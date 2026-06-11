@@ -24,7 +24,7 @@ http://127.0.0.1:8765/tests/test-runner.html
 - Confirm the title is visible.
 - Confirm the new round button is visible.
 - Click `新規局開始`.
-- Confirm the center status shows `あなたの番です`.
+- Confirm the center status shows `あなたの番です。牌を1枚選んでください`.
 - Confirm the human hand has 14 tiles.
 - Confirm CPU hands show tile counts.
 - Confirm live wall count is shown.
@@ -33,6 +33,7 @@ http://127.0.0.1:8765/tests/test-runner.html
 - Click one human tile.
 - Confirm the human discard count increases.
 - Wait for CPU turns.
+- Confirm the center status shows `CPUが考えています` during CPU turns.
 - Confirm CPU discard counts increase.
 - Confirm the turn returns to the human.
 
