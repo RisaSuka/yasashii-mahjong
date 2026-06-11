@@ -1,0 +1,60 @@
+@media (max-width: 760px) {
+  .topbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .controls {
+    justify-content: stretch;
+  }
+
+  .controls button {
+    flex: 1 1 120px;
+  }
+
+  .table {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    padding: 10px;
+  }
+
+  .seat,
+  .center-panel {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .seat-north {
+    order: 1;
+  }
+
+  .seat-west {
+    order: 2;
+  }
+
+  .seat-south {
+    order: 3;
+  }
+
+  .center-panel {
+    order: 4;
+  }
+
+  .seat-east {
+    order: 5;
+  }
+
+  .hand {
+    padding: 4px 0 8px;
+  }
+
+  .tile {
+    width: 46px;
+    height: 62px;
+  }
+
+  .tile-button {
+    min-width: 50px;
+    min-height: 66px;
+  }
+}
