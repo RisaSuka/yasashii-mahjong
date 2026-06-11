@@ -113,7 +113,7 @@ function renderStatus(round) {
   }
 
   const currentPlayer = round.players[round.currentPlayerIndex];
-  return currentPlayer.type === "human" ? "あなたの番です" : `CPUの手番です (${currentPlayer.name})`;
+  return currentPlayer.type === "human" ? "あなたの番です。牌を1枚選んでください" : `CPUが考えています (${currentPlayer.name})`;
 }
 
 function renderDoraIndicators(round) {
