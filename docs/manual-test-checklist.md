@@ -47,8 +47,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## Test Runner Check
 
 - Open the test runner URL.
-- Confirm total count is 18.
-- Confirm pass count is 18.
+- Confirm total count is 20.
+- Confirm pass count is 20.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 
