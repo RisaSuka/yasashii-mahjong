@@ -377,3 +377,31 @@ Do not start MVP-0.3 until MVP-0.2 tests are stable.
 - `src/game/rules/win-check.js` does not touch DOM.
 - No UI button is added.
 - No scoring, yaku, riichi, calls, or furiten logic is added.
+
+## Start Checklist
+
+Before implementing MVP-0.2:
+
+- Confirm current branch.
+- Confirm working tree is clean.
+- Confirm no unapproved push has happened.
+- Confirm no unapproved `main` merge has happened.
+- Confirm MVP-0.1 tests pass.
+- Confirm `docs/mvp-02-win-check-tests.md` has been reviewed.
+- Confirm Agent C test ownership and Agent A implementation ownership are separated.
+- Confirm no UI work is included in the branch plan.
+
+## Done Checklist
+
+MVP-0.2 is done when:
+
+- All MVP-0.1 tests still pass.
+- All new win-check tests pass.
+- Invalid hands return a non-winning result with a useful reason.
+- Standard hands are recognized.
+- Seven pairs are recognized.
+- Thirteen orphans are recognized.
+- Impossible five-copy hands are rejected.
+- `src/game/rules/win-check.js` is pure and DOM-free.
+- No UI behavior changed.
+- Documentation is updated with the new test count.
