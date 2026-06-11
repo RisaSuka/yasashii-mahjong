@@ -20,6 +20,7 @@ MVP-0.1は `codex/mvp-01-integration` ブランチで統合済みです。
 関連ドキュメント:
 
 - [MVP-0.1仕様](docs/mvp-01-spec.md)
+- [MVP-0.1アーキテクチャメモ](docs/mvp-01-architecture.md)
 - [Agent計画](docs/agent-plan.md)
 - [UXレビュー](docs/design-review.md)
 - [検証ログ](docs/mvp-01-verification.md)
