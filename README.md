@@ -13,6 +13,7 @@ MVP-0.1は `codex/mvp-01-integration` ブランチで統合済みです。
 - 自動テスト: 20 pass
 - 流局シミュレーション成功
 - `src/game/` はDOM非依存。例外は `src/game/storage.js` の `localStorage` 参照のみ
+- 実ブラウザの自動クリック確認は環境制約で未実施。手動確認チェックリストを用意済み
 - pushなし
 - `main` へのmergeなし
 
