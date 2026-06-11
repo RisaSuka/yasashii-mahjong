@@ -1,0 +1,55 @@
+:root {
+  color-scheme: light;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  background: #edf2ef;
+  color: #1f2933;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #edf2ef;
+}
+
+button {
+  min-height: 44px;
+  border: 1px solid #274c3a;
+  border-radius: 6px;
+  background: #274c3a;
+  color: #ffffff;
+  padding: 0 14px;
+  font: inherit;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: #ffffff;
+  color: #274c3a;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
