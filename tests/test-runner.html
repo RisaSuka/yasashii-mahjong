@@ -137,6 +137,7 @@
       import { registerStorageTests } from "./storage.test.js";
       import { registerTileTests } from "./tiles.test.js";
       import { registerWallTests } from "./wall.test.js";
+      import { registerWinCheckTests } from "./win-check.test.js";
       import { runTests, tests } from "./test.js";
 
       const totalCount = document.querySelector("#total-count");
@@ -151,6 +152,7 @@
       registerRoundTests();
       registerActionTests();
       registerStorageTests();
+      registerWinCheckTests();
 
       function renderResults(results) {
         totalCount.textContent = String(results.length);
