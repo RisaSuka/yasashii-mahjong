@@ -10,8 +10,8 @@
   display: inline-grid;
   place-items: center;
   flex: 0 0 auto;
-  width: 42px;
-  height: 58px;
+  width: 46px;
+  height: 62px;
   border: 1px solid #9aa5b1;
   border-radius: 6px;
   background: #fffdf7;
@@ -21,12 +21,17 @@
 }
 
 .tile-button {
-  min-width: 44px;
-  min-height: 58px;
+  min-width: 50px;
+  min-height: 66px;
   padding: 0;
   background: transparent;
   color: inherit;
   border: 0;
+}
+
+.tile-button:disabled .tile {
+  background: #eef2f1;
+  color: #697586;
 }
 
 .tile-button:focus-visible .tile,

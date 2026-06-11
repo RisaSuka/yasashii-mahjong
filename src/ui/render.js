@@ -113,7 +113,7 @@ function renderStatus(round) {
   }
 
   const currentPlayer = round.players[round.currentPlayerIndex];
-  return `${WIND_LABELS[currentPlayer.wind]} ${currentPlayer.name} の手番`;
+  return currentPlayer.type === "human" ? "あなたの番です" : `CPUの手番です (${currentPlayer.name})`;
 }
 
 function renderDoraIndicators(round) {
