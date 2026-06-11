@@ -204,6 +204,44 @@ Expected:
 { winning: false, type: null, reason: "not-14-tiles" }
 ```
 
+## Invalid Tile Shape Cases
+
+### Invalid suit
+
+```text
+x1 m1 m2 m3 / m4 m5 m6 / p2 p3 p4 / s7 s8 s9 / z1
+```
+
+Expected:
+
+```js
+{ winning: false, type: null, reason: "invalid-tile" }
+```
+
+### Invalid number rank
+
+```text
+m0 m1 m2 m3 / m4 m5 m6 / p2 p3 p4 / s7 s8 s9 / z1
+```
+
+Expected:
+
+```js
+{ winning: false, type: null, reason: "invalid-tile" }
+```
+
+### Invalid honor rank
+
+```text
+z8 m1 m2 m3 / m4 m5 m6 / p2 p3 p4 / s7 s8 s9 / z1
+```
+
+Expected:
+
+```js
+{ winning: false, type: null, reason: "invalid-tile" }
+```
+
 ## Impossible Copy Cases
 
 ### Five copies of one tile
@@ -307,4 +345,3 @@ Expected:
 ```js
 { winning: false, type: null, reason: "no-winning-shape" }
 ```
-
