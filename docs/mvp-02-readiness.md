@@ -2,6 +2,8 @@
 
 Use this document immediately before starting MVP-0.2 implementation.
 
+This document is not implementation approval. Start coding only after the user explicitly approves MVP-0.2 implementation.
+
 ## MVP-0.2 Goal
 
 Add the first winning-shape checker.
@@ -217,4 +219,3 @@ Do not start MVP-0.2 if any are true:
 - Scope includes scoring, yaku, calls, riichi, or furiten.
 - The implementation branch would need broad refactoring.
 - The planned API is still disputed.
-
