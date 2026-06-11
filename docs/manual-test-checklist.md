@@ -20,6 +20,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 
 ## Desktop App Check
 
+Follow this order first. It verifies the normal MVP-0.1 play loop.
+
 - Open the app URL.
 - Confirm the title is visible.
 - Confirm the new round button is visible.
@@ -39,13 +41,26 @@ http://127.0.0.1:8765/tests/test-runner.html
 
 ## Exhaustive Draw Check
 
+Then verify that the round can end without win detection.
+
 - Continue discarding tiles until the live wall reaches 0.
 - Confirm the center status shows `流局しました`.
 - Confirm stats show the drawn round count increased.
 - Refresh the page.
 - Confirm stats are still loaded from `localStorage`.
 
+## localStorage Check
+
+Use browser developer tools after starting at least one round.
+
+- Confirm `localStorage` contains `jun-chan-mahjong:stats`.
+- Confirm `roundsStarted` is at least 1.
+- Confirm `lastPlayedAt` is a string.
+- After exhaustive draw, confirm `roundsDrawn` increased.
+
 ## Test Runner Check
+
+After the app flow, verify the test runner.
 
 - Open the test runner URL.
 - Confirm total count is 20.
@@ -54,6 +69,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 - Confirm pending count is 0.
 
 ## Smartphone Width Check
+
+Finally verify the small-screen experience.
 
 Use a browser device toolbar or narrow the window to around 390px width.
 
