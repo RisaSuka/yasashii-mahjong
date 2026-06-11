@@ -1,6 +1,6 @@
 # MVP-0.1 Verification Log
 
-Last updated: 2026-06-12 07:00 JST
+Last updated: 2026-06-12 07:05 JST
 
 ## Environment
 
@@ -14,6 +14,13 @@ python -m http.server 8765 --bind 127.0.0.1
 ```
 
 ## Automated Checks
+
+Latest re-check after documentation and small UX adjustments:
+
+- Browser-style test suite via module runner: 17 pass
+- Exhaustive-draw simulation: pass
+- Static server: HTTP 200
+- `src/game/` DOM boundary: pass with expected `storage.js` exception
 
 ### Static server
 
@@ -103,4 +110,3 @@ Manual browser checks still recommended:
 - No dora effect
 - CPU discard is random
 - Full real-browser click-through still needs manual confirmation
-
