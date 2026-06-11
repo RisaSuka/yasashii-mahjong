@@ -72,4 +72,38 @@ export function registerActionTests() {
     assertEqual(nextCpu.hand.length, beforeHand - 1, "CPU discard should remove one tile from hand");
     assertEqual(nextCpu.discards.length, beforeDiscards + 1, "CPU discard should add one tile to discards");
   });
+
+  test("1局が通常山0枚まで進み流局する", async () => {
+    const { dispatchAction } = await loadModule("../src/game/actions.js", ["dispatchAction"]);
+    let state = await startedState();
+    let guard = 0;
+
+    while (state.round.phase !== "ended" && guard < 400) {
+      const player = state.round.players[state.round.currentPlayerIndex];
+      const tile = player.hand[0];
+
+      state = dispatchAction(state, {
+        type: player.type === "cpu" ? "CPU_DISCARD" : "DISCARD_TILE",
+        playerId: player.id,
+        tileId: tile?.id,
+        random: () => 0
+      });
+
+      if (state.round.phase === "ended") {
+        break;
+      }
+
+      state = dispatchAction(state, { type: "ADVANCE_TURN" });
+      state = dispatchAction(state, {
+        type: "DRAW_TILE",
+        playerId: state.round.players[state.round.currentPlayerIndex].id
+      });
+      guard += 1;
+    }
+
+    assertEqual(state.round.phase, "ended", "Round should end");
+    assertEqual(state.round.endReason, "exhaustive-draw", "Round should end by exhaustive draw");
+    assertEqual(state.round.wall.length, 0, "Live wall should be empty");
+    assertEqual(state.stats.roundsDrawn, 1, "Drawn round stats should increment");
+  });
 }
