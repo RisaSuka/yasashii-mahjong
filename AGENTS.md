@@ -21,13 +21,15 @@ The app must remain deployable as static files on GitHub Pages.
 
 MVP-0.1 has been integrated on `codex/mvp-01-integration`.
 
-Current known integration commit:
+Playable MVP-0.1 baseline commit:
 
 ```text
 72b1dda Integrate MVP 0.1 playable table
 ```
 
-Current verification at that commit:
+Later documentation and planning commits may exist on top of that baseline. Always run `git log --oneline -5` and `git status --short --branch` before continuing.
+
+Known verification:
 
 - Browser-oriented test suite: 17 pass
 - Exhaustive-draw simulation succeeds
@@ -354,4 +356,3 @@ Before MVP-0.2 begins, confirm:
 - `localStorage` stats still update for round start and exhaustive draw
 - MVP-0.2 scope is written down before implementation
 - Any new feature is backed by tests before or alongside implementation
-
