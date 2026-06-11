@@ -355,4 +355,5 @@ Before MVP-0.2 begins, confirm:
 - Smartphone hand controls remain tappable
 - `localStorage` stats still update for round start and exhaustive draw
 - MVP-0.2 scope is written down before implementation
+- MVP-0.2 win-check test cases are reviewed before implementation
 - Any new feature is backed by tests before or alongside implementation
