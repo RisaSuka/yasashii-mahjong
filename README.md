@@ -22,6 +22,7 @@ MVP-0.1は `codex/mvp-01-integration` ブランチで統合済みです。
 - [Agent計画](docs/agent-plan.md)
 - [UXレビュー](docs/design-review.md)
 - [検証ログ](docs/mvp-01-verification.md)
+- [手動確認チェックリスト](docs/manual-test-checklist.md)
 - [MVP-0.2計画](docs/mvp-02-plan.md)
 - [エージェント共通ルール](AGENTS.md)
 
