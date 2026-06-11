@@ -31,7 +31,7 @@ Later documentation and planning commits may exist on top of that baseline. Alwa
 
 Known verification:
 
-- Browser-oriented test suite: 17 pass
+- Browser-oriented test suite: 18 pass
 - Exhaustive-draw simulation succeeds
 - No push has been performed
 - No merge into `main` has been performed

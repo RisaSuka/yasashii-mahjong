@@ -47,8 +47,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## Test Runner Check
 
 - Open the test runner URL.
-- Confirm total count is 17.
-- Confirm pass count is 17.
+- Confirm total count is 18.
+- Confirm pass count is 18.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 
@@ -66,4 +66,3 @@ Use a browser device toolbar or narrow the window to around 390px width.
 ## Known Tooling Limitation
 
 Automated Playwright click-through could not be run in the current Codex environment because the available `playwright` package is missing `playwright-core`.
-
