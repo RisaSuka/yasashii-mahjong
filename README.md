@@ -29,6 +29,7 @@ MVP-0.1は `codex/mvp-01-integration` ブランチで統合済みです。
 - [MVP-0.2和了判定テストケース案](docs/mvp-02-win-check-tests.md)
 - [MVP-0.2 Agentプロンプト](docs/mvp-02-agent-prompts.md)
 - [MVP-0.2実装前チェックリスト](docs/mvp-02-readiness.md)
+- [MVP-0.3計画](docs/mvp-03-plan.md)
 - [公開前チェックリスト](docs/release-checklist.md)
 - [エージェント共通ルール](AGENTS.md)
 
