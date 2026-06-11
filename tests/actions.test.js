@@ -10,6 +10,16 @@ async function startedState() {
 }
 
 export function registerActionTests() {
+  test("START_ROUNDで対局開始数と最終プレイ日時が更新される", async () => {
+    const { dispatchAction } = await loadModule("../src/game/actions.js", ["dispatchAction"]);
+    const { createInitialGameState } = await loadModule("../src/game/round.js", ["createInitialGameState"]);
+    const state = createInitialGameState();
+    const nextState = dispatchAction(state, { type: "START_ROUND" });
+
+    assertEqual(nextState.stats.roundsStarted, 1, "START_ROUND should increment started rounds");
+    assertEqual(typeof nextState.stats.lastPlayedAt, "string", "START_ROUND should set last played time");
+  });
+
   test("打牌で手牌-1、捨て牌+1", async () => {
     const { dispatchAction } = await loadModule("../src/game/actions.js", ["dispatchAction"]);
     const state = await startedState();
@@ -71,6 +81,16 @@ export function registerActionTests() {
 
     assertEqual(nextCpu.hand.length, beforeHand - 1, "CPU discard should remove one tile from hand");
     assertEqual(nextCpu.discards.length, beforeDiscards + 1, "CPU discard should add one tile to discards");
+  });
+
+  test("TOGGLE_LARGE_TILE_MODEで大きい牌モードを切り替える", async () => {
+    const { dispatchAction } = await loadModule("../src/game/actions.js", ["dispatchAction"]);
+    const { createInitialGameState } = await loadModule("../src/game/round.js", ["createInitialGameState"]);
+    const state = createInitialGameState();
+    const nextState = dispatchAction(state, { type: "TOGGLE_LARGE_TILE_MODE" });
+
+    assertEqual(nextState.settings.largeTileMode, true, "Large tile mode should be enabled");
+    assertEqual(state.settings.largeTileMode, false, "Original state should stay unchanged");
   });
 
   test("1局が通常山0枚まで進み流局する", async () => {
