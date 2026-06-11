@@ -84,6 +84,11 @@
   text-align: center;
 }
 
+.center-panel strong {
+  color: #102a43;
+  font-size: 20px;
+}
+
 .seat-header {
   display: flex;
   align-items: center;
