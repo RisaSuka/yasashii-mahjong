@@ -152,7 +152,7 @@ Required groups:
 Before MVP-0.2 implementation:
 
 - Run current MVP-0.1 tests.
-- Confirm expected result is `20 pass`.
+- Confirm MVP-0.1 baseline tests pass. Before win-check tests are added this was `20 pass`; after MVP-0.2 win-check tests are implemented the expected total is `32 pass`.
 - Confirm exhaustive-draw simulation still succeeds.
 - Confirm local server still returns HTTP 200 for `/`.
 - Confirm `src/game/` still avoids DOM access except `src/game/storage.js`.

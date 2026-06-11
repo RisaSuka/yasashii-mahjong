@@ -17,7 +17,7 @@ python -m http.server 8765 --bind 127.0.0.1
 
 Latest re-check after documentation and small UX adjustments:
 
-- Browser-style test suite via module runner: 20 pass
+- Browser-style test suite via module runner: 32 pass
 - Exhaustive-draw simulation: pass
 - Static server: HTTP 200
 - `src/game/` DOM boundary: pass with expected `storage.js` exception
@@ -36,7 +36,7 @@ Result: pass
 Result: pass
 
 ```text
-20 pass
+32 pass
 ```
 
 Covered checks:
@@ -95,7 +95,7 @@ Manual browser checks still recommended:
 - Confirm CPU turns advance
 - Confirm the table can progress to exhaustive draw
 - Open `http://127.0.0.1:8765/tests/test-runner.html`
-- Confirm the browser UI shows 20 pass
+- Confirm the browser UI shows 32 pass
 - Check smartphone width around 390px
 - Confirm human tile buttons are easy to tap
 

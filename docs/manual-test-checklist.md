@@ -63,8 +63,8 @@ Use browser developer tools after starting at least one round.
 After the app flow, verify the test runner.
 
 - Open the test runner URL.
-- Confirm total count is 20.
-- Confirm pass count is 20.
+- Confirm total count is 32.
+- Confirm pass count is 32.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 

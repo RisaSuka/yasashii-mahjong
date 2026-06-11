@@ -76,7 +76,7 @@ Responsibilities:
 Current expected result:
 
 ```text
-20 pass
+32 pass
 ```
 
 ## Turn Flow
@@ -123,4 +123,3 @@ jun-chan-mahjong:stats
 - No furiten
 - No dora effect
 - CPU discard is random
-

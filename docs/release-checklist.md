@@ -38,7 +38,7 @@ git branch --list
 Expected:
 
 ```text
-20 pass
+32 pass
 ```
 
 Also confirm:
@@ -72,4 +72,3 @@ Check:
 - Real browser smoke check has not been done and the user expects a polished release.
 - Any MVP-0.2 implementation code slipped into MVP-0.1.
 - Push or `main` merge has not been approved.
-
