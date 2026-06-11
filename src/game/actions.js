@@ -90,7 +90,10 @@ export function drawTile(state, playerId, storage) {
     return endRoundDraw(
       {
         ...state,
-        round: drawResult.round
+        round: {
+          ...state.round,
+          wall: []
+        }
       },
       storage
     );

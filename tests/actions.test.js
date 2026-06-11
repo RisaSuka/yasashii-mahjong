@@ -50,10 +50,12 @@ export function registerActionTests() {
     const { dispatchAction } = await loadModule("../src/game/actions.js", ["dispatchAction"]);
     const state = await startedState();
     state.round.wall = [];
+    const beforeDrawn = state.stats.roundsDrawn;
     const nextState = dispatchAction(state, { type: "DRAW_TILE", playerId: 0 });
 
     assertEqual(nextState.round.phase, "ended", "Empty wall draw should end the round");
     assertEqual(nextState.round.endReason, "exhaustive-draw", "Empty wall draw should use exhaustive-draw reason");
+    assertEqual(nextState.stats.roundsDrawn, beforeDrawn + 1, "Exhaustive draw should increment draw stats");
   });
 
   test("CPU_DISCARDでCPUが1枚捨てる", async () => {
