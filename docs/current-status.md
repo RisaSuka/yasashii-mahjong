@@ -1,14 +1,14 @@
 # Current Status
 
-Last updated for MVP-0.7.8.
+Last updated for MVP-0.8 discard advice and smartphone landscape layout work.
 
 ## Repository State
 
-- Working branch: `codex/mvp-01-integration`
-- Automated tests: `136 pass / 0 pending / 0 fail`
-- Working tree: clean at the time of the MVP-0.7.8 confirmation
+- Working branch: `codex/mvp-08-discard-advice-plan`
+- Automated tests: `148 pass / 0 pending / 0 fail`
+- Working tree: clean at the time of the latest MVP-0.8 confirmation
 - Push: not yet
-- `main` merge: not yet
+- `main` merge: not yet for MVP-0.8
 
 ## Implemented MVPs
 
@@ -26,6 +26,7 @@ Last updated for MVP-0.7.8.
 | MVP-0.7.6 | Done | Furigana/reading helper APIs. |
 | MVP-0.7.7 | Done | Furigana yaku display connected to render. |
 | MVP-0.7.8 | Done | Beginner-friendly no-yaku rejection messages. |
+| MVP-0.8 | In progress | Beginner discard advice with ON/OFF setting and smartphone layout refinements. |
 
 ## Current Capabilities
 
@@ -64,6 +65,16 @@ Last updated for MVP-0.7.8.
   - rounds started
   - rounds drawn
   - last played timestamp
+- Beginner discard advice:
+  - Up to three suggested discards.
+  - Gentle reasons for beginners.
+  - ON/OFF setting stored in localStorage.
+  - Suggested tiles highlighted in the human hand.
+- Smartphone layout:
+  - Landscape is recommended for regular play.
+  - Human hand is prioritized near the bottom.
+  - CPU seats stay around the table.
+  - Portrait shows a gentle landscape recommendation.
 
 ## Not Implemented Yet
 

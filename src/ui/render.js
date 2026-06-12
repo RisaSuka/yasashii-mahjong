@@ -33,6 +33,8 @@ export function renderGame(state, root, options = {}) {
         </div>
       </header>
 
+      <p class="orientation-hint">スマホを横向きにすると、牌とボタンが見やすくなります。</p>
+
       ${round ? renderTable(state, options) : renderEmptyState()}
 
       <footer class="footer-status">

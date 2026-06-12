@@ -26,6 +26,19 @@
   gap: 8px;
 }
 
+.orientation-hint {
+  display: none;
+  margin: 8px 10px 0;
+  border: 1px solid rgba(15, 118, 110, 0.24);
+  border-radius: 8px;
+  background: #ffffff;
+  color: #274c3a;
+  padding: 8px 10px;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
 .table {
   display: grid;
   grid-template-columns: minmax(120px, 1fr) minmax(180px, 2fr) minmax(120px, 1fr);

@@ -243,6 +243,35 @@ Real-device checks:
 - Confirm tsumo, ron, and skip buttons are easy to tap when they appear.
 - Confirm yaku display, furigana, and no-yaku messages are readable.
 
+## 12. Smartphone Landscape Table Check
+
+MVP-0.8 recommends smartphone landscape for regular play. Portrait must remain usable, but landscape is the primary real-device layout.
+
+Use a real phone or browser device toolbar in landscape orientation.
+
+- Confirm the top CPU, left CPU, right CPU, center panel, and bottom human area are easy to understand.
+- Confirm the human hand stays near the bottom and remains the easiest area to find.
+- Confirm human tiles are large enough to tap.
+- Confirm the human hand can scroll horizontally without hiding the tap target.
+- Confirm the center panel does not take over the table.
+- Confirm wall count, dead wall count, dora indicator, status text, and win messages remain readable.
+- Confirm discard advice is compact in landscape.
+- Confirm the first discard advice item shows a reason.
+- Confirm the second and third discard advice items stay short.
+- Confirm suggested tile highlighting remains visible on the hand.
+- Confirm the advice ON/OFF button still works.
+- Confirm advice disappears completely when OFF.
+- Confirm tsumo, ron, and skip buttons are easy to tap when shown.
+- Confirm yaku display, furigana, and no-yaku messages are still readable.
+- Confirm large tile mode does not break the bottom hand.
+- Confirm discard rows do not become cramped enough to block understanding.
+
+Portrait orientation check:
+
+- Confirm the page shows: `スマホを横向きにすると、牌とボタンが見やすくなります。`
+- Confirm the portrait hint does not block tile taps.
+- Confirm portrait still works well enough for emergency play.
+
 ## Known Tooling Limitation
 
 The in-app Browser plugin could not be used in earlier sessions because its expected `scripts/browser-client.mjs` file was missing. Static server, module-level tests, syntax checks, and render-string checks were used instead.
