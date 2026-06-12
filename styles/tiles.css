@@ -210,7 +210,7 @@
 
 .discard-tile {
   width: 30px;
-  height: 42px;
+  height: 43px;
   border-radius: 4px;
   padding: 2px 2px 5px;
 }
@@ -222,18 +222,34 @@
 .discard-tile .tile-face {
   border-width: 1px;
   border-radius: 3px;
-  padding: 2px 1px;
+  grid-template-rows: 1fr auto;
+  padding: 3px 1px 2px;
 }
 
 .discard-tile .tile-symbol {
-  font-size: 15px;
+  font-size: 16px;
+}
+
+.discard-tile.tile-z .tile-symbol {
+  font-size: 18px;
+}
+
+.discard-tile .tile-helper {
+  gap: 1px;
+  transform: scale(0.88);
+  transform-origin: center bottom;
 }
 
 .discard-tile .tile-suit-label {
-  padding: 0 2px;
-  font-size: 7px;
+  max-width: 14px;
+  overflow: hidden;
+  padding: 0 1px;
+  font-size: 6px;
+  white-space: nowrap;
 }
 
 .discard-tile .tile-visual-cue {
-  display: none;
+  display: inline;
+  font-size: 7px;
+  line-height: 1;
 }

@@ -202,8 +202,9 @@
 .discards {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
-  min-height: 38px;
+  gap: 5px 4px;
+  align-content: flex-start;
+  min-height: 44px;
 }
 
 .footer-status {
