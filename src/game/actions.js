@@ -18,6 +18,8 @@ export function dispatchAction(state, action) {
       return cpuDiscard(state, action.random);
     case "DECLARE_TSUMO":
       return declareTsumo(state, action.playerId);
+    case "DECLARE_RON":
+      return declareRon(state, action.playerId);
     case "END_ROUND_DRAW":
       return endRoundDraw(state, action.storage);
     case "TOGGLE_LARGE_TILE_MODE":
@@ -78,6 +80,54 @@ export function declareTsumo(state, playerId) {
         winType: "tsumo",
         handType: result.type,
         handTiles: [...player.hand]
+      }
+    }
+  };
+}
+
+export function canDeclareRon(state, playerId) {
+  if (!state.round || state.round.phase !== "reaction") {
+    return false;
+  }
+
+  const lastDiscard = state.round.lastDiscard;
+
+  if (!lastDiscard?.tile || lastDiscard.playerId === null || lastDiscard.playerId === playerId) {
+    return false;
+  }
+
+  const player = state.round.players.find((candidate) => candidate.id === playerId);
+
+  if (!player || player.type !== "human") {
+    return false;
+  }
+
+  return isWinningHand([...player.hand, lastDiscard.tile]).winning;
+}
+
+export function declareRon(state, playerId) {
+  if (!canDeclareRon(state, playerId)) {
+    return state;
+  }
+
+  const player = state.round.players.find((candidate) => candidate.id === playerId);
+  const winningTile = state.round.lastDiscard.tile;
+  const handTiles = [...player.hand, winningTile];
+  const result = isWinningHand(handTiles);
+
+  return {
+    ...state,
+    round: {
+      ...state.round,
+      phase: "ended",
+      endReason: "win",
+      winningResult: {
+        winnerId: playerId,
+        winType: "ron",
+        fromPlayerId: state.round.lastDiscard.playerId,
+        winningTile,
+        handType: result.type,
+        handTiles
       }
     }
   };
