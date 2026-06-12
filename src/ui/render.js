@@ -12,7 +12,7 @@ export function renderGame(state, root, options = {}) {
   root.innerHTML = `
     <div class="app${largeTileClass}">
       <header class="topbar">
-        <h1 class="title">じゅんちゃん麻雀 MVP-0.3</h1>
+        <h1 class="title">じゅんちゃん麻雀 MVP-0.5.5</h1>
         <div class="controls">
           <button type="button" data-action="start-round">新規局開始</button>
           <button type="button" class="secondary" data-action="toggle-large">
@@ -37,7 +37,7 @@ function renderEmptyState() {
     <main class="table">
       <section class="center-panel">
         <strong>新規局開始を押してください</strong>
-        <span class="status-line">4人卓を流局またはツモ和了まで進められます。</span>
+        <span class="status-line">4人卓を流局、ツモ和了、ロン和了まで進められます。</span>
       </section>
     </main>
   `;
@@ -57,6 +57,7 @@ function renderTable(state, options) {
       ${seats.map((player) => renderSeat(player, round)).join("")}
       <section class="center-panel">
         <strong>${renderStatus(round)}</strong>
+        ${renderRonAction(state, options)}
         ${renderTsumoAction(state, options)}
         <span class="table-meta">通常山: ${round.wall.length}枚</span>
         <span class="table-meta">王牌: ${round.deadWall.length}枚</span>
@@ -115,11 +116,36 @@ function renderStatus(round) {
       return winner?.type === "human" ? "あなたのツモ和了です" : `${winner?.name || "CPU"}のツモ和了です`;
     }
 
+    if (round.endReason === "win" && round.winningResult?.winType === "ron") {
+      const winner = round.players.find((player) => player.id === round.winningResult.winnerId);
+      return winner?.type === "human" ? "あなたのロン和了です" : `${winner?.name || "CPU"}のロン和了です`;
+    }
+
     return round.endReason === "exhaustive-draw" ? "流局しました" : "局が終了しました";
+  }
+
+  if (round.phase === "reaction") {
+    return "ロンできます。ロンしますか？";
   }
 
   const currentPlayer = round.players[round.currentPlayerIndex];
   return currentPlayer.type === "human" ? "あなたの番です。牌を選んでください" : `CPUの手番です (${currentPlayer.name})`;
+}
+
+function renderRonAction(state, options) {
+  const round = state.round;
+  const human = round.players.find((player) => player.type === "human");
+
+  if (!human || typeof options.canDeclareRon !== "function" || !options.canDeclareRon(state, human.id)) {
+    return "";
+  }
+
+  return `
+    <div class="reaction-actions">
+      <button type="button" class="ron-button" data-action="declare-ron">ロン</button>
+      <button type="button" class="skip-ron-button" data-action="skip-ron">見送る</button>
+    </div>
+  `;
 }
 
 function renderTsumoAction(state, options) {

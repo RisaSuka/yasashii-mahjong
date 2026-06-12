@@ -16,4 +16,12 @@ export function bindControls(root, handlers) {
   root.querySelector("[data-action='declare-tsumo']")?.addEventListener("click", () => {
     handlers.onDeclareTsumo();
   });
+
+  root.querySelector("[data-action='declare-ron']")?.addEventListener("click", () => {
+    handlers.onDeclareRon();
+  });
+
+  root.querySelector("[data-action='skip-ron']")?.addEventListener("click", () => {
+    handlers.onSkipRon();
+  });
 }

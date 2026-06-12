@@ -27,6 +27,8 @@ async function loadGameApi() {
     return {
       dispatchAction: actions.dispatchAction,
       canDeclareTsumo: actions.canDeclareTsumo,
+      canDeclareRon: actions.canDeclareRon,
+      canRonLatestDiscard: actions.canRonLatestDiscard,
       createInitialGameState: round.createInitialGameState,
       loadStats: storage.loadStats
     };
@@ -37,13 +39,16 @@ async function loadGameApi() {
 
 function render() {
   renderGame(state, appRoot, {
-    canDeclareTsumo: gameApi.canDeclareTsumo
+    canDeclareTsumo: gameApi.canDeclareTsumo,
+    canDeclareRon: gameApi.canDeclareRon
   });
   bindControls(appRoot, {
     onStartRound: startRound,
     onToggleLargeTileMode: toggleLargeTileMode,
     onDiscardTile: discardHumanTile,
-    onDeclareTsumo: declareHumanTsumo
+    onDeclareTsumo: declareHumanTsumo,
+    onDeclareRon: declareHumanRon,
+    onSkipRon: skipRon
   });
 }
 
@@ -70,7 +75,7 @@ function discardHumanTile(tileId) {
     playerId: currentPlayer.id,
     tileId
   });
-  continueAfterDiscard();
+  handleAfterDiscard();
 }
 
 function declareHumanTsumo() {
@@ -87,6 +92,49 @@ function declareHumanTsumo() {
   render();
 }
 
+function declareHumanRon() {
+  const human = getHumanPlayer();
+
+  if (!human) {
+    return;
+  }
+
+  state = gameApi.dispatchAction(state, {
+    type: "DECLARE_RON",
+    playerId: human.id
+  });
+  render();
+}
+
+function skipRon() {
+  state = gameApi.dispatchAction(state, { type: "SKIP_RON" });
+  continueAfterReaction();
+}
+
+function handleAfterDiscard() {
+  if (enterReactionIfNeeded()) {
+    return;
+  }
+
+  continueAfterDiscard();
+}
+
+function enterReactionIfNeeded() {
+  const human = getHumanPlayer();
+
+  if (!human || !gameApi.canRonLatestDiscard?.(state, human.id)) {
+    return false;
+  }
+
+  window.clearTimeout(cpuTimer);
+  state = gameApi.dispatchAction(state, {
+    type: "ENTER_REACTION",
+    playerId: human.id
+  });
+  render();
+  return state.round?.phase === "reaction";
+}
+
 function continueAfterDiscard() {
   if (!state.round || state.round.phase === "ended") {
     render();
@@ -97,6 +145,23 @@ function continueAfterDiscard() {
   const nextPlayer = getCurrentPlayer();
 
   if (nextPlayer) {
+    state = gameApi.dispatchAction(state, { type: "DRAW_TILE", playerId: nextPlayer.id });
+    declareCpuTsumoIfAvailable(nextPlayer.id);
+  }
+
+  render();
+  scheduleCpuIfNeeded();
+}
+
+function continueAfterReaction() {
+  if (!state.round || state.round.phase === "ended") {
+    render();
+    return;
+  }
+
+  const nextPlayer = getCurrentPlayer();
+
+  if (nextPlayer && state.round.phase === "draw") {
     state = gameApi.dispatchAction(state, { type: "DRAW_TILE", playerId: nextPlayer.id });
     declareCpuTsumoIfAvailable(nextPlayer.id);
   }
@@ -128,7 +193,7 @@ function scheduleCpuIfNeeded() {
 
   cpuTimer = window.setTimeout(() => {
     state = gameApi.dispatchAction(state, { type: "CPU_DISCARD" });
-    continueAfterDiscard();
+    handleAfterDiscard();
   }, state.settings.cpuDelayMs);
 }
 
@@ -138,6 +203,14 @@ function getCurrentPlayer() {
   }
 
   return state.round.players[state.round.currentPlayerIndex] || null;
+}
+
+function getHumanPlayer() {
+  if (!state?.round) {
+    return null;
+  }
+
+  return state.round.players.find((player) => player.type === "human") || null;
 }
 
 function createFallbackGameApi() {
@@ -165,6 +238,12 @@ function createFallbackGameApi() {
       };
     },
     canDeclareTsumo() {
+      return false;
+    },
+    canDeclareRon() {
+      return false;
+    },
+    canRonLatestDiscard() {
       return false;
     },
     dispatchAction(currentState, action) {

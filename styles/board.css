@@ -102,6 +102,33 @@
   font-weight: 700;
 }
 
+.reaction-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.ron-button,
+.skip-ron-button {
+  min-width: 96px;
+  min-height: 48px;
+  border: 2px solid #0f766e;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.ron-button {
+  background: #0f766e;
+  color: #ffffff;
+}
+
+.skip-ron-button {
+  background: #ffffff;
+  color: #0f766e;
+}
+
 .seat-header {
   display: flex;
   align-items: center;
