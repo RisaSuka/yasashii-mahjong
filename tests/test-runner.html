@@ -136,6 +136,7 @@
       import { registerRoundTests } from "./round.test.js";
       import { registerStorageTests } from "./storage.test.js";
       import { registerTileTests } from "./tiles.test.js";
+      import { registerTsumoTests } from "./tsumo.test.js";
       import { registerWallTests } from "./wall.test.js";
       import { registerWinCheckTests } from "./win-check.test.js";
       import { runTests, tests } from "./test.js";
@@ -153,6 +154,7 @@
       registerActionTests();
       registerStorageTests();
       registerWinCheckTests();
+      registerTsumoTests();
 
       function renderResults(results) {
         totalCount.textContent = String(results.length);
