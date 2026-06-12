@@ -1,3 +1,5 @@
+import { formatYakuResult, getMahjongTermDescription } from "./yaku-display.js";
+
 const WIND_LABELS = {
   east: "東",
   south: "南",
@@ -57,6 +59,7 @@ function renderTable(state, options) {
       ${seats.map((player) => renderSeat(player, round)).join("")}
       <section class="center-panel">
         <strong>${renderStatus(round)}</strong>
+        ${renderYakuSummary(round)}
         ${renderRonAction(state, options)}
         ${renderTsumoAction(state, options)}
         <span class="table-meta">通常山: ${round.wall.length}枚</span>
@@ -65,6 +68,43 @@ function renderTable(state, options) {
       </section>
     </main>
   `;
+}
+
+function renderYakuSummary(round) {
+  if (round.phase !== "ended" || round.endReason !== "win") {
+    return "";
+  }
+
+  const yakuText = formatYakuResult(round.winningResult?.yakuResult);
+
+  if (!yakuText) {
+    return "";
+  }
+
+  return `
+    <section class="yaku-summary" aria-label="役の説明">
+      ${yakuText.split("\n").map((line) => `<span>${escapeHtml(line)}</span>`).join("")}
+      ${renderWinTermHelp(round.winningResult?.winType)}
+    </section>
+  `;
+}
+
+function renderWinTermHelp(winType) {
+  const winTerm = winType === "tsumo" ? "ツモ" : winType === "ron" ? "ロン" : "";
+  const winDescription = winTerm ? getMahjongTermDescription(winTerm) : "";
+  const yakuDescription = getMahjongTermDescription("役");
+  const hanDescription = getMahjongTermDescription("翻");
+  const lines = [
+    winDescription ? `${winTerm}: ${winDescription}` : "",
+    yakuDescription ? `役: ${yakuDescription}` : "",
+    hanDescription ? `翻: ${hanDescription}` : ""
+  ].filter(Boolean);
+
+  if (!lines.length) {
+    return "";
+  }
+
+  return `<div class="term-help">${lines.map((line) => `<span>${escapeHtml(line)}</span>`).join("")}</div>`;
 }
 
 function renderSeat(player, round) {
@@ -173,6 +213,15 @@ function renderDoraIndicators(round) {
 
 function renderTile(tile, extraClass = "") {
   return `<span class="tile ${extraClass}">${getTileLabel(tile)}</span>`;
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
 }
 
 function getTileLabel(tile) {
