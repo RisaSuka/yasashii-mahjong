@@ -142,6 +142,7 @@
       import { registerTsumoTests } from "./tsumo.test.js";
       import { registerWallTests } from "./wall.test.js";
       import { registerWinCheckTests } from "./win-check.test.js";
+      import { registerYakuDisplayTests } from "./yaku-display.test.js";
       import { registerYakuIntegrationTests } from "./yaku-integration.test.js";
       import { registerYakuTests } from "./yaku.test.js";
       import { runTests, tests } from "./test.js";
@@ -165,6 +166,7 @@
       registerTsumoTests();
       registerYakuTests();
       registerYakuIntegrationTests();
+      registerYakuDisplayTests();
 
       function renderResults(results) {
         totalCount.textContent = String(results.length);
