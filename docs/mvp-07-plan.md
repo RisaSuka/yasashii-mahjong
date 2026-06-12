@@ -122,6 +122,8 @@ Design constraints:
 
 This app is for both a beginner grandma user and a developer who is still learning mahjong. MVP-0.7 should not assume the player already knows yaku names.
 
+Future furigana display should show difficult yaku names as `漢字名（カタカナ読み）`, for example `断么九（タンヤオ）` and `七対子（チートイツ）`. MVP-0.7.5 records the fuller furigana policy.
+
 Display each yaku as a name, han value, and one short explanation:
 
 ```text
@@ -147,6 +149,7 @@ Recommended first explanations:
 Implementation note for later:
 
 - The explanations can live in a UI-side lookup table keyed by `yaku.id`.
+- A future helper such as `getYakuReading` or `getYakuDisplayName` can add furigana without changing game rules.
 - Do not change the `detectYaku` return shape just to add UI copy.
 - If a yaku id has no explanation, show only the yaku name and han.
 

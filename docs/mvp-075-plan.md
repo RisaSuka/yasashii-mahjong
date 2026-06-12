@@ -32,6 +32,9 @@ MVP-0.7.5 should keep the game rules unchanged and add a small, testable feedbac
 - Fu calculation
 - New yaku
 - Complete yaku coverage
+- Full glossary
+- Furigana support for every mahjong yaku
+- Tile-efficiency or strategy explanation
 - Dora
 - Riichi
 - Furiten
@@ -137,6 +140,84 @@ Display rules:
 - Prefer short lines.
 - Keep font size readable.
 - Do not hide current turn or table counts.
+
+## Furigana Display Policy
+
+Beginner and older users may not be able to read mahjong yaku names or rule terms. MVP-0.7.5 should record a display policy for furigana, even if full implementation is deferred.
+
+Yaku names should be displayed as:
+
+```text
+漢字名（カタカナ読み）
+```
+
+Examples:
+
+- 門前清自摸和（メンゼンツモ）
+- 断么九（タンヤオ）
+- 役牌（ヤクハイ）
+- 七対子（チートイツ）
+- 対々和（トイトイ）
+- 国士無双（コクシムソウ）
+
+Recommended yaku display shape:
+
+```text
+断么九（タンヤオ）
+1・9・字牌を使わず、2〜8の牌だけで作る役です。
+1翻（1ハン）
+```
+
+Display rules:
+
+- Do not show difficult kanji alone.
+- Add katakana reading next to difficult yaku names.
+- Keep the explanation short.
+- Keep the font size readable.
+- If the layout becomes narrow, stack name, reading, and explanation vertically.
+- Do not require the player to open a separate glossary just to read a result.
+
+## Term Reading And Explanation Policy
+
+For terms that beginners may not read, show a reading and short explanation.
+
+Initial term candidates:
+
+- 役（ヤク）: あがるために必要な条件です。
+- 翻（ハン）: 役の大きさを表す数字です。
+- ツモ: 自分で引いた牌であがることです。
+- ロン: 相手が捨てた牌であがることです。
+- 手牌（テハイ）: 自分が持っている牌です。
+- 捨て牌（ステハイ）: 捨てた牌です。
+- 字牌（ジハイ）: 東・南・西・北・白・發・中の牌です。
+- 么九牌（ヤオチュウハイ）: 1・9・字牌のことです。
+
+MVP-0.7.5 should not implement a full glossary screen. These readings should be small display helpers that future help UI can reuse.
+
+## Future `yaku-display.js` Reflection
+
+The existing `yakuResult` has:
+
+```js
+{ id, name, han }
+```
+
+Future display helpers can supplement missing reading information from the yaku id:
+
+```js
+getYakuReading(yakuId)
+getYakuDisplayName(yaku)
+getMahjongTermReading(term)
+```
+
+Possible output:
+
+```js
+getYakuDisplayName({ id: "tanyao", name: "断么九", han: 1 })
+// "断么九（タンヤオ）"
+```
+
+Keep this in the UI display layer. Do not change `detectYaku` just to carry furigana unless a later milestone needs richer rule metadata.
 
 ## Rejection Reason Scope
 
