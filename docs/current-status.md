@@ -5,7 +5,7 @@ Last updated for MVP-0.7.8.
 ## Repository State
 
 - Working branch: `codex/mvp-01-integration`
-- Automated tests: `135 pass / 0 pending / 0 fail`
+- Automated tests: `136 pass / 0 pending / 0 fail`
 - Working tree: clean at the time of the MVP-0.7.8 confirmation
 - Push: not yet
 - `main` merge: not yet
@@ -54,6 +54,12 @@ Last updated for MVP-0.7.8.
 - Beginner-friendly no-yaku message:
   - `形は完成していますが、役がありません。`
   - `まずはタンヤオや役牌を狙ってみましょう。`
+- Improved CSS tile visuals:
+  - Slightly tall tile shape.
+  - `tile-face` structure for future SVG/image replacement.
+  - Red manzu, blue pinzu, green souzu, and dark honor accents.
+  - Compact visual cues for suits.
+  - Large tile mode support.
 - localStorage stats:
   - rounds started
   - rounds drawn
@@ -82,7 +88,7 @@ Last updated for MVP-0.7.8.
 Before merging into `main`, confirm:
 
 - `git status --short --branch` is clean.
-- Latest test runner result is `135 pass / 0 pending / 0 fail`.
+- Latest test runner result is `136 pass / 0 pending / 0 fail`.
 - README reflects MVP-0.7.8.
 - `docs/release-checklist.md` is reviewed.
 - `docs/manual-test-checklist.md` is reviewed.

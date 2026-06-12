@@ -21,8 +21,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 135.
-- Confirm pass count is 135.
+- Confirm total count is 136.
+- Confirm pass count is 136.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 
@@ -123,18 +123,40 @@ Verify:
 - Confirm han uses readable text, such as `1翻（1ハン）`.
 - Confirm total han is shown.
 - Confirm beginner explanations are short and readable.
+- Confirm yaku display order is kept:
+  1. 役牌（ヤクハイ）
+  2. 断么九（タンヤオ）
+  3. 門前清自摸和（メンゼンツモ）
+  4. 七対子（チートイツ）
+  5. 対々和（トイトイ）
+  6. 国士無双（コクシムソウ）
 - Confirm unknown or missing yaku data does not break the screen.
 
-## 7. Exhaustive Draw Check
+## 7. Tile Visual Check
+
+- Confirm manzu, pinzu, souzu, and honor tiles are easy to distinguish at a glance.
+- Confirm manzu uses red accents.
+- Confirm pinzu uses blue accents and a small circle cue.
+- Confirm souzu uses green accents and a small stick cue.
+- Confirm honor tiles use a dark accent and larger text.
+- Confirm tiles look slightly taller and more tile-like than plain cards.
+- Confirm each tile has a white face, visible border, shadow, and bottom thickness.
+- Confirm the tile face structure does not visually crowd the main symbol.
+- Confirm discard tiles remain compact but still readable.
+- Confirm horizontal scrolling does not squeeze or collapse tiles.
+- Confirm large tile mode does not break tile proportions.
+
+## 8. Exhaustive Draw Check
 
 - Start a new round.
 - Continue discarding tiles until the live wall reaches 0.
 - Confirm the center status shows that the round ended in exhaustive draw.
+- Confirm exhaustive draw does not show `yaku-summary`.
 - Confirm stats show the drawn round count increased.
 - Refresh the page.
 - Confirm stats are still loaded from `localStorage`.
 
-## 8. localStorage Check
+## 9. localStorage Check
 
 Use browser developer tools after starting at least one round.
 
@@ -143,7 +165,7 @@ Use browser developer tools after starting at least one round.
 - Confirm `lastPlayedAt` is a string.
 - After exhaustive draw, confirm `roundsDrawn` increased.
 
-## 9. Smartphone Width Check
+## 10. Smartphone Width Check
 
 Use a browser device toolbar or narrow the window to around 390px width.
 
@@ -153,9 +175,11 @@ Use a browser device toolbar or narrow the window to around 390px width.
 - Confirm disabled tiles look disabled when it is not the human turn.
 - Confirm the large tile mode button works.
 - Confirm large tile mode makes the human hand easier to tap.
+- Confirm CSS tiles remain vertically proportioned in large tile mode.
 - Confirm the `ツモ` button is large enough to tap when it appears.
 - Confirm the `ロン` and `見送る` buttons are large enough to tap when they appear.
 - Confirm no-yaku messages and yaku summaries remain readable.
+- Confirm furigana yaku display does not wrap awkwardly or overlap.
 
 ## Known Tooling Limitation
 

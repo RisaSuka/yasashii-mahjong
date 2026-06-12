@@ -6,7 +6,7 @@ Use this before merging to `main` or publishing with GitHub Pages.
 
 - Branch: `codex/mvp-01-integration`
 - Scope: MVP-0.1 through MVP-0.7.8
-- Expected automated result: `135 pass / 0 pending / 0 fail`
+- Expected automated result: `136 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
 
@@ -30,8 +30,8 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 135.
-- Confirm pass count is 135.
+- Confirm total count is 136.
+- Confirm pass count is 136.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
@@ -51,6 +51,8 @@ git branch --list
 - Human ron win still works.
 - No-yaku tsumo/ron is rejected with a beginner-friendly message.
 - Winning result still shows yaku names, han, total han, explanations, and furigana.
+- Yaku display order remains beginner-friendly.
+- CSS tile display keeps manzu, pinzu, souzu, and honor tiles visually distinct.
 
 ## Manual Browser Checks
 
@@ -66,10 +68,15 @@ Check:
 - Smartphone width is usable.
 - Human hand is easy to find.
 - Human tiles are easy to tap.
+- Manzu, pinzu, souzu, and honor tiles are easy to distinguish.
+- Tiles look slightly tall and tile-like, not like flat text cards.
+- Horizontal scrolling does not squeeze tiles.
 - Disabled tiles look disabled.
 - Large tile mode makes the human hand easier to tap.
+- Large tile mode does not break tile proportions.
 - Tsumo, ron, and skip buttons are readable and tappable when they appear.
 - No-yaku message is readable near the center status text.
+- Furigana yaku display remains readable.
 - Exhaustive draw does not show a yaku summary.
 - Win display does not show stale rejection messages.
 

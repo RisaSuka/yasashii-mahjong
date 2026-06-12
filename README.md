@@ -7,7 +7,7 @@
 ## 現在の到達点
 
 - 最新到達点: MVP-0.7.8
-- 自動テスト: 135 pass / 0 pending / 0 fail
+- 自動テスト: 136 pass / 0 pending / 0 fail
 - 作業ツリー: clean
 - push: 未実施
 - `main` merge: 未実施
@@ -38,6 +38,7 @@
 - 役なし和了の拒否
 - 役名、翻数、合計翻、初心者向け説明表示
 - 役名と用語のふりがな表示
+- CSS牌を改善し、将来SVG/画像へ差し替えやすい `tile-face` 構造に整理
 - 固定局面を使った開発・確認
 - スマホ幅向けの最低限UI
 
@@ -78,7 +79,7 @@ http://127.0.0.1:8765/tests/test-runner.html
 期待結果:
 
 ```text
-135 pass / 0 pending / 0 fail
+136 pass / 0 pending / 0 fail
 ```
 
 ## 重要ドキュメント
@@ -89,6 +90,7 @@ http://127.0.0.1:8765/tests/test-runner.html
 - [MVP-0.1仕様](docs/mvp-01-spec.md)
 - [MVP-0.7計画](docs/mvp-07-plan.md)
 - [MVP-0.7.5計画](docs/mvp-075-plan.md)
+- [牌表示改善方針](docs/tile-visual-plan.md)
 - [Agent共通ルール](AGENTS.md)
 
 ## 開発ルール
