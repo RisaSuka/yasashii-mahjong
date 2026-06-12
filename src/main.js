@@ -13,15 +13,17 @@ async function init() {
   gameApi = await loadGameApi();
   state = gameApi.createInitialGameState();
   state.stats = gameApi.loadStats();
+  applyDiscardAdviceSettings(gameApi.loadDiscardAdviceSettings());
   render();
 }
 
 async function loadGameApi() {
   try {
-    const [actions, round, storage] = await Promise.all([
+    const [actions, round, storage, advice] = await Promise.all([
       import("./game/actions.js"),
       import("./game/round.js"),
-      import("./game/storage.js")
+      import("./game/storage.js"),
+      import("./game/advice/discard-advice.js")
     ]);
 
     return {
@@ -30,7 +32,10 @@ async function loadGameApi() {
       canDeclareRon: actions.canDeclareRon,
       canRonLatestDiscard: actions.canRonLatestDiscard,
       createInitialGameState: round.createInitialGameState,
-      loadStats: storage.loadStats
+      loadStats: storage.loadStats,
+      suggestDiscards: advice.suggestDiscards,
+      loadDiscardAdviceSettings: advice.loadDiscardAdviceSettings,
+      saveDiscardAdviceSettings: advice.saveDiscardAdviceSettings
     };
   } catch (_error) {
     return createFallbackGameApi();
@@ -40,11 +45,13 @@ async function loadGameApi() {
 function render() {
   renderGame(state, appRoot, {
     canDeclareTsumo: gameApi.canDeclareTsumo,
-    canDeclareRon: gameApi.canDeclareRon
+    canDeclareRon: gameApi.canDeclareRon,
+    suggestDiscards: gameApi.suggestDiscards
   });
   bindControls(appRoot, {
     onStartRound: startRound,
     onToggleLargeTileMode: toggleLargeTileMode,
+    onToggleDiscardAdvice: toggleDiscardAdvice,
     onDiscardTile: discardHumanTile,
     onDeclareTsumo: declareHumanTsumo,
     onDeclareRon: declareHumanRon,
@@ -60,6 +67,18 @@ function startRound() {
 
 function toggleLargeTileMode() {
   state = gameApi.dispatchAction(state, { type: "TOGGLE_LARGE_TILE_MODE" });
+  render();
+}
+
+function toggleDiscardAdvice() {
+  const nextEnabled = !state.settings.discardAdviceEnabled;
+  const nextSettings = {
+    discardAdviceEnabled: nextEnabled,
+    strategy: state.settings.discardAdviceStrategy || "beginner"
+  };
+
+  gameApi.saveDiscardAdviceSettings(nextSettings);
+  applyDiscardAdviceSettings(nextSettings);
   render();
 }
 
@@ -213,6 +232,17 @@ function getHumanPlayer() {
   return state.round.players.find((player) => player.type === "human") || null;
 }
 
+function applyDiscardAdviceSettings(settings) {
+  state = {
+    ...state,
+    settings: {
+      ...state.settings,
+      discardAdviceEnabled: settings.discardAdviceEnabled,
+      discardAdviceStrategy: settings.strategy || "beginner"
+    }
+  };
+}
+
 function createFallbackGameApi() {
   return {
     createInitialGameState() {
@@ -236,6 +266,18 @@ function createFallbackGameApi() {
         roundsDrawn: 0,
         lastPlayedAt: null
       };
+    },
+    suggestDiscards() {
+      return [];
+    },
+    loadDiscardAdviceSettings() {
+      return {
+        discardAdviceEnabled: true,
+        strategy: "beginner"
+      };
+    },
+    saveDiscardAdviceSettings(settings) {
+      return settings;
     },
     canDeclareTsumo() {
       return false;

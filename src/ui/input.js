@@ -7,6 +7,10 @@ export function bindControls(root, handlers) {
     handlers.onToggleLargeTileMode();
   });
 
+  root.querySelector("[data-action='toggle-discard-advice']")?.addEventListener("click", () => {
+    handlers.onToggleDiscardAdvice();
+  });
+
   for (const button of root.querySelectorAll("[data-action='discard-tile']")) {
     button.addEventListener("click", () => {
       handlers.onDiscardTile(button.dataset.tileId);

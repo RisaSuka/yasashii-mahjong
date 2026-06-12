@@ -27,6 +27,9 @@ export function renderGame(state, root, options = {}) {
           <button type="button" class="secondary" data-action="toggle-large">
             ${state.settings.largeTileMode ? "通常牌" : "大きい牌"}
           </button>
+          <button type="button" class="secondary" data-action="toggle-discard-advice">
+            アドバイス: ${state.settings.discardAdviceEnabled ? "ON" : "OFF"}
+          </button>
         </div>
       </header>
 
@@ -60,13 +63,15 @@ function renderTable(state, options) {
     round.players[1],
     round.players[0]
   ];
+  const discardAdvice = getDiscardAdvice(state, options);
 
   return `
     <main class="table" aria-label="4人麻雀卓">
-      ${seats.map((player) => renderSeat(player, round)).join("")}
+      ${seats.map((player) => renderSeat(player, round, discardAdvice)).join("")}
       <section class="center-panel">
         <strong>${renderStatus(round)}</strong>
         ${renderLastActionResult(round)}
+        ${renderDiscardAdvice(discardAdvice)}
         ${renderYakuSummary(round)}
         ${renderRonAction(state, options)}
         ${renderTsumoAction(state, options)}
@@ -75,6 +80,52 @@ function renderTable(state, options) {
         <span class="table-meta">ドラ表示牌: ${renderDoraIndicators(round)}</span>
       </section>
     </main>
+  `;
+}
+
+function getDiscardAdvice(state, options) {
+  const round = state.round;
+
+  if (
+    !state.settings.discardAdviceEnabled ||
+    !round ||
+    round.phase !== "discard" ||
+    typeof options.suggestDiscards !== "function"
+  ) {
+    return [];
+  }
+
+  const human = round.players.find((player) => player.type === "human");
+
+  if (!human || round.currentPlayerIndex !== human.id) {
+    return [];
+  }
+
+  return options.suggestDiscards(human.hand, {
+    round,
+    player: human,
+    strategy: state.settings.discardAdviceStrategy || "beginner",
+    maxSuggestions: 3
+  });
+}
+
+function renderDiscardAdvice(advice) {
+  if (!Array.isArray(advice) || advice.length === 0) {
+    return "";
+  }
+
+  return `
+    <section class="discard-advice" aria-label="おすすめ捨て牌">
+      <strong class="discard-advice-title">おすすめ捨て牌</strong>
+      <ol class="discard-advice-list">
+        ${advice.map((entry) => `
+          <li class="discard-advice-item">
+            <span class="discard-advice-label">${escapeHtml(entry.label || "おすすめ")}: ${escapeHtml(formatAdviceTileId(entry.tileId))}</span>
+            <span class="discard-advice-reason">理由: ${escapeHtml(entry.reason || "")}</span>
+          </li>
+        `).join("")}
+      </ol>
+    </section>
   `;
 }
 
@@ -154,7 +205,7 @@ function renderWinTermHelp(winType) {
   return `<div class="term-help">${lines.map((line) => `<span>${escapeHtml(line)}</span>`).join("")}</div>`;
 }
 
-function renderSeat(player, round) {
+function renderSeat(player, round, discardAdvice) {
   const isCurrent = round.currentPlayerIndex === player.id;
   const positionClass = `seat-${player.wind}`;
   const currentClass = isCurrent ? " current" : "";
@@ -165,7 +216,7 @@ function renderSeat(player, round) {
         <span class="seat-name">${WIND_LABELS[player.wind]} ${player.name}</span>
         <span class="seat-meta">${isCurrent ? "手番" : ""}</span>
       </div>
-      ${player.type === "human" ? renderHumanHand(player, round) : renderCpuHand(player)}
+      ${player.type === "human" ? renderHumanHand(player, round, discardAdvice) : renderCpuHand(player)}
       <div>
         <div class="seat-meta">捨て牌 ${player.discards.length}枚</div>
         <div class="discards">${player.discards.map((tile) => renderTile(tile, "discard-tile")).join("")}</div>
@@ -174,14 +225,16 @@ function renderSeat(player, round) {
   `;
 }
 
-function renderHumanHand(player, round) {
+function renderHumanHand(player, round, discardAdvice) {
   const disabled = round.currentPlayerIndex !== player.id || round.phase !== "discard";
+  const adviceTileIds = new Set((discardAdvice || []).map((entry) => entry.tileId));
 
   return `
     <div class="hand" aria-label="あなたの手牌">
       ${player.hand.map((tile) => `
-        <button class="tile-button" type="button" data-action="discard-tile" data-tile-id="${tile.id}" ${disabled ? "disabled" : ""}>
+        <button class="tile-button${adviceTileIds.has(tile.id) ? " advice-suggested" : ""}" type="button" data-action="discard-tile" data-tile-id="${tile.id}" ${disabled ? "disabled" : ""}>
           ${renderTile(tile)}
+          ${adviceTileIds.has(tile.id) ? `<span class="advice-badge">おすすめ</span>` : ""}
         </button>
       `).join("")}
     </div>
@@ -301,6 +354,25 @@ function getTileLabel(tile) {
   }
 
   return `${tile.rank}${suits[tile.suit] || "?"}`;
+}
+
+function formatAdviceTileId(tileId) {
+  if (!tileId) {
+    return "";
+  }
+
+  const match = String(tileId).match(/^([mpsz])(\d+)/);
+
+  if (!match) {
+    return String(tileId);
+  }
+
+  const tile = {
+    suit: match[1],
+    rank: Number(match[2])
+  };
+
+  return getTileLabel(tile);
 }
 
 function getTileMainLabel(tile) {

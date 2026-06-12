@@ -102,6 +102,44 @@
   line-height: 1.5;
 }
 
+.discard-advice {
+  display: grid;
+  gap: 6px;
+  border: 1px solid rgba(15, 118, 110, 0.26);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.78);
+  padding: 10px;
+  color: #102a43;
+  text-align: left;
+}
+
+.discard-advice-title {
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.discard-advice-list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.discard-advice-item {
+  line-height: 1.35;
+}
+
+.discard-advice-label {
+  display: block;
+  font-weight: 700;
+}
+
+.discard-advice-reason {
+  display: block;
+  color: #52606d;
+  font-size: 13px;
+}
+
 .yaku-summary {
   display: grid;
   gap: 4px;
