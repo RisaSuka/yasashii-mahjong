@@ -92,6 +92,86 @@ export function registerYakuDisplayTests() {
     assertIncludes(result, "ロン", "Ron summary should still mention ron");
     assertIncludes(result, "和了", "Ron summary should still mention win");
   });
+
+  test("YAKU DISPLAY: tanyao reading can be retrieved", async () => {
+    const { getYakuReading } = await loadYakuDisplayModule(["getYakuReading"]);
+
+    assertEqual(getYakuReading("tanyao"), "タンヤオ", "Tanyao reading should match");
+  });
+
+  test("YAKU DISPLAY: menzen tsumo reading can be retrieved", async () => {
+    const { getYakuReading } = await loadYakuDisplayModule(["getYakuReading"]);
+
+    assertEqual(getYakuReading("menzen_tsumo"), "メンゼンツモ", "Menzen tsumo reading should match");
+  });
+
+  test("YAKU DISPLAY: yakuhai reading can be retrieved", async () => {
+    const { getYakuReading } = await loadYakuDisplayModule(["getYakuReading"]);
+
+    assertEqual(getYakuReading("yakuhai"), "ヤクハイ", "Yakuhai reading should match");
+  });
+
+  test("YAKU DISPLAY: chiitoitsu reading can be retrieved", async () => {
+    const { getYakuReading } = await loadYakuDisplayModule(["getYakuReading"]);
+
+    assertEqual(getYakuReading("chiitoitsu"), "チートイツ", "Chiitoitsu reading should match");
+  });
+
+  test("YAKU DISPLAY: toitoi reading can be retrieved", async () => {
+    const { getYakuReading } = await loadYakuDisplayModule(["getYakuReading"]);
+
+    assertEqual(getYakuReading("toitoi"), "トイトイ", "Toitoi reading should match");
+  });
+
+  test("YAKU DISPLAY: kokushi musou reading can be retrieved", async () => {
+    const { getYakuReading } = await loadYakuDisplayModule(["getYakuReading"]);
+
+    assertEqual(getYakuReading("kokushi_musou"), "コクシムソウ", "Kokushi musou reading should match");
+  });
+
+  test("YAKU DISPLAY: yaku display name includes kanji and katakana reading", async () => {
+    const { getYakuDisplayName } = await loadYakuDisplayModule(["getYakuDisplayName"]);
+
+    assertEqual(
+      getYakuDisplayName({ id: "tanyao", name: "断么九", han: 1 }),
+      "断么九（タンヤオ）",
+      "Yaku display name should include reading"
+    );
+  });
+
+  test("YAKU DISPLAY: han term reading can be retrieved", async () => {
+    const { getMahjongTermReading } = await loadYakuDisplayModule(["getMahjongTermReading"]);
+
+    assertEqual(getMahjongTermReading("翻"), "ハン", "Han reading should match");
+  });
+
+  test("YAKU DISPLAY: hand term reading can be retrieved", async () => {
+    const { getMahjongTermReading } = await loadYakuDisplayModule(["getMahjongTermReading"]);
+
+    assertEqual(getMahjongTermReading("手牌"), "テハイ", "Hand reading should match");
+  });
+
+  test("YAKU DISPLAY: discard term reading can be retrieved", async () => {
+    const { getMahjongTermReading } = await loadYakuDisplayModule(["getMahjongTermReading"]);
+
+    assertEqual(getMahjongTermReading("捨て牌"), "ステハイ", "Discard reading should match");
+  });
+
+  test("YAKU DISPLAY: honor tile term reading can be retrieved", async () => {
+    const { getMahjongTermReading } = await loadYakuDisplayModule(["getMahjongTermReading"]);
+
+    assertEqual(getMahjongTermReading("字牌"), "ジハイ", "Honor tile reading should match");
+  });
+
+  test("YAKU DISPLAY: unknown yaku and term readings are safe", async () => {
+    const { getYakuReading, getYakuDisplayName, getMahjongTermReading, formatYakuWithReading } =
+      await loadYakuDisplayModule(["getYakuReading", "getYakuDisplayName", "getMahjongTermReading", "formatYakuWithReading"]);
+
+    assertEqual(getYakuReading("__unknown__"), "", "Unknown yaku reading should be empty");
+    assertEqual(getMahjongTermReading("__unknown__"), "", "Unknown term reading should be empty");
+    assertEqual(getYakuDisplayName({ id: "__unknown__", name: "知らない役" }), "知らない役", "Unknown yaku display should fall back to name");
+    assertIncludes(formatYakuWithReading({ id: "__unknown__", name: "知らない役", han: 1 }), "知らない役", "Unknown formatted yaku should still show name");
+  });
 }
 
 async function loadYakuDisplayModule(extraExports = []) {
