@@ -17,6 +17,7 @@ MVP-0.7 should show a simple yaku summary after a successful win and provide a c
 ## Implement In MVP-0.7
 
 - Show yaku names after tsumo or ron win.
+- Show short beginner-friendly explanations with yaku names.
 - Show each yaku's han value.
 - Show total han for the detected yaku.
 - Show a clear no-yaku rejection message such as:
@@ -32,6 +33,10 @@ MVP-0.7 should show a simple yaku summary after a successful win and provide a c
 
 ## Do Not Implement In MVP-0.7
 
+- Full tutorial mode
+- Practice mode
+- Local human-vs-human play
+- Local network play
 - Point calculation
 - Fu calculation
 - Dora / ura-dora
@@ -44,6 +49,7 @@ MVP-0.7 should show a simple yaku summary after a successful win and provide a c
 - Payment movement
 - Honba / riichi stick settlement
 - Full score result screen
+- Complete yaku coverage
 - Broad UI redesign
 
 ## Expected File Changes
@@ -109,6 +115,40 @@ Design constraints:
 - Do not show fu or points.
 - Avoid tiny labels. The yaku list should remain readable on smartphone.
 - Use the same visual rhythm as the current center status panel.
+- Prefer short lines over dense paragraphs.
+- Show yaku names and explanations together so a beginner does not need to already know the term.
+
+## Beginner-Friendly Yaku Explanation Policy
+
+This app is for both a beginner grandma user and a developer who is still learning mahjong. MVP-0.7 should not assume the player already knows yaku names.
+
+Display each yaku as a name, han value, and one short explanation:
+
+```text
+断么九 1翻
+1・9・字牌を使わず、2〜8だけで作る役です
+```
+
+Recommended first explanations:
+
+- `menzen_tsumo` / 門前清自摸和:
+  - `鳴かずに、自分で引いた牌であがる役です`
+- `tanyao` / 断么九:
+  - `1・9・字牌を使わず、2〜8だけで作る役です`
+- `yakuhai` / 役牌:
+  - `白・發・中のどれかを3枚集めると成立します`
+- `chiitoitsu` / 七対子:
+  - `同じ牌2枚の組を7つ作る役です`
+- `toitoi` / 対々和:
+  - `順子ではなく、同じ牌3枚の組を4つ作る役です`
+- `kokushi_musou` / 国士無双:
+  - `1・9・字牌を集める特別な役です`
+
+Implementation note for later:
+
+- The explanations can live in a UI-side lookup table keyed by `yaku.id`.
+- Do not change the `detectYaku` return shape just to add UI copy.
+- If a yaku id has no explanation, show only the yaku name and han.
 
 ## `winningResult.yakuResult` Display Format
 
@@ -138,6 +178,26 @@ Display rules:
 ## No-Yaku Rejection Message Policy
 
 MVP-0.6.5 currently rejects no-yaku wins by returning the original state unchanged.
+
+The rejection message must not stop at only:
+
+```text
+役がありません
+```
+
+Preferred beginner-friendly message:
+
+```text
+形は完成していますが、あがるための条件である役がありません。
+まずはタンヤオや役牌を狙ってみましょう。
+```
+
+Tone policy:
+
+- Avoid harsh words like `失敗`.
+- Prefer soft wording such as `まだ役がありません`.
+- Explain that the hand shape may be complete, but the rule still needs a yaku.
+- Give one simple next step: `タンヤオ` or `役牌`.
 
 There are two possible approaches for MVP-0.7.
 
@@ -237,6 +297,46 @@ Avoid:
 
 If more help is needed later, add a separate beginner help panel, not a dense in-game message.
 
+Additional readability rules:
+
+- Use larger text for result status, yaku names, and no-yaku messages.
+- Put difficult kanji yaku names next to a short explanation.
+- Keep each sentence short.
+- Make buttons and result areas easy to tap and easy to scan.
+- Use forgiving wording: `まだ役がありません` instead of `失敗`.
+
+## Mahjong Term Explanation Policy
+
+MVP-0.7 should add tiny explanations for important terms when they appear in result or rejection text.
+
+Examples:
+
+- `役`: `あがるために必要な条件です`
+- `翻`: `役の大きさを表す数字です`
+- `ツモ`: `自分で引いた牌であがることです`
+- `ロン`: `相手が捨てた牌であがることです`
+
+Scope:
+
+- MVP-0.7 should not implement a full help screen.
+- Term explanations should be short and local to the result/rejection display.
+- A future beginner help screen can reuse the same wording.
+
+## Future Local Battle Concept
+
+The long-term app may support local human-vs-human play.
+
+Future candidates:
+
+- Same-device pass-and-play local match:
+  - Multiple human players share one device and take turns.
+  - This is the simplest local battle candidate.
+- Same-Wi-Fi local network match:
+  - Multiple devices on the same local network join one table.
+  - This is more complex and should be considered much later.
+
+MVP-0.7 does not implement local battle, communication, room creation, hidden-hand privacy, or multiplayer synchronization. This section only records the future direction.
+
 ## Test Case Ideas
 
 Agent C should add tests before implementation.
@@ -246,9 +346,12 @@ Agent C should add tests before implementation.
 - Tsumo win with `yakuResult` renders yaku names.
 - Ron win with `yakuResult` renders yaku names.
 - Multiple yaku render as multiple rows or a comma-separated list.
+- Beginner explanation text renders for supported yaku.
 - Total han is rendered from yakuResult.
 - Missing `yakuResult` does not crash render.
 - No-yaku rejection message renders when `round.lastActionResult.reason === "no-yaku"`.
+- No-yaku rejection text explains that the shape is complete but yaku is missing.
+- Term explanation text for `役` or `翻` is available in the result area.
 
 ### Game Metadata Tests
 
