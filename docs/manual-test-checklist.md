@@ -181,6 +181,68 @@ Use a browser device toolbar or narrow the window to around 390px width.
 - Confirm no-yaku messages and yaku summaries remain readable.
 - Confirm furigana yaku display does not wrap awkwardly or overlap.
 
+## 11. Smartphone Real Device Check On Local Wi-Fi
+
+Use this when checking the app from a real smartphone on the same Wi-Fi network as the PC.
+
+Start the local server on the PC with LAN access:
+
+```powershell
+python -m http.server 8765 --bind 0.0.0.0
+```
+
+Find the PC IPv4 address:
+
+```powershell
+ipconfig
+```
+
+Look for the IPv4 address of the Wi-Fi adapter, for example:
+
+```text
+192.168.x.x
+```
+
+Connect the smartphone to the same Wi-Fi network, then open:
+
+```text
+http://<PCのIPv4アドレス>:8765/
+```
+
+Example:
+
+```text
+http://192.168.1.23:8765/
+```
+
+If Windows Firewall blocks access:
+
+- Allow Python network access when Windows asks.
+- Allow it for private networks only.
+- Do not casually allow public network access.
+- If the phone cannot connect, confirm both devices are on the same Wi-Fi and the server is still running.
+
+Security notes:
+
+- Use this only inside the same trusted Wi-Fi network.
+- This is not GitHub Pages publishing.
+- This is not a push.
+- This is not intended for external public access.
+- Stop the server after the check is finished.
+
+Real-device checks:
+
+- Confirm tiles are readable on the phone screen.
+- Confirm manzu, pinzu, souzu, and honor tiles are easy to distinguish.
+- Confirm the human hand can scroll horizontally.
+- Confirm tiles are easy to tap.
+- Confirm the advice ON/OFF button is easy to tap.
+- Confirm discard advice does not get in the way.
+- Confirm suggested tile highlighting does not block tile taps.
+- Confirm large tile mode does not break the layout.
+- Confirm tsumo, ron, and skip buttons are easy to tap when they appear.
+- Confirm yaku display, furigana, and no-yaku messages are readable.
+
 ## Known Tooling Limitation
 
 The in-app Browser plugin could not be used in earlier sessions because its expected `scripts/browser-client.mjs` file was missing. Static server, module-level tests, syntax checks, and render-string checks were used instead.
