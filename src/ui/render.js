@@ -5,14 +5,14 @@ const WIND_LABELS = {
   north: "北"
 };
 
-export function renderGame(state, root) {
+export function renderGame(state, root, options = {}) {
   const round = state.round;
   const largeTileClass = state.settings.largeTileMode ? " large-tiles" : "";
 
   root.innerHTML = `
     <div class="app${largeTileClass}">
       <header class="topbar">
-        <h1 class="title">じゅんちゃん麻雀 MVP-0.1</h1>
+        <h1 class="title">じゅんちゃん麻雀 MVP-0.3</h1>
         <div class="controls">
           <button type="button" data-action="start-round">新規局開始</button>
           <button type="button" class="secondary" data-action="toggle-large">
@@ -21,7 +21,7 @@ export function renderGame(state, root) {
         </div>
       </header>
 
-      ${round ? renderTable(state) : renderEmptyState()}
+      ${round ? renderTable(state, options) : renderEmptyState()}
 
       <footer class="footer-status">
         <span>対局開始数: ${state.stats.roundsStarted}</span>
@@ -37,13 +37,13 @@ function renderEmptyState() {
     <main class="table">
       <section class="center-panel">
         <strong>新規局開始を押してください</strong>
-        <span class="status-line">game core未統合でもUIの形を確認できます。</span>
+        <span class="status-line">4人卓を流局またはツモ和了まで進められます。</span>
       </section>
     </main>
   `;
 }
 
-function renderTable(state) {
+function renderTable(state, options) {
   const { round } = state;
   const seats = [
     round.players[2],
@@ -57,6 +57,7 @@ function renderTable(state) {
       ${seats.map((player) => renderSeat(player, round)).join("")}
       <section class="center-panel">
         <strong>${renderStatus(round)}</strong>
+        ${renderTsumoAction(state, options)}
         <span class="table-meta">通常山: ${round.wall.length}枚</span>
         <span class="table-meta">王牌: ${round.deadWall.length}枚</span>
         <span class="table-meta">ドラ表示牌: ${renderDoraIndicators(round)}</span>
@@ -109,11 +110,31 @@ function renderCpuHand(player) {
 
 function renderStatus(round) {
   if (round.phase === "ended") {
+    if (round.endReason === "win" && round.winningResult?.winType === "tsumo") {
+      const winner = round.players.find((player) => player.id === round.winningResult.winnerId);
+      return winner?.type === "human" ? "あなたのツモ和了です" : `${winner?.name || "CPU"}のツモ和了です`;
+    }
+
     return round.endReason === "exhaustive-draw" ? "流局しました" : "局が終了しました";
   }
 
   const currentPlayer = round.players[round.currentPlayerIndex];
-  return currentPlayer.type === "human" ? "あなたの番です。牌を1枚選んでください" : `CPUが考えています (${currentPlayer.name})`;
+  return currentPlayer.type === "human" ? "あなたの番です。牌を選んでください" : `CPUの手番です (${currentPlayer.name})`;
+}
+
+function renderTsumoAction(state, options) {
+  const round = state.round;
+  const human = round.players.find((player) => player.type === "human");
+
+  if (!human || typeof options.canDeclareTsumo !== "function" || !options.canDeclareTsumo(state, human.id)) {
+    return "";
+  }
+
+  return `
+    <button type="button" class="tsumo-button" data-action="declare-tsumo">
+      ツモ
+    </button>
+  `;
 }
 
 function renderDoraIndicators(round) {

@@ -26,6 +26,7 @@ async function loadGameApi() {
 
     return {
       dispatchAction: actions.dispatchAction,
+      canDeclareTsumo: actions.canDeclareTsumo,
       createInitialGameState: round.createInitialGameState,
       loadStats: storage.loadStats
     };
@@ -35,11 +36,14 @@ async function loadGameApi() {
 }
 
 function render() {
-  renderGame(state, appRoot);
+  renderGame(state, appRoot, {
+    canDeclareTsumo: gameApi.canDeclareTsumo
+  });
   bindControls(appRoot, {
     onStartRound: startRound,
     onToggleLargeTileMode: toggleLargeTileMode,
-    onDiscardTile: discardHumanTile
+    onDiscardTile: discardHumanTile,
+    onDeclareTsumo: declareHumanTsumo
   });
 }
 
@@ -69,6 +73,20 @@ function discardHumanTile(tileId) {
   continueAfterDiscard();
 }
 
+function declareHumanTsumo() {
+  const currentPlayer = getCurrentPlayer();
+
+  if (!currentPlayer || currentPlayer.type !== "human") {
+    return;
+  }
+
+  state = gameApi.dispatchAction(state, {
+    type: "DECLARE_TSUMO",
+    playerId: currentPlayer.id
+  });
+  render();
+}
+
 function continueAfterDiscard() {
   if (!state.round || state.round.phase === "ended") {
     render();
@@ -80,10 +98,24 @@ function continueAfterDiscard() {
 
   if (nextPlayer) {
     state = gameApi.dispatchAction(state, { type: "DRAW_TILE", playerId: nextPlayer.id });
+    declareCpuTsumoIfAvailable(nextPlayer.id);
   }
 
   render();
   scheduleCpuIfNeeded();
+}
+
+function declareCpuTsumoIfAvailable(playerId) {
+  const player = state.round?.players.find((candidate) => candidate.id === playerId);
+
+  if (!player || player.type !== "cpu" || !gameApi.canDeclareTsumo?.(state, playerId)) {
+    return;
+  }
+
+  state = gameApi.dispatchAction(state, {
+    type: "DECLARE_TSUMO",
+    playerId
+  });
 }
 
 function scheduleCpuIfNeeded() {
@@ -131,6 +163,9 @@ function createFallbackGameApi() {
         roundsDrawn: 0,
         lastPlayedAt: null
       };
+    },
+    canDeclareTsumo() {
+      return false;
     },
     dispatchAction(currentState, action) {
       if (action.type === "TOGGLE_LARGE_TILE_MODE") {

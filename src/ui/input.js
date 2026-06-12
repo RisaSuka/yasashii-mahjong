@@ -12,4 +12,8 @@ export function bindControls(root, handlers) {
       handlers.onDiscardTile(button.dataset.tileId);
     });
   }
+
+  root.querySelector("[data-action='declare-tsumo']")?.addEventListener("click", () => {
+    handlers.onDeclareTsumo();
+  });
 }
