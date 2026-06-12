@@ -51,6 +51,7 @@ export function startRound(state, options = {}) {
     },
     turnCount: 0,
     endReason: null,
+    winningResult: null,
     players
   };
 

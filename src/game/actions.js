@@ -1,5 +1,6 @@
 import { chooseRandomDiscard } from "./cpu/random-cpu.js";
 import { addTileToPlayer, createInitialGameState, startRound } from "./round.js";
+import { isWinningHand } from "./rules/win-check.js";
 import { drawFromWall } from "./wall.js";
 import { createDefaultStats, saveStats } from "./storage.js";
 
@@ -15,6 +16,8 @@ export function dispatchAction(state, action) {
       return advanceTurn(state);
     case "CPU_DISCARD":
       return cpuDiscard(state, action.random);
+    case "DECLARE_TSUMO":
+      return declareTsumo(state, action.playerId);
     case "END_ROUND_DRAW":
       return endRoundDraw(state, action.storage);
     case "TOGGLE_LARGE_TILE_MODE":
@@ -36,6 +39,48 @@ export function dispatchAction(state, action) {
     default:
       return state;
   }
+}
+
+export function canDeclareTsumo(state, playerId) {
+  if (!state.round || state.round.phase !== "discard") {
+    return false;
+  }
+
+  if (state.round.currentPlayerIndex !== playerId) {
+    return false;
+  }
+
+  const player = state.round.players.find((candidate) => candidate.id === playerId);
+
+  if (!player) {
+    return false;
+  }
+
+  return isWinningHand(player.hand).winning;
+}
+
+export function declareTsumo(state, playerId) {
+  if (!canDeclareTsumo(state, playerId)) {
+    return state;
+  }
+
+  const player = state.round.players.find((candidate) => candidate.id === playerId);
+  const result = isWinningHand(player.hand);
+
+  return {
+    ...state,
+    round: {
+      ...state.round,
+      phase: "ended",
+      endReason: "win",
+      winningResult: {
+        winnerId: playerId,
+        winType: "tsumo",
+        handType: result.type,
+        handTiles: [...player.hand]
+      }
+    }
+  };
 }
 
 export function discardTile(state, playerId, tileId) {
