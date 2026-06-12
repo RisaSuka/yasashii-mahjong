@@ -172,6 +172,24 @@ export function registerYakuDisplayTests() {
     assertEqual(getYakuDisplayName({ id: "__unknown__", name: "知らない役" }), "知らない役", "Unknown yaku display should fall back to name");
     assertIncludes(formatYakuWithReading({ id: "__unknown__", name: "知らない役", han: 1 }), "知らない役", "Unknown formatted yaku should still show name");
   });
+
+  test("YAKU DISPLAY: yaku results are sorted in beginner-friendly order", async () => {
+    const { sortYakuForDisplay } = await loadYakuDisplayModule(["sortYakuForDisplay"]);
+    const sorted = sortYakuForDisplay([
+      { id: "kokushi_musou", name: "国士無双", han: 13 },
+      { id: "menzen_tsumo", name: "門前清自摸和", han: 1 },
+      { id: "tanyao", name: "断么九", han: 1 },
+      { id: "yakuhai", name: "役牌", han: 1 },
+      { id: "toitoi", name: "対々和", han: 2 },
+      { id: "chiitoitsu", name: "七対子", han: 2 }
+    ]);
+
+    assertEqual(
+      sorted.map((yaku) => yaku.id).join(","),
+      "yakuhai,tanyao,menzen_tsumo,chiitoitsu,toitoi,kokushi_musou",
+      "Yaku should be sorted from easier beginner concepts to special hands"
+    );
+  });
 }
 
 async function loadYakuDisplayModule(extraExports = []) {

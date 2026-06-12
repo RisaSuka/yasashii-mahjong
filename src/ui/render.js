@@ -3,7 +3,8 @@ import {
   getMahjongTermReading,
   getTotalHan,
   getYakuDescription,
-  getYakuDisplayName
+  getYakuDisplayName,
+  sortYakuForDisplay
 } from "./yaku-display.js";
 
 const WIND_LABELS = {
@@ -105,13 +106,14 @@ function renderYakuSummary(round) {
     return "";
   }
 
-  const totalHan = getTotalHan(yakuResult);
+  const sortedYakuResult = sortYakuForDisplay(yakuResult);
+  const totalHan = getTotalHan(sortedYakuResult);
   const hanReading = getMahjongTermReading("翻");
 
   return `
     <section class="yaku-summary" aria-label="役の説明">
       <span class="yaku-summary-title">役（ヤク）:</span>
-      ${yakuResult.map((yaku) => renderYakuSummaryItem(yaku, hanReading)).join("")}
+      ${sortedYakuResult.map((yaku) => renderYakuSummaryItem(yaku, hanReading)).join("")}
       ${totalHan > 0 ? `<span class="yaku-total">合計 ${totalHan}翻（${totalHan}${escapeHtml(hanReading)}）</span>` : ""}
       ${renderWinTermHelp(round.winningResult?.winType)}
     </section>
@@ -257,7 +259,16 @@ function renderDoraIndicators(round) {
 }
 
 function renderTile(tile, extraClass = "") {
-  return `<span class="tile ${extraClass}">${getTileLabel(tile)}</span>`;
+  const suitClass = tile ? ` tile-${tile.suit}` : "";
+  const mainLabel = getTileMainLabel(tile);
+  const suitLabel = getTileSuitLabel(tile);
+
+  return `
+    <span class="tile${suitClass} ${extraClass}">
+      <span class="tile-main">${escapeHtml(mainLabel)}</span>
+      ${suitLabel ? `<span class="tile-suit-label">${escapeHtml(suitLabel)}</span>` : ""}
+    </span>
+  `;
 }
 
 function escapeHtml(value) {
@@ -282,4 +293,32 @@ function getTileLabel(tile) {
   }
 
   return `${tile.rank}${suits[tile.suit] || "?"}`;
+}
+
+function getTileMainLabel(tile) {
+  if (!tile) {
+    return "";
+  }
+
+  if (tile.suit === "z") {
+    const honors = ["", "東", "南", "西", "北", "白", "發", "中"];
+    return honors[tile.rank] || "?";
+  }
+
+  return String(tile.rank);
+}
+
+function getTileSuitLabel(tile) {
+  if (!tile) {
+    return "";
+  }
+
+  const suitLabels = {
+    m: "萬",
+    p: "筒",
+    s: "索",
+    z: "字牌"
+  };
+
+  return suitLabels[tile.suit] || "";
 }

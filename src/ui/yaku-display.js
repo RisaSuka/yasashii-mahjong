@@ -16,6 +16,15 @@ const YAKU_READINGS = {
   kokushi_musou: "コクシムソウ"
 };
 
+const YAKU_DISPLAY_ORDER = {
+  yakuhai: 10,
+  tanyao: 20,
+  menzen_tsumo: 30,
+  chiitoitsu: 40,
+  toitoi: 50,
+  kokushi_musou: 60
+};
+
 const TERM_DESCRIPTIONS = {
   ツモ: "自分で引いた牌であがることです。",
   ロン: "相手が捨てた牌であがることです。",
@@ -40,7 +49,7 @@ export function formatYakuResult(yakuResult = []) {
 
   const lines = ["役:"];
 
-  for (const yaku of yakuResult) {
+  for (const yaku of sortYakuForDisplay(yakuResult)) {
     const name = yaku.name || yaku.id || "役";
     const hanText = Number.isFinite(yaku.han) ? ` ${yaku.han}翻` : "";
     const description = getYakuDescription(yaku.id);
@@ -98,6 +107,23 @@ export function getTotalHan(yakuResult = []) {
   }
 
   return yakuResult.reduce((sum, yaku) => sum + (Number.isFinite(yaku.han) ? yaku.han : 0), 0);
+}
+
+export function sortYakuForDisplay(yakuResult = []) {
+  if (!Array.isArray(yakuResult)) {
+    return [];
+  }
+
+  return [...yakuResult].sort((a, b) => {
+    const orderA = YAKU_DISPLAY_ORDER[a?.id] ?? 999;
+    const orderB = YAKU_DISPLAY_ORDER[b?.id] ?? 999;
+
+    if (orderA !== orderB) {
+      return orderA - orderB;
+    }
+
+    return String(a?.id || "").localeCompare(String(b?.id || ""));
+  });
 }
 
 export function formatYakuWithReading(yaku = {}) {
