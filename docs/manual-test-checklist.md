@@ -21,8 +21,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 79.
-- Confirm pass count is 79.
+- Confirm total count is 135.
+- Confirm pass count is 135.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 
@@ -31,7 +31,7 @@ http://127.0.0.1:8765/tests/test-runner.html
 - Open the app URL.
 - Confirm the title is visible.
 - Confirm the new round button is visible.
-- Click `新規局開始`.
+- Click the new round button.
 - Confirm the center status shows the human turn.
 - Confirm the human hand has 14 tiles.
 - Confirm CPU hands show tile counts.
@@ -42,9 +42,20 @@ http://127.0.0.1:8765/tests/test-runner.html
 - Confirm the human discard count increases.
 - Wait for CPU turns.
 - Confirm CPU discard counts increase.
-- Confirm the turn returns to the human when no ron/tsumo ends the round.
+- Confirm the turn returns to the human when no win ends the round.
 
-## 3. Deterministic Ron Check
+## 3. Tsumo Win Check
+
+Normal shuffled play may not quickly produce a winning hand. Use automated tests as the primary acceptance check, and use fixed scenarios from the console when needed.
+
+- Confirm no `ツモ` button is visible for ordinary non-winning hands.
+- If a winning hand appears, confirm the `ツモ` button is visible only on the human turn.
+- Click `ツモ`.
+- Confirm the center status shows `あなたのツモ和了です`.
+- Confirm the yaku summary shows yaku name, furigana, han, total han, and beginner explanation.
+- Confirm no further discard/draw action progresses after the round ends.
+
+## 4. Ron Reaction Check
 
 Normal shuffled play may not quickly produce a ron-ready discard. Use the fixed scenario in a browser console for deterministic manual confirmation.
 
@@ -85,39 +96,45 @@ draw();
 
 Then verify:
 
-- The center status shows `ロンできます。ロンしますか？`.
+- The center status asks whether to ron.
 - The `ロン` button is visible.
 - The `見送る` button is visible.
 - Click `見送る`.
 - Confirm the next player draws and the table returns to normal discard flow.
-- Run the console setup again.
-- Click `ロン`.
-- Confirm the center status shows `あなたのロン和了です`.
-- Confirm no further tile discard is required after ron.
 
-## 4. Tsumo Regression Check
+## 5. No-Yaku Rejection Message Check
 
-Because normal shuffled play may not quickly produce a winning hand, automated tests are the primary acceptance check for tsumo.
+Use automated tests as the main acceptance check. For manual confirmation, use a no-yaku winning-shape state from the console.
 
-Manual UI checks:
+Verify:
 
-- Confirm no `ツモ` button is visible for ordinary non-winning hands.
-- If a winning hand appears, confirm the `ツモ` button is visible only on the human turn.
-- Click `ツモ`.
-- Confirm the center status shows `あなたのツモ和了です`.
-- Confirm no further discard/draw action progresses after the round ends.
-- If CPU wins by tsumo during random play, confirm the center status shows `CPU nのツモ和了です`.
+- A no-yaku tsumo attempt does not end the round.
+- A no-yaku ron attempt does not end the round.
+- The center panel shows `形は完成していますが、役がありません。`
+- The message also shows `まずはタンヤオや役牌を狙ってみましょう。`
+- The wording feels gentle and does not say `失敗`.
+- After a valid win, the rejection message is cleared.
+- Exhaustive draw does not show the rejection message.
 
-## 5. Exhaustive Draw Check
+## 6. Yaku Display Check
+
+- Confirm a win displays yaku names.
+- Confirm yaku names include furigana, such as `断么九（タンヤオ）`.
+- Confirm han uses readable text, such as `1翻（1ハン）`.
+- Confirm total han is shown.
+- Confirm beginner explanations are short and readable.
+- Confirm unknown or missing yaku data does not break the screen.
+
+## 7. Exhaustive Draw Check
 
 - Start a new round.
 - Continue discarding tiles until the live wall reaches 0.
-- Confirm the center status shows `流局しました`.
+- Confirm the center status shows that the round ended in exhaustive draw.
 - Confirm stats show the drawn round count increased.
 - Refresh the page.
 - Confirm stats are still loaded from `localStorage`.
 
-## 6. localStorage Check
+## 8. localStorage Check
 
 Use browser developer tools after starting at least one round.
 
@@ -126,7 +143,7 @@ Use browser developer tools after starting at least one round.
 - Confirm `lastPlayedAt` is a string.
 - After exhaustive draw, confirm `roundsDrawn` increased.
 
-## 7. Smartphone Width Check
+## 9. Smartphone Width Check
 
 Use a browser device toolbar or narrow the window to around 390px width.
 
@@ -138,8 +155,8 @@ Use a browser device toolbar or narrow the window to around 390px width.
 - Confirm large tile mode makes the human hand easier to tap.
 - Confirm the `ツモ` button is large enough to tap when it appears.
 - Confirm the `ロン` and `見送る` buttons are large enough to tap when they appear.
+- Confirm no-yaku messages and yaku summaries remain readable.
 
 ## Known Tooling Limitation
 
 The in-app Browser plugin could not be used in earlier sessions because its expected `scripts/browser-client.mjs` file was missing. Static server, module-level tests, syntax checks, and render-string checks were used instead.
-
