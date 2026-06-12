@@ -38,6 +38,8 @@
 
   .center-panel {
     order: 4;
+    gap: 6px;
+    padding: 10px;
   }
 
   .seat-east {
@@ -60,5 +62,36 @@
   .tile-button {
     min-width: 50px;
     min-height: 66px;
+  }
+
+  .discard-advice {
+    gap: 4px;
+    padding: 7px 8px;
+  }
+
+  .discard-advice-title {
+    font-size: 14px;
+  }
+
+  .discard-advice-list {
+    gap: 3px;
+    padding-left: 18px;
+  }
+
+  .discard-advice-item {
+    line-height: 1.25;
+  }
+
+  .discard-advice-label {
+    font-size: 13px;
+  }
+
+  .discard-advice-reason {
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  .discard-advice-item.is-secondary .discard-advice-reason {
+    display: none;
   }
 }

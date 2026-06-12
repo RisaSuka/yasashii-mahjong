@@ -134,6 +134,10 @@
   font-weight: 700;
 }
 
+.discard-advice-item.is-secondary .discard-advice-label {
+  font-size: 14px;
+}
+
 .discard-advice-reason {
   display: block;
   color: #52606d;

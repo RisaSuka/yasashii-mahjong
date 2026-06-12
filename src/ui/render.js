@@ -118,8 +118,8 @@ function renderDiscardAdvice(advice) {
     <section class="discard-advice" aria-label="おすすめ捨て牌">
       <strong class="discard-advice-title">おすすめ捨て牌</strong>
       <ol class="discard-advice-list">
-        ${advice.map((entry) => `
-          <li class="discard-advice-item">
+        ${advice.map((entry, index) => `
+          <li class="discard-advice-item${index === 0 ? " is-primary" : " is-secondary"}">
             <span class="discard-advice-label">${escapeHtml(entry.label || "おすすめ")}: ${escapeHtml(formatAdviceTileId(entry.tileId))}</span>
             <span class="discard-advice-reason">理由: ${escapeHtml(entry.reason || "")}</span>
           </li>
