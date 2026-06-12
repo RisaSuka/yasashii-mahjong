@@ -103,6 +103,25 @@
   line-height: 1.45;
 }
 
+.yaku-summary-title,
+.yaku-total {
+  font-weight: 700;
+}
+
+.yaku-item {
+  display: grid;
+  gap: 2px;
+  justify-items: center;
+}
+
+.yaku-name {
+  font-weight: 700;
+}
+
+.yaku-description {
+  max-width: 34ch;
+}
+
 .term-help {
   display: grid;
   gap: 2px;

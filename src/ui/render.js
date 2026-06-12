@@ -1,4 +1,10 @@
-import { formatYakuResult, getMahjongTermDescription } from "./yaku-display.js";
+import {
+  getMahjongTermDescription,
+  getMahjongTermReading,
+  getTotalHan,
+  getYakuDescription,
+  getYakuDisplayName
+} from "./yaku-display.js";
 
 const WIND_LABELS = {
   east: "東",
@@ -75,29 +81,50 @@ function renderYakuSummary(round) {
     return "";
   }
 
-  const yakuText = formatYakuResult(round.winningResult?.yakuResult);
+  const yakuResult = round.winningResult?.yakuResult;
 
-  if (!yakuText) {
+  if (!Array.isArray(yakuResult) || yakuResult.length === 0) {
     return "";
   }
 
+  const totalHan = getTotalHan(yakuResult);
+  const hanReading = getMahjongTermReading("翻");
+
   return `
     <section class="yaku-summary" aria-label="役の説明">
-      ${yakuText.split("\n").map((line) => `<span>${escapeHtml(line)}</span>`).join("")}
+      <span class="yaku-summary-title">役（ヤク）:</span>
+      ${yakuResult.map((yaku) => renderYakuSummaryItem(yaku, hanReading)).join("")}
+      ${totalHan > 0 ? `<span class="yaku-total">合計 ${totalHan}翻（${totalHan}${escapeHtml(hanReading)}）</span>` : ""}
       ${renderWinTermHelp(round.winningResult?.winType)}
     </section>
+  `;
+}
+
+function renderYakuSummaryItem(yaku, hanReading) {
+  const displayName = getYakuDisplayName(yaku);
+  const hanText = Number.isFinite(yaku.han) ? `${yaku.han}翻（${yaku.han}${hanReading}）` : "";
+  const description = getYakuDescription(yaku.id);
+
+  return `
+    <div class="yaku-item">
+      <span class="yaku-name">${escapeHtml(displayName)}${hanText ? ` ${escapeHtml(hanText)}` : ""}</span>
+      ${description ? `<span class="yaku-description">${escapeHtml(description)}</span>` : ""}
+    </div>
   `;
 }
 
 function renderWinTermHelp(winType) {
   const winTerm = winType === "tsumo" ? "ツモ" : winType === "ron" ? "ロン" : "";
   const winDescription = winTerm ? getMahjongTermDescription(winTerm) : "";
+  const winReading = winTerm ? getMahjongTermReading(winTerm) : "";
   const yakuDescription = getMahjongTermDescription("役");
+  const yakuReading = getMahjongTermReading("役");
   const hanDescription = getMahjongTermDescription("翻");
+  const hanReading = getMahjongTermReading("翻");
   const lines = [
-    winDescription ? `${winTerm}: ${winDescription}` : "",
-    yakuDescription ? `役: ${yakuDescription}` : "",
-    hanDescription ? `翻: ${hanDescription}` : ""
+    winDescription ? `${winTerm}${winReading ? `（${winReading}）` : ""}: ${winDescription}` : "",
+    yakuDescription ? `役${yakuReading ? `（${yakuReading}）` : ""}: ${yakuDescription}` : "",
+    hanDescription ? `翻${hanReading ? `（${hanReading}）` : ""}: ${hanDescription}` : ""
   ].filter(Boolean);
 
   if (!lines.length) {
