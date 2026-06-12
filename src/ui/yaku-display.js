@@ -7,11 +7,30 @@ const YAKU_DESCRIPTIONS = {
   kokushi_musou: "1・9・字牌を集める特別な役です。"
 };
 
+const YAKU_READINGS = {
+  menzen_tsumo: "メンゼンツモ",
+  tanyao: "タンヤオ",
+  yakuhai: "ヤクハイ",
+  chiitoitsu: "チートイツ",
+  toitoi: "トイトイ",
+  kokushi_musou: "コクシムソウ"
+};
+
 const TERM_DESCRIPTIONS = {
   ツモ: "自分で引いた牌であがることです。",
   ロン: "相手が捨てた牌であがることです。",
   役: "あがるために必要な条件です。",
   翻: "役の大きさを表す数字です。"
+};
+
+const TERM_READINGS = {
+  翻: "ハン",
+  手牌: "テハイ",
+  捨て牌: "ステハイ",
+  字牌: "ジハイ",
+  役: "ヤク",
+  ツモ: "ツモ",
+  ロン: "ロン"
 };
 
 export function formatYakuResult(yakuResult = []) {
@@ -46,8 +65,27 @@ export function getYakuDescription(yakuId) {
   return YAKU_DESCRIPTIONS[yakuId] || "";
 }
 
+export function getYakuReading(yakuId) {
+  return YAKU_READINGS[yakuId] || "";
+}
+
+export function getYakuDisplayName(yaku = {}) {
+  const name = yaku.name || yaku.id || "";
+  const reading = getYakuReading(yaku.id);
+
+  if (!name) {
+    return reading;
+  }
+
+  return reading ? `${name}（${reading}）` : name;
+}
+
 export function getMahjongTermDescription(term) {
   return TERM_DESCRIPTIONS[term] || "";
+}
+
+export function getMahjongTermReading(term) {
+  return TERM_READINGS[term] || "";
 }
 
 export function getNoYakuMessage() {
@@ -60,6 +98,15 @@ export function getTotalHan(yakuResult = []) {
   }
 
   return yakuResult.reduce((sum, yaku) => sum + (Number.isFinite(yaku.han) ? yaku.han : 0), 0);
+}
+
+export function formatYakuWithReading(yaku = {}) {
+  const displayName = getYakuDisplayName(yaku);
+  const hanText = Number.isFinite(yaku.han) ? `${yaku.han}翻` : "";
+  const description = getYakuDescription(yaku.id);
+  const title = [displayName, hanText].filter(Boolean).join(" ");
+
+  return [title, description].filter(Boolean).join("\n");
 }
 
 export function formatWinSummary({ winType, winnerType } = {}) {
