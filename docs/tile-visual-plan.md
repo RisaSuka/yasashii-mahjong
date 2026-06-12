@@ -2,39 +2,73 @@
 
 ## Goal
 
-Make tile suits easier to recognize for beginners and older players without adding heavy assets or changing game logic.
+Make tile suits easier to recognize for beginners and older players while keeping the app small, static, and easy to maintain.
 
-## Chosen Approach
+## Current Choice
 
-Use approach D:
+Use CSS tiles for now.
 
-- Base implementation: CSS-enhanced tile rendering.
-- Structure: add suit-specific classes and inner labels in `render.js`.
-- Future option: replace the inner tile content with SVG or static images later.
-- No AI-generated production assets for this step.
+Reasons:
 
-This keeps the app small, GitHub Pages friendly, and easy to maintain.
+- No image loading is required.
+- GitHub Pages can serve the app as-is.
+- The design can be adjusted quickly with CSS.
+- The tile data structure does not need to change.
+- The UI can still be refactored later to SVG or image assets.
 
-## Suit Cues
+## DOM Structure
 
-- Manzu: red accent.
-- Pinzu: blue accent.
-- Souzu: green accent.
-- Honors: dark accent and larger main character.
-- All tiles: white face, clear border, bigger main text, generous spacing.
+The current tile markup is intentionally asset-friendly:
+
+```text
+tile
+  tile-face
+    tile-symbol
+    tile-helper
+      tile-visual-cue
+      tile-suit-label
+```
+
+This structure supports three future paths:
+
+- CSS tile: current implementation.
+- SVG tile: replace `tile-face` content with inline SVG or an SVG component.
+- Image tile: replace `tile-face` content with an image while keeping the outer tile shell and sizing rules.
+
+## Current CSS Tile Design
+
+- Slightly tall tile shape.
+- White tile face.
+- Outer shell with shadow and bottom thickness.
+- Large main symbol.
+- Small suit label.
+- Compact visual cue:
+  - Manzu: red accent and `萬`.
+  - Pinzu: blue accent and `○`.
+  - Souzu: green accent and `┃`.
+  - Honors: dark accent and `字`.
+- Discard tiles stay compact but keep the suit color cue.
+- Large tile mode increases both the main symbol and the helper cue.
 
 ## Mobile And Large Tile Mode
 
 - Human hand remains horizontally scrollable.
-- Tap target size remains controlled by `.tile-button`.
-- Large tile mode increases main text and suit label sizes.
-- Discard tiles stay compact but keep suit color cues.
+- Tile buttons keep their tap target size.
+- Tiles use `flex: 0 0 auto` so they do not collapse in horizontal scroll.
+- Large tile mode grows tile width, tile height, and symbol size together.
 
-## AI Image Generation
+## Future SVG / Image Direction
 
-AI image generation was not used for this implementation.
+Before replacing CSS tiles with assets:
 
-If used later, start with sample concepts only:
+- Test representative tiles first, not all 34 kinds.
+- Confirm visual consistency across suits.
+- Confirm readability at normal size, discard size, and large tile mode.
+- Confirm license and ownership of all assets.
+- Confirm the asset naming and lookup table are maintainable.
+- Confirm the app still works on GitHub Pages without a build step.
+
+Representative tiles for design checks:
 
 - 一萬
 - 九萬
@@ -46,7 +80,16 @@ If used later, start with sample concepts only:
 - 發
 - 中
 
-Production should still prefer CSS/SVG unless static images prove clearly better for readability.
+## AI Image Generation
+
+AI image generation was not used for the current implementation.
+
+If used later:
+
+- Use it only for design exploration first.
+- Do not immediately generate and ship all 34 tile assets.
+- Compare generated samples against CSS/SVG for readability and consistency.
+- Do not use AI output as production assets until license, consistency, and maintainability are reviewed.
 
 ## Yaku Display Order
 
@@ -63,6 +106,9 @@ Unknown yaku are kept after the known yaku and sorted by id for stable display.
 
 ## Out Of Scope
 
+- Production image assets.
+- Full 34-kind SVG tile set.
+- AI-generated assets shipped directly.
 - Point calculation.
 - New yaku.
 - Calls.

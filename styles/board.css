@@ -215,12 +215,12 @@
 }
 
 .large-tiles .tile {
-  width: 54px;
-  height: 72px;
+  width: 56px;
+  height: 78px;
 }
 
-.large-tiles .tile-main {
-  font-size: 28px;
+.large-tiles .tile-symbol {
+  font-size: 31px;
 }
 
 .large-tiles .tile-suit-label {
@@ -228,14 +228,18 @@
 }
 
 .large-tiles .hand .tile {
-  width: 62px;
-  height: 82px;
+  width: 64px;
+  height: 90px;
 }
 
-.large-tiles .hand .tile-main {
-  font-size: 32px;
+.large-tiles .hand .tile-symbol {
+  font-size: 36px;
 }
 
 .large-tiles .hand .tile-suit-label {
   font-size: 13px;
+}
+
+.large-tiles .hand .tile-visual-cue {
+  font-size: 14px;
 }

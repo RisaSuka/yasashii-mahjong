@@ -262,11 +262,19 @@ function renderTile(tile, extraClass = "") {
   const suitClass = tile ? ` tile-${tile.suit}` : "";
   const mainLabel = getTileMainLabel(tile);
   const suitLabel = getTileSuitLabel(tile);
+  const visualCue = getTileVisualCue(tile);
 
   return `
     <span class="tile${suitClass} ${extraClass}">
-      <span class="tile-main">${escapeHtml(mainLabel)}</span>
-      ${suitLabel ? `<span class="tile-suit-label">${escapeHtml(suitLabel)}</span>` : ""}
+      <span class="tile-face">
+        <span class="tile-symbol">${escapeHtml(mainLabel)}</span>
+        ${suitLabel ? `
+          <span class="tile-helper">
+            ${visualCue ? `<span class="tile-visual-cue" aria-hidden="true">${escapeHtml(visualCue)}</span>` : ""}
+            <span class="tile-suit-label">${escapeHtml(suitLabel)}</span>
+          </span>
+        ` : ""}
+      </span>
     </span>
   `;
 }
@@ -321,4 +329,19 @@ function getTileSuitLabel(tile) {
   };
 
   return suitLabels[tile.suit] || "";
+}
+
+function getTileVisualCue(tile) {
+  if (!tile) {
+    return "";
+  }
+
+  const visualCues = {
+    m: "萬",
+    p: "○",
+    s: "┃",
+    z: "字"
+  };
+
+  return visualCues[tile.suit] || "";
 }

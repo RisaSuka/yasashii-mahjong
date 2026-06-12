@@ -9,47 +9,84 @@
 .tile {
   display: inline-grid;
   position: relative;
-  align-content: center;
-  justify-items: center;
-  gap: 2px;
+  place-items: stretch;
   flex: 0 0 auto;
-  width: 46px;
-  height: 62px;
+  width: 48px;
+  height: 66px;
+  box-sizing: border-box;
   overflow: hidden;
-  border: 2px solid #8f9aa6;
-  border-radius: 7px;
-  background: linear-gradient(180deg, #ffffff 0%, #fffdf7 74%, #f3eee2 100%);
+  border: 1px solid #8f9aa6;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #ffffff 0%, #f7f2e7 78%, #d7c8ad 100%);
   color: #1f2933;
   font-weight: 700;
-  box-shadow: inset 0 -5px 0 rgba(0, 0, 0, 0.08), 0 1px 2px rgba(15, 23, 42, 0.12);
+  padding: 4px 4px 8px;
+  box-shadow:
+    inset 0 -7px 0 rgba(100, 76, 42, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 2px 3px rgba(15, 23, 42, 0.16);
 }
 
 .tile::before {
   content: "";
   position: absolute;
-  top: 0;
   right: 0;
-  left: 0;
-  height: 7px;
-  background: #8f9aa6;
+  bottom: 0;
+  left: 4px;
+  width: calc(100% - 8px);
+  height: 6px;
+  border-radius: 0 0 6px 6px;
+  background: rgba(111, 85, 46, 0.2);
 }
 
-.tile-main,
+.tile-face {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  align-items: center;
+  justify-items: center;
+  min-width: 0;
+  min-height: 0;
+  border: 2px solid rgba(143, 154, 166, 0.58);
+  border-radius: 6px;
+  background:
+    radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.95), transparent 24%),
+    linear-gradient(180deg, #ffffff 0%, #fffdfa 100%);
+  padding: 5px 3px 4px;
+  box-shadow: inset 0 -2px 0 rgba(15, 23, 42, 0.05);
+}
+
+.tile-symbol,
+.tile-helper,
+.tile-visual-cue,
 .tile-suit-label {
   position: relative;
   z-index: 1;
 }
 
-.tile-main {
-  font-size: 23px;
+.tile-symbol {
+  font-size: 26px;
+  line-height: 1;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.tile-helper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  max-width: 100%;
+}
+
+.tile-visual-cue {
+  font-size: 12px;
   line-height: 1;
 }
 
 .tile-suit-label {
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.76);
-  padding: 1px 5px;
-  font-size: 11px;
+  background: rgba(255, 255, 255, 0.82);
+  padding: 1px 4px;
+  font-size: 10px;
   line-height: 1.2;
 }
 
@@ -58,8 +95,16 @@
   color: #8a1c14;
 }
 
-.tile-m::before {
-  background: #d92d20;
+.tile-m .tile-face {
+  border-color: rgba(180, 35, 24, 0.64);
+  background:
+    linear-gradient(90deg, rgba(217, 45, 32, 0.16), transparent 28%, transparent 72%, rgba(217, 45, 32, 0.12)),
+    linear-gradient(180deg, #ffffff 0%, #fffafa 100%);
+}
+
+.tile-m .tile-visual-cue,
+.tile-m .tile-suit-label {
+  color: #b42318;
 }
 
 .tile-p {
@@ -67,8 +112,16 @@
   color: #1849a9;
 }
 
-.tile-p::before {
-  background: #2e90fa;
+.tile-p .tile-face {
+  border-color: rgba(23, 92, 211, 0.62);
+  background:
+    radial-gradient(circle at 50% 28%, rgba(46, 144, 250, 0.14) 0 18%, transparent 19%),
+    linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.tile-p .tile-visual-cue,
+.tile-p .tile-suit-label {
+  color: #175cd3;
 }
 
 .tile-s {
@@ -76,8 +129,16 @@
   color: #05603a;
 }
 
-.tile-s::before {
-  background: #12b76a;
+.tile-s .tile-face {
+  border-color: rgba(8, 116, 67, 0.62);
+  background:
+    linear-gradient(90deg, transparent 0 34%, rgba(18, 183, 106, 0.12) 35% 39%, transparent 40% 60%, rgba(18, 183, 106, 0.1) 61% 65%, transparent 66%),
+    linear-gradient(180deg, #ffffff 0%, #f7fffb 100%);
+}
+
+.tile-s .tile-visual-cue,
+.tile-s .tile-suit-label {
+  color: #087443;
 }
 
 .tile-z {
@@ -85,12 +146,18 @@
   color: #111827;
 }
 
-.tile-z::before {
-  background: #475467;
+.tile-z .tile-face {
+  border-color: rgba(51, 65, 85, 0.72);
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
 }
 
-.tile-z .tile-main {
-  font-size: 26px;
+.tile-z .tile-symbol {
+  font-size: 29px;
+}
+
+.tile-z .tile-visual-cue,
+.tile-z .tile-suit-label {
+  color: #334155;
 }
 
 .tile-button {
@@ -113,8 +180,14 @@
   box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.05);
 }
 
-.tile-button:disabled .tile::before {
-  background: #cbd5d1;
+.tile-button:disabled .tile-face {
+  border-color: #cbd5d1;
+  background: #f4f7f6;
+}
+
+.tile-button:disabled .tile-visual-cue,
+.tile-button:disabled .tile-suit-label {
+  color: #697586;
 }
 
 .tile-button:not(:disabled):focus-visible .tile,
@@ -124,6 +197,8 @@
 }
 
 .tile-back {
+  display: inline-grid;
+  place-items: center;
   background: #2f5d50;
   border-color: #24483f;
   color: #ffffff;
@@ -134,20 +209,31 @@
 }
 
 .discard-tile {
-  width: 28px;
-  height: 38px;
+  width: 30px;
+  height: 42px;
   border-radius: 4px;
+  padding: 2px 2px 5px;
 }
 
 .discard-tile::before {
   height: 4px;
 }
 
-.discard-tile .tile-main {
-  font-size: 14px;
+.discard-tile .tile-face {
+  border-width: 1px;
+  border-radius: 3px;
+  padding: 2px 1px;
+}
+
+.discard-tile .tile-symbol {
+  font-size: 15px;
 }
 
 .discard-tile .tile-suit-label {
-  padding: 0 3px;
-  font-size: 8px;
+  padding: 0 2px;
+  font-size: 7px;
+}
+
+.discard-tile .tile-visual-cue {
+  display: none;
 }
