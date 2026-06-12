@@ -207,7 +207,7 @@ async function ronReadyReactionState(options = {}) {
 }
 
 async function nonWinningBeforeReaction() {
-  const state = await ronReadyBeforeReaction();
+  const state = await ronReadyBeforeReaction({ currentPlayerIndex: 1 });
 
   return {
     ...state,

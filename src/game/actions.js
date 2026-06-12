@@ -16,6 +16,11 @@ export function dispatchAction(state, action) {
       return advanceTurn(state);
     case "CPU_DISCARD":
       return cpuDiscard(state, action.random);
+    case "ENTER_REACTION":
+      return enterReaction(state, action.playerId);
+    case "ADVANCE_AFTER_REACTION":
+    case "SKIP_RON":
+      return advanceAfterReaction(state);
     case "DECLARE_TSUMO":
       return declareTsumo(state, action.playerId);
     case "DECLARE_RON":
@@ -90,6 +95,14 @@ export function canDeclareRon(state, playerId) {
     return false;
   }
 
+  return canRonLatestDiscard(state, playerId);
+}
+
+export function canRonLatestDiscard(state, playerId) {
+  if (!state.round || state.round.phase === "ended") {
+    return false;
+  }
+
   const lastDiscard = state.round.lastDiscard;
 
   if (!lastDiscard?.tile || lastDiscard.playerId === null || lastDiscard.playerId === playerId) {
@@ -103,6 +116,36 @@ export function canDeclareRon(state, playerId) {
   }
 
   return isWinningHand([...player.hand, lastDiscard.tile]).winning;
+}
+
+export function enterReaction(state, playerId) {
+  if (!canRonLatestDiscard(state, playerId)) {
+    return state;
+  }
+
+  return {
+    ...state,
+    round: {
+      ...state.round,
+      phase: "reaction"
+    }
+  };
+}
+
+export function advanceAfterReaction(state) {
+  if (!state.round || state.round.phase !== "reaction") {
+    return state;
+  }
+
+  return {
+    ...state,
+    round: {
+      ...state.round,
+      phase: "draw",
+      currentPlayerIndex: (state.round.currentPlayerIndex + 1) % state.round.players.length,
+      turnCount: state.round.turnCount + 1
+    }
+  };
 }
 
 export function declareRon(state, playerId) {
