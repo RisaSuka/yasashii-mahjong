@@ -1,6 +1,7 @@
 import { chooseRandomDiscard } from "./cpu/random-cpu.js";
 import { addTileToPlayer, createInitialGameState, startRound } from "./round.js";
 import { isWinningHand } from "./rules/win-check.js";
+import { detectYaku } from "./rules/yaku.js";
 import { drawFromWall } from "./wall.js";
 import { createDefaultStats, saveStats } from "./storage.js";
 
@@ -63,7 +64,13 @@ export function canDeclareTsumo(state, playerId) {
     return false;
   }
 
-  return isWinningHand(player.hand).winning;
+  const result = isWinningHand(player.hand);
+
+  if (!result.winning) {
+    return false;
+  }
+
+  return detectYaku(player.hand, createTsumoYakuContext(state, player, result)).length > 0;
 }
 
 export function declareTsumo(state, playerId) {
@@ -73,6 +80,11 @@ export function declareTsumo(state, playerId) {
 
   const player = state.round.players.find((candidate) => candidate.id === playerId);
   const result = isWinningHand(player.hand);
+  const yakuResult = detectYaku(player.hand, createTsumoYakuContext(state, player, result));
+
+  if (yakuResult.length === 0) {
+    return state;
+  }
 
   return {
     ...state,
@@ -84,7 +96,8 @@ export function declareTsumo(state, playerId) {
         winnerId: playerId,
         winType: "tsumo",
         handType: result.type,
-        handTiles: [...player.hand]
+        handTiles: [...player.hand],
+        yakuResult
       }
     }
   };
@@ -115,7 +128,14 @@ export function canRonLatestDiscard(state, playerId) {
     return false;
   }
 
-  return isWinningHand([...player.hand, lastDiscard.tile]).winning;
+  const handTiles = [...player.hand, lastDiscard.tile];
+  const result = isWinningHand(handTiles);
+
+  if (!result.winning) {
+    return false;
+  }
+
+  return detectYaku(handTiles, createRonYakuContext(state, player, result)).length > 0;
 }
 
 export function enterReaction(state, playerId) {
@@ -157,6 +177,11 @@ export function declareRon(state, playerId) {
   const winningTile = state.round.lastDiscard.tile;
   const handTiles = [...player.hand, winningTile];
   const result = isWinningHand(handTiles);
+  const yakuResult = detectYaku(handTiles, createRonYakuContext(state, player, result));
+
+  if (!result.winning || yakuResult.length === 0) {
+    return state;
+  }
 
   return {
     ...state,
@@ -170,10 +195,38 @@ export function declareRon(state, playerId) {
         fromPlayerId: state.round.lastDiscard.playerId,
         winningTile,
         handType: result.type,
-        handTiles
+        handTiles,
+        yakuResult
       }
     }
   };
+}
+
+function createTsumoYakuContext(state, player, result) {
+  return {
+    winType: "tsumo",
+    menzen: isClosedHand(player),
+    isClosed: isClosedHand(player),
+    handType: result.type,
+    winnerId: player.id,
+    winningTile: state.round.lastDraw?.playerId === player.id ? state.round.lastDraw.tile : null
+  };
+}
+
+function createRonYakuContext(state, player, result) {
+  return {
+    winType: "ron",
+    menzen: isClosedHand(player),
+    isClosed: isClosedHand(player),
+    handType: result.type,
+    winnerId: player.id,
+    fromPlayerId: state.round.lastDiscard.playerId,
+    winningTile: state.round.lastDiscard.tile
+  };
+}
+
+function isClosedHand(player) {
+  return player.menzen !== false && player.isClosed !== false && (!player.melds || player.melds.length === 0);
 }
 
 export function discardTile(state, playerId, tileId) {

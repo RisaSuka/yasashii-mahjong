@@ -189,7 +189,7 @@ async function ronReadyBeforeReaction(options = {}) {
 
 async function ronReadyReactionState(options = {}) {
   const { createScenarioState } = await loadModule("../src/game/scenarios.js", ["createScenarioState"]);
-  const state = createScenarioState("ron-ready-basic", { phase: "reaction" });
+  const state = createScenarioState("ron-ready-tanyao", { phase: "reaction" });
   const lastDiscard = {
     ...state.round.lastDiscard,
     playerId: options.lastDiscardPlayerId ?? state.round.lastDiscard.playerId

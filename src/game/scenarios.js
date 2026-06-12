@@ -44,6 +44,22 @@ const SCENARIOS = {
       playerId: 1,
       tile: "z1"
     }
+  },
+  "ron-ready-tanyao": {
+    name: "ron-ready-tanyao",
+    description: "Human player can ron on a CPU discard with tanyao.",
+    phase: "discard",
+    currentPlayerIndex: 2,
+    hands: {
+      0: "m2 m3 m4 m4 m5 m6 p2 p3 p4 p6 p7 p8 s5"
+    },
+    discards: {
+      1: "s5"
+    },
+    lastDiscard: {
+      playerId: 1,
+      tile: "s5"
+    }
   }
 };
 
