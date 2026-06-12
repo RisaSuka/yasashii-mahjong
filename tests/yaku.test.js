@@ -11,7 +11,7 @@ export function registerYakuTests() {
       handType: "standard"
     });
 
-    assertHasYaku(result, "menzen-tsumo");
+    assertHasYaku(result, "menzen_tsumo");
   });
 
   test("YAKU: tanyao can be detected", async () => {
@@ -66,7 +66,7 @@ export function registerYakuTests() {
       handType: "thirteen-orphans"
     });
 
-    assertHasYaku(result, "kokushi-musou");
+    assertHasYaku(result, "kokushi_musou");
   });
 
   test("YAKU: no-yaku hand returns no yaku", async () => {
@@ -77,8 +77,7 @@ export function registerYakuTests() {
       handType: "standard"
     });
 
-    assertEqual(result?.hasYaku, false, "No-yaku hand should not report yaku");
-    assertEqual(result?.yaku?.length, 0, "No-yaku hand should return an empty yaku list");
+    assertEqual(result.length, 0, "No-yaku hand should return an empty yaku list");
   });
 
   test("YAKU: multiple yaku can be returned together", async () => {
@@ -89,7 +88,7 @@ export function registerYakuTests() {
       handType: "standard"
     });
 
-    assertHasYaku(result, "menzen-tsumo");
+    assertHasYaku(result, "menzen_tsumo");
     assertHasYaku(result, "tanyao");
   });
 
@@ -119,9 +118,9 @@ async function loadYakuModule() {
 }
 
 function assertHasYaku(result, expectedId) {
-  assertEqual(result?.hasYaku, true, "Result should report yaku");
+  assertTrue(Array.isArray(result), "Yaku result should be an array");
   assertTrue(
-    result?.yaku?.some((yaku) => yaku.id === expectedId),
+    result.some((yaku) => yaku.id === expectedId),
     `Expected yaku ${expectedId} to be present`
   );
 }
