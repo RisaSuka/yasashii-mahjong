@@ -21,8 +21,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 136.
-- Confirm pass count is 136.
+- Confirm total count is 148.
+- Confirm pass count is 148.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 

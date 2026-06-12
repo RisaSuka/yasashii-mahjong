@@ -1,3 +1,7 @@
+# MVP-0.8 release candidate note
+
+The `codex/mvp-08-discard-advice-plan` branch adds beginner discard advice, an advice ON/OFF setting, and smartphone landscape layout refinements. Current release-candidate checks target `148 pass / 0 pending / 0 fail`. Smartphone landscape is the recommended play orientation; portrait remains usable and shows a gentle landscape recommendation.
+
 # じゅんちゃん麻雀
 
 人間1人 vs CPU3人で遊べる、ブラウザ向け4人リーチ麻雀Webアプリを段階的に開発しています。

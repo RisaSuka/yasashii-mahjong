@@ -26,7 +26,7 @@ Last updated for MVP-0.8 discard advice and smartphone landscape layout work.
 | MVP-0.7.6 | Done | Furigana/reading helper APIs. |
 | MVP-0.7.7 | Done | Furigana yaku display connected to render. |
 | MVP-0.7.8 | Done | Beginner-friendly no-yaku rejection messages. |
-| MVP-0.8 | In progress | Beginner discard advice with ON/OFF setting and smartphone layout refinements. |
+| MVP-0.8 | Release candidate | Beginner discard advice with ON/OFF setting and smartphone landscape layout refinements. |
 
 ## Current Capabilities
 
@@ -70,11 +70,13 @@ Last updated for MVP-0.8 discard advice and smartphone landscape layout work.
   - Gentle reasons for beginners.
   - ON/OFF setting stored in localStorage.
   - Suggested tiles highlighted in the human hand.
+  - Mobile display keeps the first reason visible and secondary suggestions compact.
 - Smartphone layout:
   - Landscape is recommended for regular play.
   - Human hand is prioritized near the bottom.
   - CPU seats stay around the table.
   - Portrait shows a gentle landscape recommendation.
+  - Tsumo, ron, skip, and advice toggle remain tappable.
 
 ## Not Implemented Yet
 
@@ -99,10 +101,14 @@ Last updated for MVP-0.8 discard advice and smartphone landscape layout work.
 Before merging into `main`, confirm:
 
 - `git status --short --branch` is clean.
-- Latest test runner result is `136 pass / 0 pending / 0 fail`.
-- README reflects MVP-0.7.8.
+- Latest test runner result is `148 pass / 0 pending / 0 fail`.
+- `/` returns HTTP 200 from a local static server.
+- `/tests/test-runner.html` returns HTTP 200 from a local static server.
+- README reflects MVP-0.8.
+- Smartphone landscape layout has been checked or queued for final real-device check.
 - `docs/release-checklist.md` is reviewed.
 - `docs/manual-test-checklist.md` is reviewed.
+- `docs/landscape-ui-plan.md` is reviewed.
 - The user explicitly approves the merge.
 - The user explicitly approves any push.
 
@@ -115,5 +121,6 @@ Before publishing:
 - Confirm all module imports are relative and static-host friendly.
 - Confirm no build step is required.
 - Confirm no external dependencies are required.
-- Confirm smartphone width is manually checked.
+- Confirm smartphone landscape is manually checked.
+- Confirm portrait shows the landscape recommendation.
 - Confirm README clearly lists missing major features.

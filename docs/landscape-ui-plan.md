@@ -19,6 +19,8 @@ This note records the MVP-0.8 landscape layout direction. It is inspired by comm
 - Center: status, wall count, dead wall count, dora indicator, win/no-yaku messages, and discard advice.
 - Bottom: human hand, human discards, and action buttons.
 
+Current implementation uses responsive CSS only. It does not change `src/game/**`, tile data, or the discard advice core.
+
 ## Discard Advice In Landscape
 
 - Keep the first recommendation easy to read with a reason.
@@ -26,6 +28,7 @@ This note records the MVP-0.8 landscape layout direction. It is inspired by comm
 - Preserve suggested tile highlighting on the hand.
 - Do not let advice cover or crowd the hand.
 - OFF means the advice panel is fully hidden.
+- Current CSS keeps the first advice reason visible and hides secondary reasons on compact mobile layouts.
 
 ## Portrait Behavior
 
