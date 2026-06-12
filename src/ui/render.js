@@ -65,6 +65,7 @@ function renderTable(state, options) {
       ${seats.map((player) => renderSeat(player, round)).join("")}
       <section class="center-panel">
         <strong>${renderStatus(round)}</strong>
+        ${renderLastActionResult(round)}
         ${renderYakuSummary(round)}
         ${renderRonAction(state, options)}
         ${renderTsumoAction(state, options)}
@@ -73,6 +74,23 @@ function renderTable(state, options) {
         <span class="table-meta">ドラ表示牌: ${renderDoraIndicators(round)}</span>
       </section>
     </main>
+  `;
+}
+
+function renderLastActionResult(round) {
+  const result = round.lastActionResult;
+
+  if (!result?.message || round.phase === "ended") {
+    return "";
+  }
+
+  return `
+    <section class="action-message" aria-label="操作メッセージ">
+      ${String(result.message)
+        .split("\n")
+        .map((line) => `<span>${escapeHtml(line)}</span>`)
+        .join("")}
+    </section>
   `;
 }
 

@@ -5,6 +5,8 @@ import { detectYaku } from "./rules/yaku.js";
 import { drawFromWall } from "./wall.js";
 import { createDefaultStats, saveStats } from "./storage.js";
 
+const NO_YAKU_MESSAGE = "形は完成していますが、役がありません。\nまずはタンヤオや役牌を狙ってみましょう。";
+
 export function dispatchAction(state, action) {
   switch (action.type) {
     case "START_ROUND":
@@ -74,22 +76,33 @@ export function canDeclareTsumo(state, playerId) {
 }
 
 export function declareTsumo(state, playerId) {
-  if (!canDeclareTsumo(state, playerId)) {
+  if (!state.round || state.round.phase !== "discard" || state.round.currentPlayerIndex !== playerId) {
     return state;
   }
 
   const player = state.round.players.find((candidate) => candidate.id === playerId);
+
+  if (!player) {
+    return state;
+  }
+
   const result = isWinningHand(player.hand);
+
+  if (!result.winning) {
+    return state;
+  }
+
   const yakuResult = detectYaku(player.hand, createTsumoYakuContext(state, player, result));
 
   if (yakuResult.length === 0) {
-    return state;
+    return withLastActionResult(state, createNoYakuResult("tsumo"));
   }
 
   return {
     ...state,
     round: {
       ...state.round,
+      lastActionResult: null,
       phase: "ended",
       endReason: "win",
       winningResult: {
@@ -169,24 +182,41 @@ export function advanceAfterReaction(state) {
 }
 
 export function declareRon(state, playerId) {
-  if (!canDeclareRon(state, playerId)) {
+  if (!state.round || state.round.phase !== "reaction") {
+    return state;
+  }
+
+  const lastDiscard = state.round.lastDiscard;
+
+  if (!lastDiscard?.tile || lastDiscard.playerId === null || lastDiscard.playerId === playerId) {
     return state;
   }
 
   const player = state.round.players.find((candidate) => candidate.id === playerId);
-  const winningTile = state.round.lastDiscard.tile;
+
+  if (!player || player.type !== "human") {
+    return state;
+  }
+
+  const winningTile = lastDiscard.tile;
   const handTiles = [...player.hand, winningTile];
   const result = isWinningHand(handTiles);
+
+  if (!result.winning) {
+    return state;
+  }
+
   const yakuResult = detectYaku(handTiles, createRonYakuContext(state, player, result));
 
-  if (!result.winning || yakuResult.length === 0) {
-    return state;
+  if (yakuResult.length === 0) {
+    return withLastActionResult(state, createNoYakuResult("ron"));
   }
 
   return {
     ...state,
     round: {
       ...state.round,
+      lastActionResult: null,
       phase: "ended",
       endReason: "win",
       winningResult: {
@@ -198,6 +228,25 @@ export function declareRon(state, playerId) {
         handTiles,
         yakuResult
       }
+    }
+  };
+}
+
+function createNoYakuResult(action) {
+  return {
+    type: "rejected",
+    reason: "no-yaku",
+    action,
+    message: NO_YAKU_MESSAGE
+  };
+}
+
+function withLastActionResult(state, lastActionResult) {
+  return {
+    ...state,
+    round: {
+      ...state.round,
+      lastActionResult
     }
   };
 }

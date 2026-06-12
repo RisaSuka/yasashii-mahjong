@@ -90,6 +90,18 @@
   line-height: 1.35;
 }
 
+.action-message {
+  display: grid;
+  gap: 3px;
+  border: 1px solid rgba(180, 83, 9, 0.32);
+  border-radius: 8px;
+  background: #fff7ed;
+  padding: 10px;
+  color: #7c2d12;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
 .yaku-summary {
   display: grid;
   gap: 4px;
