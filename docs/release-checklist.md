@@ -4,16 +4,16 @@ Use this before merging to `main` or publishing with GitHub Pages.
 
 ## Current Release Candidate
 
-- Branch: `codex/mvp-11-discard-layout`
-- Scope: MVP-0.1 through MVP-1.1.6 discard-fit fix
-- Expected automated result: `199 pass / 0 pending / 0 fail`
+- Branch: `codex/mvp-12-discard-zoom`
+- Scope: MVP-0.1 through MVP-1.2 discard zoom popup
+- Expected automated result: `204 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-1.1.x is not published yet.
+- Publish status: MVP-1.2 is not published yet.
 
 ## Git Safety
 
-- Confirm the current branch is `codex/mvp-11-discard-layout`.
+- Confirm the current branch is `codex/mvp-12-discard-zoom`.
 - Confirm the working tree is clean.
 - Confirm the latest commit is the intended release candidate.
 - Confirm no unreviewed local commits are being skipped.
@@ -31,8 +31,8 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 199.
-- Confirm pass count is 199.
+- Confirm total count is 204.
+- Confirm pass count is 204.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
@@ -44,7 +44,7 @@ node tests/layout-check.mjs
 
 - If Node is not on PATH in the Codex desktop environment, use the bundled Node command documented in `docs/layout-test.md`.
 - Confirm layout-check screenshots are written under `test-artifacts/layout/`.
-- Current layout-check result: all target viewports and scenarios pass, including `late` and `draw-ended` with 18 discards per player.
+- Current layout-check result: all target viewports and scenarios pass, including `late`, `draw-ended`, and `discard-zoom`.
 
 ## Core Functional Checks
 
@@ -105,6 +105,10 @@ node tests/layout-check.mjs
 - Smartphone landscape layout guard exists and is documented in `docs/layout-test.md`.
 - Layout screenshots are ignored by git via `test-artifacts/`.
 - Late-hand and draw-ended discard zones fit 18 discards without clipping in the layout guard.
+- Tapping/clicking any player discard zone opens a larger discard zoom popup.
+- The discard zoom popup shows the selected player label, discard count, and enlarged discard tiles.
+- The discard zoom popup can be closed with the close button, backdrop click, or Escape.
+- Discard zoom and discard-advice popups do not stay open at the same time.
 
 ## Manual Browser Checks
 
@@ -141,6 +145,7 @@ Check:
 - Human discards are visible above the human hand in the center discard ring.
 - CPU discards remain visible in the center discard ring without making CPU seats dominate the table.
 - The discard-advice reason popup opens and closes in landscape.
+- The discard zoom popup opens and closes in landscape.
 
 ## GitHub Pages Checks
 

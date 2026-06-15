@@ -1,15 +1,15 @@
 # Current Status
 
-Last updated for MVP-1.1.6 smartphone landscape discard-fit fix.
+Last updated for MVP-1.2 discard zoom popup.
 
 ## Repository State
 
-- Working branch: `codex/mvp-11-discard-layout`
-- Automated tests: `199 pass / 0 pending / 0 fail`
-- Layout check: Chrome-based smartphone landscape guard passes all target viewports/scenarios
-- Working tree: clean at the time of the latest MVP-1.1.6 discard-fit fix
+- Working branch: `codex/mvp-12-discard-zoom`
+- Automated tests: `204 pass / 0 pending / 0 fail`
+- Layout check: Chrome-based smartphone landscape guard passed all target viewports/scenarios at MVP-1.1.6; MVP-1.2 adds a discard-zoom scenario that must be run before merge/publish
+- Working tree: clean at the time of the latest MVP-1.2 discard zoom work
 - Push: not yet
-- `main` merge: not yet for MVP-1.1.x
+- `main` merge: not yet for MVP-1.2
 
 ## Implemented MVPs
 
@@ -35,6 +35,7 @@ Last updated for MVP-1.1.6 smartphone landscape discard-fit fix.
 | MVP-1.1.1 | Working branch | Table-center discard ring and popup discard-advice reasons for smartphone landscape. |
 | MVP-1.1.4 | Working branch | Chrome-based smartphone landscape layout guard for detecting clipping, overflow, overlap, and unclickable controls. |
 | MVP-1.1.6 | Working branch | Late-hand landscape discard grids fit 18 discards in all four discard zones and pass the layout guard. |
+| MVP-1.2 | Working branch | Discard areas can be tapped to open a larger discard-list popup for each player. |
 
 ## Current Capabilities
 
@@ -134,12 +135,22 @@ Last updated for MVP-1.1.6 smartphone landscape discard-fit fix.
 - `tests/layout-check.mjs` launches local Chrome through Chrome DevTools Protocol.
 - The check starts a temporary static server and does not require Playwright or Puppeteer packages.
 - Covered viewports: 844x390, 896x414, 932x430, 812x375, and 780x360.
-- Covered scenarios: early, mid, late, draw-ended, and actions.
+- Covered scenarios: early, mid, late, draw-ended, actions, and discard-zoom.
 - It checks page overflow, important element visibility, discard clipping, hand clipping, recommended badge clipping, action/advice button clickability, popup bounds, and major overlaps.
 - Screenshots are saved under `test-artifacts/layout/`.
 - `test-artifacts/` is ignored by git.
-- Current layout-check result: all viewports and scenarios pass as of MVP-1.1.6.
+- Current verified layout-check result: all viewports and MVP-1.1.6 scenarios pass as of MVP-1.1.6.
 - The previous known failure, late-hand and draw-ended discard clipping at tile 13+ in all four discard zones, is fixed by the MVP-1.1.6 discard grid update.
+
+## MVP-1.2 Discard Zoom
+
+- Every center discard zone is tappable/clickable.
+- Tapping north, west, south, or east discards opens a dialog for that player's discard list.
+- The dialog shows the player label, discard count, all discard tiles in a larger tile size, and a close button.
+- Backdrop click and Escape also close the dialog.
+- Opening discard zoom closes the advice popup, and opening advice closes discard zoom.
+- The layout guard includes a `discard-zoom` scenario that opens the human discard dialog with 18 tiles and checks viewport fit, close-button clickability, and tile count.
+- Run `tests/layout-check.mjs` before merging or publishing MVP-1.2.
 
 ## MVP-1.1 Remaining Visual Polish Candidates
 
@@ -173,7 +184,7 @@ Last updated for MVP-1.1.6 smartphone landscape discard-fit fix.
 Before merging into `main`, confirm:
 
 - `git status --short --branch` is clean.
-- Latest test runner result is `199 pass / 0 pending / 0 fail`.
+- Latest test runner result is `204 pass / 0 pending / 0 fail`.
 - `tests/layout-check.mjs` has been run and its result is reviewed.
 - `tests/layout-check.mjs` passes, including late-hand and draw-ended discard scenarios.
 - `/` returns HTTP 200 from a local static server.

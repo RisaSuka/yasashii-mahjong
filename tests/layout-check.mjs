@@ -22,7 +22,8 @@ const SCENARIOS = [
   { name: "mid", discards: 9, mode: "playing" },
   { name: "late", discards: 18, mode: "playing" },
   { name: "draw-ended", discards: 18, mode: "draw-ended" },
-  { name: "actions", discards: 9, mode: "actions" }
+  { name: "actions", discards: 9, mode: "actions" },
+  { name: "discard-zoom", discards: 18, mode: "discard-zoom" }
 ];
 const TOLERANCE = 2;
 
@@ -171,7 +172,8 @@ function setupScenarioSource() {
           reason: "Layout check advice reason two."
         }
       ],
-      discardAdviceDialogOpen: mode === "actions"
+      discardAdviceDialogOpen: mode === "actions",
+      discardZoomPlayerId: mode === "discard-zoom" ? 0 : null
     });
   }`;
 }
@@ -298,6 +300,32 @@ function inspectLayoutSource() {
       const rect = modal.getBoundingClientRect();
       if (!isInViewport(rect, viewport, tolerance)) {
         failures.push("advice popup is outside viewport");
+      }
+    }
+
+    const zoomModal = document.querySelector(".discard-zoom-modal");
+    if (zoomModal) {
+      const rect = zoomModal.getBoundingClientRect();
+      if (!isInViewport(rect, viewport, tolerance)) {
+        failures.push("discard zoom popup is outside viewport");
+      }
+
+      const closeButton = zoomModal.querySelector("[data-action='close-discard-zoom']");
+      if (!closeButton) {
+        failures.push("discard zoom close button is missing");
+      } else {
+        const closeRect = closeButton.getBoundingClientRect();
+        if (!isInViewport(closeRect, viewport, tolerance)) {
+          failures.push("discard zoom close button is outside viewport");
+        }
+        if (!isClickableAtCenter(closeButton, closeRect)) {
+          failures.push("discard zoom close button is not clickable at center");
+        }
+      }
+
+      const zoomTiles = zoomModal.querySelectorAll(".discard-zoom-tile");
+      if (zoomTiles.length < 18) {
+        failures.push("discard zoom shows fewer than 18 discard tiles");
       }
     }
 

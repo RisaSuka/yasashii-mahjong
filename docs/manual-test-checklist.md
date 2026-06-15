@@ -21,8 +21,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 199.
-- Confirm pass count is 199.
+- Confirm total count is 204.
+- Confirm pass count is 204.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - For smartphone landscape layout work, also run the layout guard described in `docs/layout-test.md`.
@@ -388,6 +388,7 @@ Confirm it checks these scenarios:
 - Late hand with about 18 discards per player.
 - Exhaustive-draw ended hand with late discards.
 - Action-button state with advice popup.
+- Discard zoom popup state with 18 human discards.
 
 Review failures for:
 
@@ -398,6 +399,8 @@ Review failures for:
 - Hidden or unclickable action buttons.
 - Hidden or unclickable advice button.
 - Advice popup outside the viewport.
+- Discard zoom popup outside the viewport.
+- Discard zoom close button hidden or unclickable.
 - Overlap between the center information, discard zones, and hand area.
 
 Screenshots are saved under:
@@ -412,6 +415,24 @@ Current expected result after MVP-1.1.6:
 - Layout check passes across all target viewports and scenarios.
 - Late-hand and draw-ended scenarios show 18 discards per player without discard clipping.
 - If layout check fails again, inspect the reported viewport/scenario and the matching screenshot in `test-artifacts/layout/`.
+
+## 17. MVP-1.2 Discard Zoom Check
+
+Use a real phone in landscape orientation, or browser device toolbar viewports such as 844x390, 896x414, and 932x430.
+
+- Open the app with `?v=mvp12-discard-zoom-1`.
+- Confirm north, west, south, and east discard zones show a small `拡大` hint.
+- Tap/click the north CPU discard zone.
+- Confirm a popup opens with `北 CPU 3の捨て牌`.
+- Confirm the popup shows the north CPU discarded tiles larger than the normal center-ring tiles.
+- Close the popup with `閉じる`.
+- Repeat for west CPU, south CPU, and east/human discards.
+- Confirm backdrop click closes the popup.
+- Confirm Escape closes the popup on desktop.
+- Confirm opening discard zoom closes the advice popup, and opening advice closes discard zoom.
+- Confirm the popup does not create page-level horizontal or vertical scrolling in smartphone landscape.
+- Confirm the close button remains visible and easy to tap.
+- Confirm `次の局へ`, `東風戦終了`, and `もう一度遊ぶ` still work after opening and closing discard zoom.
 
 Portrait orientation check:
 

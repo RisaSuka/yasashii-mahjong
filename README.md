@@ -1,3 +1,7 @@
+# MVP-1.2 discard zoom note
+
+MVP-1.2 adds a discard zoom popup for older-user readability. Tap or click any player's discard area in the smartphone landscape table to open a larger discard list for that player. The popup can be closed with the close button, backdrop click, or Escape key, and it is kept separate from the discard-advice popup. Current normal tests target `204 pass / 0 pending / 0 fail`, and the layout guard includes a discard-zoom open scenario.
+
 # MVP-1.1.6 layout-test note
 
 MVP-1.1.4 adds a Chrome-based smartphone landscape layout guard at `tests/layout-check.mjs`. It checks common landscape viewports, early/mid/late discard counts, page overflow, clipped discard zones, clipped hand tiles, clipped advice badges, action/advice button clickability, popup bounds, and major overlaps.

@@ -88,7 +88,8 @@ function renderTableLegacy(state, options) {
               <div class="center-secondary">
             ${renderPreviousRoundResult(state.lastRoundResult, round)}
             ${renderLastActionResult(round)}
-            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen)}
+            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen && options.discardZoomPlayerId == null)}
+            ${renderDiscardZoomDialog(round, options.discardZoomPlayerId)}
             ${renderYakuSummary(round)}
             <div class="table-meta-row">
               <span class="table-meta">山 ${round.wall.length}</span>
@@ -139,7 +140,8 @@ function renderTable(state, options) {
             </div>
             ${renderPreviousRoundResult(state.lastRoundResult, round)}
             ${renderLastActionResult(round)}
-            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen)}
+            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen && options.discardZoomPlayerId == null)}
+            ${renderDiscardZoomDialog(round, options.discardZoomPlayerId)}
             ${renderYakuSummary(round)}
           </div>
           ${renderTableDiscardZone(round.players[1], "south", round)}
@@ -305,6 +307,38 @@ function renderDiscardAdviceDialog(advice, isOpen) {
   `;
 }
 
+function renderDiscardZoomDialog(round, playerId) {
+  if (playerId === null || playerId === undefined) {
+    return "";
+  }
+
+  const player = round.players.find((candidate) => candidate.id === Number(playerId));
+
+  if (!player) {
+    return "";
+  }
+
+  const label = `${WIND_LABELS[player.wind]} ${player.name}`;
+  const discards = player.discards || [];
+
+  return `
+    <section class="discard-zoom-backdrop" data-action="close-discard-zoom" aria-label="捨て牌拡大を閉じる">
+      <div class="discard-zoom-modal" role="dialog" aria-modal="false" aria-label="${escapeHtml(label)}の捨て牌">
+        <div class="discard-zoom-header">
+          <strong>${escapeHtml(label)}の捨て牌</strong>
+          <button type="button" class="discard-zoom-close" data-action="close-discard-zoom">閉じる</button>
+        </div>
+        <div class="discard-zoom-count">捨て牌 ${discards.length}枚</div>
+        <div class="discard-zoom-tiles">
+          ${discards.length
+            ? discards.map((tile) => renderTile(tile, "discard-zoom-tile")).join("")
+            : `<span class="discard-zoom-empty">まだ捨て牌はありません</span>`}
+        </div>
+      </div>
+    </section>
+  `;
+}
+
 function renderLastActionResult(round) {
   const result = round.lastActionResult;
 
@@ -427,10 +461,11 @@ function renderTableDiscardZone(player, position, round) {
   const currentClass = round?.currentPlayerIndex === player.id ? " is-current-turn" : "";
 
   return `
-    <section class="table-discard-zone table-discard-${position}${currentClass}" aria-label="${escapeHtml(label)}の捨て牌">
+    <section class="table-discard-zone table-discard-${position}${currentClass}" role="button" tabindex="0" data-action="open-discard-zoom" data-player-id="${player.id}" aria-label="${escapeHtml(label)}の捨て牌を拡大">
       <div class="table-discard-label">
         <span>${escapeHtml(label)}</span>
         <span>捨て牌 ${player.discards.length}枚</span>
+        <span class="discard-zoom-hint">拡大</span>
       </div>
       <div class="discards table-center-discards">
         ${visibleDiscards.map((tile) => renderTile(tile, "discard-tile")).join("")}

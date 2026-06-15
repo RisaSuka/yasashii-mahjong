@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp116-discard-fit-1";
-import { renderGame } from "./ui/render.js?v=mvp116-discard-fit-1";
+import { bindControls } from "./ui/input.js?v=mvp12-discard-zoom-1";
+import { renderGame } from "./ui/render.js?v=mvp12-discard-zoom-1";
 
-const APP_ASSET_VERSION = "mvp116-discard-fit-1";
+const APP_ASSET_VERSION = "mvp12-discard-zoom-1";
 
 const appRoot = document.querySelector("#app");
 
@@ -9,6 +9,7 @@ let state = null;
 let gameApi = null;
 let cpuTimer = null;
 let discardAdviceDialogOpen = false;
+let discardZoomPlayerId = null;
 
 init();
 
@@ -50,7 +51,8 @@ function render() {
     canDeclareTsumo: gameApi.canDeclareTsumo,
     canDeclareRon: gameApi.canDeclareRon,
     suggestDiscards: gameApi.suggestDiscards,
-    discardAdviceDialogOpen
+    discardAdviceDialogOpen,
+    discardZoomPlayerId
   });
   bindControls(appRoot, {
     onStartMatch: startMatch,
@@ -60,6 +62,8 @@ function render() {
     onToggleDiscardAdvice: toggleDiscardAdvice,
     onOpenDiscardAdvice: openDiscardAdvice,
     onCloseDiscardAdvice: closeDiscardAdvice,
+    onOpenDiscardZoom: openDiscardZoom,
+    onCloseDiscardZoom: closeDiscardZoom,
     onDiscardTile: discardHumanTile,
     onDeclareTsumo: declareHumanTsumo,
     onDeclareRon: declareHumanRon,
@@ -70,6 +74,7 @@ function render() {
 function startMatch() {
   window.clearTimeout(cpuTimer);
   discardAdviceDialogOpen = false;
+  discardZoomPlayerId = null;
   state = gameApi.dispatchAction(state, { type: "START_MATCH" });
   render();
   scheduleCpuIfNeeded();
@@ -78,6 +83,7 @@ function startMatch() {
 function startNextRound() {
   window.clearTimeout(cpuTimer);
   discardAdviceDialogOpen = false;
+  discardZoomPlayerId = null;
   state = gameApi.dispatchAction(state, { type: "START_NEXT_ROUND" });
   render();
   scheduleCpuIfNeeded();
@@ -98,16 +104,29 @@ function toggleDiscardAdvice() {
   gameApi.saveDiscardAdviceSettings(nextSettings);
   applyDiscardAdviceSettings(nextSettings);
   discardAdviceDialogOpen = false;
+  discardZoomPlayerId = null;
   render();
 }
 
 function openDiscardAdvice() {
   discardAdviceDialogOpen = true;
+  discardZoomPlayerId = null;
   render();
 }
 
 function closeDiscardAdvice() {
   discardAdviceDialogOpen = false;
+  render();
+}
+
+function openDiscardZoom(playerId) {
+  discardAdviceDialogOpen = false;
+  discardZoomPlayerId = Number(playerId);
+  render();
+}
+
+function closeDiscardZoom() {
+  discardZoomPlayerId = null;
   render();
 }
 
@@ -124,6 +143,7 @@ function discardHumanTile(tileId) {
     tileId
   });
   discardAdviceDialogOpen = false;
+  discardZoomPlayerId = null;
   handleAfterDiscard();
 }
 

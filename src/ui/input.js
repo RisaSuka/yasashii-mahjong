@@ -1,4 +1,11 @@
 export function bindControls(root, handlers) {
+  root.addEventListener?.("keydown", (event) => {
+    if (event.key === "Escape") {
+      handlers.onCloseDiscardAdvice?.();
+      handlers.onCloseDiscardZoom?.();
+    }
+  });
+
   for (const button of root.querySelectorAll("[data-action='start-match']")) {
     button.addEventListener("click", () => {
       handlers.onStartMatch?.();
@@ -28,6 +35,27 @@ export function bindControls(root, handlers) {
   root.querySelector("[data-action='close-discard-advice']")?.addEventListener("click", () => {
     handlers.onCloseDiscardAdvice?.();
   });
+
+  for (const trigger of root.querySelectorAll("[data-action='open-discard-zoom']")) {
+    trigger.addEventListener("click", () => {
+      handlers.onOpenDiscardZoom?.(trigger.dataset.playerId);
+    });
+    trigger.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        handlers.onOpenDiscardZoom?.(trigger.dataset.playerId);
+      }
+    });
+  }
+
+  for (const trigger of root.querySelectorAll("[data-action='close-discard-zoom']")) {
+    trigger.addEventListener("click", (event) => {
+      if (trigger.classList?.contains("discard-zoom-backdrop") && event.target !== trigger) {
+        return;
+      }
+      handlers.onCloseDiscardZoom?.();
+    });
+  }
 
   for (const button of root.querySelectorAll("[data-action='discard-tile']")) {
     button.addEventListener("click", () => {

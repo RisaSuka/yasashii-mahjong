@@ -318,6 +318,107 @@ export function registerMatchUiTests() {
     assertEqual(opened, 1, "Open advice button should call its handler");
     assertEqual(closed, 1, "Close advice button should call its handler");
   });
+
+  test("MVP-1.2 UI: discard zoom controls render for all four center discard zones", async () => {
+    const html = await renderState(addDiscards(await startMatchState(), 6));
+
+    assertEqual((html.match(/data-action="open-discard-zoom"/g) || []).length, 4, "All four discard zones should open the zoom dialog");
+    assertTrue(html.includes('data-player-id="0"'), "Human discard zoom target should render");
+    assertTrue(html.includes('data-player-id="1"'), "South CPU discard zoom target should render");
+    assertTrue(html.includes('data-player-id="2"'), "West CPU discard zoom target should render");
+    assertTrue(html.includes('data-player-id="3"'), "North CPU discard zoom target should render");
+    assertTrue(html.includes("discard-zoom-hint"), "Discard zones should visibly hint that they can be enlarged");
+  });
+
+  test("MVP-1.2 UI: human discard zoom dialog shows enlarged discard list", async () => {
+    const html = await renderState(addDiscards(await startMatchState(), 18), { discardZoomPlayerId: 0 });
+    const modalHtml = extractSectionHtml(html, "discard-zoom-backdrop");
+
+    assertTrue(html.includes("discard-zoom-modal"), "Discard zoom modal should render when a player is selected");
+    assertTrue(html.includes("東 あなた"), "Zoom modal should show the selected player name");
+    assertTrue(html.includes('data-action="close-discard-zoom"'), "Zoom modal should include a close action");
+    assertEqual(countZoomDiscardTiles(modalHtml), 18, "Zoom modal should show the selected player's 18 discards");
+  });
+
+  test("MVP-1.2 UI: CPU discard zoom dialogs can target north, west, and south", async () => {
+    const state = addDiscards(await startMatchState(), 9);
+    const northHtml = await renderState(state, { discardZoomPlayerId: 3 });
+    const westHtml = await renderState(state, { discardZoomPlayerId: 2 });
+    const southHtml = await renderState(state, { discardZoomPlayerId: 1 });
+
+    assertTrue(northHtml.includes("北 CPU 3"), "North CPU zoom should identify CPU 3");
+    assertTrue(westHtml.includes("西 CPU 2"), "West CPU zoom should identify CPU 2");
+    assertTrue(southHtml.includes("南 CPU 1"), "South CPU zoom should identify CPU 1");
+    assertEqual(countZoomDiscardTiles(extractSectionHtml(northHtml, "discard-zoom-backdrop")), 9, "North CPU zoom should show its discards");
+    assertEqual(countZoomDiscardTiles(extractSectionHtml(westHtml, "discard-zoom-backdrop")), 9, "West CPU zoom should show its discards");
+    assertEqual(countZoomDiscardTiles(extractSectionHtml(southHtml, "discard-zoom-backdrop")), 9, "South CPU zoom should show its discards");
+  });
+
+  test("MVP-1.2 UI: discard zoom and advice modal do not render at the same time", async () => {
+    const started = await startMatchState();
+    const state = {
+      ...started,
+      settings: {
+        ...started.settings,
+        discardAdviceEnabled: true
+      }
+    };
+    const html = await renderState(addDiscards(state, 4), {
+      suggestDiscards: sampleAdvice,
+      discardAdviceDialogOpen: true,
+      discardZoomPlayerId: 0
+    });
+
+    assertTrue(html.includes("discard-zoom-modal"), "Discard zoom should render");
+    assertTrue(!html.includes("discard-advice-modal"), "Advice modal should be suppressed while discard zoom is open");
+  });
+
+  test("MVP-1.2 UI: discard zoom controls dispatch open and close handlers", async () => {
+    const { bindControls } = await loadModule("../src/ui/input.js", ["bindControls"]);
+    let openedPlayerId = null;
+    let closed = 0;
+    const openTrigger = createFakeButton({ playerId: "2" });
+    const closeTrigger = createFakeButton();
+    const root = {
+      querySelector() {
+        return null;
+      },
+      querySelectorAll(selector) {
+        if (selector === "[data-action='open-discard-zoom']") {
+          return [openTrigger];
+        }
+
+        if (selector === "[data-action='close-discard-zoom']") {
+          return [closeTrigger];
+        }
+
+        return [];
+      }
+    };
+
+    bindControls(root, {
+      onStartMatch() {},
+      onStartRound() {},
+      onStartNextRound() {},
+      onToggleLargeTileMode() {},
+      onToggleDiscardAdvice() {},
+      onOpenDiscardZoom(playerId) {
+        openedPlayerId = playerId;
+      },
+      onCloseDiscardZoom() {
+        closed += 1;
+      },
+      onDiscardTile() {},
+      onDeclareTsumo() {},
+      onDeclareRon() {},
+      onSkipRon() {}
+    });
+    openTrigger.listeners.click();
+    closeTrigger.listeners.click();
+
+    assertEqual(openedPlayerId, "2", "Open zoom should pass the selected player id");
+    assertEqual(closed, 1, "Close zoom should call its handler");
+  });
 }
 
 function extractSectionHtml(html, className) {
@@ -336,6 +437,10 @@ function extractBetween(html, startNeedle, endNeedle) {
 
 function countDiscardTiles(html) {
   return (html.match(/class="tile[^"]*discard-tile/g) || []).length;
+}
+
+function countZoomDiscardTiles(html) {
+  return (html.match(/class="tile[^"]*discard-zoom-tile/g) || []).length;
 }
 
 async function initialState() {
@@ -429,9 +534,15 @@ function addDiscards(state, count) {
   };
 }
 
-function createFakeButton() {
+function createFakeButton(dataset = {}) {
   return {
+    dataset,
     listeners: {},
+    classList: {
+      contains() {
+        return false;
+      }
+    },
     addEventListener(type, listener) {
       this.listeners[type] = listener;
     }
