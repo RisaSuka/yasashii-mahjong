@@ -3,6 +3,8 @@ import { createTiles } from "./tiles.js";
 import { buildWall, drawFromWall } from "./wall.js";
 import { createDefaultStats, saveStats } from "./storage.js";
 
+let roundSequence = 0;
+
 export function createInitialGameState() {
   return {
     version: 1,
@@ -35,7 +37,7 @@ export function startRound(state, options = {}) {
   const handNumber = options.handNumber || 1;
 
   let round = {
-    id: `round-${Date.now()}`,
+    id: `round-${Date.now()}-${++roundSequence}`,
     phase: "setup",
     roundWind,
     handNumber,
