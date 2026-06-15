@@ -36,7 +36,7 @@ export async function loadModule(path, expectedExports = []) {
   let module;
 
   try {
-    module = await import(path);
+    module = await import(withCacheBust(path));
   } catch (error) {
     throw new NotImplementedError(`未実装: ${path} を読み込めません。${error.message}`);
   }
@@ -48,6 +48,16 @@ export async function loadModule(path, expectedExports = []) {
   }
 
   return module;
+}
+
+function withCacheBust(path) {
+  const cacheBust = globalThis.__TEST_CACHE_BUST__;
+
+  if (!cacheBust || path.includes("?")) {
+    return path;
+  }
+
+  return `${path}?v=${encodeURIComponent(cacheBust)}`;
 }
 
 export async function runTests() {

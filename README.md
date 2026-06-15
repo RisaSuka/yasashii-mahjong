@@ -1,10 +1,20 @@
+# MVP-1.1.6 layout-test note
+
+MVP-1.1.4 adds a Chrome-based smartphone landscape layout guard at `tests/layout-check.mjs`. It checks common landscape viewports, early/mid/late discard counts, page overflow, clipped discard zones, clipped hand tiles, clipped advice badges, action/advice button clickability, popup bounds, and major overlaps.
+
+MVP-1.1.6 fixes the known late-hand discard clipping detected by that guard. Screenshots are written to `test-artifacts/layout/`, which is ignored by git. Current normal tests target `199 pass / 0 pending / 0 fail`, and `tests/layout-check.mjs` should pass across all target smartphone landscape viewports and scenarios.
+
+# MVP-1.1.1 working branch note
+
+MVP-1.1.1 moves discards toward a table-center ring in smartphone landscape: north, west, south, and human discards surround the center information. The human hand keeps the bottom tap area, advice highlights remain on the hand, and detailed discard advice opens from a small `助言を見る` popup instead of taking permanent center space. The app module URLs use `mvp111-discard-center-1` for real-device cache busting.
+
 # MVP-1.0 working branch note
 
 MVP-1.0 adds the first east-only match skeleton: `START_MATCH`, East 1 through East 4 progression, fixed scores, no dealer repeat, compact `roundHistory`, current-hand display, and a minimal `東風戦終了` display. Human hands are automatically sorted into an easy-to-read tile order. The app module URLs are versioned for the MVP-1.0 real-device check so smartphone browsers do not keep stale JavaScript. Point-based final results are still for a later step.
 
-This MVP-1.0 work is not published yet. Do not merge to `main` or push without explicit approval.
+This MVP-1.1.1 work is not published yet. Do not merge to `main` or push without explicit approval.
 
-Current MVP-1.0 local checks target `188 pass / 0 pending / 0 fail`.
+Current MVP-1.1.1 local checks target `194 pass / 0 pending / 0 fail`.
 
 # MVP-0.9 working branch note
 

@@ -1,14 +1,15 @@
 # Current Status
 
-Last updated for MVP-1.0 restart-match UI fix.
+Last updated for MVP-1.1.6 smartphone landscape discard-fit fix.
 
 ## Repository State
 
-- Working branch: `codex/mvp-09-next-round`
-- Automated tests: `188 pass / 0 pending / 0 fail`
-- Working tree: clean at the time of the latest MVP-1.0 UI confirmation
+- Working branch: `codex/mvp-11-discard-layout`
+- Automated tests: `199 pass / 0 pending / 0 fail`
+- Layout check: Chrome-based smartphone landscape guard passes all target viewports/scenarios
+- Working tree: clean at the time of the latest MVP-1.1.6 discard-fit fix
 - Push: not yet
-- `main` merge: not yet for MVP-1.0
+- `main` merge: not yet for MVP-1.1.x
 
 ## Implemented MVPs
 
@@ -30,6 +31,10 @@ Last updated for MVP-1.0 restart-match UI fix.
 | MVP-0.9 | Done on working branch | Next-round continuation after exhaustive draw, tsumo, or ron. |
 | MVP-0.9.5 | Working branch | Smartphone landscape review and small next-round UI refinements. |
 | MVP-1.0 | Working branch | Minimal east-only match state and UI: East 1 through East 4, fixed scores, compact round history, current-hand display, and East-only end display. |
+| MVP-1.1 | Working branch | Smartphone landscape discard layout: human discards above the hand, compact CPU discards, and reduced page-level scrolling. |
+| MVP-1.1.1 | Working branch | Table-center discard ring and popup discard-advice reasons for smartphone landscape. |
+| MVP-1.1.4 | Working branch | Chrome-based smartphone landscape layout guard for detecting clipping, overflow, overlap, and unclickable controls. |
+| MVP-1.1.6 | Working branch | Late-hand landscape discard grids fit 18 discards in all four discard zones and pass the layout guard. |
 
 ## Current Capabilities
 
@@ -109,6 +114,39 @@ Last updated for MVP-1.0 restart-match UI fix.
   - App CSS and module URLs include `v=mvp10-sort-debug-3`.
   - `main.js` also imports changed game/UI modules with the same version.
   - The rendered start button is covered by a UI event test that reaches the `START_MATCH` handler.
+- MVP-1.1 landscape discard layout:
+  - Human discards are displayed in a separate area above the human hand in landscape.
+  - The human discard area shows the latest 12 discarded tiles.
+  - CPU discard areas show the latest 6 discarded tiles in compact seats.
+  - The human hand remains the bottom-priority tap area and may scroll horizontally inside its own strip.
+  - Landscape CSS reduces page-level horizontal and vertical scrolling with `100dvh`/`100svh` sizing.
+  - App CSS and module URLs include `v=mvp11-discard-layout-1`.
+- MVP-1.1.1 center discard layout:
+  - Landscape shows a center discard ring for north, west, south, and east discards.
+  - CPU discard zones prioritize recent discards over CPU hand-back display in landscape.
+  - Human discards sit above the hand as a center-bottom discard zone instead of overlapping the hand.
+  - Detailed discard-advice reasons are opened with `助言を見る`.
+  - Advice details appear in a compact popup and can be closed without adding page scroll.
+  - App CSS and module URLs include `v=mvp111-discard-center-1`.
+
+## MVP-1.1.4 Layout-Test Setup
+
+- `tests/layout-check.mjs` launches local Chrome through Chrome DevTools Protocol.
+- The check starts a temporary static server and does not require Playwright or Puppeteer packages.
+- Covered viewports: 844x390, 896x414, 932x430, 812x375, and 780x360.
+- Covered scenarios: early, mid, late, draw-ended, and actions.
+- It checks page overflow, important element visibility, discard clipping, hand clipping, recommended badge clipping, action/advice button clickability, popup bounds, and major overlaps.
+- Screenshots are saved under `test-artifacts/layout/`.
+- `test-artifacts/` is ignored by git.
+- Current layout-check result: all viewports and scenarios pass as of MVP-1.1.6.
+- The previous known failure, late-hand and draw-ended discard clipping at tile 13+ in all four discard zones, is fixed by the MVP-1.1.6 discard grid update.
+
+## MVP-1.1 Remaining Visual Polish Candidates
+
+- West CPU 2 and South CPU 1 seat labels can still feel slightly clipped in smartphone landscape.
+- The previous-round summary, such as `前の局: 流局`, can feel cramped in the compact landscape table.
+- Smartphone landscape is playable, but fine UI polish is still needed around spacing, labels, and table balance.
+- A discard-enlargement popup remains a candidate for MVP-1.2 or later, especially for older users when discard tiles must stay small.
 
 ## Not Implemented Yet
 
@@ -135,11 +173,14 @@ Last updated for MVP-1.0 restart-match UI fix.
 Before merging into `main`, confirm:
 
 - `git status --short --branch` is clean.
-- Latest test runner result is `188 pass / 0 pending / 0 fail`.
+- Latest test runner result is `199 pass / 0 pending / 0 fail`.
+- `tests/layout-check.mjs` has been run and its result is reviewed.
+- `tests/layout-check.mjs` passes, including late-hand and draw-ended discard scenarios.
 - `/` returns HTTP 200 from a local static server.
 - `/tests/test-runner.html` returns HTTP 200 from a local static server.
-- README reflects MVP-1.0 UI status.
+- README reflects MVP-1.1.x layout status.
 - Smartphone landscape layout has been checked or queued for final real-device check.
+- `docs/layout-test.md` is reviewed.
 - `docs/release-checklist.md` is reviewed.
 - `docs/manual-test-checklist.md` is reviewed.
 - `docs/landscape-ui-plan.md` is reviewed.

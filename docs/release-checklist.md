@@ -4,16 +4,16 @@ Use this before merging to `main` or publishing with GitHub Pages.
 
 ## Current Release Candidate
 
-- Branch: `codex/mvp-09-next-round`
-- Scope: MVP-0.1 through MVP-1.0
-- Expected automated result: `188 pass / 0 pending / 0 fail`
+- Branch: `codex/mvp-11-discard-layout`
+- Scope: MVP-0.1 through MVP-1.1.6 discard-fit fix
+- Expected automated result: `199 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-1.0 is not published yet.
+- Publish status: MVP-1.1.x is not published yet.
 
 ## Git Safety
 
-- Confirm the current branch is `codex/mvp-09-next-round`.
+- Confirm the current branch is `codex/mvp-11-discard-layout`.
 - Confirm the working tree is clean.
 - Confirm the latest commit is the intended release candidate.
 - Confirm no unreviewed local commits are being skipped.
@@ -31,11 +31,20 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 188.
-- Confirm pass count is 188.
+- Confirm total count is 199.
+- Confirm pass count is 199.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
+- Run the smartphone landscape layout guard:
+
+```powershell
+node tests/layout-check.mjs
+```
+
+- If Node is not on PATH in the Codex desktop environment, use the bundled Node command documented in `docs/layout-test.md`.
+- Confirm layout-check screenshots are written under `test-artifacts/layout/`.
+- Current layout-check result: all target viewports and scenarios pass, including `late` and `draw-ended` with 18 discards per player.
 
 ## Core Functional Checks
 
@@ -80,8 +89,22 @@ git branch --list
 - Human hand tiles are automatically sorted in manzu, pinzu, souzu, honor order.
 - The sorted human hand still supports tile-id based discard.
 - Beginner discard advice still highlights the intended sorted tile.
-- App module URLs include the current MVP-1.0 cache-busting version.
+- App module URLs include the current MVP-1.1.x cache-busting version.
 - All visible start-match buttons dispatch through the `START_MATCH` UI handler.
+- Table-center discard ring appears in smartphone landscape.
+- North, west, south, and human discard zones surround the center information.
+- Human discard zone appears above the human hand and does not overlap it.
+- CPU discard zones show recent discard tiles instead of disappearing into CPU seats.
+- Page-level horizontal scroll is absent in smartphone landscape.
+- Page-level vertical scroll is absent or minimal in smartphone landscape.
+- Hand overflow stays inside the hand strip.
+- `助言を見る` opens a compact discard-advice reason popup.
+- The discard-advice reason popup closes without adding page scroll.
+- Advice OFF hides the advice reason button.
+- App module URLs include the current MVP-1.1.x cache-busting version.
+- Smartphone landscape layout guard exists and is documented in `docs/layout-test.md`.
+- Layout screenshots are ignored by git via `test-artifacts/`.
+- Late-hand and draw-ended discard zones fit 18 discards without clipping in the layout guard.
 
 ## Manual Browser Checks
 
@@ -115,6 +138,9 @@ Check:
 - Next-round button is readable and tappable after a round ends.
 - Next-round button remains easy to tap in smartphone landscape.
 - Previous-round result text is readable after the next round starts.
+- Human discards are visible above the human hand in the center discard ring.
+- CPU discards remain visible in the center discard ring without making CPU seats dominate the table.
+- The discard-advice reason popup opens and closes in landscape.
 
 ## GitHub Pages Checks
 
@@ -124,9 +150,10 @@ Check:
 - Confirm `tests/test-runner.html` works from a static server.
 - Confirm there are no external dependencies that GitHub Pages must install.
 - Confirm README describes the current MVP scope and known missing features.
-- Confirm `docs/current-status.md` reflects MVP-1.0 and 188 pass.
+- Confirm `docs/current-status.md` reflects MVP-1.1.x and 199 pass.
 - Confirm `docs/manual-test-checklist.md` includes smartphone landscape checks.
 - Confirm `docs/manual-test-checklist.md` includes next-round checks.
+- Confirm `docs/layout-test.md` reflects the current layout guard result.
 
 ## Do Not Release If
 

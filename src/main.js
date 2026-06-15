@@ -1,13 +1,14 @@
-import { bindControls } from "./ui/input.js?v=mvp10-sort-debug-3";
-import { renderGame } from "./ui/render.js?v=mvp10-sort-debug-3";
+import { bindControls } from "./ui/input.js?v=mvp116-discard-fit-1";
+import { renderGame } from "./ui/render.js?v=mvp116-discard-fit-1";
 
-const APP_ASSET_VERSION = "mvp10-sort-debug-3";
+const APP_ASSET_VERSION = "mvp116-discard-fit-1";
 
 const appRoot = document.querySelector("#app");
 
 let state = null;
 let gameApi = null;
 let cpuTimer = null;
+let discardAdviceDialogOpen = false;
 
 init();
 
@@ -48,7 +49,8 @@ function render() {
   renderGame(state, appRoot, {
     canDeclareTsumo: gameApi.canDeclareTsumo,
     canDeclareRon: gameApi.canDeclareRon,
-    suggestDiscards: gameApi.suggestDiscards
+    suggestDiscards: gameApi.suggestDiscards,
+    discardAdviceDialogOpen
   });
   bindControls(appRoot, {
     onStartMatch: startMatch,
@@ -56,6 +58,8 @@ function render() {
     onStartNextRound: startNextRound,
     onToggleLargeTileMode: toggleLargeTileMode,
     onToggleDiscardAdvice: toggleDiscardAdvice,
+    onOpenDiscardAdvice: openDiscardAdvice,
+    onCloseDiscardAdvice: closeDiscardAdvice,
     onDiscardTile: discardHumanTile,
     onDeclareTsumo: declareHumanTsumo,
     onDeclareRon: declareHumanRon,
@@ -65,6 +69,7 @@ function render() {
 
 function startMatch() {
   window.clearTimeout(cpuTimer);
+  discardAdviceDialogOpen = false;
   state = gameApi.dispatchAction(state, { type: "START_MATCH" });
   render();
   scheduleCpuIfNeeded();
@@ -72,6 +77,7 @@ function startMatch() {
 
 function startNextRound() {
   window.clearTimeout(cpuTimer);
+  discardAdviceDialogOpen = false;
   state = gameApi.dispatchAction(state, { type: "START_NEXT_ROUND" });
   render();
   scheduleCpuIfNeeded();
@@ -91,6 +97,17 @@ function toggleDiscardAdvice() {
 
   gameApi.saveDiscardAdviceSettings(nextSettings);
   applyDiscardAdviceSettings(nextSettings);
+  discardAdviceDialogOpen = false;
+  render();
+}
+
+function openDiscardAdvice() {
+  discardAdviceDialogOpen = true;
+  render();
+}
+
+function closeDiscardAdvice() {
+  discardAdviceDialogOpen = false;
   render();
 }
 
@@ -106,6 +123,7 @@ function discardHumanTile(tileId) {
     playerId: currentPlayer.id,
     tileId
   });
+  discardAdviceDialogOpen = false;
   handleAfterDiscard();
 }
 

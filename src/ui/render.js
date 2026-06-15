@@ -62,6 +62,49 @@ function renderEmptyState() {
   `;
 }
 
+function renderTableLegacy(state, options) {
+  const { round } = state;
+  const seats = [
+    round.players[2],
+    round.players[3],
+    round.players[1],
+    round.players[0]
+  ];
+  const discardAdvice = getDiscardAdvice(state, options);
+
+  return `
+    <main class="table" aria-label="4人麻雀卓">
+      ${seats.map((player) => renderSeat(player, round, discardAdvice)).join("")}
+      <section class="center-panel">
+        <div class="table-discard-ring">
+          ${renderTableDiscardZone(round.players[3], "north", round)}
+          ${renderTableDiscardZone(round.players[2], "west", round)}
+          <div class="center-info">
+            <div class="center-info-main">
+              <div class="center-primary">
+                ${renderMatchSummary(state)}
+                <strong class="center-status">${renderCompactStatus(round)}</strong>
+              </div>
+              <div class="center-secondary">
+            ${renderPreviousRoundResult(state.lastRoundResult, round)}
+            ${renderLastActionResult(round)}
+            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen)}
+            ${renderYakuSummary(round)}
+            <div class="table-meta-row">
+              <span class="table-meta">山 ${round.wall.length}</span>
+              <span class="table-meta">王牌 ${round.deadWall.length}</span>
+              <span class="table-meta">ドラ ${renderDoraIndicators(round)}</span>
+            </div>
+            ${renderTableActionBar(state, options)}
+          </div>
+          ${renderTableDiscardZone(round.players[1], "south", round)}
+          ${renderTableDiscardZone(round.players[0], "east", round)}
+        </div>
+      </section>
+    </main>
+  `;
+}
+
 function renderTable(state, options) {
   const { round } = state;
   const seats = [
@@ -76,24 +119,50 @@ function renderTable(state, options) {
     <main class="table" aria-label="4人麻雀卓">
       ${seats.map((player) => renderSeat(player, round, discardAdvice)).join("")}
       <section class="center-panel">
-        ${renderMatchSummary(state)}
-        <strong>${renderStatus(round)}</strong>
-        ${renderPreviousRoundResult(state.lastRoundResult, round)}
-        ${renderLastActionResult(round)}
-        ${renderDiscardAdvice(discardAdvice)}
-        ${renderYakuSummary(round)}
-        ${renderMatchEndAction(state)}
-        ${renderNextRoundAction(state)}
-        ${renderRonAction(state, options)}
-        ${renderTsumoAction(state, options)}
-        <div class="table-meta-row">
-          <span class="table-meta">山 ${round.wall.length}</span>
-          <span class="table-meta">王牌 ${round.deadWall.length}</span>
-          <span class="table-meta">ドラ ${renderDoraIndicators(round)}</span>
+        <div class="table-discard-ring">
+          ${renderTableDiscardZone(round.players[3], "north", round)}
+          ${renderTableDiscardZone(round.players[2], "west", round)}
+          <div class="center-info">
+            <div class="center-info-main">
+              <div class="center-primary">
+                ${renderMatchSummary(state)}
+                <strong class="center-status">${renderCompactStatus(round)}</strong>
+              </div>
+              <div class="center-secondary">
+                <div class="table-meta-row">
+                  <span class="table-meta">山 ${round.wall.length}</span>
+                  <span class="table-meta">王牌 ${round.deadWall.length}</span>
+                  <span class="table-meta">ドラ ${renderDoraIndicators(round)}</span>
+                </div>
+                ${renderTableActionBar(state, options)}
+              </div>
+            </div>
+            ${renderPreviousRoundResult(state.lastRoundResult, round)}
+            ${renderLastActionResult(round)}
+            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen)}
+            ${renderYakuSummary(round)}
+          </div>
+          ${renderTableDiscardZone(round.players[1], "south", round)}
+          ${renderTableDiscardZone(round.players[0], "east", round)}
         </div>
       </section>
     </main>
   `;
+}
+
+function renderTableActionBar(state, options) {
+  const actions = [
+    renderMatchEndAction(state),
+    renderNextRoundAction(state),
+    renderRonAction(state, options),
+    renderTsumoAction(state, options)
+  ].filter(Boolean).join("");
+
+  if (!actions) {
+    return "";
+  }
+
+  return `<div class="table-action-bar">${actions}</div>`;
 }
 
 function renderMatchSummary(state) {
@@ -195,22 +264,43 @@ function getDiscardAdvice(state, options) {
   });
 }
 
-function renderDiscardAdvice(advice) {
+function renderDiscardAdviceButton(advice) {
   if (!Array.isArray(advice) || advice.length === 0) {
     return "";
   }
 
   return `
-    <section class="discard-advice" aria-label="おすすめ捨て牌">
-      <strong class="discard-advice-title">おすすめ捨て牌</strong>
+    <button type="button" class="discard-advice-trigger" data-action="open-discard-advice">
+      助言を見る
+    </button>
+  `;
+}
+
+function renderDiscardAdviceDialog(advice, isOpen) {
+  if (!Array.isArray(advice) || advice.length === 0) {
+    return "";
+  }
+
+  if (!isOpen) {
+    return "";
+  }
+
+  return `
+    <section class="discard-advice-modal" role="dialog" aria-modal="false" aria-label="おすすめ理由">
+      <div class="discard-advice">
+        <div class="discard-advice-header">
+          <strong class="discard-advice-title">おすすめ理由</strong>
+          <button type="button" class="discard-advice-close" data-action="close-discard-advice">閉じる</button>
+        </div>
       <ol class="discard-advice-list">
         ${advice.map((entry, index) => `
           <li class="discard-advice-item${index === 0 ? " is-primary" : " is-secondary"}">
             <span class="discard-advice-label">${index === 0 ? escapeHtml(entry.label || "おすすめ") : "候補"}: ${escapeHtml(formatAdviceTileId(entry.tileId))}</span>
-            ${index === 0 ? `<span class="discard-advice-reason">理由: ${escapeHtml(entry.reason || "")}</span>` : ""}
+            <span class="discard-advice-reason">理由: ${escapeHtml(entry.reason || "")}</span>
           </li>
         `).join("")}
       </ol>
+      </div>
     </section>
   `;
 }
@@ -295,20 +385,64 @@ function renderSeat(player, round, discardAdvice) {
   const isCurrent = round.currentPlayerIndex === player.id;
   const positionClass = `seat-${player.wind}`;
   const currentClass = isCurrent ? " current" : "";
+  const currentIndicator = isCurrent ? `<span class="seat-turn-indicator" aria-label="現在の手番">▶ 手番</span>` : "";
 
   return `
     <section class="seat ${positionClass}${currentClass}">
       <div class="seat-header">
         <span class="seat-name">${WIND_LABELS[player.wind]} ${player.name}</span>
-        <span class="seat-meta">${isCurrent ? "手番" : ""}</span>
+        <span class="seat-meta seat-header-actions">
+          ${player.type === "human" ? renderSeatAdviceButton(discardAdvice) : ""}
+          ${currentIndicator}
+        </span>
       </div>
       ${player.type === "human" ? renderHumanHand(player, round, discardAdvice) : renderCpuHand(player)}
-      <div>
+      <div class="discard-area ${player.type === "human" ? "discard-area-human" : "discard-area-cpu"}">
         <div class="seat-meta">捨て牌 ${player.discards.length}枚</div>
-        <div class="discards">${player.discards.map((tile) => renderTile(tile, "discard-tile")).join("")}</div>
+        <div class="discards">${getVisibleDiscards(player).map((tile) => renderTile(tile, "discard-tile")).join("")}</div>
       </div>
     </section>
   `;
+}
+
+function renderSeatAdviceButton(advice) {
+  if (!Array.isArray(advice) || advice.length === 0) {
+    return `<span class="seat-advice-placeholder" aria-hidden="true">助言を見る</span>`;
+  }
+
+  return `
+    <button type="button" class="discard-advice-trigger seat-advice-trigger" data-action="open-discard-advice">
+      助言を見る
+    </button>
+  `;
+}
+
+function renderTableDiscardZone(player, position, round) {
+  if (!player) {
+    return "";
+  }
+
+  const visibleDiscards = getVisibleDiscards(player);
+  const label = `${WIND_LABELS[player.wind]} ${player.name}`;
+  const currentClass = round?.currentPlayerIndex === player.id ? " is-current-turn" : "";
+
+  return `
+    <section class="table-discard-zone table-discard-${position}${currentClass}" aria-label="${escapeHtml(label)}の捨て牌">
+      <div class="table-discard-label">
+        <span>${escapeHtml(label)}</span>
+        <span>捨て牌 ${player.discards.length}枚</span>
+      </div>
+      <div class="discards table-center-discards">
+        ${visibleDiscards.map((tile) => renderTile(tile, "discard-tile")).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function getVisibleDiscards(player) {
+  const limit = 18;
+
+  return player.discards.slice(-limit);
 }
 
 function renderHumanHand(player, round, discardAdvice) {
@@ -333,6 +467,29 @@ function renderCpuHand(player) {
       <span class="tile tile-back">${player.hand.length}</span>
     </div>
   `;
+}
+
+function renderCompactStatus(round) {
+  if (round.phase === "ended") {
+    if (round.endReason === "win" && round.winningResult?.winType === "tsumo") {
+      const winner = round.players.find((player) => player.id === round.winningResult.winnerId);
+      return winner?.type === "human" ? "あなたのツモ" : `${winner?.name || "CPU"}のツモ`;
+    }
+
+    if (round.endReason === "win" && round.winningResult?.winType === "ron") {
+      const winner = round.players.find((player) => player.id === round.winningResult.winnerId);
+      return winner?.type === "human" ? "あなたのロン" : `${winner?.name || "CPU"}のロン`;
+    }
+
+    return round.endReason === "exhaustive-draw" ? "流局" : "局終了";
+  }
+
+  if (round.phase === "reaction") {
+    return "ロン確認";
+  }
+
+  const currentPlayer = round.players[round.currentPlayerIndex];
+  return currentPlayer.type === "human" ? "あなたの番" : `${currentPlayer.name}の番`;
 }
 
 function renderStatus(round) {
