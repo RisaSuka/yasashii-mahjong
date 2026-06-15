@@ -11,6 +11,8 @@ export function dispatchAction(state, action) {
   switch (action.type) {
     case "START_ROUND":
       return startRound(state, { storage: action.storage, random: action.random });
+    case "START_MATCH":
+      return startMatch(state, { storage: action.storage, random: action.random });
     case "START_NEXT_ROUND":
       return startNextRound(state, { storage: action.storage, random: action.random });
     case "DISCARD_TILE":
@@ -77,6 +79,28 @@ export function canDeclareTsumo(state, playerId) {
   return detectYaku(player.hand, createTsumoYakuContext(state, player, result)).length > 0;
 }
 
+export function startMatch(state, options = {}) {
+  const match = createInitialMatch();
+  const nextState = startRound(
+    {
+      ...state,
+      match,
+      lastRoundResult: null
+    },
+    {
+      ...options,
+      roundWind: match.roundWind,
+      handNumber: match.handNumber,
+      dealerIndex: match.dealerIndex
+    }
+  );
+
+  return {
+    ...nextState,
+    match
+  };
+}
+
 export function startNextRound(state, options = {}) {
   if (!state.round) {
     return startRound(state, options);
@@ -87,6 +111,11 @@ export function startNextRound(state, options = {}) {
   }
 
   const lastRoundResult = createLastRoundResult(state.round);
+
+  if (state.match?.type === "tonpuu") {
+    return startNextMatchRound(state, lastRoundResult, options);
+  }
+
   const nextState = startRound(
     {
       ...state,
@@ -108,10 +137,87 @@ export function startNextRound(state, options = {}) {
   return nextState;
 }
 
+function createInitialMatch() {
+  return {
+    type: "tonpuu",
+    phase: "playing",
+    status: "playing",
+    roundWind: "east",
+    handNumber: 1,
+    dealerIndex: 0,
+    maxHands: 4,
+    scores: [25000, 25000, 25000, 25000],
+    roundHistory: []
+  };
+}
+
+function startNextMatchRound(state, lastRoundResult, options = {}) {
+  const match = normalizeMatch(state.match);
+  const roundHistory = [...match.roundHistory, createRoundHistoryEntry(lastRoundResult)];
+
+  if (match.handNumber >= match.maxHands) {
+    return {
+      ...state,
+      lastRoundResult,
+      match: {
+        ...match,
+        phase: "ended",
+        status: "ended",
+        roundHistory
+      }
+    };
+  }
+
+  const nextMatch = {
+    ...match,
+    phase: "playing",
+    status: "playing",
+    handNumber: match.handNumber + 1,
+    dealerIndex: (match.dealerIndex + 1) % 4,
+    roundHistory
+  };
+  const nextState = startRound(
+    {
+      ...state,
+      match: nextMatch,
+      lastRoundResult
+    },
+    {
+      ...options,
+      roundWind: nextMatch.roundWind,
+      handNumber: nextMatch.handNumber,
+      dealerIndex: nextMatch.dealerIndex
+    }
+  );
+
+  return {
+    ...nextState,
+    match: nextMatch
+  };
+}
+
+function normalizeMatch(match) {
+  return {
+    type: "tonpuu",
+    phase: match.phase || match.status || "playing",
+    status: match.status || match.phase || "playing",
+    roundWind: match.roundWind || "east",
+    handNumber: match.handNumber || 1,
+    dealerIndex: match.dealerIndex ?? 0,
+    maxHands: match.maxHands || 4,
+    scores: match.scores || [25000, 25000, 25000, 25000],
+    roundHistory: Array.isArray(match.roundHistory) ? match.roundHistory : []
+  };
+}
+
 function createLastRoundResult(round) {
   const result = {
     roundId: round.id,
+    roundWind: round.roundWind,
+    handNumber: round.handNumber,
+    handLabel: getHandLabel(round),
     endReason: round.endReason,
+    resultType: getResultType(round),
     endedAt: new Date().toISOString()
   };
 
@@ -128,6 +234,37 @@ function createLastRoundResult(round) {
     handType: round.winningResult.handType,
     yakuResult: round.winningResult.yakuResult
   };
+}
+
+function createRoundHistoryEntry(result) {
+  return {
+    handLabel: result.handLabel,
+    roundWind: result.roundWind,
+    handNumber: result.handNumber,
+    resultType: result.resultType,
+    winnerId: result.winnerId,
+    winType: result.winType
+  };
+}
+
+function getResultType(round) {
+  if (round.endReason === "win") {
+    return round.winningResult?.winType || "win";
+  }
+
+  if (round.endReason === "exhaustive-draw") {
+    return "draw";
+  }
+
+  return round.endReason || "ended";
+}
+
+function getHandLabel(round) {
+  const windLabels = {
+    east: "東"
+  };
+
+  return `${windLabels[round.roundWind] || round.roundWind}${round.handNumber}局`;
 }
 
 export function declareTsumo(state, playerId) {

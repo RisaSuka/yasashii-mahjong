@@ -30,15 +30,19 @@ export function startRound(state, options = {}) {
     }
   }
 
+  const dealerIndex = options.dealerIndex ?? 0;
+  const roundWind = options.roundWind || "east";
+  const handNumber = options.handNumber || 1;
+
   let round = {
     id: `round-${Date.now()}`,
     phase: "setup",
-    roundWind: "east",
-    handNumber: 1,
+    roundWind,
+    handNumber,
     honba: 0,
     riichiSticks: 0,
-    dealerIndex: 0,
-    currentPlayerIndex: 0,
+    dealerIndex,
+    currentPlayerIndex: dealerIndex,
     wall,
     deadWall: wallState.deadWall,
     doraIndicators: wallState.doraIndicators,
