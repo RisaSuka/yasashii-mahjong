@@ -5,11 +5,11 @@ Use this before merging to `main` or publishing with GitHub Pages.
 ## Current Release Candidate
 
 - Branch: `codex/mvp-11-discard-layout`
-- Scope: MVP-0.1 through MVP-1.1.1
-- Expected automated result: `194 pass / 0 pending / 0 fail`
+- Scope: MVP-0.1 through MVP-1.1.4 layout-test setup
+- Expected automated result: `199 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-1.1.1 is not published yet.
+- Publish status: MVP-1.1.x is not published yet.
 
 ## Git Safety
 
@@ -31,11 +31,20 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 194.
-- Confirm pass count is 194.
+- Confirm total count is 199.
+- Confirm pass count is 199.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
+- Run the smartphone landscape layout guard:
+
+```powershell
+node tests/layout-check.mjs
+```
+
+- If Node is not on PATH in the Codex desktop environment, use the bundled Node command documented in `docs/layout-test.md`.
+- Confirm layout-check screenshots are written under `test-artifacts/layout/`.
+- Known current layout-check result: late-hand discard clipping at 13+ discards is detected in `late` and `draw-ended` scenarios. Do not release until that failure is fixed or explicitly accepted.
 
 ## Core Functional Checks
 
@@ -80,7 +89,7 @@ git branch --list
 - Human hand tiles are automatically sorted in manzu, pinzu, souzu, honor order.
 - The sorted human hand still supports tile-id based discard.
 - Beginner discard advice still highlights the intended sorted tile.
-- App module URLs include the current MVP-1.1.1 cache-busting version.
+- App module URLs include the current MVP-1.1.x cache-busting version.
 - All visible start-match buttons dispatch through the `START_MATCH` UI handler.
 - Table-center discard ring appears in smartphone landscape.
 - North, west, south, and human discard zones surround the center information.
@@ -92,7 +101,9 @@ git branch --list
 - `助言を見る` opens a compact discard-advice reason popup.
 - The discard-advice reason popup closes without adding page scroll.
 - Advice OFF hides the advice reason button.
-- App module URLs include the current MVP-1.1.1 cache-busting version.
+- App module URLs include the current MVP-1.1.x cache-busting version.
+- Smartphone landscape layout guard exists and is documented in `docs/layout-test.md`.
+- Layout screenshots are ignored by git via `test-artifacts/`.
 
 ## Manual Browser Checks
 
@@ -138,9 +149,10 @@ Check:
 - Confirm `tests/test-runner.html` works from a static server.
 - Confirm there are no external dependencies that GitHub Pages must install.
 - Confirm README describes the current MVP scope and known missing features.
-- Confirm `docs/current-status.md` reflects MVP-1.1.1 and 194 pass.
+- Confirm `docs/current-status.md` reflects MVP-1.1.x and 199 pass.
 - Confirm `docs/manual-test-checklist.md` includes smartphone landscape checks.
 - Confirm `docs/manual-test-checklist.md` includes next-round checks.
+- Confirm `docs/layout-test.md` reflects the current layout guard and known failures.
 
 ## Do Not Release If
 

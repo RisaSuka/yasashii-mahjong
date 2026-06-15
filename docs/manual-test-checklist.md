@@ -21,10 +21,12 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 194.
-- Confirm pass count is 194.
+- Confirm total count is 199.
+- Confirm pass count is 199.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
+- For smartphone landscape layout work, also run the layout guard described in `docs/layout-test.md`.
+- If `tests/layout-check.mjs` fails, review the reported viewport/scenario and screenshots under `test-artifacts/layout/` before continuing UI fixes.
 
 ## 2. Normal Desktop Flow
 
@@ -356,6 +358,59 @@ Use a real phone in landscape orientation, or browser device toolbar viewports s
 - Confirm `谺｡縺ｮ螻縺ｸ`, `譚ｱ鬚ｨ謌ｦ邨ゆｺ・, and restart controls still appear in the correct states.
 - Confirm large tile mode does not hide the human discard area or clip the human hand.
 - Confirm portrait still shows the landscape recommendation and remains usable enough for emergency play.
+
+## 16. Automated Smartphone Landscape Layout Guard
+
+Run this before continuing MVP-1.1 layout fixes or asking for another real-device Safari check.
+
+```powershell
+node tests/layout-check.mjs
+```
+
+If Node is not on PATH in the Codex desktop environment, use:
+
+```powershell
+& "C:\Users\kurop\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe" tests\layout-check.mjs
+```
+
+Confirm the script checks these viewports:
+
+- 844x390
+- 896x414
+- 932x430
+- 812x375
+- 780x360
+
+Confirm it checks these scenarios:
+
+- Early hand with about 3 discards per player.
+- Middle hand with about 9 discards per player.
+- Late hand with about 18 discards per player.
+- Exhaustive-draw ended hand with late discards.
+- Action-button state with advice popup.
+
+Review failures for:
+
+- Page-level horizontal or vertical overflow.
+- North, west, south, or east discard clipping.
+- Human hand tile clipping.
+- Recommended badge clipping.
+- Hidden or unclickable action buttons.
+- Hidden or unclickable advice button.
+- Advice popup outside the viewport.
+- Overlap between the center information, discard zones, and hand area.
+
+Screenshots are saved under:
+
+```text
+test-artifacts/layout/
+```
+
+Known current result at layout-test setup:
+
+- Normal browser tests pass.
+- Layout check intentionally detects late-hand discard clipping at 13+ discards in the `late` and `draw-ended` scenarios.
+- Treat those failures as the next layout-fix target, not as something to hide.
 
 Portrait orientation check:
 

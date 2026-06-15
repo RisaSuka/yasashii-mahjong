@@ -1,14 +1,15 @@
 # Current Status
 
-Last updated for MVP-1.1.1 center discard layout and advice popup.
+Last updated for MVP-1.1.4 smartphone landscape layout-test setup.
 
 ## Repository State
 
 - Working branch: `codex/mvp-11-discard-layout`
-- Automated tests: `194 pass / 0 pending / 0 fail`
-- Working tree: clean at the time of the latest MVP-1.1.1 layout verification
+- Automated tests: `199 pass / 0 pending / 0 fail`
+- Layout check: Chrome-based smartphone landscape guard added; known late-hand discard clipping is detected
+- Working tree: clean at the time of the latest MVP-1.1.4 layout-test setup
 - Push: not yet
-- `main` merge: not yet for MVP-1.1.1
+- `main` merge: not yet for MVP-1.1.x
 
 ## Implemented MVPs
 
@@ -32,6 +33,7 @@ Last updated for MVP-1.1.1 center discard layout and advice popup.
 | MVP-1.0 | Working branch | Minimal east-only match state and UI: East 1 through East 4, fixed scores, compact round history, current-hand display, and East-only end display. |
 | MVP-1.1 | Working branch | Smartphone landscape discard layout: human discards above the hand, compact CPU discards, and reduced page-level scrolling. |
 | MVP-1.1.1 | Working branch | Table-center discard ring and popup discard-advice reasons for smartphone landscape. |
+| MVP-1.1.4 | Working branch | Chrome-based smartphone landscape layout guard for detecting clipping, overflow, overlap, and unclickable controls. |
 
 ## Current Capabilities
 
@@ -126,6 +128,17 @@ Last updated for MVP-1.1.1 center discard layout and advice popup.
   - Advice details appear in a compact popup and can be closed without adding page scroll.
   - App CSS and module URLs include `v=mvp111-discard-center-1`.
 
+## MVP-1.1.4 Layout-Test Setup
+
+- `tests/layout-check.mjs` launches local Chrome through Chrome DevTools Protocol.
+- The check starts a temporary static server and does not require Playwright or Puppeteer packages.
+- Covered viewports: 844x390, 896x414, 932x430, 812x375, and 780x360.
+- Covered scenarios: early, mid, late, draw-ended, and actions.
+- It checks page overflow, important element visibility, discard clipping, hand clipping, recommended badge clipping, action/advice button clickability, popup bounds, and major overlaps.
+- Screenshots are saved under `test-artifacts/layout/`.
+- `test-artifacts/` is ignored by git.
+- Current known layout-check failures: late-hand and draw-ended scenarios detect discard clipping at discard tile 13+ in all four discard zones.
+
 ## Not Implemented Yet
 
 - Point calculation.
@@ -151,11 +164,14 @@ Last updated for MVP-1.1.1 center discard layout and advice popup.
 Before merging into `main`, confirm:
 
 - `git status --short --branch` is clean.
-- Latest test runner result is `194 pass / 0 pending / 0 fail`.
+- Latest test runner result is `199 pass / 0 pending / 0 fail`.
+- `tests/layout-check.mjs` has been run and its result is reviewed.
+- Known late-hand discard clipping is fixed or explicitly accepted before release.
 - `/` returns HTTP 200 from a local static server.
 - `/tests/test-runner.html` returns HTTP 200 from a local static server.
-- README reflects MVP-1.1.1 layout status.
+- README reflects MVP-1.1.x layout status.
 - Smartphone landscape layout has been checked or queued for final real-device check.
+- `docs/layout-test.md` is reviewed.
 - `docs/release-checklist.md` is reviewed.
 - `docs/manual-test-checklist.md` is reviewed.
 - `docs/landscape-ui-plan.md` is reviewed.

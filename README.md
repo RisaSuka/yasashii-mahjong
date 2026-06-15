@@ -1,3 +1,9 @@
+# MVP-1.1.4 layout-test note
+
+MVP-1.1.4 adds a Chrome-based smartphone landscape layout guard at `tests/layout-check.mjs`. It checks common landscape viewports, early/mid/late discard counts, page overflow, clipped discard zones, clipped hand tiles, clipped advice badges, action/advice button clickability, popup bounds, and major overlaps.
+
+Screenshots are written to `test-artifacts/layout/`, which is ignored by git. Current normal tests target `199 pass / 0 pending / 0 fail`. The layout guard currently detects the known late-hand discard clipping issue, which should be fixed before treating MVP-1.1 as release-ready.
+
 # MVP-1.1.1 working branch note
 
 MVP-1.1.1 moves discards toward a table-center ring in smartphone landscape: north, west, south, and human discards surround the center information. The human hand keeps the bottom tap area, advice highlights remain on the hand, and detailed discard advice opens from a small `助言を見る` popup instead of taking permanent center space. The app module URLs use `mvp111-discard-center-1` for real-device cache busting.
