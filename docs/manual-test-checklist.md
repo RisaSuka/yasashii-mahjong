@@ -21,8 +21,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 188.
-- Confirm pass count is 188.
+- Confirm total count is 190.
+- Confirm pass count is 190.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 
@@ -281,7 +281,7 @@ Security notes:
 
 Real-device checks:
 
-- Open the app in a new tab with `?v=mvp10-sort-debug-3` if the phone might have cached an older module.
+- Open the app in a new tab with `?v=mvp11-discard-layout-1` if the phone might have cached an older module.
 - Confirm the first start button begins an east-only match, not a single standalone round.
 - Confirm `東1局` appears immediately after pressing the start button.
 - Confirm tiles are readable on the phone screen.
@@ -326,6 +326,26 @@ Use a real phone or browser device toolbar in landscape orientation.
 - Confirm large tile mode does not break the bottom hand.
 - Confirm discard rows do not become cramped enough to block understanding.
 - Confirm the human hand is not clipped vertically.
+
+## 15. MVP-1.1 Landscape Discard Layout Check
+
+Use a real phone in landscape orientation, or browser device toolbar viewports such as 844x390, 896x414, and 932x430.
+
+- Open the app with `?v=mvp11-discard-layout-1`.
+- Confirm page-level horizontal scrolling does not appear.
+- Confirm page-level vertical scrolling is absent or nearly absent.
+- Confirm the human discard area is above the human hand, not below it near the home bar.
+- Confirm the human discard label and latest discarded tiles are readable.
+- Confirm the human discard area can show recent discards without pushing the hand out of view.
+- Confirm CPU discard areas are visible for the top, left, and right players.
+- Confirm CPU seats stay compact and do not dominate the table.
+- Confirm the human hand stays at the bottom and remains easy to tap.
+- Confirm any hand overflow scrolls inside the hand strip only.
+- Confirm suggested discard highlights still appear on the sorted human hand.
+- Confirm East 1 through East 4 labels are still visible.
+- Confirm `谺｡縺ｮ螻縺ｸ`, `譚ｱ鬚ｨ謌ｦ邨ゆｺ・, and restart controls still appear in the correct states.
+- Confirm large tile mode does not hide the human discard area or clip the human hand.
+- Confirm portrait still shows the landscape recommendation and remains usable enough for emergency play.
 
 Portrait orientation check:
 

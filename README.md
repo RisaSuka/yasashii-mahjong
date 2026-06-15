@@ -1,10 +1,14 @@
+# MVP-1.1 working branch note
+
+MVP-1.1 improves the smartphone landscape table layout. Human discards are shown in a clearer area above the human hand, CPU discards show recent tiles in compact seats, and landscape CSS reduces page-level scrolling while keeping the human hand tappable. The app module URLs use `mvp11-discard-layout-1` for real-device cache busting.
+
 # MVP-1.0 working branch note
 
 MVP-1.0 adds the first east-only match skeleton: `START_MATCH`, East 1 through East 4 progression, fixed scores, no dealer repeat, compact `roundHistory`, current-hand display, and a minimal `東風戦終了` display. Human hands are automatically sorted into an easy-to-read tile order. The app module URLs are versioned for the MVP-1.0 real-device check so smartphone browsers do not keep stale JavaScript. Point-based final results are still for a later step.
 
-This MVP-1.0 work is not published yet. Do not merge to `main` or push without explicit approval.
+This MVP-1.1 work is not published yet. Do not merge to `main` or push without explicit approval.
 
-Current MVP-1.0 local checks target `188 pass / 0 pending / 0 fail`.
+Current MVP-1.1 local checks target `190 pass / 0 pending / 0 fail`.
 
 # MVP-0.9 working branch note
 

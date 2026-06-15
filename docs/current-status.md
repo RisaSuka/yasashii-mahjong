@@ -1,14 +1,14 @@
 # Current Status
 
-Last updated for MVP-1.0 restart-match UI fix.
+Last updated for MVP-1.1 landscape discard layout.
 
 ## Repository State
 
-- Working branch: `codex/mvp-09-next-round`
-- Automated tests: `188 pass / 0 pending / 0 fail`
-- Working tree: clean at the time of the latest MVP-1.0 UI confirmation
+- Working branch: `codex/mvp-11-discard-layout`
+- Automated tests: `190 pass / 0 pending / 0 fail`
+- Working tree: clean at the time of the latest MVP-1.1 layout verification
 - Push: not yet
-- `main` merge: not yet for MVP-1.0
+- `main` merge: not yet for MVP-1.1
 
 ## Implemented MVPs
 
@@ -30,6 +30,7 @@ Last updated for MVP-1.0 restart-match UI fix.
 | MVP-0.9 | Done on working branch | Next-round continuation after exhaustive draw, tsumo, or ron. |
 | MVP-0.9.5 | Working branch | Smartphone landscape review and small next-round UI refinements. |
 | MVP-1.0 | Working branch | Minimal east-only match state and UI: East 1 through East 4, fixed scores, compact round history, current-hand display, and East-only end display. |
+| MVP-1.1 | Working branch | Smartphone landscape discard layout: human discards above the hand, compact CPU discards, and reduced page-level scrolling. |
 
 ## Current Capabilities
 
@@ -109,6 +110,13 @@ Last updated for MVP-1.0 restart-match UI fix.
   - App CSS and module URLs include `v=mvp10-sort-debug-3`.
   - `main.js` also imports changed game/UI modules with the same version.
   - The rendered start button is covered by a UI event test that reaches the `START_MATCH` handler.
+- MVP-1.1 landscape discard layout:
+  - Human discards are displayed in a separate area above the human hand in landscape.
+  - The human discard area shows the latest 12 discarded tiles.
+  - CPU discard areas show the latest 6 discarded tiles in compact seats.
+  - The human hand remains the bottom-priority tap area and may scroll horizontally inside its own strip.
+  - Landscape CSS reduces page-level horizontal and vertical scrolling with `100dvh`/`100svh` sizing.
+  - App CSS and module URLs include `v=mvp11-discard-layout-1`.
 
 ## Not Implemented Yet
 
@@ -135,10 +143,10 @@ Last updated for MVP-1.0 restart-match UI fix.
 Before merging into `main`, confirm:
 
 - `git status --short --branch` is clean.
-- Latest test runner result is `188 pass / 0 pending / 0 fail`.
+- Latest test runner result is `190 pass / 0 pending / 0 fail`.
 - `/` returns HTTP 200 from a local static server.
 - `/tests/test-runner.html` returns HTTP 200 from a local static server.
-- README reflects MVP-1.0 UI status.
+- README reflects MVP-1.1 layout status.
 - Smartphone landscape layout has been checked or queued for final real-device check.
 - `docs/release-checklist.md` is reviewed.
 - `docs/manual-test-checklist.md` is reviewed.
