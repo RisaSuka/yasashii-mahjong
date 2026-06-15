@@ -250,9 +250,12 @@ MVP-0.8 recommends smartphone landscape for regular play. Portrait must remain u
 Use a real phone or browser device toolbar in landscape orientation.
 
 - Confirm the top CPU, left CPU, right CPU, center panel, and bottom human area are easy to understand.
+- Confirm page-level vertical scrolling is mostly avoided.
+- Confirm page-level horizontal scrolling does not appear.
 - Confirm the human hand stays near the bottom and remains the easiest area to find.
 - Confirm human tiles are large enough to tap.
-- Confirm the human hand can scroll horizontally without hiding the tap target.
+- Confirm the human hand can scroll horizontally inside the hand area without hiding the tap target.
+- Confirm any hand overflow is limited to the hand strip, not the whole page.
 - Confirm the center panel does not take over the table.
 - Confirm wall count, dead wall count, dora indicator, status text, and win messages remain readable.
 - Confirm discard advice is compact in landscape.
@@ -261,7 +264,9 @@ Use a real phone or browser device toolbar in landscape orientation.
 - Confirm suggested tile highlighting remains visible on the hand.
 - Confirm the advice ON/OFF button still works.
 - Confirm advice disappears completely when OFF.
+- Confirm CPU seats are compact enough and do not dominate the screen.
 - Confirm tsumo, ron, and skip buttons are easy to tap when shown.
+- Confirm the advice ON/OFF button is easy to tap.
 - Confirm yaku display, furigana, and no-yaku messages are still readable.
 - Confirm large tile mode does not break the bottom hand.
 - Confirm discard rows do not become cramped enough to block understanding.
