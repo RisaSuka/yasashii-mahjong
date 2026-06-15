@@ -309,15 +309,15 @@ function renderStatus(round) {
 
 function formatRoundResult(result) {
   if (result.endReason === "win" && result.winType === "tsumo") {
-    return result.winnerId === 0 ? "あなたのツモ和了です" : `CPU ${result.winnerId}のツモ和了です`;
+    return result.winnerId === 0 ? "あなたのツモ" : `CPU ${result.winnerId}のツモ`;
   }
 
   if (result.endReason === "win" && result.winType === "ron") {
-    return result.winnerId === 0 ? "あなたのロン和了です" : `CPU ${result.winnerId}のロン和了です`;
+    return result.winnerId === 0 ? "あなたのロン" : `CPU ${result.winnerId}のロン`;
   }
 
   if (result.endReason === "exhaustive-draw") {
-    return "流局しました";
+    return "流局";
   }
 
   return "局が終了しました";

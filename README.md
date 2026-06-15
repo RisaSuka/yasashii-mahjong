@@ -2,6 +2,8 @@
 
 The `codex/mvp-09-next-round` branch adds a post-round continuation loop. After exhaustive draw, tsumo, or ron, the app can show a `次の局へ` button and start a fresh round while preserving large tile mode and discard advice settings.
 
+MVP-0.9.5 refines that next-round UI for smartphone landscape: the `次の局へ` button is easier to tap, and the previous result text stays short.
+
 This MVP-0.9 work is not published yet. Do not merge to `main` or push without explicit approval.
 
 Current MVP-0.9 local checks target `159 pass / 0 pending / 0 fail`.

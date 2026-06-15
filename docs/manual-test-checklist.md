@@ -169,6 +169,7 @@ Use browser developer tools after starting at least one round.
 
 - Finish a round by exhaustive draw or use automated tests as the primary deterministic check.
 - Confirm the center panel shows `次の局へ` after the round ends.
+- Confirm `次の局へ` is easy to tap in smartphone landscape.
 - Click `次の局へ`.
 - Confirm a fresh round starts.
 - Confirm the center status returns to the human discard turn or current turn guidance.
@@ -176,6 +177,8 @@ Use browser developer tools after starting at least one round.
 - Confirm CPU players have 13 tiles.
 - Confirm the live wall is back to 69 tiles.
 - Confirm the previous result is shown briefly as `前の局`.
+- Confirm the previous result uses short wording such as `前の局: 流局`, `前の局: あなたのツモ`, or `前の局: あなたのロン`.
+- Confirm the previous result does not crowd the center panel or the human hand.
 - Confirm `roundsStarted` increases by 1.
 - Confirm `roundsDrawn` does not increase again just by pressing `次の局へ`.
 - Confirm large tile mode remains in the same ON/OFF state.

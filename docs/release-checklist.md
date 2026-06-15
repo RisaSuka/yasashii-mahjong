@@ -62,6 +62,7 @@ git branch --list
 - After exhaustive draw, tsumo, or ron, `次の局へ` appears.
 - Pressing `次の局へ` starts a fresh round.
 - Previous round result is displayed briefly.
+- Previous round result uses short wording and does not crowd the center panel.
 - Large tile mode and discard advice settings are preserved after `次の局へ`.
 
 ## Manual Browser Checks
@@ -94,6 +95,7 @@ Check:
 - Exhaustive draw does not show a yaku summary.
 - Win display does not show stale rejection messages.
 - Next-round button is readable and tappable after a round ends.
+- Next-round button remains easy to tap in smartphone landscape.
 - Previous-round result text is readable after the next round starts.
 
 ## GitHub Pages Checks

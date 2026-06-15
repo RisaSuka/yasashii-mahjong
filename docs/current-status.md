@@ -1,12 +1,12 @@
 # Current Status
 
-Last updated for MVP-0.9 next-round work.
+Last updated for MVP-0.9.5 next-round UI review.
 
 ## Repository State
 
 - Working branch: `codex/mvp-09-next-round`
 - Automated tests: `159 pass / 0 pending / 0 fail`
-- Working tree: clean at the time of the latest MVP-0.9 confirmation
+- Working tree: clean at the time of the latest MVP-0.9.5 confirmation
 - Push: not yet
 - `main` merge: not yet for MVP-0.9
 
@@ -27,7 +27,8 @@ Last updated for MVP-0.9 next-round work.
 | MVP-0.7.7 | Done | Furigana yaku display connected to render. |
 | MVP-0.7.8 | Done | Beginner-friendly no-yaku rejection messages. |
 | MVP-0.8 | Done | Beginner discard advice with ON/OFF setting and smartphone landscape layout refinements. |
-| MVP-0.9 | Working branch | Next-round continuation after exhaustive draw, tsumo, or ron. |
+| MVP-0.9 | Done on working branch | Next-round continuation after exhaustive draw, tsumo, or ron. |
+| MVP-0.9.5 | Working branch | Smartphone landscape review and small next-round UI refinements. |
 
 ## Current Capabilities
 
@@ -82,6 +83,7 @@ Last updated for MVP-0.9 next-round work.
   - `次の局へ` appears after exhaustive draw, tsumo, or ron.
   - The next round creates a fresh wall, dead wall, players, hands, and dealer initial draw.
   - Previous round result is kept as `lastRoundResult`.
+  - Previous result display uses short wording such as `前の局: 流局`.
   - Large tile mode and discard advice settings are preserved.
 
 ## Not Implemented Yet
