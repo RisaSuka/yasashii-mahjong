@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp10-sort-debug-2";
-import { renderGame } from "./ui/render.js?v=mvp10-sort-debug-2";
+import { bindControls } from "./ui/input.js?v=mvp10-sort-debug-3";
+import { renderGame } from "./ui/render.js?v=mvp10-sort-debug-3";
 
-const APP_ASSET_VERSION = "mvp10-sort-debug-2";
+const APP_ASSET_VERSION = "mvp10-sort-debug-3";
 
 const appRoot = document.querySelector("#app");
 

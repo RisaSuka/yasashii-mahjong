@@ -16,8 +16,8 @@ export function registerMatchUiTests() {
       querySelector(selector) {
         return selector === "[data-action='start-match']" ? startButton : null;
       },
-      querySelectorAll() {
-        return [];
+      querySelectorAll(selector) {
+        return selector === "[data-action='start-match']" ? [startButton] : [];
       }
     };
 
@@ -39,6 +39,39 @@ export function registerMatchUiTests() {
     startButton.listeners.click();
 
     assertEqual(calledHandler, "match", "Rendered start button should call START_MATCH UI handler");
+  });
+
+  test("MVP-1.0 UI: all start-match buttons dispatch including restart", async () => {
+    const { bindControls } = await loadModule("../src/ui/input.js", ["bindControls"]);
+    let callCount = 0;
+    const headerStartButton = createFakeButton();
+    const restartButton = createFakeButton();
+    const root = {
+      querySelector() {
+        return null;
+      },
+      querySelectorAll(selector) {
+        return selector === "[data-action='start-match']" ? [headerStartButton, restartButton] : [];
+      }
+    };
+
+    bindControls(root, {
+      onStartMatch() {
+        callCount += 1;
+      },
+      onStartRound() {},
+      onStartNextRound() {},
+      onToggleLargeTileMode() {},
+      onToggleDiscardAdvice() {},
+      onDiscardTile() {},
+      onDeclareTsumo() {},
+      onDeclareRon() {},
+      onSkipRon() {}
+    });
+    headerStartButton.listeners.click();
+    restartButton.listeners.click();
+
+    assertEqual(callCount, 2, "Header and restart start-match buttons should both be clickable");
   });
 
   test("MVP-1.0 UI: START_MATCH renders East 1 label", async () => {
@@ -72,6 +105,33 @@ export function registerMatchUiTests() {
     assertTrue(html.includes("東風戦終了"), "East 4 ended hand should show match ended");
     assertTrue(!html.includes('data-action="start-next-round"'), "East 4 ended hand should not show next round");
     assertTrue(html.includes('data-action="start-match"'), "East 4 ended hand should offer a fresh match start");
+  });
+
+  test("MVP-1.0 UI: START_MATCH after match end restarts East 1 and clears end display", async () => {
+    const { dispatchAction } = await loadModule("../src/game/actions.js", ["dispatchAction"]);
+    const ended = await endedHandState(4);
+    const restarted = dispatchAction(
+      {
+        ...ended,
+        settings: {
+          ...ended.settings,
+          largeTileMode: true,
+          discardAdviceEnabled: false
+        }
+      },
+      { type: "START_MATCH", random: reverseRandom }
+    );
+    const html = await renderState(restarted);
+
+    assertEqual(restarted.match.status, "playing", "Restarted match should be playing");
+    assertEqual(restarted.match.handNumber, 1, "Restarted match should begin at East 1");
+    assertEqual(restarted.match.dealerIndex, 0, "Restarted match should reset dealer to East");
+    assertEqual(restarted.round.phase, "discard", "Restarted match should enter discard phase");
+    assertTrue(html.includes("match-hand-label"), "Restarted match should render the hand label area");
+    assertTrue(!html.includes("match-ended-summary"), "Restarted match should hide previous match ended summary");
+    assertTrue(isSorted(restarted.round.players[0].hand), "Restarted human hand should be sorted");
+    assertEqual(restarted.settings.largeTileMode, true, "Large tile mode should be preserved");
+    assertEqual(restarted.settings.discardAdviceEnabled, false, "Advice setting should be preserved");
   });
 
   test("MVP-1.0 UI: existing yaku, advice, and next-round UI hooks remain available", async () => {
@@ -145,4 +205,21 @@ function createFakeButton() {
       this.listeners[type] = listener;
     }
   };
+}
+
+function reverseRandom() {
+  return 0.999999;
+}
+
+function isSorted(tiles) {
+  return tileKeys(tiles) === tileKeys([...tiles].sort(compareForTest));
+}
+
+function compareForTest(a, b) {
+  const suitOrder = { m: 0, p: 1, s: 2, z: 3 };
+  return suitOrder[a.suit] - suitOrder[b.suit] || a.rank - b.rank || a.copy - b.copy;
+}
+
+function tileKeys(tiles) {
+  return tiles.map((tileValue) => `${tileValue.suit}${tileValue.rank}-${tileValue.copy}`).join(",");
 }
