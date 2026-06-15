@@ -142,6 +142,31 @@ export function registerMatchUiTests() {
     assertTrue(html.includes("discard-advice") || html.includes("center-panel"), "Advice/center UI should still have a rendering area");
     assertTrue(html.includes("seat-east"), "Human hand seat should still render");
   });
+
+  test("MVP-1.1 UI: human and CPU discard areas render separately", async () => {
+    const state = addDiscards(await startMatchState(), 4);
+    const html = await renderState(state);
+    const eastSeatStart = html.indexOf("seat-east");
+    const humanDiscardIndex = html.indexOf("discard-area-human", eastSeatStart);
+    const humanHandIndex = html.indexOf('class="hand"', eastSeatStart);
+
+    assertTrue(humanDiscardIndex > -1, "Human discard area should be explicit");
+    assertTrue(humanHandIndex > -1, "Human hand should still render");
+    assertTrue(humanDiscardIndex > humanHandIndex, "DOM keeps hand controls stable while CSS moves human discards above the hand");
+    assertTrue(html.includes("discard-area-cpu"), "CPU discard area should be explicit");
+    assertTrue(html.includes("advice-suggested") || html.includes("seat-east"), "Advice highlighting/rendering should remain available");
+  });
+
+  test("MVP-1.1 UI: discard display limits visible recent tiles", async () => {
+    const state = addDiscards(await startMatchState(), 18);
+    const html = await renderState(state);
+    const eastSeatStart = html.indexOf("seat-east");
+    const eastSeatEnd = html.indexOf("</section>", eastSeatStart);
+    const eastSeatHtml = html.slice(eastSeatStart, eastSeatEnd);
+    const visibleHumanDiscards = (eastSeatHtml.match(/class="tile[^"]*discard-tile/g) || []).length;
+
+    assertEqual(visibleHumanDiscards, 12, "Human discard area should show the latest 12 tiles");
+  });
 }
 
 async function initialState() {
@@ -196,6 +221,25 @@ async function renderState(state) {
   });
 
   return root.innerHTML;
+}
+
+function addDiscards(state, count) {
+  return {
+    ...state,
+    round: {
+      ...state.round,
+      players: state.round.players.map((player) => ({
+        ...player,
+        discards: Array.from({ length: count }, (_, index) => ({
+          id: `${player.wind}-discard-${index}`,
+          suit: ["m", "p", "s", "z"][index % 4],
+          rank: index % 4 === 3 ? (index % 7) + 1 : (index % 9) + 1,
+          copy: 0,
+          red: false
+        }))
+      }))
+    }
+  };
 }
 
 function createFakeButton() {

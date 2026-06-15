@@ -330,6 +330,27 @@
   min-height: 44px;
 }
 
+.discard-area {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.discard-area-human {
+  border: 1px solid rgba(15, 118, 110, 0.18);
+  border-radius: 8px;
+  background: rgba(217, 232, 223, 0.42);
+  padding: 6px;
+}
+
+.discard-area-human .discards {
+  min-height: 38px;
+}
+
+.discard-area-cpu .discards {
+  min-height: 36px;
+}
+
 .footer-status {
   display: flex;
   flex-wrap: wrap;

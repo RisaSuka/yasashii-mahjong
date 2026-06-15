@@ -303,12 +303,18 @@ function renderSeat(player, round, discardAdvice) {
         <span class="seat-meta">${isCurrent ? "手番" : ""}</span>
       </div>
       ${player.type === "human" ? renderHumanHand(player, round, discardAdvice) : renderCpuHand(player)}
-      <div>
+      <div class="discard-area ${player.type === "human" ? "discard-area-human" : "discard-area-cpu"}">
         <div class="seat-meta">捨て牌 ${player.discards.length}枚</div>
-        <div class="discards">${player.discards.map((tile) => renderTile(tile, "discard-tile")).join("")}</div>
+        <div class="discards">${getVisibleDiscards(player).map((tile) => renderTile(tile, "discard-tile")).join("")}</div>
       </div>
     </section>
   `;
+}
+
+function getVisibleDiscards(player) {
+  const limit = player.type === "human" ? 12 : 6;
+
+  return player.discards.slice(-limit);
 }
 
 function renderHumanHand(player, round, discardAdvice) {
