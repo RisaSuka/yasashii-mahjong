@@ -143,6 +143,18 @@ export function registerMatchUiTests() {
     assertTrue(html.includes("seat-east"), "Human hand seat should still render");
   });
 
+  test("MVP-1.1.4 UI: center information renders as compact primary and secondary columns", async () => {
+    const playingHtml = await renderState(await startMatchState());
+    const endedHtml = await renderState(await endedHandState(2));
+
+    assertTrue(playingHtml.includes("center-info-main"), "Center info should have a stable compact wrapper");
+    assertTrue(playingHtml.includes("center-primary"), "Round and status should render in the primary center column");
+    assertTrue(playingHtml.includes("center-secondary"), "Wall, dora, and action controls should render in the secondary center column");
+    assertTrue(playingHtml.includes("table-meta-row"), "Wall/dead wall/dora summary should stay in one compact row");
+    assertTrue(endedHtml.includes("center-secondary"), "Ended hands should keep actions in the secondary center column");
+    assertTrue(endedHtml.includes('data-action="start-next-round"'), "Next-round action should remain available in the compact center layout");
+  });
+
   test("MVP-1.1 UI: human and CPU discard areas render separately", async () => {
     const state = addDiscards(await startMatchState(), 4);
     const html = await renderState(state);

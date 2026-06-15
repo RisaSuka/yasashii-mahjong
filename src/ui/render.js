@@ -62,6 +62,49 @@ function renderEmptyState() {
   `;
 }
 
+function renderTableLegacy(state, options) {
+  const { round } = state;
+  const seats = [
+    round.players[2],
+    round.players[3],
+    round.players[1],
+    round.players[0]
+  ];
+  const discardAdvice = getDiscardAdvice(state, options);
+
+  return `
+    <main class="table" aria-label="4人麻雀卓">
+      ${seats.map((player) => renderSeat(player, round, discardAdvice)).join("")}
+      <section class="center-panel">
+        <div class="table-discard-ring">
+          ${renderTableDiscardZone(round.players[3], "north", round)}
+          ${renderTableDiscardZone(round.players[2], "west", round)}
+          <div class="center-info">
+            <div class="center-info-main">
+              <div class="center-primary">
+                ${renderMatchSummary(state)}
+                <strong class="center-status">${renderCompactStatus(round)}</strong>
+              </div>
+              <div class="center-secondary">
+            ${renderPreviousRoundResult(state.lastRoundResult, round)}
+            ${renderLastActionResult(round)}
+            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen)}
+            ${renderYakuSummary(round)}
+            <div class="table-meta-row">
+              <span class="table-meta">山 ${round.wall.length}</span>
+              <span class="table-meta">王牌 ${round.deadWall.length}</span>
+              <span class="table-meta">ドラ ${renderDoraIndicators(round)}</span>
+            </div>
+            ${renderTableActionBar(state, options)}
+          </div>
+          ${renderTableDiscardZone(round.players[1], "south", round)}
+          ${renderTableDiscardZone(round.players[0], "east", round)}
+        </div>
+      </section>
+    </main>
+  `;
+}
+
 function renderTable(state, options) {
   const { round } = state;
   const seats = [
@@ -80,18 +123,24 @@ function renderTable(state, options) {
           ${renderTableDiscardZone(round.players[3], "north", round)}
           ${renderTableDiscardZone(round.players[2], "west", round)}
           <div class="center-info">
-            ${renderMatchSummary(state)}
-            <strong class="center-status">${renderCompactStatus(round)}</strong>
+            <div class="center-info-main">
+              <div class="center-primary">
+                ${renderMatchSummary(state)}
+                <strong class="center-status">${renderCompactStatus(round)}</strong>
+              </div>
+              <div class="center-secondary">
+                <div class="table-meta-row">
+                  <span class="table-meta">山 ${round.wall.length}</span>
+                  <span class="table-meta">王牌 ${round.deadWall.length}</span>
+                  <span class="table-meta">ドラ ${renderDoraIndicators(round)}</span>
+                </div>
+                ${renderTableActionBar(state, options)}
+              </div>
+            </div>
             ${renderPreviousRoundResult(state.lastRoundResult, round)}
             ${renderLastActionResult(round)}
             ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen)}
             ${renderYakuSummary(round)}
-            <div class="table-meta-row">
-              <span class="table-meta">山 ${round.wall.length}</span>
-              <span class="table-meta">王牌 ${round.deadWall.length}</span>
-              <span class="table-meta">ドラ ${renderDoraIndicators(round)}</span>
-            </div>
-            ${renderTableActionBar(state, options)}
           </div>
           ${renderTableDiscardZone(round.players[1], "south", round)}
           ${renderTableDiscardZone(round.players[0], "east", round)}

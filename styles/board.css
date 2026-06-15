@@ -134,6 +134,23 @@
   min-width: 0;
 }
 
+.center-info-main {
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.center-primary,
+.center-secondary {
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
 .table-discard-zone {
   display: grid;
   gap: 3px;

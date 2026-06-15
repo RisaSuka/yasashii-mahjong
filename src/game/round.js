@@ -1,5 +1,5 @@
 import { createPlayers } from "./player.js";
-import { createTiles, sortTiles } from "./tiles.js?v=mvp113-discard-stable-1";
+import { createTiles, sortTiles } from "./tiles.js?v=mvp114-wide-layout-1";
 import { buildWall, drawFromWall } from "./wall.js";
 import { createDefaultStats, saveStats } from "./storage.js";
 
