@@ -1,4 +1,8 @@
 export function bindControls(root, handlers) {
+  root.querySelector("[data-action='start-match']")?.addEventListener("click", () => {
+    handlers.onStartMatch?.();
+  });
+
   root.querySelector("[data-action='start-round']")?.addEventListener("click", () => {
     handlers.onStartRound();
   });

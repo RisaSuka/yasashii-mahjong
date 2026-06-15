@@ -23,7 +23,7 @@ export function renderGame(state, root, options = {}) {
       <header class="topbar">
         <h1 class="title">じゅんちゃん麻雀 MVP-0.5.5</h1>
         <div class="controls">
-          <button type="button" data-action="start-round">
+          <button type="button" data-action="start-match">
             <span class="button-label-full">新規局開始</span>
             <span class="button-label-short" aria-hidden="true">新規局</span>
           </button>
@@ -76,12 +76,14 @@ function renderTable(state, options) {
     <main class="table" aria-label="4人麻雀卓">
       ${seats.map((player) => renderSeat(player, round, discardAdvice)).join("")}
       <section class="center-panel">
+        ${renderMatchSummary(state)}
         <strong>${renderStatus(round)}</strong>
         ${renderPreviousRoundResult(state.lastRoundResult, round)}
         ${renderLastActionResult(round)}
         ${renderDiscardAdvice(discardAdvice)}
         ${renderYakuSummary(round)}
-        ${renderNextRoundAction(round)}
+        ${renderMatchEndAction(state)}
+        ${renderNextRoundAction(state)}
         ${renderRonAction(state, options)}
         ${renderTsumoAction(state, options)}
         <div class="table-meta-row">
@@ -91,6 +93,39 @@ function renderTable(state, options) {
         </div>
       </section>
     </main>
+  `;
+}
+
+function renderMatchSummary(state) {
+  const { match, round } = state;
+
+  if (!match && !round?.handNumber) {
+    return "";
+  }
+
+  const label = getHandLabel(match || round);
+  const dealerLabel = getDealerLabel(match?.dealerIndex ?? round?.dealerIndex);
+
+  return `
+    <section class="match-summary" aria-label="現在の局">
+      <span class="match-hand-label">${escapeHtml(label)}</span>
+      ${dealerLabel ? `<span class="match-dealer-label">親 ${escapeHtml(dealerLabel)}</span>` : ""}
+    </section>
+  `;
+}
+
+function renderMatchEndAction(state) {
+  if (!isMatchFinishedForDisplay(state)) {
+    return "";
+  }
+
+  return `
+    <section class="match-ended-summary" aria-label="東風戦終了">
+      <strong>東風戦終了</strong>
+      <span>4局遊び終わりました。</span>
+      <span>点数計算はまだ未対応です。</span>
+      <button type="button" class="restart-match-button" data-action="start-match">もう一度遊ぶ</button>
+    </section>
   `;
 }
 
@@ -106,8 +141,14 @@ function renderPreviousRoundResult(lastRoundResult, round) {
   `;
 }
 
-function renderNextRoundAction(round) {
+function renderNextRoundAction(state) {
+  const { round } = state;
+
   if (round.phase !== "ended") {
+    return "";
+  }
+
+  if (isMatchFinishedForDisplay(state)) {
     return "";
   }
 
@@ -116,6 +157,16 @@ function renderNextRoundAction(round) {
       次の局へ
     </button>
   `;
+}
+
+function isMatchFinishedForDisplay(state) {
+  const { match, round } = state;
+
+  if (!match) {
+    return false;
+  }
+
+  return match.status === "ended" || match.phase === "ended" || (round?.phase === "ended" && match.handNumber >= match.maxHands);
 }
 
 function getDiscardAdvice(state, options) {
@@ -305,6 +356,22 @@ function renderStatus(round) {
 
   const currentPlayer = round.players[round.currentPlayerIndex];
   return currentPlayer.type === "human" ? "あなたの番です。牌を選んでください" : `CPUの手番です (${currentPlayer.name})`;
+}
+
+function getHandLabel(source) {
+  const windLabels = {
+    east: "東"
+  };
+  const wind = windLabels[source?.roundWind] || source?.roundWind || "東";
+  const handNumber = source?.handNumber || 1;
+
+  return `${wind}${handNumber}局`;
+}
+
+function getDealerLabel(dealerIndex) {
+  const labels = ["あなた", "南 CPU", "西 CPU", "北 CPU"];
+
+  return labels[dealerIndex] || "";
 }
 
 function formatRoundResult(result) {

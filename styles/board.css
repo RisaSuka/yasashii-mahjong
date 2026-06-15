@@ -129,6 +129,42 @@
   line-height: 1.35;
 }
 
+.match-summary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #274c3a;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.match-hand-label {
+  border: 1px solid rgba(15, 118, 110, 0.28);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 3px 10px;
+  font-weight: 700;
+}
+
+.match-dealer-label {
+  color: #52606d;
+  font-size: 13px;
+}
+
+.match-ended-summary {
+  display: grid;
+  gap: 4px;
+  justify-items: center;
+  border: 1px solid rgba(15, 118, 110, 0.28);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.78);
+  padding: 9px;
+  color: #102a43;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
 .discard-advice {
   display: grid;
   gap: 6px;
@@ -228,7 +264,8 @@
   font-weight: 700;
 }
 
-.next-round-button {
+.next-round-button,
+.restart-match-button {
   justify-self: center;
   min-width: 128px;
   min-height: 48px;

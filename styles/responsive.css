@@ -259,6 +259,19 @@
     line-height: 1.1;
   }
 
+  .match-summary {
+    gap: 5px;
+    font-size: 10px;
+  }
+
+  .match-hand-label {
+    padding: 2px 7px;
+  }
+
+  .match-dealer-label {
+    font-size: 9px;
+  }
+
   .table-meta-row .table-meta + .table-meta::before {
     content: "｜";
     margin-right: 4px;
@@ -395,13 +408,19 @@
 
   .yaku-summary,
   .action-message,
-  .previous-round-result {
+  .previous-round-result,
+  .match-ended-summary {
     padding: 6px 7px;
     font-size: 12px;
     line-height: 1.3;
   }
 
-  .next-round-button {
+  .match-ended-summary {
+    gap: 2px;
+  }
+
+  .next-round-button,
+  .restart-match-button {
     min-width: 112px;
     min-height: 44px;
     font-size: 15px;

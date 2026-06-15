@@ -49,7 +49,8 @@ function render() {
     suggestDiscards: gameApi.suggestDiscards
   });
   bindControls(appRoot, {
-    onStartRound: startRound,
+    onStartMatch: startMatch,
+    onStartRound: startMatch,
     onStartNextRound: startNextRound,
     onToggleLargeTileMode: toggleLargeTileMode,
     onToggleDiscardAdvice: toggleDiscardAdvice,
@@ -60,8 +61,9 @@ function render() {
   });
 }
 
-function startRound() {
-  state = gameApi.dispatchAction(state, { type: "START_ROUND" });
+function startMatch() {
+  window.clearTimeout(cpuTimer);
+  state = gameApi.dispatchAction(state, { type: "START_MATCH" });
   render();
   scheduleCpuIfNeeded();
 }
@@ -307,9 +309,10 @@ function createFallbackGameApi() {
         };
       }
 
-      if (action.type === "START_ROUND") {
+      if (action.type === "START_MATCH" || action.type === "START_ROUND") {
         return {
           ...currentState,
+          match: createFallbackMatch(),
           round: createFallbackRound()
         };
       }
@@ -359,6 +362,20 @@ function createFallbackPlayer(id, name, type, wind, handSize) {
       red: false
     })),
     discards: []
+  };
+}
+
+function createFallbackMatch() {
+  return {
+    type: "tonpuu",
+    phase: "playing",
+    status: "playing",
+    roundWind: "east",
+    handNumber: 1,
+    dealerIndex: 0,
+    maxHands: 4,
+    scores: [25000, 25000, 25000, 25000],
+    roundHistory: []
   };
 }
 
