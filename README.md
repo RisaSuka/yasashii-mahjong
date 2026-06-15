@@ -1,3 +1,11 @@
+# MVP-0.9 working branch note
+
+The `codex/mvp-09-next-round` branch adds a post-round continuation loop. After exhaustive draw, tsumo, or ron, the app can show a `次の局へ` button and start a fresh round while preserving large tile mode and discard advice settings.
+
+This MVP-0.9 work is not published yet. Do not merge to `main` or push without explicit approval.
+
+Current MVP-0.9 local checks target `159 pass / 0 pending / 0 fail`.
+
 # MVP-0.8 release candidate note
 
 The `codex/mvp-08-discard-advice-plan` branch adds beginner discard advice, an advice ON/OFF setting, and smartphone landscape layout refinements. Current release-candidate checks target `148 pass / 0 pending / 0 fail`. Smartphone landscape is the recommended play orientation; portrait remains usable and shows a gentle landscape recommendation.

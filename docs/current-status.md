@@ -1,14 +1,14 @@
 # Current Status
 
-Last updated for MVP-0.8 discard advice and smartphone landscape layout work.
+Last updated for MVP-0.9 next-round work.
 
 ## Repository State
 
-- Working branch: `codex/mvp-08-discard-advice-plan`
-- Automated tests: `148 pass / 0 pending / 0 fail`
-- Working tree: clean at the time of the latest MVP-0.8 confirmation
+- Working branch: `codex/mvp-09-next-round`
+- Automated tests: `159 pass / 0 pending / 0 fail`
+- Working tree: clean at the time of the latest MVP-0.9 confirmation
 - Push: not yet
-- `main` merge: not yet for MVP-0.8
+- `main` merge: not yet for MVP-0.9
 
 ## Implemented MVPs
 
@@ -26,7 +26,8 @@ Last updated for MVP-0.8 discard advice and smartphone landscape layout work.
 | MVP-0.7.6 | Done | Furigana/reading helper APIs. |
 | MVP-0.7.7 | Done | Furigana yaku display connected to render. |
 | MVP-0.7.8 | Done | Beginner-friendly no-yaku rejection messages. |
-| MVP-0.8 | Release candidate | Beginner discard advice with ON/OFF setting and smartphone landscape layout refinements. |
+| MVP-0.8 | Done | Beginner discard advice with ON/OFF setting and smartphone landscape layout refinements. |
+| MVP-0.9 | Working branch | Next-round continuation after exhaustive draw, tsumo, or ron. |
 
 ## Current Capabilities
 
@@ -77,6 +78,11 @@ Last updated for MVP-0.8 discard advice and smartphone landscape layout work.
   - CPU seats stay around the table.
   - Portrait shows a gentle landscape recommendation.
   - Tsumo, ron, skip, and advice toggle remain tappable.
+- Next-round continuation:
+  - `次の局へ` appears after exhaustive draw, tsumo, or ron.
+  - The next round creates a fresh wall, dead wall, players, hands, and dealer initial draw.
+  - Previous round result is kept as `lastRoundResult`.
+  - Large tile mode and discard advice settings are preserved.
 
 ## Not Implemented Yet
 
@@ -88,6 +94,8 @@ Last updated for MVP-0.8 discard advice and smartphone landscape layout work.
 - Dora and ura-dora scoring.
 - East-only match flow.
 - Hanchan flow.
+- Dealer repeat and honba full rules.
+- Point movement between rounds.
 - CPU ron.
 - Multiple ron.
 - Full CPU AI.
@@ -101,10 +109,10 @@ Last updated for MVP-0.8 discard advice and smartphone landscape layout work.
 Before merging into `main`, confirm:
 
 - `git status --short --branch` is clean.
-- Latest test runner result is `148 pass / 0 pending / 0 fail`.
+- Latest test runner result is `159 pass / 0 pending / 0 fail`.
 - `/` returns HTTP 200 from a local static server.
 - `/tests/test-runner.html` returns HTTP 200 from a local static server.
-- README reflects MVP-0.8.
+- README reflects MVP-0.9.
 - Smartphone landscape layout has been checked or queued for final real-device check.
 - `docs/release-checklist.md` is reviewed.
 - `docs/manual-test-checklist.md` is reviewed.

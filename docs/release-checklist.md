@@ -4,15 +4,16 @@ Use this before merging to `main` or publishing with GitHub Pages.
 
 ## Current Release Candidate
 
-- Branch: `codex/mvp-08-discard-advice-plan`
-- Scope: MVP-0.1 through MVP-0.8
-- Expected automated result: `148 pass / 0 pending / 0 fail`
+- Branch: `codex/mvp-09-next-round`
+- Scope: MVP-0.1 through MVP-0.9
+- Expected automated result: `159 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
+- Publish status: MVP-0.9 is not published yet.
 
 ## Git Safety
 
-- Confirm the current branch is `codex/mvp-08-discard-advice-plan`.
+- Confirm the current branch is `codex/mvp-09-next-round`.
 - Confirm the working tree is clean.
 - Confirm the latest commit is the intended release candidate.
 - Confirm no unreviewed local commits are being skipped.
@@ -30,8 +31,8 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 148.
-- Confirm pass count is 148.
+- Confirm total count is 159.
+- Confirm pass count is 159.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
@@ -58,6 +59,10 @@ git branch --list
 - Suggested discard highlighting remains visible without blocking taps.
 - Smartphone landscape keeps CPU seats, center information, and the bottom human hand easy to understand.
 - Portrait shows the landscape recommendation message.
+- After exhaustive draw, tsumo, or ron, `次の局へ` appears.
+- Pressing `次の局へ` starts a fresh round.
+- Previous round result is displayed briefly.
+- Large tile mode and discard advice settings are preserved after `次の局へ`.
 
 ## Manual Browser Checks
 
@@ -88,6 +93,8 @@ Check:
 - Furigana yaku display remains readable.
 - Exhaustive draw does not show a yaku summary.
 - Win display does not show stale rejection messages.
+- Next-round button is readable and tappable after a round ends.
+- Previous-round result text is readable after the next round starts.
 
 ## GitHub Pages Checks
 
@@ -97,8 +104,9 @@ Check:
 - Confirm `tests/test-runner.html` works from a static server.
 - Confirm there are no external dependencies that GitHub Pages must install.
 - Confirm README describes the current MVP scope and known missing features.
-- Confirm `docs/current-status.md` reflects MVP-0.8 and 148 pass.
+- Confirm `docs/current-status.md` reflects MVP-0.9 and 159 pass.
 - Confirm `docs/manual-test-checklist.md` includes smartphone landscape checks.
+- Confirm `docs/manual-test-checklist.md` includes next-round checks.
 
 ## Do Not Release If
 

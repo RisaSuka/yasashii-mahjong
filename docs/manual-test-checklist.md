@@ -21,8 +21,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 148.
-- Confirm pass count is 148.
+- Confirm total count is 159.
+- Confirm pass count is 159.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 
@@ -165,7 +165,24 @@ Use browser developer tools after starting at least one round.
 - Confirm `lastPlayedAt` is a string.
 - After exhaustive draw, confirm `roundsDrawn` increased.
 
-## 10. Smartphone Width Check
+## 10. Next Round Check
+
+- Finish a round by exhaustive draw or use automated tests as the primary deterministic check.
+- Confirm the center panel shows `次の局へ` after the round ends.
+- Click `次の局へ`.
+- Confirm a fresh round starts.
+- Confirm the center status returns to the human discard turn or current turn guidance.
+- Confirm the dealer has 14 tiles after the initial draw.
+- Confirm CPU players have 13 tiles.
+- Confirm the live wall is back to 69 tiles.
+- Confirm the previous result is shown briefly as `前の局`.
+- Confirm `roundsStarted` increases by 1.
+- Confirm `roundsDrawn` does not increase again just by pressing `次の局へ`.
+- Confirm large tile mode remains in the same ON/OFF state.
+- Confirm discard advice remains in the same ON/OFF state.
+- Confirm the header `新規局開始` button still works as a fresh restart option.
+
+## 11. Smartphone Width Check
 
 Use a browser device toolbar or narrow the window to around 390px width.
 
@@ -181,7 +198,7 @@ Use a browser device toolbar or narrow the window to around 390px width.
 - Confirm no-yaku messages and yaku summaries remain readable.
 - Confirm furigana yaku display does not wrap awkwardly or overlap.
 
-## 11. Smartphone Real Device Check On Local Wi-Fi
+## 12. Smartphone Real Device Check On Local Wi-Fi
 
 Use this when checking the app from a real smartphone on the same Wi-Fi network as the PC.
 
@@ -243,7 +260,7 @@ Real-device checks:
 - Confirm tsumo, ron, and skip buttons are easy to tap when they appear.
 - Confirm yaku display, furigana, and no-yaku messages are readable.
 
-## 12. Smartphone Landscape Table Check
+## 13. Smartphone Landscape Table Check
 
 MVP-0.8 recommends smartphone landscape for regular play. Portrait must remain usable, but landscape is the primary real-device layout.
 
