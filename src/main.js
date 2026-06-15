@@ -1,5 +1,7 @@
-import { bindControls } from "./ui/input.js";
-import { renderGame } from "./ui/render.js";
+import { bindControls } from "./ui/input.js?v=mvp10-sort-debug-2";
+import { renderGame } from "./ui/render.js?v=mvp10-sort-debug-2";
+
+const APP_ASSET_VERSION = "mvp10-sort-debug-2";
 
 const appRoot = document.querySelector("#app");
 
@@ -20,10 +22,10 @@ async function init() {
 async function loadGameApi() {
   try {
     const [actions, round, storage, advice] = await Promise.all([
-      import("./game/actions.js"),
-      import("./game/round.js"),
-      import("./game/storage.js"),
-      import("./game/advice/discard-advice.js")
+      import(`./game/actions.js?v=${APP_ASSET_VERSION}`),
+      import(`./game/round.js?v=${APP_ASSET_VERSION}`),
+      import(`./game/storage.js?v=${APP_ASSET_VERSION}`),
+      import(`./game/advice/discard-advice.js?v=${APP_ASSET_VERSION}`)
     ]);
 
     return {

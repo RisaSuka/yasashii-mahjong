@@ -1,10 +1,44 @@
-import { assertTrue, loadModule, test } from "./test.js";
+import { assertEqual, assertTrue, loadModule, test } from "./test.js";
 
 export function registerMatchUiTests() {
   test("MVP-1.0 UI: empty screen offers east-only match start", async () => {
     const html = await renderState(await initialState());
 
     assertTrue(html.includes('data-action="start-match"'), "Initial screen should expose START_MATCH entry point");
+    assertTrue(!html.includes('data-action="start-round"'), "Initial screen should not expose old START_ROUND entry point");
+  });
+
+  test("MVP-1.0 UI: start-match button dispatches through onStartMatch handler", async () => {
+    const { bindControls } = await loadModule("../src/ui/input.js", ["bindControls"]);
+    let calledHandler = "";
+    const startButton = createFakeButton();
+    const root = {
+      querySelector(selector) {
+        return selector === "[data-action='start-match']" ? startButton : null;
+      },
+      querySelectorAll() {
+        return [];
+      }
+    };
+
+    bindControls(root, {
+      onStartMatch() {
+        calledHandler = "match";
+      },
+      onStartRound() {
+        calledHandler = "round";
+      },
+      onStartNextRound() {},
+      onToggleLargeTileMode() {},
+      onToggleDiscardAdvice() {},
+      onDiscardTile() {},
+      onDeclareTsumo() {},
+      onDeclareRon() {},
+      onSkipRon() {}
+    });
+    startButton.listeners.click();
+
+    assertEqual(calledHandler, "match", "Rendered start button should call START_MATCH UI handler");
   });
 
   test("MVP-1.0 UI: START_MATCH renders East 1 label", async () => {
@@ -102,4 +136,13 @@ async function renderState(state) {
   });
 
   return root.innerHTML;
+}
+
+function createFakeButton() {
+  return {
+    listeners: {},
+    addEventListener(type, listener) {
+      this.listeners[type] = listener;
+    }
+  };
 }
