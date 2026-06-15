@@ -5,7 +5,7 @@ Last updated for MVP-1.0 east-only match UI connection.
 ## Repository State
 
 - Working branch: `codex/mvp-09-next-round`
-- Automated tests: `185 pass / 0 pending / 0 fail`
+- Automated tests: `186 pass / 0 pending / 0 fail`
 - Working tree: clean at the time of the latest MVP-1.0 UI confirmation
 - Push: not yet
 - `main` merge: not yet for MVP-1.0
@@ -104,6 +104,10 @@ Last updated for MVP-1.0 east-only match UI connection.
   - Suited tiles sort from 1 through 9.
   - Honor tiles sort east, south, west, north, white, green, red.
   - Sorting is automatic; no extra UI toggle is added.
+- MVP-1.0 real-device cache handling:
+  - App CSS and module URLs include `v=mvp10-sort-debug-2`.
+  - `main.js` also imports changed game/UI modules with the same version.
+  - The rendered start button is covered by a UI event test that reaches the `START_MATCH` handler.
 
 ## Not Implemented Yet
 
@@ -130,7 +134,7 @@ Last updated for MVP-1.0 east-only match UI connection.
 Before merging into `main`, confirm:
 
 - `git status --short --branch` is clean.
-- Latest test runner result is `185 pass / 0 pending / 0 fail`.
+- Latest test runner result is `186 pass / 0 pending / 0 fail`.
 - `/` returns HTTP 200 from a local static server.
 - `/tests/test-runner.html` returns HTTP 200 from a local static server.
 - README reflects MVP-1.0 UI status.

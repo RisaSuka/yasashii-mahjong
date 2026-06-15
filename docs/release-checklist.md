@@ -6,7 +6,7 @@ Use this before merging to `main` or publishing with GitHub Pages.
 
 - Branch: `codex/mvp-09-next-round`
 - Scope: MVP-0.1 through MVP-1.0
-- Expected automated result: `185 pass / 0 pending / 0 fail`
+- Expected automated result: `186 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
 - Publish status: MVP-1.0 is not published yet.
@@ -31,8 +31,8 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 185.
-- Confirm pass count is 185.
+- Confirm total count is 186.
+- Confirm pass count is 186.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
@@ -78,6 +78,8 @@ git branch --list
 - Human hand tiles are automatically sorted in manzu, pinzu, souzu, honor order.
 - The sorted human hand still supports tile-id based discard.
 - Beginner discard advice still highlights the intended sorted tile.
+- App module URLs include the current MVP-1.0 cache-busting version.
+- The visible start button dispatches through the `START_MATCH` UI handler.
 
 ## Manual Browser Checks
 

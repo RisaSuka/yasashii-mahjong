@@ -21,8 +21,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 185.
-- Confirm pass count is 185.
+- Confirm total count is 186.
+- Confirm pass count is 186.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 
@@ -279,6 +279,9 @@ Security notes:
 
 Real-device checks:
 
+- Open the app in a new tab with `?v=mvp10-sort-debug-2` if the phone might have cached an older module.
+- Confirm the first start button begins an east-only match, not a single standalone round.
+- Confirm `東1局` appears immediately after pressing the start button.
 - Confirm tiles are readable on the phone screen.
 - Confirm manzu, pinzu, souzu, and honor tiles are easy to distinguish.
 - Confirm the human hand can scroll horizontally.
