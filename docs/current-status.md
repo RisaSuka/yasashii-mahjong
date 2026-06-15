@@ -141,6 +141,13 @@ Last updated for MVP-1.1.6 smartphone landscape discard-fit fix.
 - Current layout-check result: all viewports and scenarios pass as of MVP-1.1.6.
 - The previous known failure, late-hand and draw-ended discard clipping at tile 13+ in all four discard zones, is fixed by the MVP-1.1.6 discard grid update.
 
+## MVP-1.1 Remaining Visual Polish Candidates
+
+- West CPU 2 and South CPU 1 seat labels can still feel slightly clipped in smartphone landscape.
+- The previous-round summary, such as `前の局: 流局`, can feel cramped in the compact landscape table.
+- Smartphone landscape is playable, but fine UI polish is still needed around spacing, labels, and table balance.
+- A discard-enlargement popup remains a candidate for MVP-1.2 or later, especially for older users when discard tiles must stay small.
+
 ## Not Implemented Yet
 
 - Point calculation.
