@@ -161,14 +161,14 @@ function setupScenarioSource() {
         {
           tileId: state.round.players[0].hand[0]?.id,
           priority: 1,
-          label: "おすすめ",
-          reason: "孤立していて、形を作りにくいため候補です。"
+          label: "Advice",
+          reason: "Layout check advice reason one."
         },
         {
           tileId: state.round.players[0].hand[1]?.id,
           priority: 2,
-          label: "候補",
-          reason: "近い牌が少ないため候補です。"
+          label: "Candidate",
+          reason: "Layout check advice reason two."
         }
       ],
       discardAdviceDialogOpen: mode === "actions"
@@ -520,7 +520,11 @@ class CdpPage {
     });
 
     if (result.exceptionDetails) {
-      throw new Error(result.exceptionDetails.text || "Runtime evaluation failed");
+      const details = result.exceptionDetails.exception?.description
+        || result.exceptionDetails.exception?.value
+        || result.exceptionDetails.text
+        || "Runtime evaluation failed";
+      throw new Error(details);
     }
 
     return result.result.value;

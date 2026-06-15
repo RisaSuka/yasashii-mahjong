@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp114-wide-layout-1";
-import { renderGame } from "./ui/render.js?v=mvp114-wide-layout-1";
+import { bindControls } from "./ui/input.js?v=mvp116-discard-fit-1";
+import { renderGame } from "./ui/render.js?v=mvp116-discard-fit-1";
 
-const APP_ASSET_VERSION = "mvp114-wide-layout-1";
+const APP_ASSET_VERSION = "mvp116-discard-fit-1";
 
 const appRoot = document.querySelector("#app");
 

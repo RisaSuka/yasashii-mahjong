@@ -1,13 +1,13 @@
 # Current Status
 
-Last updated for MVP-1.1.4 smartphone landscape layout-test setup.
+Last updated for MVP-1.1.6 smartphone landscape discard-fit fix.
 
 ## Repository State
 
 - Working branch: `codex/mvp-11-discard-layout`
 - Automated tests: `199 pass / 0 pending / 0 fail`
-- Layout check: Chrome-based smartphone landscape guard added; known late-hand discard clipping is detected
-- Working tree: clean at the time of the latest MVP-1.1.4 layout-test setup
+- Layout check: Chrome-based smartphone landscape guard passes all target viewports/scenarios
+- Working tree: clean at the time of the latest MVP-1.1.6 discard-fit fix
 - Push: not yet
 - `main` merge: not yet for MVP-1.1.x
 
@@ -34,6 +34,7 @@ Last updated for MVP-1.1.4 smartphone landscape layout-test setup.
 | MVP-1.1 | Working branch | Smartphone landscape discard layout: human discards above the hand, compact CPU discards, and reduced page-level scrolling. |
 | MVP-1.1.1 | Working branch | Table-center discard ring and popup discard-advice reasons for smartphone landscape. |
 | MVP-1.1.4 | Working branch | Chrome-based smartphone landscape layout guard for detecting clipping, overflow, overlap, and unclickable controls. |
+| MVP-1.1.6 | Working branch | Late-hand landscape discard grids fit 18 discards in all four discard zones and pass the layout guard. |
 
 ## Current Capabilities
 
@@ -137,7 +138,8 @@ Last updated for MVP-1.1.4 smartphone landscape layout-test setup.
 - It checks page overflow, important element visibility, discard clipping, hand clipping, recommended badge clipping, action/advice button clickability, popup bounds, and major overlaps.
 - Screenshots are saved under `test-artifacts/layout/`.
 - `test-artifacts/` is ignored by git.
-- Current known layout-check failures: late-hand and draw-ended scenarios detect discard clipping at discard tile 13+ in all four discard zones.
+- Current layout-check result: all viewports and scenarios pass as of MVP-1.1.6.
+- The previous known failure, late-hand and draw-ended discard clipping at tile 13+ in all four discard zones, is fixed by the MVP-1.1.6 discard grid update.
 
 ## Not Implemented Yet
 
@@ -166,7 +168,7 @@ Before merging into `main`, confirm:
 - `git status --short --branch` is clean.
 - Latest test runner result is `199 pass / 0 pending / 0 fail`.
 - `tests/layout-check.mjs` has been run and its result is reviewed.
-- Known late-hand discard clipping is fixed or explicitly accepted before release.
+- `tests/layout-check.mjs` passes, including late-hand and draw-ended discard scenarios.
 - `/` returns HTTP 200 from a local static server.
 - `/tests/test-runner.html` returns HTTP 200 from a local static server.
 - README reflects MVP-1.1.x layout status.

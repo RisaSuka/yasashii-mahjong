@@ -406,11 +406,12 @@ Screenshots are saved under:
 test-artifacts/layout/
 ```
 
-Known current result at layout-test setup:
+Current expected result after MVP-1.1.6:
 
 - Normal browser tests pass.
-- Layout check intentionally detects late-hand discard clipping at 13+ discards in the `late` and `draw-ended` scenarios.
-- Treat those failures as the next layout-fix target, not as something to hide.
+- Layout check passes across all target viewports and scenarios.
+- Late-hand and draw-ended scenarios show 18 discards per player without discard clipping.
+- If layout check fails again, inspect the reported viewport/scenario and the matching screenshot in `test-artifacts/layout/`.
 
 Portrait orientation check:
 

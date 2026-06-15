@@ -98,15 +98,15 @@ test-artifacts/layout/896x414-draw-ended.png
 
 `test-artifacts/` is intentionally ignored by git.
 
-## Current Known Failures
+## Current Result
 
-As of MVP-1.1.4 layout-test setup, the regular browser tests pass, but the new layout check correctly detects the known real-device problem:
+As of MVP-1.1.6, the regular browser tests pass and the layout check passes across all target viewports and scenarios.
 
-- `late` and `draw-ended` fail across all target viewports.
-- North, west, south, and east discard zones clip discard tile 13 and later.
-- This matches the Safari real-device issue where late-hand discards are visually cut off or appear to disappear.
+- `late` and `draw-ended` render 18 discards for north, west, south, and east without discard clipping.
+- Page-level horizontal and vertical overflow remain within the guard limits.
+- Important action/advice controls remain visible and clickable.
 
-This is expected for the first layout-check commit. The next UI fix should make these checks pass or update the check only if the product intentionally changes the display rule.
+The earlier MVP-1.1.4 guard intentionally detected late-hand discard clipping at discard tile 13 and later. MVP-1.1.6 fixes that known failure by fitting the landscape discard grids for 18-tile late-hand states.
 
 ## Release Gate Recommendation
 

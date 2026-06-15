@@ -772,12 +772,12 @@
 
   .table-discard-north .table-center-discards,
   .table-discard-east .table-center-discards {
-    grid-template-columns: repeat(12, minmax(9px, 14px));
+    grid-template-columns: repeat(18, minmax(8px, 14px));
   }
 
   .table-discard-west .table-center-discards,
   .table-discard-south .table-center-discards {
-    grid-template-columns: repeat(6, minmax(9px, 13px));
+    grid-template-columns: repeat(9, minmax(8px, 13px));
   }
 
   .table-center-discards .discard-tile {
@@ -911,12 +911,12 @@
 
   .table-discard-north .table-center-discards,
   .table-discard-east .table-center-discards {
-    grid-template-columns: repeat(12, minmax(8px, 12px));
+    grid-template-columns: repeat(18, minmax(7px, 12px));
   }
 
   .table-discard-west .table-center-discards,
   .table-discard-south .table-center-discards {
-    grid-template-columns: repeat(6, minmax(8px, 12px));
+    grid-template-columns: repeat(9, minmax(7px, 12px));
   }
 
   .table-center-discards .discard-tile {

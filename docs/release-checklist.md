@@ -5,7 +5,7 @@ Use this before merging to `main` or publishing with GitHub Pages.
 ## Current Release Candidate
 
 - Branch: `codex/mvp-11-discard-layout`
-- Scope: MVP-0.1 through MVP-1.1.4 layout-test setup
+- Scope: MVP-0.1 through MVP-1.1.6 discard-fit fix
 - Expected automated result: `199 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
@@ -44,7 +44,7 @@ node tests/layout-check.mjs
 
 - If Node is not on PATH in the Codex desktop environment, use the bundled Node command documented in `docs/layout-test.md`.
 - Confirm layout-check screenshots are written under `test-artifacts/layout/`.
-- Known current layout-check result: late-hand discard clipping at 13+ discards is detected in `late` and `draw-ended` scenarios. Do not release until that failure is fixed or explicitly accepted.
+- Current layout-check result: all target viewports and scenarios pass, including `late` and `draw-ended` with 18 discards per player.
 
 ## Core Functional Checks
 
@@ -104,6 +104,7 @@ node tests/layout-check.mjs
 - App module URLs include the current MVP-1.1.x cache-busting version.
 - Smartphone landscape layout guard exists and is documented in `docs/layout-test.md`.
 - Layout screenshots are ignored by git via `test-artifacts/`.
+- Late-hand and draw-ended discard zones fit 18 discards without clipping in the layout guard.
 
 ## Manual Browser Checks
 
@@ -152,7 +153,7 @@ Check:
 - Confirm `docs/current-status.md` reflects MVP-1.1.x and 199 pass.
 - Confirm `docs/manual-test-checklist.md` includes smartphone landscape checks.
 - Confirm `docs/manual-test-checklist.md` includes next-round checks.
-- Confirm `docs/layout-test.md` reflects the current layout guard and known failures.
+- Confirm `docs/layout-test.md` reflects the current layout guard result.
 
 ## Do Not Release If
 
