@@ -68,6 +68,11 @@
   box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.16);
 }
 
+.table-discard-zone.is-current-turn {
+  border-color: rgba(15, 118, 110, 0.5);
+  box-shadow: inset 0 0 0 1px rgba(15, 118, 110, 0.18);
+}
+
 .seat-north {
   grid-column: 2;
   grid-row: 1;
@@ -380,6 +385,29 @@
   gap: 8px;
 }
 
+.seat-header-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.seat-turn-indicator {
+  border: 1px solid rgba(15, 118, 110, 0.28);
+  border-radius: 999px;
+  background: rgba(217, 232, 223, 0.86);
+  color: #0f4f47;
+  padding: 2px 7px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.seat-advice-placeholder {
+  visibility: hidden;
+}
+
 .seat-name {
   font-weight: 700;
 }
@@ -409,6 +437,12 @@
   padding: 0 14px;
   font-size: 14px;
   font-weight: 700;
+}
+
+.seat-advice-trigger {
+  min-height: 30px;
+  padding: 0 10px;
+  font-size: 13px;
 }
 
 .discard-advice-modal {

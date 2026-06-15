@@ -178,15 +178,15 @@ export function registerMatchUiTests() {
     assertTrue(html.includes("table-discard-east"), "Human discards should render near the center");
   });
 
-  test("MVP-1.1.2 UI: center ring keeps CPU discards beyond six tiles", async () => {
-    const html = await renderState(addDiscards(await startMatchState(), 12));
+  test("MVP-1.1.3 UI: center ring keeps CPU discards through late hand", async () => {
+    const html = await renderState(addDiscards(await startMatchState(), 18));
     const northHtml = extractSectionHtml(html, "table-discard-north");
     const westHtml = extractSectionHtml(html, "table-discard-west");
     const southHtml = extractSectionHtml(html, "table-discard-south");
 
-    assertEqual(countDiscardTiles(northHtml), 12, "North CPU center discards should keep up to 12 recent tiles");
-    assertEqual(countDiscardTiles(westHtml), 12, "West CPU center discards should keep up to 12 recent tiles");
-    assertEqual(countDiscardTiles(southHtml), 12, "South CPU center discards should keep up to 12 recent tiles");
+    assertEqual(countDiscardTiles(northHtml), 18, "North CPU center discards should keep up to 18 recent tiles");
+    assertEqual(countDiscardTiles(westHtml), 18, "West CPU center discards should keep up to 18 recent tiles");
+    assertEqual(countDiscardTiles(southHtml), 18, "South CPU center discards should keep up to 18 recent tiles");
   });
 
   test("MVP-1.1.2 UI: important win and reaction buttons stay in the table action bar", async () => {
@@ -218,6 +218,31 @@ export function registerMatchUiTests() {
     assertTrue(openHtml.includes("discard-advice-modal"), "Advice modal should render when opened");
     assertTrue(openHtml.includes('data-action="close-discard-advice"'), "Advice modal should include a close button");
     assertEqual((openHtml.match(/discard-advice-item/g) || []).length, 2, "Advice modal should keep each candidate as a separate readable item");
+  });
+
+  test("MVP-1.1.3 UI: advice button is anchored in the human seat instead of center info", async () => {
+    const started = await startMatchState();
+    const state = {
+      ...started,
+      settings: {
+        ...started.settings,
+        discardAdviceEnabled: true
+      }
+    };
+    const html = await renderState(state, { suggestDiscards: sampleAdvice });
+    const centerHtml = extractBetween(html, 'class="center-info"', 'class="table-discard-south"');
+    const eastSeatHtml = extractSectionHtml(html, "seat-east");
+
+    assertTrue(eastSeatHtml.includes('data-action="open-discard-advice"'), "Advice button should render in the human seat header");
+    assertTrue(!centerHtml.includes('data-action="open-discard-advice"'), "Center info should not gain or lose height from the advice button");
+  });
+
+  test("MVP-1.1.3 UI: current turn is shown on the player seat and discard zone", async () => {
+    const html = await renderState(await startMatchState());
+
+    assertTrue(html.includes("seat-east current"), "Current human seat should keep the current turn highlight");
+    assertTrue(html.includes("seat-turn-indicator"), "Current player should get a compact turn indicator");
+    assertTrue(html.includes("table-discard-east is-current-turn"), "Current player discard zone should also be highlighted");
   });
 
   test("MVP-1.1.1 UI: discard advice reason button is hidden when advice is off", async () => {
@@ -286,6 +311,13 @@ export function registerMatchUiTests() {
 function extractSectionHtml(html, className) {
   const start = html.indexOf(className);
   const end = html.indexOf("</section>", start);
+
+  return start === -1 || end === -1 ? "" : html.slice(start, end);
+}
+
+function extractBetween(html, startNeedle, endNeedle) {
+  const start = html.indexOf(startNeedle);
+  const end = html.indexOf(endNeedle, start);
 
   return start === -1 || end === -1 ? "" : html.slice(start, end);
 }

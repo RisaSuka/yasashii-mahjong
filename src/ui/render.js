@@ -77,14 +77,13 @@ function renderTable(state, options) {
       ${seats.map((player) => renderSeat(player, round, discardAdvice)).join("")}
       <section class="center-panel">
         <div class="table-discard-ring">
-          ${renderTableDiscardZone(round.players[3], "north")}
-          ${renderTableDiscardZone(round.players[2], "west")}
+          ${renderTableDiscardZone(round.players[3], "north", round)}
+          ${renderTableDiscardZone(round.players[2], "west", round)}
           <div class="center-info">
             ${renderMatchSummary(state)}
-            <strong>${renderStatus(round)}</strong>
+            <strong class="center-status">${renderCompactStatus(round)}</strong>
             ${renderPreviousRoundResult(state.lastRoundResult, round)}
             ${renderLastActionResult(round)}
-            ${renderDiscardAdviceButton(discardAdvice)}
             ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen)}
             ${renderYakuSummary(round)}
             <div class="table-meta-row">
@@ -94,8 +93,8 @@ function renderTable(state, options) {
             </div>
             ${renderTableActionBar(state, options)}
           </div>
-          ${renderTableDiscardZone(round.players[1], "south")}
-          ${renderTableDiscardZone(round.players[0], "east")}
+          ${renderTableDiscardZone(round.players[1], "south", round)}
+          ${renderTableDiscardZone(round.players[0], "east", round)}
         </div>
       </section>
     </main>
@@ -337,12 +336,16 @@ function renderSeat(player, round, discardAdvice) {
   const isCurrent = round.currentPlayerIndex === player.id;
   const positionClass = `seat-${player.wind}`;
   const currentClass = isCurrent ? " current" : "";
+  const currentIndicator = isCurrent ? `<span class="seat-turn-indicator" aria-label="現在の手番">▶ 手番</span>` : "";
 
   return `
     <section class="seat ${positionClass}${currentClass}">
       <div class="seat-header">
         <span class="seat-name">${WIND_LABELS[player.wind]} ${player.name}</span>
-        <span class="seat-meta">${isCurrent ? "手番" : ""}</span>
+        <span class="seat-meta seat-header-actions">
+          ${player.type === "human" ? renderSeatAdviceButton(discardAdvice) : ""}
+          ${currentIndicator}
+        </span>
       </div>
       ${player.type === "human" ? renderHumanHand(player, round, discardAdvice) : renderCpuHand(player)}
       <div class="discard-area ${player.type === "human" ? "discard-area-human" : "discard-area-cpu"}">
@@ -353,16 +356,29 @@ function renderSeat(player, round, discardAdvice) {
   `;
 }
 
-function renderTableDiscardZone(player, position) {
+function renderSeatAdviceButton(advice) {
+  if (!Array.isArray(advice) || advice.length === 0) {
+    return `<span class="seat-advice-placeholder" aria-hidden="true">助言を見る</span>`;
+  }
+
+  return `
+    <button type="button" class="discard-advice-trigger seat-advice-trigger" data-action="open-discard-advice">
+      助言を見る
+    </button>
+  `;
+}
+
+function renderTableDiscardZone(player, position, round) {
   if (!player) {
     return "";
   }
 
   const visibleDiscards = getVisibleDiscards(player);
   const label = `${WIND_LABELS[player.wind]} ${player.name}`;
+  const currentClass = round?.currentPlayerIndex === player.id ? " is-current-turn" : "";
 
   return `
-    <section class="table-discard-zone table-discard-${position}" aria-label="${escapeHtml(label)}の捨て牌">
+    <section class="table-discard-zone table-discard-${position}${currentClass}" aria-label="${escapeHtml(label)}の捨て牌">
       <div class="table-discard-label">
         <span>${escapeHtml(label)}</span>
         <span>捨て牌 ${player.discards.length}枚</span>
@@ -375,7 +391,7 @@ function renderTableDiscardZone(player, position) {
 }
 
 function getVisibleDiscards(player) {
-  const limit = player.type === "human" ? 18 : 12;
+  const limit = 18;
 
   return player.discards.slice(-limit);
 }
@@ -402,6 +418,29 @@ function renderCpuHand(player) {
       <span class="tile tile-back">${player.hand.length}</span>
     </div>
   `;
+}
+
+function renderCompactStatus(round) {
+  if (round.phase === "ended") {
+    if (round.endReason === "win" && round.winningResult?.winType === "tsumo") {
+      const winner = round.players.find((player) => player.id === round.winningResult.winnerId);
+      return winner?.type === "human" ? "あなたのツモ" : `${winner?.name || "CPU"}のツモ`;
+    }
+
+    if (round.endReason === "win" && round.winningResult?.winType === "ron") {
+      const winner = round.players.find((player) => player.id === round.winningResult.winnerId);
+      return winner?.type === "human" ? "あなたのロン" : `${winner?.name || "CPU"}のロン`;
+    }
+
+    return round.endReason === "exhaustive-draw" ? "流局" : "局終了";
+  }
+
+  if (round.phase === "reaction") {
+    return "ロン確認";
+  }
+
+  const currentPlayer = round.players[round.currentPlayerIndex];
+  return currentPlayer.type === "human" ? "あなたの番" : `${currentPlayer.name}の番`;
 }
 
 function renderStatus(round) {
