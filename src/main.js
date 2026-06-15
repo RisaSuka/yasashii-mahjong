@@ -50,6 +50,7 @@ function render() {
   });
   bindControls(appRoot, {
     onStartRound: startRound,
+    onStartNextRound: startNextRound,
     onToggleLargeTileMode: toggleLargeTileMode,
     onToggleDiscardAdvice: toggleDiscardAdvice,
     onDiscardTile: discardHumanTile,
@@ -61,6 +62,13 @@ function render() {
 
 function startRound() {
   state = gameApi.dispatchAction(state, { type: "START_ROUND" });
+  render();
+  scheduleCpuIfNeeded();
+}
+
+function startNextRound() {
+  window.clearTimeout(cpuTimer);
+  state = gameApi.dispatchAction(state, { type: "START_NEXT_ROUND" });
   render();
   scheduleCpuIfNeeded();
 }
@@ -306,6 +314,14 @@ function createFallbackGameApi() {
         };
       }
 
+      if (action.type === "START_NEXT_ROUND") {
+        return {
+          ...currentState,
+          lastRoundResult: createFallbackRoundResult(currentState.round),
+          round: createFallbackRound()
+        };
+      }
+
       return currentState;
     }
   };
@@ -343,5 +359,13 @@ function createFallbackPlayer(id, name, type, wind, handSize) {
       red: false
     })),
     discards: []
+  };
+}
+
+function createFallbackRoundResult(round) {
+  return {
+    roundId: round?.id || "fallback-round",
+    endReason: round?.endReason || "exhaustive-draw",
+    endedAt: new Date().toISOString()
   };
 }

@@ -3,6 +3,10 @@ export function bindControls(root, handlers) {
     handlers.onStartRound();
   });
 
+  root.querySelector("[data-action='start-next-round']")?.addEventListener("click", () => {
+    handlers.onStartNextRound();
+  });
+
   root.querySelector("[data-action='toggle-large']")?.addEventListener("click", () => {
     handlers.onToggleLargeTileMode();
   });

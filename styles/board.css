@@ -119,6 +119,16 @@
   line-height: 1.5;
 }
 
+.previous-round-result {
+  border: 1px solid rgba(15, 118, 110, 0.22);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.68);
+  padding: 8px 10px;
+  color: #274c3a;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
 .discard-advice {
   display: grid;
   gap: 6px;
@@ -209,6 +219,18 @@
 .tsumo-button {
   justify-self: center;
   min-width: 96px;
+  min-height: 48px;
+  border: 2px solid #0f766e;
+  border-radius: 8px;
+  background: #0f766e;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.next-round-button {
+  justify-self: center;
+  min-width: 128px;
   min-height: 48px;
   border: 2px solid #0f766e;
   border-radius: 8px;

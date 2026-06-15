@@ -77,9 +77,11 @@ function renderTable(state, options) {
       ${seats.map((player) => renderSeat(player, round, discardAdvice)).join("")}
       <section class="center-panel">
         <strong>${renderStatus(round)}</strong>
+        ${renderPreviousRoundResult(state.lastRoundResult, round)}
         ${renderLastActionResult(round)}
         ${renderDiscardAdvice(discardAdvice)}
         ${renderYakuSummary(round)}
+        ${renderNextRoundAction(round)}
         ${renderRonAction(state, options)}
         ${renderTsumoAction(state, options)}
         <div class="table-meta-row">
@@ -89,6 +91,30 @@ function renderTable(state, options) {
         </div>
       </section>
     </main>
+  `;
+}
+
+function renderPreviousRoundResult(lastRoundResult, round) {
+  if (!lastRoundResult || round.phase === "ended") {
+    return "";
+  }
+
+  return `
+    <section class="previous-round-result" aria-label="前の局の結果">
+      前の局: ${escapeHtml(formatRoundResult(lastRoundResult))}
+    </section>
+  `;
+}
+
+function renderNextRoundAction(round) {
+  if (round.phase !== "ended") {
+    return "";
+  }
+
+  return `
+    <button type="button" class="next-round-button" data-action="start-next-round">
+      次の局へ
+    </button>
   `;
 }
 
@@ -279,6 +305,22 @@ function renderStatus(round) {
 
   const currentPlayer = round.players[round.currentPlayerIndex];
   return currentPlayer.type === "human" ? "あなたの番です。牌を選んでください" : `CPUの手番です (${currentPlayer.name})`;
+}
+
+function formatRoundResult(result) {
+  if (result.endReason === "win" && result.winType === "tsumo") {
+    return result.winnerId === 0 ? "あなたのツモ和了です" : `CPU ${result.winnerId}のツモ和了です`;
+  }
+
+  if (result.endReason === "win" && result.winType === "ron") {
+    return result.winnerId === 0 ? "あなたのロン和了です" : `CPU ${result.winnerId}のロン和了です`;
+  }
+
+  if (result.endReason === "exhaustive-draw") {
+    return "流局しました";
+  }
+
+  return "局が終了しました";
 }
 
 function renderRonAction(state, options) {

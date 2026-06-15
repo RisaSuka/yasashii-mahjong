@@ -394,10 +394,17 @@
   }
 
   .yaku-summary,
-  .action-message {
+  .action-message,
+  .previous-round-result {
     padding: 6px 7px;
     font-size: 12px;
     line-height: 1.3;
+  }
+
+  .next-round-button {
+    min-width: 92px;
+    min-height: 34px;
+    font-size: 14px;
   }
 
   .term-help {
