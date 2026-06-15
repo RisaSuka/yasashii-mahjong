@@ -102,48 +102,81 @@
   }
 }
 
-@media (max-width: 940px) and (orientation: landscape) {
+@media (max-width: 1180px) and (orientation: landscape) {
   html,
   body {
-    overflow: hidden;
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
   .app {
-    height: 100svh;
+    width: 100%;
+    max-width: 100vw;
     min-height: 100svh;
-    overflow: hidden;
-    grid-template-rows: auto minmax(0, 1fr) auto;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    grid-template-rows: auto minmax(0, 1fr);
   }
 
   .topbar {
+    align-items: center;
+    flex-direction: row;
     gap: 8px;
-    padding: 6px 8px;
+    min-width: 0;
+    padding: 4px 6px;
   }
 
   .title {
-    font-size: 15px;
+    flex: 0 1 148px;
+    min-width: 0;
+    overflow: hidden;
+    font-size: 13px;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  .controls {
-    gap: 6px;
+  .title::after {
+    content: "じゅんちゃん麻雀";
   }
 
-  .controls button {
-    min-height: 36px;
-    padding: 0 10px;
+  .title {
+    font-size: 0;
+  }
+
+  .title::after {
     font-size: 13px;
   }
 
-  .table {
-    grid-template-columns: minmax(72px, 0.72fr) minmax(252px, 2.45fr) minmax(72px, 0.72fr);
-    grid-template-rows: minmax(44px, 0.62fr) minmax(70px, 1fr) minmax(88px, 1.18fr);
+  .controls {
+    flex: 1 1 0;
+    flex-wrap: nowrap;
     gap: 6px;
+    min-width: 0;
+  }
+
+  .controls button {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 32px;
+    max-width: none;
+    overflow: hidden;
+    padding: 0 8px;
+    font-size: 12px;
+    line-height: 1.1;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .table {
+    grid-template-columns: minmax(58px, 0.5fr) minmax(0, 2.8fr) minmax(58px, 0.5fr);
+    grid-template-rows: minmax(32px, 0.36fr) minmax(54px, 0.58fr) minmax(106px, auto);
+    gap: 4px;
     width: 100%;
     max-width: none;
     min-height: 0;
-    height: 100%;
-    overflow: hidden;
-    padding: 6px 8px;
+    overflow-x: hidden;
+    padding: 4px 6px 2px;
   }
 
   .seat {
@@ -203,39 +236,44 @@
 
   .center-panel {
     align-content: start;
-    gap: 4px;
+    gap: 2px;
     min-height: 0;
     overflow: hidden;
-    padding: 7px;
+    padding: 5px;
   }
 
   .center-panel strong {
-    font-size: 15px;
-    line-height: 1.25;
+    font-size: 13px;
+    line-height: 1.15;
   }
 
   .discard-advice {
-    gap: 3px;
-    padding: 6px 7px;
+    gap: 2px;
+    padding: 4px 6px;
     overflow: hidden;
   }
 
   .discard-advice-title {
-    font-size: 13px;
+    font-size: 11px;
+    line-height: 1.15;
   }
 
   .discard-advice-list {
-    gap: 2px;
-    padding-left: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 8px;
+    padding-left: 14px;
   }
 
   .discard-advice-label {
-    font-size: 12px;
+    display: inline;
+    font-size: 11px;
   }
 
   .discard-advice-reason {
-    font-size: 11px;
-    line-height: 1.3;
+    display: inline;
+    font-size: 10px;
+    line-height: 1.2;
   }
 
   .discard-advice-item.is-secondary .discard-advice-reason {
@@ -260,14 +298,14 @@
   }
 
   .seat:not(.seat-east) .hand .tile {
-    width: 26px;
-    height: 36px;
+    width: 22px;
+    height: 30px;
     border-radius: 4px;
     padding: 2px 2px 4px;
   }
 
   .seat:not(.seat-east) .tile-symbol {
-    font-size: 14px;
+    font-size: 12px;
   }
 
   .seat:not(.seat-east) .tile-suit-label,
@@ -276,31 +314,32 @@
   }
 
   .seat-east {
-    min-height: 96px;
+    min-height: 104px;
+    overflow: visible;
   }
 
   .seat-east .hand {
     min-width: 0;
     overflow-x: auto;
-    overflow-y: hidden;
-    padding: 2px 0 8px;
+    overflow-y: visible;
+    padding: 2px 0 10px;
     scrollbar-width: thin;
   }
 
   .seat-east .hand .tile {
-    width: 48px;
-    height: 66px;
+    width: 46px;
+    height: 64px;
   }
 
   .seat-east .hand .tile-button {
-    min-width: 52px;
-    min-height: 70px;
+    min-width: 50px;
+    min-height: 68px;
   }
 
   .discards {
     gap: 3px;
-    min-height: 28px;
-    max-height: 48px;
+    min-height: 22px;
+    max-height: 34px;
     overflow: hidden;
   }
 
@@ -334,12 +373,9 @@
   }
 
   .footer-status {
-    max-height: 20px;
+    display: none;
+    max-height: 0;
     overflow: hidden;
-    gap: 8px;
-    padding: 2px 8px 4px;
-    font-size: 10px;
-    line-height: 1.2;
   }
 }
 
@@ -404,7 +440,7 @@
   }
 }
 
-@media (max-width: 940px) and (orientation: landscape) {
+@media (max-width: 1180px) and (orientation: landscape) {
   .large-tiles .seat-east .hand .tile {
     width: 56px;
     height: 78px;
