@@ -21,8 +21,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 186.
-- Confirm pass count is 186.
+- Confirm total count is 188.
+- Confirm pass count is 188.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 
@@ -226,6 +226,8 @@ Use automated tests as the primary acceptance check for MVP-1.0, then manually c
 - Confirm East 4 ended hand shows `東風戦終了`.
 - Confirm East 4 ended hand does not show `次の局へ`.
 - Confirm the East-only end message says point calculation is not supported yet.
+- Confirm the restart button after the East-only end is tappable.
+- Confirm the fresh match restart returns to East 1, clears the East-only end message, and keeps large tile/advice settings.
 - Confirm `もう一度遊ぶ` starts a fresh east-only match.
 
 ## 13. Smartphone Real Device Check On Local Wi-Fi
@@ -279,7 +281,7 @@ Security notes:
 
 Real-device checks:
 
-- Open the app in a new tab with `?v=mvp10-sort-debug-2` if the phone might have cached an older module.
+- Open the app in a new tab with `?v=mvp10-sort-debug-3` if the phone might have cached an older module.
 - Confirm the first start button begins an east-only match, not a single standalone round.
 - Confirm `東1局` appears immediately after pressing the start button.
 - Confirm tiles are readable on the phone screen.

@@ -6,7 +6,7 @@ Use this before merging to `main` or publishing with GitHub Pages.
 
 - Branch: `codex/mvp-09-next-round`
 - Scope: MVP-0.1 through MVP-1.0
-- Expected automated result: `186 pass / 0 pending / 0 fail`
+- Expected automated result: `188 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
 - Publish status: MVP-1.0 is not published yet.
@@ -31,8 +31,8 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 186.
-- Confirm pass count is 186.
+- Confirm total count is 188.
+- Confirm pass count is 188.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
@@ -75,11 +75,13 @@ git branch --list
 - East 4 ended hand shows `東風戦終了`.
 - East 4 ended hand does not show `次の局へ`.
 - A fresh match start button remains available after the match ends.
+- The fresh match start button after match end is tappable and dispatches `START_MATCH`.
+- Restarting after match end returns to East 1 and clears the East-only end message.
 - Human hand tiles are automatically sorted in manzu, pinzu, souzu, honor order.
 - The sorted human hand still supports tile-id based discard.
 - Beginner discard advice still highlights the intended sorted tile.
 - App module URLs include the current MVP-1.0 cache-busting version.
-- The visible start button dispatches through the `START_MATCH` UI handler.
+- All visible start-match buttons dispatch through the `START_MATCH` UI handler.
 
 ## Manual Browser Checks
 
@@ -122,7 +124,7 @@ Check:
 - Confirm `tests/test-runner.html` works from a static server.
 - Confirm there are no external dependencies that GitHub Pages must install.
 - Confirm README describes the current MVP scope and known missing features.
-- Confirm `docs/current-status.md` reflects MVP-1.0 and 176 pass.
+- Confirm `docs/current-status.md` reflects MVP-1.0 and 188 pass.
 - Confirm `docs/manual-test-checklist.md` includes smartphone landscape checks.
 - Confirm `docs/manual-test-checklist.md` includes next-round checks.
 

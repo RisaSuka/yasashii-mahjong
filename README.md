@@ -4,7 +4,7 @@ MVP-1.0 adds the first east-only match skeleton: `START_MATCH`, East 1 through E
 
 This MVP-1.0 work is not published yet. Do not merge to `main` or push without explicit approval.
 
-Current MVP-1.0 local checks target `186 pass / 0 pending / 0 fail`.
+Current MVP-1.0 local checks target `188 pass / 0 pending / 0 fail`.
 
 # MVP-0.9 working branch note
 
