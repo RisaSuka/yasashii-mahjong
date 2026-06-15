@@ -5,11 +5,11 @@ Use this before merging to `main` or publishing with GitHub Pages.
 ## Current Release Candidate
 
 - Branch: `codex/mvp-11-discard-layout`
-- Scope: MVP-0.1 through MVP-1.1
-- Expected automated result: `190 pass / 0 pending / 0 fail`
+- Scope: MVP-0.1 through MVP-1.1.1
+- Expected automated result: `194 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-1.1 is not published yet.
+- Publish status: MVP-1.1.1 is not published yet.
 
 ## Git Safety
 
@@ -31,8 +31,8 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 190.
-- Confirm pass count is 190.
+- Confirm total count is 194.
+- Confirm pass count is 194.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
@@ -80,15 +80,19 @@ git branch --list
 - Human hand tiles are automatically sorted in manzu, pinzu, souzu, honor order.
 - The sorted human hand still supports tile-id based discard.
 - Beginner discard advice still highlights the intended sorted tile.
-- App module URLs include the current MVP-1.1 cache-busting version.
+- App module URLs include the current MVP-1.1.1 cache-busting version.
 - All visible start-match buttons dispatch through the `START_MATCH` UI handler.
-- Human discard area appears above the human hand in smartphone landscape.
-- Human discard area shows recent discards without sitting against the iPhone home bar.
-- CPU seats show compact recent discard tiles.
+- Table-center discard ring appears in smartphone landscape.
+- North, west, south, and human discard zones surround the center information.
+- Human discard zone appears above the human hand and does not overlap it.
+- CPU discard zones show recent discard tiles instead of disappearing into CPU seats.
 - Page-level horizontal scroll is absent in smartphone landscape.
 - Page-level vertical scroll is absent or minimal in smartphone landscape.
 - Hand overflow stays inside the hand strip.
-- App module URLs include the current MVP-1.1 cache-busting version.
+- `助言を見る` opens a compact discard-advice reason popup.
+- The discard-advice reason popup closes without adding page scroll.
+- Advice OFF hides the advice reason button.
+- App module URLs include the current MVP-1.1.1 cache-busting version.
 
 ## Manual Browser Checks
 
@@ -122,8 +126,9 @@ Check:
 - Next-round button is readable and tappable after a round ends.
 - Next-round button remains easy to tap in smartphone landscape.
 - Previous-round result text is readable after the next round starts.
-- Human discards are visible above the human hand in landscape.
-- CPU discards remain visible without making CPU seats dominate the table.
+- Human discards are visible above the human hand in the center discard ring.
+- CPU discards remain visible in the center discard ring without making CPU seats dominate the table.
+- The discard-advice reason popup opens and closes in landscape.
 
 ## GitHub Pages Checks
 
@@ -133,7 +138,7 @@ Check:
 - Confirm `tests/test-runner.html` works from a static server.
 - Confirm there are no external dependencies that GitHub Pages must install.
 - Confirm README describes the current MVP scope and known missing features.
-- Confirm `docs/current-status.md` reflects MVP-1.1 and 190 pass.
+- Confirm `docs/current-status.md` reflects MVP-1.1.1 and 194 pass.
 - Confirm `docs/manual-test-checklist.md` includes smartphone landscape checks.
 - Confirm `docs/manual-test-checklist.md` includes next-round checks.
 

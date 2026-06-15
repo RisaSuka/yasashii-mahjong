@@ -1,5 +1,5 @@
 import { chooseRandomDiscard } from "./cpu/random-cpu.js";
-import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp11-discard-layout-1";
+import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp111-discard-center-1";
 import { isWinningHand } from "./rules/win-check.js";
 import { detectYaku } from "./rules/yaku.js";
 import { drawFromWall } from "./wall.js";

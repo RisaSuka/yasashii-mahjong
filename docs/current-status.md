@@ -1,14 +1,14 @@
 # Current Status
 
-Last updated for MVP-1.1 landscape discard layout.
+Last updated for MVP-1.1.1 center discard layout and advice popup.
 
 ## Repository State
 
 - Working branch: `codex/mvp-11-discard-layout`
-- Automated tests: `190 pass / 0 pending / 0 fail`
-- Working tree: clean at the time of the latest MVP-1.1 layout verification
+- Automated tests: `194 pass / 0 pending / 0 fail`
+- Working tree: clean at the time of the latest MVP-1.1.1 layout verification
 - Push: not yet
-- `main` merge: not yet for MVP-1.1
+- `main` merge: not yet for MVP-1.1.1
 
 ## Implemented MVPs
 
@@ -31,6 +31,7 @@ Last updated for MVP-1.1 landscape discard layout.
 | MVP-0.9.5 | Working branch | Smartphone landscape review and small next-round UI refinements. |
 | MVP-1.0 | Working branch | Minimal east-only match state and UI: East 1 through East 4, fixed scores, compact round history, current-hand display, and East-only end display. |
 | MVP-1.1 | Working branch | Smartphone landscape discard layout: human discards above the hand, compact CPU discards, and reduced page-level scrolling. |
+| MVP-1.1.1 | Working branch | Table-center discard ring and popup discard-advice reasons for smartphone landscape. |
 
 ## Current Capabilities
 
@@ -117,6 +118,13 @@ Last updated for MVP-1.1 landscape discard layout.
   - The human hand remains the bottom-priority tap area and may scroll horizontally inside its own strip.
   - Landscape CSS reduces page-level horizontal and vertical scrolling with `100dvh`/`100svh` sizing.
   - App CSS and module URLs include `v=mvp11-discard-layout-1`.
+- MVP-1.1.1 center discard layout:
+  - Landscape shows a center discard ring for north, west, south, and east discards.
+  - CPU discard zones prioritize recent discards over CPU hand-back display in landscape.
+  - Human discards sit above the hand as a center-bottom discard zone instead of overlapping the hand.
+  - Detailed discard-advice reasons are opened with `助言を見る`.
+  - Advice details appear in a compact popup and can be closed without adding page scroll.
+  - App CSS and module URLs include `v=mvp111-discard-center-1`.
 
 ## Not Implemented Yet
 
@@ -143,10 +151,10 @@ Last updated for MVP-1.1 landscape discard layout.
 Before merging into `main`, confirm:
 
 - `git status --short --branch` is clean.
-- Latest test runner result is `190 pass / 0 pending / 0 fail`.
+- Latest test runner result is `194 pass / 0 pending / 0 fail`.
 - `/` returns HTTP 200 from a local static server.
 - `/tests/test-runner.html` returns HTTP 200 from a local static server.
-- README reflects MVP-1.1 layout status.
+- README reflects MVP-1.1.1 layout status.
 - Smartphone landscape layout has been checked or queued for final real-device check.
 - `docs/release-checklist.md` is reviewed.
 - `docs/manual-test-checklist.md` is reviewed.

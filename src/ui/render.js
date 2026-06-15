@@ -76,20 +76,29 @@ function renderTable(state, options) {
     <main class="table" aria-label="4人麻雀卓">
       ${seats.map((player) => renderSeat(player, round, discardAdvice)).join("")}
       <section class="center-panel">
-        ${renderMatchSummary(state)}
-        <strong>${renderStatus(round)}</strong>
-        ${renderPreviousRoundResult(state.lastRoundResult, round)}
-        ${renderLastActionResult(round)}
-        ${renderDiscardAdvice(discardAdvice)}
-        ${renderYakuSummary(round)}
-        ${renderMatchEndAction(state)}
-        ${renderNextRoundAction(state)}
-        ${renderRonAction(state, options)}
-        ${renderTsumoAction(state, options)}
-        <div class="table-meta-row">
-          <span class="table-meta">山 ${round.wall.length}</span>
-          <span class="table-meta">王牌 ${round.deadWall.length}</span>
-          <span class="table-meta">ドラ ${renderDoraIndicators(round)}</span>
+        <div class="table-discard-ring">
+          ${renderTableDiscardZone(round.players[3], "north")}
+          ${renderTableDiscardZone(round.players[2], "west")}
+          <div class="center-info">
+            ${renderMatchSummary(state)}
+            <strong>${renderStatus(round)}</strong>
+            ${renderPreviousRoundResult(state.lastRoundResult, round)}
+            ${renderLastActionResult(round)}
+            ${renderDiscardAdviceButton(discardAdvice)}
+            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen)}
+            ${renderYakuSummary(round)}
+            ${renderMatchEndAction(state)}
+            ${renderNextRoundAction(state)}
+            ${renderRonAction(state, options)}
+            ${renderTsumoAction(state, options)}
+            <div class="table-meta-row">
+              <span class="table-meta">山 ${round.wall.length}</span>
+              <span class="table-meta">王牌 ${round.deadWall.length}</span>
+              <span class="table-meta">ドラ ${renderDoraIndicators(round)}</span>
+            </div>
+          </div>
+          ${renderTableDiscardZone(round.players[1], "south")}
+          ${renderTableDiscardZone(round.players[0], "east")}
         </div>
       </section>
     </main>
@@ -195,22 +204,43 @@ function getDiscardAdvice(state, options) {
   });
 }
 
-function renderDiscardAdvice(advice) {
+function renderDiscardAdviceButton(advice) {
   if (!Array.isArray(advice) || advice.length === 0) {
     return "";
   }
 
   return `
-    <section class="discard-advice" aria-label="おすすめ捨て牌">
-      <strong class="discard-advice-title">おすすめ捨て牌</strong>
+    <button type="button" class="discard-advice-trigger" data-action="open-discard-advice">
+      助言を見る
+    </button>
+  `;
+}
+
+function renderDiscardAdviceDialog(advice, isOpen) {
+  if (!Array.isArray(advice) || advice.length === 0) {
+    return "";
+  }
+
+  if (!isOpen) {
+    return "";
+  }
+
+  return `
+    <section class="discard-advice-modal" role="dialog" aria-modal="false" aria-label="おすすめ理由">
+      <div class="discard-advice">
+        <div class="discard-advice-header">
+          <strong class="discard-advice-title">おすすめ理由</strong>
+          <button type="button" class="discard-advice-close" data-action="close-discard-advice">閉じる</button>
+        </div>
       <ol class="discard-advice-list">
         ${advice.map((entry, index) => `
           <li class="discard-advice-item${index === 0 ? " is-primary" : " is-secondary"}">
             <span class="discard-advice-label">${index === 0 ? escapeHtml(entry.label || "おすすめ") : "候補"}: ${escapeHtml(formatAdviceTileId(entry.tileId))}</span>
-            ${index === 0 ? `<span class="discard-advice-reason">理由: ${escapeHtml(entry.reason || "")}</span>` : ""}
+            <span class="discard-advice-reason">理由: ${escapeHtml(entry.reason || "")}</span>
           </li>
         `).join("")}
       </ol>
+      </div>
     </section>
   `;
 }
@@ -306,6 +336,27 @@ function renderSeat(player, round, discardAdvice) {
       <div class="discard-area ${player.type === "human" ? "discard-area-human" : "discard-area-cpu"}">
         <div class="seat-meta">捨て牌 ${player.discards.length}枚</div>
         <div class="discards">${getVisibleDiscards(player).map((tile) => renderTile(tile, "discard-tile")).join("")}</div>
+      </div>
+    </section>
+  `;
+}
+
+function renderTableDiscardZone(player, position) {
+  if (!player) {
+    return "";
+  }
+
+  const visibleDiscards = getVisibleDiscards(player);
+  const label = `${WIND_LABELS[player.wind]} ${player.name}`;
+
+  return `
+    <section class="table-discard-zone table-discard-${position}" aria-label="${escapeHtml(label)}の捨て牌">
+      <div class="table-discard-label">
+        <span>${escapeHtml(label)}</span>
+        <span>捨て牌 ${player.discards.length}枚</span>
+      </div>
+      <div class="discards table-center-discards">
+        ${visibleDiscards.map((tile) => renderTile(tile, "discard-tile")).join("")}
       </div>
     </section>
   `;

@@ -167,6 +167,96 @@ export function registerMatchUiTests() {
 
     assertEqual(visibleHumanDiscards, 12, "Human discard area should show the latest 12 tiles");
   });
+
+  test("MVP-1.1.1 UI: table-center discard ring renders all four directions", async () => {
+    const html = await renderState(addDiscards(await startMatchState(), 8));
+
+    assertTrue(html.includes("table-discard-ring"), "Center discard ring should render");
+    assertTrue(html.includes("table-discard-north"), "North CPU discards should render near the center");
+    assertTrue(html.includes("table-discard-west"), "West CPU discards should render near the center");
+    assertTrue(html.includes("table-discard-south"), "South CPU discards should render near the center");
+    assertTrue(html.includes("table-discard-east"), "Human discards should render near the center");
+  });
+
+  test("MVP-1.1.1 UI: discard advice reason button and modal render from advice state", async () => {
+    const started = await startMatchState();
+    const state = {
+      ...started,
+      settings: {
+        ...started.settings,
+        discardAdviceEnabled: true
+      }
+    };
+    const closedHtml = await renderState(state, { suggestDiscards: sampleAdvice });
+    const openHtml = await renderState(state, { suggestDiscards: sampleAdvice, discardAdviceDialogOpen: true });
+
+    assertTrue(closedHtml.includes('data-action="open-discard-advice"'), "Advice button should be visible when advice is available");
+    assertTrue(!closedHtml.includes("discard-advice-modal"), "Advice modal should stay closed by default");
+    assertTrue(openHtml.includes("discard-advice-modal"), "Advice modal should render when opened");
+    assertTrue(openHtml.includes('data-action="close-discard-advice"'), "Advice modal should include a close button");
+  });
+
+  test("MVP-1.1.1 UI: discard advice reason button is hidden when advice is off", async () => {
+    const started = await startMatchState();
+    const state = {
+      ...started,
+      settings: {
+        ...started.settings,
+        discardAdviceEnabled: false
+      }
+    };
+    const html = await renderState(state, { suggestDiscards: sampleAdvice });
+
+    assertTrue(!html.includes('data-action="open-discard-advice"'), "Advice reason button should not show when advice is OFF");
+    assertTrue(!html.includes("discard-advice-modal"), "Advice modal should not show when advice is OFF");
+  });
+
+  test("MVP-1.1.1 UI: advice modal buttons dispatch open and close handlers", async () => {
+    const { bindControls } = await loadModule("../src/ui/input.js", ["bindControls"]);
+    let opened = 0;
+    let closed = 0;
+    const openButton = createFakeButton();
+    const closeButton = createFakeButton();
+    const root = {
+      querySelector(selector) {
+        if (selector === "[data-action='open-discard-advice']") {
+          return openButton;
+        }
+
+        if (selector === "[data-action='close-discard-advice']") {
+          return closeButton;
+        }
+
+        return null;
+      },
+      querySelectorAll() {
+        return [];
+      }
+    };
+
+    bindControls(root, {
+      onStartMatch() {},
+      onStartRound() {},
+      onStartNextRound() {},
+      onToggleLargeTileMode() {},
+      onToggleDiscardAdvice() {},
+      onOpenDiscardAdvice() {
+        opened += 1;
+      },
+      onCloseDiscardAdvice() {
+        closed += 1;
+      },
+      onDiscardTile() {},
+      onDeclareTsumo() {},
+      onDeclareRon() {},
+      onSkipRon() {}
+    });
+    openButton.listeners.click();
+    closeButton.listeners.click();
+
+    assertEqual(opened, 1, "Open advice button should call its handler");
+    assertEqual(closed, 1, "Close advice button should call its handler");
+  });
 }
 
 async function initialState() {
@@ -210,17 +300,35 @@ async function endedHandState(handNumber) {
   };
 }
 
-async function renderState(state) {
+async function renderState(state, renderOptions = {}) {
   const { renderGame } = await loadModule("../src/ui/render.js", ["renderGame"]);
   const root = { innerHTML: "" };
 
   renderGame(state, root, {
     canDeclareTsumo: () => false,
     canDeclareRon: () => false,
-    suggestDiscards: () => []
+    suggestDiscards: () => [],
+    ...renderOptions
   });
 
   return root.innerHTML;
+}
+
+function sampleAdvice() {
+  return [
+    {
+      tileId: "s1-0",
+      priority: 1,
+      label: "おすすめ",
+      reason: "端に近く、組み合わせが作りにくいためです。"
+    },
+    {
+      tileId: "m9-0",
+      priority: 2,
+      label: "候補",
+      reason: "孤立しているため候補です。"
+    }
+  ];
 }
 
 function addDiscards(state, count) {

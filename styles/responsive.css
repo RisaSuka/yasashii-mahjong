@@ -560,3 +560,109 @@
     font-size: 32px;
   }
 }
+
+@media (max-width: 1180px) and (orientation: landscape) {
+  .table {
+    grid-template-columns: minmax(54px, 0.44fr) minmax(0, 3fr) minmax(54px, 0.44fr);
+    grid-template-rows: minmax(24px, 0.24fr) minmax(76px, 0.9fr) minmax(112px, 0.9fr);
+  }
+
+  .center-panel {
+    padding: 3px 4px;
+  }
+
+  .table-discard-ring {
+    height: 100%;
+    grid-template-columns: minmax(54px, 0.66fr) minmax(120px, 1.4fr) minmax(54px, 0.66fr);
+    grid-template-rows: minmax(22px, auto) minmax(34px, 1fr) minmax(30px, auto);
+    gap: 3px;
+  }
+
+  .center-info {
+    gap: 1px;
+    align-content: center;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .table-discard-zone {
+    gap: 1px;
+    overflow: hidden;
+    padding: 2px 3px;
+  }
+
+  .table-discard-label {
+    font-size: 8px;
+    line-height: 1;
+  }
+
+  .table-center-discards {
+    min-height: 20px;
+    max-height: 44px;
+    overflow: hidden;
+  }
+
+  .table-discard-north .table-center-discards,
+  .table-discard-east .table-center-discards {
+    justify-content: center;
+  }
+
+  .table-discard-west .table-center-discards,
+  .table-discard-south .table-center-discards {
+    max-height: 66px;
+  }
+
+  .seat:not(.seat-east) .hand,
+  .seat .discard-area {
+    display: none;
+  }
+
+  .seat-east {
+    grid-template-rows: auto minmax(78px, 1fr);
+  }
+
+  .seat-east .hand {
+    order: 2;
+  }
+
+  .discard-advice-trigger {
+    min-height: 24px;
+    padding: 0 10px;
+    font-size: 10px;
+  }
+
+  .discard-advice-modal {
+    width: min(94%, 360px);
+    max-height: 86%;
+  }
+
+  .discard-advice-header {
+    gap: 6px;
+  }
+
+  .discard-advice-close {
+    min-height: 24px;
+    padding: 0 8px;
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 720px) and (orientation: landscape) {
+  .table {
+    grid-template-columns: minmax(50px, 0.5fr) minmax(0, 3fr) minmax(50px, 0.5fr);
+    grid-template-rows: minmax(22px, 0.24fr) minmax(74px, 0.92fr) minmax(110px, 0.94fr);
+  }
+
+  .table-discard-ring {
+    grid-template-columns: minmax(48px, 0.65fr) minmax(108px, 1.4fr) minmax(48px, 0.65fr);
+    grid-template-rows: minmax(20px, auto) minmax(34px, 1fr) minmax(28px, auto);
+  }
+
+  .table-discard-zone {
+    padding: 2px;
+  }
+
+  .table-center-discards {
+    max-height: 42px;
+  }
+}

@@ -21,6 +21,14 @@ export function bindControls(root, handlers) {
     handlers.onToggleDiscardAdvice();
   });
 
+  root.querySelector("[data-action='open-discard-advice']")?.addEventListener("click", () => {
+    handlers.onOpenDiscardAdvice?.();
+  });
+
+  root.querySelector("[data-action='close-discard-advice']")?.addEventListener("click", () => {
+    handlers.onCloseDiscardAdvice?.();
+  });
+
   for (const button of root.querySelectorAll("[data-action='discard-tile']")) {
     button.addEventListener("click", () => {
       handlers.onDiscardTile(button.dataset.tileId);
