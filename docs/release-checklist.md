@@ -5,11 +5,11 @@ Use this before merging to `main` or publishing with GitHub Pages.
 ## Current Release Candidate
 
 - Branch: `codex/mvp-09-next-round`
-- Scope: MVP-0.1 through MVP-0.9
-- Expected automated result: `159 pass / 0 pending / 0 fail`
+- Scope: MVP-0.1 through MVP-1.0 core
+- Expected automated result: `170 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-0.9 is not published yet.
+- Publish status: MVP-1.0 core is not published yet.
 
 ## Git Safety
 
@@ -31,8 +31,8 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 159.
-- Confirm pass count is 159.
+- Confirm total count is 170.
+- Confirm pass count is 170.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
@@ -64,6 +64,12 @@ git branch --list
 - Previous round result is displayed briefly.
 - Previous round result uses short wording and does not crowd the center panel.
 - Large tile mode and discard advice settings are preserved after `次の局へ`.
+- `START_MATCH` starts East 1 with dealer 0.
+- Match progression advances East 1 to East 4.
+- After East 4 ends, the match is ended and East 5 is not created.
+- Dealer advances every hand in MVP-1.0, regardless of draw, tsumo, or ron.
+- Scores remain fixed; no point movement is performed.
+- `roundHistory` stores compact results without point details.
 
 ## Manual Browser Checks
 
@@ -106,7 +112,7 @@ Check:
 - Confirm `tests/test-runner.html` works from a static server.
 - Confirm there are no external dependencies that GitHub Pages must install.
 - Confirm README describes the current MVP scope and known missing features.
-- Confirm `docs/current-status.md` reflects MVP-0.9 and 159 pass.
+- Confirm `docs/current-status.md` reflects MVP-1.0 core and 170 pass.
 - Confirm `docs/manual-test-checklist.md` includes smartphone landscape checks.
 - Confirm `docs/manual-test-checklist.md` includes next-round checks.
 

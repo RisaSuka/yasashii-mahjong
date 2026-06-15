@@ -1,14 +1,14 @@
 # Current Status
 
-Last updated for MVP-0.9.5 next-round UI review.
+Last updated for MVP-1.0 east-only match core.
 
 ## Repository State
 
 - Working branch: `codex/mvp-09-next-round`
-- Automated tests: `159 pass / 0 pending / 0 fail`
-- Working tree: clean at the time of the latest MVP-0.9.5 confirmation
+- Automated tests: `170 pass / 0 pending / 0 fail`
+- Working tree: clean at the time of the latest MVP-1.0 core confirmation
 - Push: not yet
-- `main` merge: not yet for MVP-0.9
+- `main` merge: not yet for MVP-1.0
 
 ## Implemented MVPs
 
@@ -29,6 +29,7 @@ Last updated for MVP-0.9.5 next-round UI review.
 | MVP-0.8 | Done | Beginner discard advice with ON/OFF setting and smartphone landscape layout refinements. |
 | MVP-0.9 | Done on working branch | Next-round continuation after exhaustive draw, tsumo, or ron. |
 | MVP-0.9.5 | Working branch | Smartphone landscape review and small next-round UI refinements. |
+| MVP-1.0 core | Working branch | Minimal east-only match state, East 1 through East 4 progression, fixed scores, and compact round history. |
 
 ## Current Capabilities
 
@@ -85,6 +86,13 @@ Last updated for MVP-0.9.5 next-round UI review.
   - Previous round result is kept as `lastRoundResult`.
   - Previous result display uses short wording such as `前の局: 流局`.
   - Large tile mode and discard advice settings are preserved.
+- East-only match core:
+  - `START_MATCH` starts an east-only match at East 1.
+  - `START_NEXT_ROUND` advances East 1, East 2, East 3, and East 4.
+  - After East 4 ends, match state becomes ended and no East 5 starts.
+  - Dealer advances every hand with no dealer repeat in MVP-1.0.
+  - Scores remain fixed; no point movement is performed.
+  - `roundHistory` stores compact hand results without point details.
 
 ## Not Implemented Yet
 
@@ -94,7 +102,7 @@ Last updated for MVP-0.9.5 next-round UI review.
 - Riichi.
 - Furiten.
 - Dora and ura-dora scoring.
-- East-only match flow.
+- East-only match UI polish and final result screen.
 - Hanchan flow.
 - Dealer repeat and honba full rules.
 - Point movement between rounds.
@@ -111,10 +119,10 @@ Last updated for MVP-0.9.5 next-round UI review.
 Before merging into `main`, confirm:
 
 - `git status --short --branch` is clean.
-- Latest test runner result is `159 pass / 0 pending / 0 fail`.
+- Latest test runner result is `170 pass / 0 pending / 0 fail`.
 - `/` returns HTTP 200 from a local static server.
 - `/tests/test-runner.html` returns HTTP 200 from a local static server.
-- README reflects MVP-0.9.
+- README reflects MVP-1.0 core status.
 - Smartphone landscape layout has been checked or queued for final real-device check.
 - `docs/release-checklist.md` is reviewed.
 - `docs/manual-test-checklist.md` is reviewed.

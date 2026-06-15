@@ -1,12 +1,18 @@
+# MVP-1.0 working branch note
+
+MVP-1.0 core adds the first east-only match skeleton: `START_MATCH`, East 1 through East 4 progression, fixed scores, no dealer repeat, and compact `roundHistory`. The full East-only result UI is still for a later step.
+
+This MVP-1.0 work is not published yet. Do not merge to `main` or push without explicit approval.
+
+Current MVP-1.0 core local checks target `170 pass / 0 pending / 0 fail`.
+
 # MVP-0.9 working branch note
 
 The `codex/mvp-09-next-round` branch adds a post-round continuation loop. After exhaustive draw, tsumo, or ron, the app can show a `次の局へ` button and start a fresh round while preserving large tile mode and discard advice settings.
 
 MVP-0.9.5 refines that next-round UI for smartphone landscape: the `次の局へ` button is easier to tap, and the previous result text stays short.
 
-This MVP-0.9 work is not published yet. Do not merge to `main` or push without explicit approval.
-
-Current MVP-0.9 local checks target `159 pass / 0 pending / 0 fail`.
+This is a historical note for the previous MVP-0.9 step. Current local checks are listed in the MVP-1.0 note above.
 
 # MVP-0.8 release candidate note
 

@@ -21,8 +21,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 159.
-- Confirm pass count is 159.
+- Confirm total count is 170.
+- Confirm pass count is 170.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 
@@ -201,7 +201,21 @@ Use a browser device toolbar or narrow the window to around 390px width.
 - Confirm no-yaku messages and yaku summaries remain readable.
 - Confirm furigana yaku display does not wrap awkwardly or overlap.
 
-## 12. Smartphone Real Device Check On Local Wi-Fi
+## 12. East-Only Match Core Check
+
+Use automated tests as the primary acceptance check for MVP-1.0 core.
+
+- Confirm `START_MATCH` starts East 1.
+- Confirm East 1 uses dealer player 0.
+- Confirm `START_NEXT_ROUND` advances to East 2, East 3, and East 4.
+- Confirm dealer advances 0, 1, 2, 3 without dealer repeat in MVP-1.0.
+- Confirm after East 4 ends, the match is ended and East 5 is not created.
+- Confirm scores remain fixed and no point movement is shown.
+- Confirm `roundHistory` stores compact results for ended hands.
+- Confirm `lastRoundResult` still represents only the immediately previous hand.
+- Confirm large tile mode and discard advice settings are preserved.
+
+## 13. Smartphone Real Device Check On Local Wi-Fi
 
 Use this when checking the app from a real smartphone on the same Wi-Fi network as the PC.
 
@@ -263,7 +277,7 @@ Real-device checks:
 - Confirm tsumo, ron, and skip buttons are easy to tap when they appear.
 - Confirm yaku display, furigana, and no-yaku messages are readable.
 
-## 13. Smartphone Landscape Table Check
+## 14. Smartphone Landscape Table Check
 
 MVP-0.8 recommends smartphone landscape for regular play. Portrait must remain usable, but landscape is the primary real-device layout.
 
