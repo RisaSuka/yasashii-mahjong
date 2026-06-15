@@ -32,6 +32,14 @@ export function compareTiles(a, b) {
   return a.copy - b.copy;
 }
 
+export function sortTiles(tiles) {
+  if (!Array.isArray(tiles)) {
+    return [];
+  }
+
+  return [...tiles].sort(compareTiles);
+}
+
 export function getTileLabel(tile) {
   if (!tile) {
     return "";

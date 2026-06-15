@@ -1,5 +1,5 @@
 import { createPlayers } from "./player.js";
-import { createTiles } from "./tiles.js";
+import { createTiles, sortTiles } from "./tiles.js";
 import { buildWall, drawFromWall } from "./wall.js";
 import { createDefaultStats, saveStats } from "./storage.js";
 
@@ -65,6 +65,7 @@ export function startRound(state, options = {}) {
   const drawResult = drawFromWall(round);
   round = drawResult.round;
   round.players = addTileToPlayer(round.players, round.dealerIndex, drawResult.tile);
+  round.players = sortHumanHands(round.players);
   round.phase = "discard";
   round.lastDraw = {
     playerId: round.dealerIndex,
@@ -93,7 +94,20 @@ export function addTileToPlayer(players, playerId, tile) {
 
     return {
       ...player,
-      hand: [...player.hand, tile]
+      hand: player.type === "human" ? sortTiles([...player.hand, tile]) : [...player.hand, tile]
+    };
+  });
+}
+
+function sortHumanHands(players) {
+  return players.map((player) => {
+    if (player.type !== "human") {
+      return player;
+    }
+
+    return {
+      ...player,
+      hand: sortTiles(player.hand)
     };
   });
 }
