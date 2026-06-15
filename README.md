@@ -1,10 +1,10 @@
 # MVP-1.0 working branch note
 
-MVP-1.0 core adds the first east-only match skeleton: `START_MATCH`, East 1 through East 4 progression, fixed scores, no dealer repeat, and compact `roundHistory`. The full East-only result UI is still for a later step.
+MVP-1.0 adds the first east-only match skeleton: `START_MATCH`, East 1 through East 4 progression, fixed scores, no dealer repeat, compact `roundHistory`, current-hand display, and a minimal `東風戦終了` display. Point-based final results are still for a later step.
 
 This MVP-1.0 work is not published yet. Do not merge to `main` or push without explicit approval.
 
-Current MVP-1.0 core local checks target `170 pass / 0 pending / 0 fail`.
+Current MVP-1.0 local checks target `176 pass / 0 pending / 0 fail`.
 
 # MVP-0.9 working branch note
 

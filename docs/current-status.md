@@ -1,12 +1,12 @@
 # Current Status
 
-Last updated for MVP-1.0 east-only match core.
+Last updated for MVP-1.0 east-only match UI connection.
 
 ## Repository State
 
 - Working branch: `codex/mvp-09-next-round`
-- Automated tests: `170 pass / 0 pending / 0 fail`
-- Working tree: clean at the time of the latest MVP-1.0 core confirmation
+- Automated tests: `176 pass / 0 pending / 0 fail`
+- Working tree: clean at the time of the latest MVP-1.0 UI confirmation
 - Push: not yet
 - `main` merge: not yet for MVP-1.0
 
@@ -29,7 +29,7 @@ Last updated for MVP-1.0 east-only match core.
 | MVP-0.8 | Done | Beginner discard advice with ON/OFF setting and smartphone landscape layout refinements. |
 | MVP-0.9 | Done on working branch | Next-round continuation after exhaustive draw, tsumo, or ron. |
 | MVP-0.9.5 | Working branch | Smartphone landscape review and small next-round UI refinements. |
-| MVP-1.0 core | Working branch | Minimal east-only match state, East 1 through East 4 progression, fixed scores, and compact round history. |
+| MVP-1.0 | Working branch | Minimal east-only match state and UI: East 1 through East 4, fixed scores, compact round history, current-hand display, and East-only end display. |
 
 ## Current Capabilities
 
@@ -93,6 +93,12 @@ Last updated for MVP-1.0 east-only match core.
   - Dealer advances every hand with no dealer repeat in MVP-1.0.
   - Scores remain fixed; no point movement is performed.
   - `roundHistory` stores compact hand results without point details.
+- East-only match UI:
+  - The center panel shows the current hand label, such as `東1局`.
+  - East 1 through East 3 ended hands show `次の局へ`.
+  - East 4 ended hand shows `東風戦終了` and does not show `次の局へ`.
+  - The end display says four hands are complete and point calculation is not supported yet.
+  - A fresh match start button remains available after the match ends.
 
 ## Not Implemented Yet
 
@@ -102,7 +108,7 @@ Last updated for MVP-1.0 east-only match core.
 - Riichi.
 - Furiten.
 - Dora and ura-dora scoring.
-- East-only match UI polish and final result screen.
+- Point-based final result screen.
 - Hanchan flow.
 - Dealer repeat and honba full rules.
 - Point movement between rounds.
@@ -119,10 +125,10 @@ Last updated for MVP-1.0 east-only match core.
 Before merging into `main`, confirm:
 
 - `git status --short --branch` is clean.
-- Latest test runner result is `170 pass / 0 pending / 0 fail`.
+- Latest test runner result is `176 pass / 0 pending / 0 fail`.
 - `/` returns HTTP 200 from a local static server.
 - `/tests/test-runner.html` returns HTTP 200 from a local static server.
-- README reflects MVP-1.0 core status.
+- README reflects MVP-1.0 UI status.
 - Smartphone landscape layout has been checked or queued for final real-device check.
 - `docs/release-checklist.md` is reviewed.
 - `docs/manual-test-checklist.md` is reviewed.

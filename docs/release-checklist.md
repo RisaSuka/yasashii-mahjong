@@ -5,11 +5,11 @@ Use this before merging to `main` or publishing with GitHub Pages.
 ## Current Release Candidate
 
 - Branch: `codex/mvp-09-next-round`
-- Scope: MVP-0.1 through MVP-1.0 core
-- Expected automated result: `170 pass / 0 pending / 0 fail`
+- Scope: MVP-0.1 through MVP-1.0
+- Expected automated result: `176 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-1.0 core is not published yet.
+- Publish status: MVP-1.0 is not published yet.
 
 ## Git Safety
 
@@ -31,8 +31,8 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 170.
-- Confirm pass count is 170.
+- Confirm total count is 176.
+- Confirm pass count is 176.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
@@ -70,6 +70,11 @@ git branch --list
 - Dealer advances every hand in MVP-1.0, regardless of draw, tsumo, or ron.
 - Scores remain fixed; no point movement is performed.
 - `roundHistory` stores compact results without point details.
+- The center panel shows the current hand label, such as `東1局`.
+- East 1 through East 3 ended hands show `次の局へ`.
+- East 4 ended hand shows `東風戦終了`.
+- East 4 ended hand does not show `次の局へ`.
+- A fresh match start button remains available after the match ends.
 
 ## Manual Browser Checks
 
@@ -112,7 +117,7 @@ Check:
 - Confirm `tests/test-runner.html` works from a static server.
 - Confirm there are no external dependencies that GitHub Pages must install.
 - Confirm README describes the current MVP scope and known missing features.
-- Confirm `docs/current-status.md` reflects MVP-1.0 core and 170 pass.
+- Confirm `docs/current-status.md` reflects MVP-1.0 and 176 pass.
 - Confirm `docs/manual-test-checklist.md` includes smartphone landscape checks.
 - Confirm `docs/manual-test-checklist.md` includes next-round checks.
 

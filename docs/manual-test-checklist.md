@@ -21,8 +21,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 170.
-- Confirm pass count is 170.
+- Confirm total count is 176.
+- Confirm pass count is 176.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 
@@ -201,9 +201,9 @@ Use a browser device toolbar or narrow the window to around 390px width.
 - Confirm no-yaku messages and yaku summaries remain readable.
 - Confirm furigana yaku display does not wrap awkwardly or overlap.
 
-## 12. East-Only Match Core Check
+## 12. East-Only Match UI Check
 
-Use automated tests as the primary acceptance check for MVP-1.0 core.
+Use automated tests as the primary acceptance check for MVP-1.0, then manually confirm the minimal UI.
 
 - Confirm `START_MATCH` starts East 1.
 - Confirm East 1 uses dealer player 0.
@@ -214,6 +214,12 @@ Use automated tests as the primary acceptance check for MVP-1.0 core.
 - Confirm `roundHistory` stores compact results for ended hands.
 - Confirm `lastRoundResult` still represents only the immediately previous hand.
 - Confirm large tile mode and discard advice settings are preserved.
+- Confirm the center panel shows `東1局`, `東2局`, `東3局`, or `東4局`.
+- Confirm East 1 through East 3 ended hands show `次の局へ`.
+- Confirm East 4 ended hand shows `東風戦終了`.
+- Confirm East 4 ended hand does not show `次の局へ`.
+- Confirm the East-only end message says point calculation is not supported yet.
+- Confirm `もう一度遊ぶ` starts a fresh east-only match.
 
 ## 13. Smartphone Real Device Check On Local Wi-Fi
 
