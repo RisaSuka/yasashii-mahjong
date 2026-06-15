@@ -153,6 +153,8 @@
       import { registerYakuTests } from "./yaku.test.js";
       import { runTests, tests } from "./test.js";
 
+      globalThis.__TEST_CACHE_BUST__ = "mvp112-discard-fix-1";
+
       const totalCount = document.querySelector("#total-count");
       const passCount = document.querySelector("#pass-count");
       const failCount = document.querySelector("#fail-count");

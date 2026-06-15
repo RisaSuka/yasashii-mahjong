@@ -87,15 +87,12 @@ function renderTable(state, options) {
             ${renderDiscardAdviceButton(discardAdvice)}
             ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen)}
             ${renderYakuSummary(round)}
-            ${renderMatchEndAction(state)}
-            ${renderNextRoundAction(state)}
-            ${renderRonAction(state, options)}
-            ${renderTsumoAction(state, options)}
             <div class="table-meta-row">
               <span class="table-meta">山 ${round.wall.length}</span>
               <span class="table-meta">王牌 ${round.deadWall.length}</span>
               <span class="table-meta">ドラ ${renderDoraIndicators(round)}</span>
             </div>
+            ${renderTableActionBar(state, options)}
           </div>
           ${renderTableDiscardZone(round.players[1], "south")}
           ${renderTableDiscardZone(round.players[0], "east")}
@@ -103,6 +100,21 @@ function renderTable(state, options) {
       </section>
     </main>
   `;
+}
+
+function renderTableActionBar(state, options) {
+  const actions = [
+    renderMatchEndAction(state),
+    renderNextRoundAction(state),
+    renderRonAction(state, options),
+    renderTsumoAction(state, options)
+  ].filter(Boolean).join("");
+
+  if (!actions) {
+    return "";
+  }
+
+  return `<div class="table-action-bar">${actions}</div>`;
 }
 
 function renderMatchSummary(state) {
@@ -363,7 +375,7 @@ function renderTableDiscardZone(player, position) {
 }
 
 function getVisibleDiscards(player) {
-  const limit = player.type === "human" ? 12 : 6;
+  const limit = player.type === "human" ? 18 : 12;
 
   return player.discards.slice(-limit);
 }

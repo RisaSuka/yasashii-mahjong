@@ -346,6 +346,13 @@
   gap: 8px;
 }
 
+.table-action-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
 .ron-button,
 .skip-ron-button {
   min-width: 96px;

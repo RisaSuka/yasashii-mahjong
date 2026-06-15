@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp111-discard-center-1";
-import { renderGame } from "./ui/render.js?v=mvp111-discard-center-1";
+import { bindControls } from "./ui/input.js?v=mvp112-discard-fix-1";
+import { renderGame } from "./ui/render.js?v=mvp112-discard-fix-1";
 
-const APP_ASSET_VERSION = "mvp111-discard-center-1";
+const APP_ASSET_VERSION = "mvp112-discard-fix-1";
 
 const appRoot = document.querySelector("#app");
 
