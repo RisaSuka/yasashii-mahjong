@@ -6,7 +6,7 @@ Use this before merging to `main` or publishing with GitHub Pages.
 
 - Branch: `codex/mvp-09-next-round`
 - Scope: MVP-0.1 through MVP-1.0
-- Expected automated result: `176 pass / 0 pending / 0 fail`
+- Expected automated result: `185 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
 - Publish status: MVP-1.0 is not published yet.
@@ -31,8 +31,8 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 176.
-- Confirm pass count is 176.
+- Confirm total count is 185.
+- Confirm pass count is 185.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
@@ -75,6 +75,9 @@ git branch --list
 - East 4 ended hand shows `東風戦終了`.
 - East 4 ended hand does not show `次の局へ`.
 - A fresh match start button remains available after the match ends.
+- Human hand tiles are automatically sorted in manzu, pinzu, souzu, honor order.
+- The sorted human hand still supports tile-id based discard.
+- Beginner discard advice still highlights the intended sorted tile.
 
 ## Manual Browser Checks
 

@@ -5,7 +5,7 @@ Last updated for MVP-1.0 east-only match UI connection.
 ## Repository State
 
 - Working branch: `codex/mvp-09-next-round`
-- Automated tests: `176 pass / 0 pending / 0 fail`
+- Automated tests: `185 pass / 0 pending / 0 fail`
 - Working tree: clean at the time of the latest MVP-1.0 UI confirmation
 - Push: not yet
 - `main` merge: not yet for MVP-1.0
@@ -99,6 +99,11 @@ Last updated for MVP-1.0 east-only match UI connection.
   - East 4 ended hand shows `東風戦終了` and does not show `次の局へ`.
   - The end display says four hands are complete and point calculation is not supported yet.
   - A fresh match start button remains available after the match ends.
+- Human hand auto-sort:
+  - Human hand tiles are always shown in manzu, pinzu, souzu, honor order.
+  - Suited tiles sort from 1 through 9.
+  - Honor tiles sort east, south, west, north, white, green, red.
+  - Sorting is automatic; no extra UI toggle is added.
 
 ## Not Implemented Yet
 
@@ -125,7 +130,7 @@ Last updated for MVP-1.0 east-only match UI connection.
 Before merging into `main`, confirm:
 
 - `git status --short --branch` is clean.
-- Latest test runner result is `176 pass / 0 pending / 0 fail`.
+- Latest test runner result is `185 pass / 0 pending / 0 fail`.
 - `/` returns HTTP 200 from a local static server.
 - `/tests/test-runner.html` returns HTTP 200 from a local static server.
 - README reflects MVP-1.0 UI status.

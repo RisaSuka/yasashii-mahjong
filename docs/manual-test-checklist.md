@@ -21,8 +21,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 176.
-- Confirm pass count is 176.
+- Confirm total count is 185.
+- Confirm pass count is 185.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 
@@ -135,6 +135,13 @@ Verify:
 ## 7. Tile Visual Check
 
 - Confirm manzu, pinzu, souzu, and honor tiles are easy to distinguish at a glance.
+- Confirm the human hand is automatically sorted as manzu, pinzu, souzu, then honors.
+- Confirm suited tiles are sorted from 1 through 9.
+- Confirm honor tiles are sorted east, south, west, north, white, green, red.
+- Confirm the human hand remains sorted after a draw.
+- Confirm the human hand remains sorted after pressing `次の局へ`.
+- Confirm sorted tiles can still be tapped and discarded correctly.
+- Confirm suggested discard highlighting still appears on the correct sorted tile.
 - Confirm manzu uses red accents.
 - Confirm pinzu uses blue accents and a small circle cue.
 - Confirm souzu uses green accents and a small stick cue.
