@@ -11,6 +11,7 @@ export function createInitialGameState() {
       cpuDelayMs: 300
     },
     stats: createDefaultStats(),
+    lastRoundResult: null,
     round: null
   };
 }

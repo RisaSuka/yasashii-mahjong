@@ -11,6 +11,8 @@ export function dispatchAction(state, action) {
   switch (action.type) {
     case "START_ROUND":
       return startRound(state, { storage: action.storage, random: action.random });
+    case "START_NEXT_ROUND":
+      return startNextRound(state, { storage: action.storage, random: action.random });
     case "DISCARD_TILE":
       return discardTile(state, action.playerId, action.tileId);
     case "DRAW_TILE":
@@ -73,6 +75,59 @@ export function canDeclareTsumo(state, playerId) {
   }
 
   return detectYaku(player.hand, createTsumoYakuContext(state, player, result)).length > 0;
+}
+
+export function startNextRound(state, options = {}) {
+  if (!state.round) {
+    return startRound(state, options);
+  }
+
+  if (state.round.phase !== "ended") {
+    return state;
+  }
+
+  const lastRoundResult = createLastRoundResult(state.round);
+  const nextState = startRound(
+    {
+      ...state,
+      lastRoundResult
+    },
+    options
+  );
+
+  if (nextState.round.id === state.round.id) {
+    return {
+      ...nextState,
+      round: {
+        ...nextState.round,
+        id: `${nextState.round.id}-next`
+      }
+    };
+  }
+
+  return nextState;
+}
+
+function createLastRoundResult(round) {
+  const result = {
+    roundId: round.id,
+    endReason: round.endReason,
+    endedAt: new Date().toISOString()
+  };
+
+  if (round.endReason !== "win" || !round.winningResult) {
+    return result;
+  }
+
+  return {
+    ...result,
+    winnerId: round.winningResult.winnerId,
+    winType: round.winningResult.winType,
+    fromPlayerId: round.winningResult.fromPlayerId,
+    winningTile: round.winningResult.winningTile,
+    handType: round.winningResult.handType,
+    yakuResult: round.winningResult.yakuResult
+  };
 }
 
 export function declareTsumo(state, playerId) {
