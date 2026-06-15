@@ -26,6 +26,10 @@
   gap: 8px;
 }
 
+.button-label-short {
+  display: none;
+}
+
 .orientation-hint {
   display: none;
   margin: 8px 10px 0;
@@ -155,6 +159,11 @@
   display: block;
   color: #52606d;
   font-size: 13px;
+}
+
+.table-meta-row {
+  display: grid;
+  gap: 3px;
 }
 
 .yaku-summary {

@@ -258,10 +258,13 @@ Use a real phone or browser device toolbar in landscape orientation.
 - Confirm any hand overflow is limited to the hand strip, not the whole page.
 - Confirm the center panel does not take over the table.
 - Confirm wall count, dead wall count, dora indicator, status text, and win messages remain readable.
+- Confirm wall count, dead wall count, and dora indicator are shown in one compact row in landscape.
 - Confirm discard advice is compact in landscape.
+- Confirm discard advice is not clipped in the center panel.
 - Confirm the first discard advice item shows a reason.
 - Confirm the second and third discard advice items stay short.
 - Confirm suggested tile highlighting remains visible on the hand.
+- Confirm header buttons do not overflow horizontally in landscape.
 - Confirm the advice ON/OFF button still works.
 - Confirm advice disappears completely when OFF.
 - Confirm CPU seats are compact enough and do not dominate the screen.
@@ -270,6 +273,7 @@ Use a real phone or browser device toolbar in landscape orientation.
 - Confirm yaku display, furigana, and no-yaku messages are still readable.
 - Confirm large tile mode does not break the bottom hand.
 - Confirm discard rows do not become cramped enough to block understanding.
+- Confirm the human hand is not clipped vertically.
 
 Portrait orientation check:
 

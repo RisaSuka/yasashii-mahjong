@@ -23,12 +23,17 @@ export function renderGame(state, root, options = {}) {
       <header class="topbar">
         <h1 class="title">じゅんちゃん麻雀 MVP-0.5.5</h1>
         <div class="controls">
-          <button type="button" data-action="start-round">新規局開始</button>
+          <button type="button" data-action="start-round">
+            <span class="button-label-full">新規局開始</span>
+            <span class="button-label-short" aria-hidden="true">新規局</span>
+          </button>
           <button type="button" class="secondary" data-action="toggle-large">
-            ${state.settings.largeTileMode ? "通常牌" : "大きい牌"}
+            <span class="button-label-full">${state.settings.largeTileMode ? "通常牌" : "大きい牌"}</span>
+            <span class="button-label-short" aria-hidden="true">${state.settings.largeTileMode ? "通常" : "大牌"}</span>
           </button>
           <button type="button" class="secondary" data-action="toggle-discard-advice">
-            アドバイス: ${state.settings.discardAdviceEnabled ? "ON" : "OFF"}
+            <span class="button-label-full">アドバイス: ${state.settings.discardAdviceEnabled ? "ON" : "OFF"}</span>
+            <span class="button-label-short" aria-hidden="true">助言${state.settings.discardAdviceEnabled ? "ON" : "OFF"}</span>
           </button>
         </div>
       </header>
@@ -77,9 +82,11 @@ function renderTable(state, options) {
         ${renderYakuSummary(round)}
         ${renderRonAction(state, options)}
         ${renderTsumoAction(state, options)}
-        <span class="table-meta">通常山: ${round.wall.length}枚</span>
-        <span class="table-meta">王牌: ${round.deadWall.length}枚</span>
-        <span class="table-meta">ドラ表示牌: ${renderDoraIndicators(round)}</span>
+        <div class="table-meta-row">
+          <span class="table-meta">山 ${round.wall.length}</span>
+          <span class="table-meta">王牌 ${round.deadWall.length}</span>
+          <span class="table-meta">ドラ ${renderDoraIndicators(round)}</span>
+        </div>
       </section>
     </main>
   `;
@@ -122,8 +129,8 @@ function renderDiscardAdvice(advice) {
       <ol class="discard-advice-list">
         ${advice.map((entry, index) => `
           <li class="discard-advice-item${index === 0 ? " is-primary" : " is-secondary"}">
-            <span class="discard-advice-label">${escapeHtml(entry.label || "おすすめ")}: ${escapeHtml(formatAdviceTileId(entry.tileId))}</span>
-            <span class="discard-advice-reason">理由: ${escapeHtml(entry.reason || "")}</span>
+            <span class="discard-advice-label">${index === 0 ? escapeHtml(entry.label || "おすすめ") : "候補"}: ${escapeHtml(formatAdviceTileId(entry.tileId))}</span>
+            ${index === 0 ? `<span class="discard-advice-reason">理由: ${escapeHtml(entry.reason || "")}</span>` : ""}
           </li>
         `).join("")}
       </ol>
