@@ -319,6 +319,83 @@ export function registerMatchUiTests() {
     assertEqual(closed, 1, "Close advice button should call its handler");
   });
 
+  test("MVP-1.4 UI: beginner help button and dialog render", async () => {
+    const closedHtml = await renderState(await startMatchState());
+    const openHtml = await renderState(await startMatchState(), { beginnerHelpDialogOpen: true });
+
+    assertTrue(closedHtml.includes('data-action="open-beginner-help"'), "Beginner help button should be available from the table header");
+    assertTrue(!closedHtml.includes("beginner-help-modal"), "Beginner help should stay closed by default");
+    assertTrue(openHtml.includes("beginner-help-modal"), "Beginner help modal should render when opened");
+    assertTrue(openHtml.includes('data-action="close-beginner-help"'), "Beginner help modal should include a close action");
+    assertTrue(openHtml.includes("孤立牌"), "Beginner help should explain isolated tiles");
+    assertTrue(openHtml.includes("ドラ"), "Beginner help should explain dora");
+  });
+
+  test("MVP-1.4 UI: beginner help suppresses advice, zoom, and result popups", async () => {
+    const state = await matchEndedHistoryState();
+    const html = await renderState(addDiscards(state, 4), {
+      suggestDiscards: sampleAdvice,
+      discardAdviceDialogOpen: true,
+      discardZoomPlayerId: 0,
+      matchResultDialogOpen: true,
+      beginnerHelpDialogOpen: true
+    });
+
+    assertTrue(html.includes("beginner-help-modal"), "Beginner help should render");
+    assertTrue(!html.includes("discard-advice-modal"), "Advice modal should be suppressed by help");
+    assertTrue(!html.includes("discard-zoom-modal"), "Discard zoom modal should be suppressed by help");
+    assertTrue(!html.includes("match-result-modal"), "Match result modal should be suppressed by help");
+  });
+
+  test("MVP-1.4 UI: beginner help controls dispatch open and close handlers", async () => {
+    const { bindControls } = await loadModule("../src/ui/input.js", ["bindControls"]);
+    let opened = 0;
+    let closed = 0;
+    let keydownListener = null;
+    const openButton = createFakeButton();
+    const closeButton = createFakeButton();
+    const root = {
+      addEventListener(type, listener) {
+        if (type === "keydown") {
+          keydownListener = listener;
+        }
+      },
+      querySelector(selector) {
+        if (selector === "[data-action='open-beginner-help']") {
+          return openButton;
+        }
+
+        return null;
+      },
+      querySelectorAll(selector) {
+        if (selector === "[data-action='close-beginner-help']") {
+          return [closeButton];
+        }
+
+        return [];
+      }
+    };
+
+    bindControls(root, {
+      onOpenBeginnerHelp() {
+        opened += 1;
+      },
+      onCloseDiscardAdvice() {},
+      onCloseDiscardZoom() {},
+      onCloseMatchResult() {},
+      onCloseBeginnerHelp() {
+        closed += 1;
+      }
+    });
+
+    openButton.listeners.click();
+    closeButton.listeners.click({ target: closeButton });
+    keydownListener({ key: "Escape" });
+
+    assertEqual(opened, 1, "Open help button should call its handler");
+    assertEqual(closed, 2, "Close button and Escape should close beginner help");
+  });
+
   test("MVP-1.2 UI: discard zoom controls render for all four center discard zones", async () => {
     const html = await renderState(addDiscards(await startMatchState(), 6));
 

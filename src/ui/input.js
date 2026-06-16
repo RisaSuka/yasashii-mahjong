@@ -4,6 +4,7 @@ export function bindControls(root, handlers) {
       handlers.onCloseDiscardAdvice?.();
       handlers.onCloseDiscardZoom?.();
       handlers.onCloseMatchResult?.();
+      handlers.onCloseBeginnerHelp?.();
     }
   });
 
@@ -68,6 +69,19 @@ export function bindControls(root, handlers) {
         return;
       }
       handlers.onCloseMatchResult?.();
+    });
+  }
+
+  root.querySelector("[data-action='open-beginner-help']")?.addEventListener("click", () => {
+    handlers.onOpenBeginnerHelp?.();
+  });
+
+  for (const trigger of root.querySelectorAll("[data-action='close-beginner-help']")) {
+    trigger.addEventListener("click", (event) => {
+      if (trigger.classList?.contains("beginner-help-backdrop") && event.target !== trigger) {
+        return;
+      }
+      handlers.onCloseBeginnerHelp?.();
     });
   }
 

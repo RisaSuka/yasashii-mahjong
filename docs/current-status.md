@@ -1,15 +1,15 @@
 # Current Status
 
-Last updated for MVP-1.3.1 match result popup polish.
+Last updated for MVP-1.4 discard evaluator v1.
 
 ## Repository State
 
-- Working branch: `codex/mvp-12-discard-zoom`
-- Automated tests: `210 pass / 0 pending / 0 fail`
+- Working branch: `codex/mvp-14-discard-evaluator`
+- Automated tests: `220 pass / 0 pending / 0 fail`
 - Layout check: Chrome-based smartphone landscape guard passed all target viewports/scenarios at MVP-1.1.6; MVP-1.2 adds a discard-zoom scenario that must be run before merge/publish
-- Working tree: clean at the time of the latest MVP-1.3.1 match result polish
+- Working tree: clean at the time of the latest MVP-1.4 verification
 - Push: not yet
-- `main` merge: not yet for MVP-1.3.1
+- `main` merge: not yet for MVP-1.4
 
 ## Implemented MVPs
 
@@ -37,6 +37,7 @@ Last updated for MVP-1.3.1 match result popup polish.
 | MVP-1.1.6 | Working branch | Late-hand landscape discard grids fit 18 discards in all four discard zones and pass the layout guard. |
 | MVP-1.2 | Working branch | Discard areas can be tapped to open a larger discard-list popup for each player. |
 | MVP-1.3.1 | Working branch | East-only match end screen has a polished result-history popup based on `roundHistory`. |
+| MVP-1.4 | Working branch | Shared discard evaluator v1 scores every tile for beginner advice and future CPU use; beginner help popup added. |
 
 ## Current Capabilities
 
@@ -161,6 +162,17 @@ Last updated for MVP-1.3.1 match result popup polish.
 - The result popup shows short beginner-friendly lines such as `東1局: 流局`, `東2局: あなたのツモ`, and `東3局: 南CPUのロン`.
 - The result popup closes with `閉じる`, backdrop click, or Escape.
 - Result, advice, and discard-zoom popups do not stay open at the same time.
+
+## MVP-1.4 Discard Evaluator v1
+
+- `evaluateDiscardCandidates(hand, context)` is a UI-independent pure evaluator for discard candidates.
+- The evaluator returns one scored entry per valid tile with `tile`, `tileId`, `score`, `reasons`, and `tags`.
+- Lower scores are easier discard candidates; higher scores are tiles the app prefers to keep.
+- The v1 score considers isolated tiles, terminal tiles, honor tiles, pairs, connected number shapes, yakuhai pairs, dora, nearby dora, visible table tiles, and simple tanyao direction.
+- `suggestDiscards(hand, context)` now uses the evaluator and keeps valid hands from returning empty advice.
+- Advice reasons remain short and beginner-friendly.
+- CPU discard behavior is not connected to the evaluator yet; random CPU play remains for this MVP.
+- A beginner help popup explains that advice is a guide, not an absolute answer, and introduces isolated tiles, terminals, honors, pairs, connected numbers, dora, tanyao, and yakuhai.
 
 ## MVP-1.1 Remaining Visual Polish Candidates
 

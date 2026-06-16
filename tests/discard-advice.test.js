@@ -112,6 +112,71 @@ export function registerDiscardAdviceTests() {
 
     assertEqual(loaded.discardAdviceEnabled, false, "Saved OFF setting should be loaded");
   });
+
+  test("DISCARD EVALUATOR: returns scored candidates for every valid tile", async () => {
+    const { evaluateDiscardCandidates } = await loadDiscardAdviceModule(["evaluateDiscardCandidates"]);
+    const hand = tiles("m1 m5 m5 p2 p3 p4 s4 s5 s6 m8 m9 z1 z2 z2");
+    const candidates = evaluateDiscardCandidates(hand);
+
+    assertEqual(candidates.length, hand.length, "Evaluator should score each tile in a valid hand");
+    assertTrue(candidates.every((entry) => entry.tile && entry.tileId && Number.isFinite(entry.score)), "Each candidate should include tile, tileId, and score");
+    assertTrue(candidates.every((entry) => Array.isArray(entry.reasons) && entry.reasons.length > 0), "Each candidate should include beginner-friendly reasons");
+  });
+
+  test("DISCARD EVALUATOR: isolated terminal and honor score lower than pair tiles", async () => {
+    const { evaluateDiscardCandidates } = await loadDiscardAdviceModule(["evaluateDiscardCandidates"]);
+    const candidates = evaluateDiscardCandidates(tiles("m1 m5 m5 p2 p3 p4 s4 s5 s6 m8 m9 z1 z2 z2"));
+
+    assertTrue(scoreFor(candidates, "m1") < scoreFor(candidates, "m5"), "Isolated terminal should be easier to discard than a pair");
+    assertTrue(scoreFor(candidates, "z1") < scoreFor(candidates, "z2"), "Isolated honor should be easier to discard than an honor pair");
+  });
+
+  test("DISCARD EVALUATOR: connected number shapes are preserved", async () => {
+    const { evaluateDiscardCandidates } = await loadDiscardAdviceModule(["evaluateDiscardCandidates"]);
+    const candidates = evaluateDiscardCandidates(tiles("m2 m3 m4 p6 p7 s1 s9 z1 z2 z3 m8 p1 s5"));
+
+    assertTrue(scoreFor(candidates, "m3") > scoreFor(candidates, "s9"), "Middle tile in a sequence should be valued above an isolated terminal");
+    assertTrue(scoreFor(candidates, "p6") > scoreFor(candidates, "z1"), "Adjacent shape should be valued above an isolated honor");
+  });
+
+  test("DISCARD EVALUATOR: dora and nearby dora are kept more often", async () => {
+    const { evaluateDiscardCandidates } = await loadDiscardAdviceModule(["evaluateDiscardCandidates"]);
+    const hand = tiles("m2 m5 m6 p1 p9 s1 s9 z1 z2 z3 p4 p5 s5");
+    const candidates = evaluateDiscardCandidates(hand, {
+      dora: [{ suit: "m", rank: 5 }]
+    });
+
+    assertTrue(scoreFor(candidates, "m5") > scoreFor(candidates, "p9"), "Dora should be harder to discard than an isolated terminal");
+    assertTrue(scoreFor(candidates, "m6") > scoreFor(candidates, "z1"), "Near dora should receive a small keep bonus");
+  });
+
+  test("DISCARD EVALUATOR: visible tiles lower value", async () => {
+    const { evaluateDiscardCandidates } = await loadDiscardAdviceModule(["evaluateDiscardCandidates"]);
+    const hand = tiles("m2 m5 p2 p3 p4 s4 s5 s6 m8 m9 z1 z2 z3");
+    const withVisible = evaluateDiscardCandidates(hand, {
+      discards: tiles("m2 m2 m2")
+    });
+    const withoutVisible = evaluateDiscardCandidates(hand);
+
+    assertTrue(scoreFor(withVisible, "m2") < scoreFor(withoutVisible, "m2"), "Tiles heavily visible on the table should lose value");
+  });
+
+  test("DISCARD EVALUATOR: yakuhai pair is preserved", async () => {
+    const { evaluateDiscardCandidates } = await loadDiscardAdviceModule(["evaluateDiscardCandidates"]);
+    const candidates = evaluateDiscardCandidates(tiles("m1 m9 p1 p9 s1 s9 z5 z5 z1 z2 z3 m4 p4"));
+
+    assertTrue(scoreFor(candidates, "z5") > scoreFor(candidates, "m1"), "Dragon pair should be valued above an isolated terminal");
+  });
+
+  test("DISCARD ADVICE: evaluator fallback still returns advice for connected hands", async () => {
+    const { suggestDiscards } = await loadDiscardAdviceModule(["suggestDiscards"]);
+    const advice = suggestDiscards(tiles("m2 m3 m4 p3 p4 p5 s4 s5 s6 m6 m7 p7 p8"));
+    const uniqueTileTypes = new Set(advice.map((entry) => entry.tileId.replace(/-\d+$/, "")));
+
+    assertTrue(advice.length >= 1, "Advice should not be empty for a valid hand");
+    assertTrue(advice.length <= 3, "Advice should stay compact");
+    assertEqual(uniqueTileTypes.size, advice.length, "Advice should avoid duplicate tile types");
+  });
 }
 
 async function loadDiscardAdviceModule(extraExports = []) {
@@ -126,6 +191,13 @@ function assertAdviceIncludesTile(advice, tilePrefix, message) {
 function assertNoAdviceForTile(advice, tilePrefix, message) {
   assertTrue(Array.isArray(advice), "Advice should be an array");
   assertTrue(!advice.some((entry) => entry.tileId.startsWith(tilePrefix)), message);
+}
+
+function scoreFor(candidates, tilePrefix) {
+  const found = candidates.find((entry) => entry.tileId.startsWith(tilePrefix));
+
+  assertTrue(Boolean(found), `Expected candidate for ${tilePrefix}`);
+  return found.score;
 }
 
 function tiles(pattern) {

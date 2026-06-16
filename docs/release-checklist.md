@@ -4,16 +4,16 @@ Use this before merging to `main` or publishing with GitHub Pages.
 
 ## Current Release Candidate
 
-- Branch: `codex/mvp-12-discard-zoom`
-- Scope: MVP-0.1 through MVP-1.3 match result popup
-- Expected automated result: `210 pass / 0 pending / 0 fail`
+- Branch: `codex/mvp-14-discard-evaluator`
+- Scope: MVP-0.1 through MVP-1.4 discard evaluator v1
+- Expected automated result: `220 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-1.3 is not published yet.
+- Publish status: MVP-1.4 is not published yet.
 
 ## Git Safety
 
-- Confirm the current branch is `codex/mvp-12-discard-zoom`.
+- Confirm the current branch is `codex/mvp-14-discard-evaluator`.
 - Confirm the working tree is clean.
 - Confirm the latest commit is the intended release candidate.
 - Confirm no unreviewed local commits are being skipped.
@@ -31,8 +31,8 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 210.
-- Confirm pass count is 210.
+- Confirm total count is 220.
+- Confirm pass count is 220.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
@@ -113,6 +113,13 @@ node tests/layout-check.mjs
 - `結果を見る` opens a compact `roundHistory` popup.
 - The result popup lists East 1 through East 4 without points or rankings.
 - Result, advice, and discard-zoom popups do not stay open at the same time.
+- `evaluateDiscardCandidates` scores all valid hand tiles with reasons.
+- `suggestDiscards` uses the evaluator and returns at least one candidate for valid hands.
+- Advice reasons remain beginner-friendly and do not imply an absolute correct answer.
+- Dora, pairs, connected number shapes, and yakuhai pairs are kept more often by the evaluator.
+- Beginner help opens and explains isolated tiles, terminal tiles, honor tiles, pairs, connected numbers, dora, tanyao, and yakuhai.
+- Beginner help, advice, discard zoom, and match result popups do not stay open at the same time.
+- CPU discards remain random in MVP-1.4.
 
 ## Manual Browser Checks
 

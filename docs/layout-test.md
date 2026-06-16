@@ -110,6 +110,7 @@ As of MVP-1.1.6, the regular browser tests pass and the layout check passes acro
 - Important action/advice controls remain visible and clickable.
 - MVP-1.2 adds the `discard-zoom` scenario. It checks that the zoom dialog, close button, and 18 enlarged discard tiles fit within the smartphone landscape viewport.
 - MVP-1.3 adds `match-ended` and `result-popup` scenarios. They check that the end summary, replay/result actions, result dialog, close button, and four history entries fit within the smartphone landscape viewport.
+- MVP-1.4 keeps the existing layout scenarios and adds a compact beginner help popup. If future help content grows, add a dedicated `beginner-help-open` scenario before merging the UI change.
 
 The earlier MVP-1.1.4 guard intentionally detected late-hand discard clipping at discard tile 13 and later. MVP-1.1.6 fixes that known failure by fitting the landscape discard grids for 18-tile late-hand states.
 

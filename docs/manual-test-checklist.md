@@ -455,6 +455,26 @@ Use a real phone in landscape orientation, or browser device toolbar viewports s
 - Confirm the result popup does not stay open at the same time as the discard zoom or advice popup.
 - Confirm smartphone landscape does not gain page-level overflow when the result popup is open.
 
+## 19. MVP-1.4 Discard Evaluator And Beginner Help Check
+
+- Open the app with `?v=mvp14-discard-evaluator-1`.
+- Start an east-only match.
+- Confirm advice is ON by default unless you previously turned it OFF.
+- Confirm at least one suggested discard appears on the human discard turn.
+- Confirm suggested tiles remain highlighted in the human hand.
+- Tap/click the advice reason button.
+- Confirm the reason popup shows beginner-friendly reasons for the current candidates.
+- Confirm reasons sound like guidance, not an absolute correct answer.
+- Confirm advice remains available even when the hand has mostly connected number tiles.
+- Toggle advice OFF and confirm advice highlights and the advice reason button disappear.
+- Toggle advice ON again and confirm suggestions return.
+- Open `初心者ヘルプ`.
+- Confirm the help says advice is only a guide.
+- Confirm the help explains isolated tiles, terminal tiles, honor tiles, pairs, connected number tiles, dora, tanyao, and yakuhai.
+- Confirm the help closes with the close button and Escape on desktop.
+- Confirm beginner help does not stay open at the same time as advice, discard zoom, or result popups.
+- Confirm discard zoom, match result popup, next round, match end, and replay still work after opening and closing beginner help.
+
 Portrait orientation check:
 
 - Confirm the page shows: `スマホを横向きにすると、牌とボタンが見やすくなります。`

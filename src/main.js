@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp132-result-four-visible-1";
-import { renderGame } from "./ui/render.js?v=mvp132-result-four-visible-1";
+import { bindControls } from "./ui/input.js?v=mvp14-discard-evaluator-1";
+import { renderGame } from "./ui/render.js?v=mvp14-discard-evaluator-1";
 
-const APP_ASSET_VERSION = "mvp132-result-four-visible-1";
+const APP_ASSET_VERSION = "mvp14-discard-evaluator-1";
 
 const appRoot = document.querySelector("#app");
 
@@ -11,6 +11,7 @@ let cpuTimer = null;
 let discardAdviceDialogOpen = false;
 let discardZoomPlayerId = null;
 let matchResultDialogOpen = false;
+let beginnerHelpDialogOpen = false;
 
 init();
 
@@ -54,7 +55,8 @@ function render() {
     suggestDiscards: gameApi.suggestDiscards,
     discardAdviceDialogOpen,
     discardZoomPlayerId,
-    matchResultDialogOpen
+    matchResultDialogOpen,
+    beginnerHelpDialogOpen
   });
   bindControls(appRoot, {
     onStartMatch: startMatch,
@@ -68,6 +70,8 @@ function render() {
     onCloseDiscardZoom: closeDiscardZoom,
     onOpenMatchResult: openMatchResult,
     onCloseMatchResult: closeMatchResult,
+    onOpenBeginnerHelp: openBeginnerHelp,
+    onCloseBeginnerHelp: closeBeginnerHelp,
     onDiscardTile: discardHumanTile,
     onDeclareTsumo: declareHumanTsumo,
     onDeclareRon: declareHumanRon,
@@ -80,6 +84,7 @@ function startMatch() {
   discardAdviceDialogOpen = false;
   discardZoomPlayerId = null;
   matchResultDialogOpen = false;
+  beginnerHelpDialogOpen = false;
   state = gameApi.dispatchAction(state, { type: "START_MATCH" });
   render();
   scheduleCpuIfNeeded();
@@ -90,6 +95,7 @@ function startNextRound() {
   discardAdviceDialogOpen = false;
   discardZoomPlayerId = null;
   matchResultDialogOpen = false;
+  beginnerHelpDialogOpen = false;
   state = gameApi.dispatchAction(state, { type: "START_NEXT_ROUND" });
   render();
   scheduleCpuIfNeeded();
@@ -112,6 +118,7 @@ function toggleDiscardAdvice() {
   discardAdviceDialogOpen = false;
   discardZoomPlayerId = null;
   matchResultDialogOpen = false;
+  beginnerHelpDialogOpen = false;
   render();
 }
 
@@ -119,6 +126,7 @@ function openDiscardAdvice() {
   discardAdviceDialogOpen = true;
   discardZoomPlayerId = null;
   matchResultDialogOpen = false;
+  beginnerHelpDialogOpen = false;
   render();
 }
 
@@ -131,6 +139,7 @@ function openDiscardZoom(playerId) {
   discardAdviceDialogOpen = false;
   discardZoomPlayerId = Number(playerId);
   matchResultDialogOpen = false;
+  beginnerHelpDialogOpen = false;
   render();
 }
 
@@ -143,11 +152,25 @@ function openMatchResult() {
   discardAdviceDialogOpen = false;
   discardZoomPlayerId = null;
   matchResultDialogOpen = true;
+  beginnerHelpDialogOpen = false;
   render();
 }
 
 function closeMatchResult() {
   matchResultDialogOpen = false;
+  render();
+}
+
+function openBeginnerHelp() {
+  discardAdviceDialogOpen = false;
+  discardZoomPlayerId = null;
+  matchResultDialogOpen = false;
+  beginnerHelpDialogOpen = true;
+  render();
+}
+
+function closeBeginnerHelp() {
+  beginnerHelpDialogOpen = false;
   render();
 }
 
@@ -166,6 +189,7 @@ function discardHumanTile(tileId) {
   discardAdviceDialogOpen = false;
   discardZoomPlayerId = null;
   matchResultDialogOpen = false;
+  beginnerHelpDialogOpen = false;
   handleAfterDiscard();
 }
 

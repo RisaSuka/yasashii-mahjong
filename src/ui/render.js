@@ -35,6 +35,10 @@ export function renderGame(state, root, options = {}) {
             <span class="button-label-full">アドバイス: ${state.settings.discardAdviceEnabled ? "ON" : "OFF"}</span>
             <span class="button-label-short" aria-hidden="true">助言${state.settings.discardAdviceEnabled ? "ON" : "OFF"}</span>
           </button>
+          <button type="button" class="secondary beginner-help-button" data-action="open-beginner-help">
+            <span class="button-label-full">初心者ヘルプ</span>
+            <span class="button-label-short" aria-hidden="true">ヘルプ</span>
+          </button>
         </div>
       </header>
 
@@ -88,9 +92,10 @@ function renderTableLegacy(state, options) {
               <div class="center-secondary">
             ${renderPreviousRoundResult(state.lastRoundResult, round)}
             ${renderLastActionResult(round)}
-            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen && options.discardZoomPlayerId == null && !options.matchResultDialogOpen)}
-            ${renderDiscardZoomDialog(round, options.matchResultDialogOpen ? null : options.discardZoomPlayerId)}
-            ${renderMatchResultDialog(state, options.matchResultDialogOpen)}
+            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen && options.discardZoomPlayerId == null && !options.matchResultDialogOpen && !options.beginnerHelpDialogOpen)}
+            ${renderDiscardZoomDialog(round, options.matchResultDialogOpen || options.beginnerHelpDialogOpen ? null : options.discardZoomPlayerId)}
+            ${renderMatchResultDialog(state, options.matchResultDialogOpen && !options.beginnerHelpDialogOpen)}
+            ${renderBeginnerHelpDialog(options.beginnerHelpDialogOpen)}
             ${renderYakuSummary(round)}
             <div class="table-meta-row">
               <span class="table-meta">山 ${round.wall.length}</span>
@@ -141,9 +146,10 @@ function renderTable(state, options) {
             </div>
             ${renderPreviousRoundResult(state.lastRoundResult, round)}
             ${renderLastActionResult(round)}
-            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen && options.discardZoomPlayerId == null && !options.matchResultDialogOpen)}
-            ${renderDiscardZoomDialog(round, options.matchResultDialogOpen ? null : options.discardZoomPlayerId)}
-            ${renderMatchResultDialog(state, options.matchResultDialogOpen)}
+            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen && options.discardZoomPlayerId == null && !options.matchResultDialogOpen && !options.beginnerHelpDialogOpen)}
+            ${renderDiscardZoomDialog(round, options.matchResultDialogOpen || options.beginnerHelpDialogOpen ? null : options.discardZoomPlayerId)}
+            ${renderMatchResultDialog(state, options.matchResultDialogOpen && !options.beginnerHelpDialogOpen)}
+            ${renderBeginnerHelpDialog(options.beginnerHelpDialogOpen)}
             ${renderYakuSummary(round)}
           </div>
           ${renderTableDiscardZone(round.players[1], "south", round)}
@@ -367,6 +373,43 @@ function renderMatchResultDialog(state, isOpen) {
             `).join("")
             : `<li>まだ局履歴がありません</li>`}
         </ol>
+      </div>
+    </section>
+  `;
+}
+
+function renderBeginnerHelpDialog(isOpen) {
+  if (!isOpen) {
+    return "";
+  }
+
+  const topics = [
+    ["おすすめ", "絶対の正解ではなく、迷った時の補助です。"],
+    ["孤立牌", "近い数字や同じ牌がなく、組み合わせを作りにくい牌です。"],
+    ["端牌", "1や9の牌です。つながる数字が少ないので、孤立している時は候補になりやすいです。"],
+    ["字牌", "東・南・西・北・白・發・中です。同じ牌が集まると役になります。"],
+    ["対子", "同じ牌2枚の組です。3枚そろうと形や役になりやすいので、残すことが多いです。"],
+    ["連続した数牌", "3・4や6・7のような近い数字は、順子を作りやすいので残すことが多いです。"],
+    ["ドラ", "持っていると点が高くなりやすい大事な牌です。MVPでは点数計算はまだ未対応です。"],
+    ["狙いやすい役", "まずはタンヤオや役牌を狙うと分かりやすいです。"]
+  ];
+
+  return `
+    <section class="beginner-help-backdrop" data-action="close-beginner-help" aria-label="初心者ヘルプを閉じる">
+      <div class="beginner-help-modal" role="dialog" aria-modal="false" aria-label="初心者ヘルプ">
+        <div class="beginner-help-header">
+          <strong>初心者ヘルプ</strong>
+          <button type="button" class="beginner-help-close" data-action="close-beginner-help">閉じる</button>
+        </div>
+        <p class="beginner-help-note">おすすめ捨て牌は、強い正解ではなく「迷った時の考え方」です。</p>
+        <dl class="beginner-help-list">
+          ${topics.map(([term, description]) => `
+            <div class="beginner-help-item">
+              <dt>${escapeHtml(term)}</dt>
+              <dd>${escapeHtml(description)}</dd>
+            </div>
+          `).join("")}
+        </dl>
       </div>
     </section>
   `;

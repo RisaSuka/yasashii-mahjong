@@ -1,3 +1,11 @@
+# MVP-1.4 discard evaluator note
+
+MVP-1.4 adds a shared discard evaluator v1 for beginner advice and future CPU improvements. `evaluateDiscardCandidates(hand, context)` scores every tile with beginner-readable reasons, and `suggestDiscards(hand, context)` now uses that evaluation so valid hands should keep producing 1 to 3 advice candidates instead of falling back to empty advice. The evaluator is still intentionally lightweight: it does not perform full shanten calculation, danger reading, scoring expectation, riichi, calls, or furiten checks.
+
+The advice UI keeps the existing highlighted hand tiles and reason popup. A compact beginner help popup explains that advice is only a guide, and explains isolated tiles, terminal tiles, honor tiles, pairs, connected number tiles, dora, tanyao, and yakuhai. CPU discards are not connected to the evaluator yet; random CPU play remains in place for MVP-1.4.
+
+Current local checks target `220 pass / 0 pending / 0 fail`, plus the existing smartphone landscape layout guard.
+
 # MVP-1.3 match result note
 
 MVP-1.3 improves the East-only match end screen. After East 4 ends, the app shows a short `東風戦終了` summary, keeps `もう一度遊ぶ` visible, and adds a `結果を見る` popup with the four hand results from `roundHistory`. MVP-1.3.1 tightens the result popup spacing so East 1 through East 4 are easier to read on smartphone landscape. Point calculation and ranking remain out of scope. Current normal tests target `210 pass / 0 pending / 0 fail`, and the layout guard includes match-ended/result-popup scenarios.

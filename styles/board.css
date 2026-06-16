@@ -693,6 +693,86 @@
   margin-left: 0;
 }
 
+.beginner-help-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 32;
+  display: grid;
+  place-items: center;
+  padding: 12px;
+  background: rgba(15, 23, 42, 0.18);
+}
+
+.beginner-help-modal {
+  box-sizing: border-box;
+  width: min(620px, calc(100vw - 24px));
+  max-width: calc(100vw - 24px);
+  max-height: min(84dvh, calc(100vh - 24px));
+  overflow: auto;
+  border: 2px solid #0f766e;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.24);
+  padding: 12px;
+}
+
+.beginner-help-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 8px;
+  background: rgba(255, 255, 255, 0.96);
+  font-size: 18px;
+}
+
+.beginner-help-close {
+  min-height: 36px;
+  border: 1px solid #0f766e;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #0f3f36;
+  padding: 0 14px;
+  font-weight: 800;
+}
+
+.beginner-help-note {
+  margin: 0 0 8px;
+  color: #52606d;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.beginner-help-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.beginner-help-item {
+  border: 1px solid rgba(15, 118, 110, 0.18);
+  border-radius: 8px;
+  background: rgba(240, 253, 250, 0.74);
+  padding: 8px;
+}
+
+.beginner-help-item dt {
+  font-weight: 800;
+  color: #0f3f36;
+  margin-bottom: 2px;
+}
+
+.beginner-help-item dd {
+  margin: 0;
+  color: #243b53;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
 .discard-area {
   display: grid;
   gap: 4px;
