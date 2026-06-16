@@ -426,7 +426,7 @@ function createFallbackRound() {
     doraIndicators: [{ id: "z1-0", suit: "z", rank: 1, copy: 0, red: false }],
     endReason: null,
     players: [
-      createFallbackPlayer(0, "縺ゅ↑縺・, "human", "east", 14),
+      createFallbackPlayer(0, "You", "human", "east", 14),
       createFallbackPlayer(1, "CPU 1", "cpu", "south", 13),
       createFallbackPlayer(2, "CPU 2", "cpu", "west", 13),
       createFallbackPlayer(3, "CPU 3", "cpu", "north", 13)
