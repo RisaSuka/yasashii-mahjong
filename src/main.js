@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp14-discard-evaluator-1";
-import { renderGame } from "./ui/render.js?v=mvp14-discard-evaluator-1";
+import { bindControls } from "./ui/input.js?v=mvp14-discard-evaluator-2";
+import { renderGame } from "./ui/render.js?v=mvp14-discard-evaluator-2";
 
-const APP_ASSET_VERSION = "mvp14-discard-evaluator-1";
+const APP_ASSET_VERSION = "mvp14-discard-evaluator-2";
 
 const appRoot = document.querySelector("#app");
 

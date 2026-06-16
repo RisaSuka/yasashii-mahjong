@@ -21,7 +21,7 @@ export function renderGame(state, root, options = {}) {
   root.innerHTML = `
     <div class="app${largeTileClass}">
       <header class="topbar">
-        <h1 class="title">じゅんちゃん麻雀 MVP-0.5.5</h1>
+        <h1 class="title">じゅんちゃん麻雀</h1>
         <div class="controls">
           <button type="button" data-action="start-match">
             <span class="button-label-full">新規局開始</span>
