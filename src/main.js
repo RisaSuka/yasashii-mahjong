@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp131-result-polish-1";
-import { renderGame } from "./ui/render.js?v=mvp131-result-polish-1";
+import { bindControls } from "./ui/input.js?v=mvp132-result-four-visible-1";
+import { renderGame } from "./ui/render.js?v=mvp132-result-four-visible-1";
 
-const APP_ASSET_VERSION = "mvp131-result-polish-1";
+const APP_ASSET_VERSION = "mvp132-result-four-visible-1";
 
 const appRoot = document.querySelector("#app");
 
@@ -402,7 +402,7 @@ function createFallbackRound() {
     doraIndicators: [{ id: "z1-0", suit: "z", rank: 1, copy: 0, red: false }],
     endReason: null,
     players: [
-      createFallbackPlayer(0, "あなた", "human", "east", 14),
+      createFallbackPlayer(0, "あなぁE, "human", "east", 14),
       createFallbackPlayer(1, "CPU 1", "cpu", "south", 13),
       createFallbackPlayer(2, "CPU 2", "cpu", "west", 13),
       createFallbackPlayer(3, "CPU 3", "cpu", "north", 13)

@@ -388,6 +388,12 @@ function inspectLayoutSource() {
       if (entries.length < 4) {
         failures.push("match result popup shows fewer than 4 history entries");
       }
+      for (const [index, entry] of entries.entries()) {
+        const entryRect = entry.getBoundingClientRect();
+        if (!isInsideRect(entryRect, rect, tolerance)) {
+          failures.push("match result entry " + (index + 1) + " is clipped inside popup");
+        }
+      }
     }
 
     checkOverlap("east discard", rects.eastDiscard, "hand", rects.hand, 0.08);
@@ -443,6 +449,13 @@ function inspectLayoutSource() {
         && rect.left >= -tolerance
         && rect.right <= viewport.width + tolerance
         && rect.bottom <= viewport.height + tolerance;
+    }
+
+    function isInsideRect(rect, containerRect, tolerance) {
+      return rect.top >= containerRect.top - tolerance
+        && rect.left >= containerRect.left - tolerance
+        && rect.right <= containerRect.right + tolerance
+        && rect.bottom <= containerRect.bottom + tolerance;
     }
 
     function toRect(rect) {
