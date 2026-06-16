@@ -1,6 +1,6 @@
 # MVP-1.3 match result note
 
-MVP-1.3 improves the East-only match end screen. After East 4 ends, the app shows a short `東風戦終了` summary, keeps `もう一度遊ぶ` visible, and adds a `結果を見る` popup with the four hand results from `roundHistory`. Point calculation and ranking remain out of scope. Current normal tests target `209 pass / 0 pending / 0 fail`, and the layout guard includes match-ended/result-popup scenarios.
+MVP-1.3 improves the East-only match end screen. After East 4 ends, the app shows a short `東風戦終了` summary, keeps `もう一度遊ぶ` visible, and adds a `結果を見る` popup with the four hand results from `roundHistory`. MVP-1.3.1 tightens the result popup spacing so East 1 through East 4 are easier to read on smartphone landscape. Point calculation and ranking remain out of scope. Current normal tests target `210 pass / 0 pending / 0 fail`, and the layout guard includes match-ended/result-popup scenarios.
 
 # MVP-1.2 discard zoom note
 

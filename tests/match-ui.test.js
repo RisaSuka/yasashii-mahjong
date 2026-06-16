@@ -486,6 +486,21 @@ export function registerMatchUiTests() {
     assertTrue(html.includes('data-action="close-match-result"'), "Result popup should include a close action");
   });
 
+  test("MVP-1.3.1 UI: match result popup handles empty history", async () => {
+    const state = await matchEndedHistoryState();
+    const html = await renderState({
+      ...state,
+      match: {
+        ...state.match,
+        roundHistory: []
+      }
+    }, { matchResultDialogOpen: true });
+
+    assertTrue(html.includes("match-result-modal"), "Result popup should still render with empty history");
+    assertTrue(html.includes("match-result-list"), "Result popup should keep the result list structure");
+    assertTrue(html.includes('data-action="close-match-result"'), "Result popup should still include a close action");
+  });
+
   test("MVP-1.3 UI: match result popup suppresses other popups", async () => {
     const html = await renderState(await matchEndedHistoryState(), {
       suggestDiscards: sampleAdvice,

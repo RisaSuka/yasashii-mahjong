@@ -1,15 +1,15 @@
 # Current Status
 
-Last updated for MVP-1.3 match result popup.
+Last updated for MVP-1.3.1 match result popup polish.
 
 ## Repository State
 
 - Working branch: `codex/mvp-12-discard-zoom`
-- Automated tests: `209 pass / 0 pending / 0 fail`
+- Automated tests: `210 pass / 0 pending / 0 fail`
 - Layout check: Chrome-based smartphone landscape guard passed all target viewports/scenarios at MVP-1.1.6; MVP-1.2 adds a discard-zoom scenario that must be run before merge/publish
-- Working tree: clean at the time of the latest MVP-1.3 match result work
+- Working tree: clean at the time of the latest MVP-1.3.1 match result polish
 - Push: not yet
-- `main` merge: not yet for MVP-1.3
+- `main` merge: not yet for MVP-1.3.1
 
 ## Implemented MVPs
 
@@ -36,7 +36,7 @@ Last updated for MVP-1.3 match result popup.
 | MVP-1.1.4 | Working branch | Chrome-based smartphone landscape layout guard for detecting clipping, overflow, overlap, and unclickable controls. |
 | MVP-1.1.6 | Working branch | Late-hand landscape discard grids fit 18 discards in all four discard zones and pass the layout guard. |
 | MVP-1.2 | Working branch | Discard areas can be tapped to open a larger discard-list popup for each player. |
-| MVP-1.3 | Working branch | East-only match end screen has a result-history popup based on `roundHistory`. |
+| MVP-1.3.1 | Working branch | East-only match end screen has a polished result-history popup based on `roundHistory`. |
 
 ## Current Capabilities
 
@@ -194,7 +194,7 @@ Last updated for MVP-1.3 match result popup.
 Before merging into `main`, confirm:
 
 - `git status --short --branch` is clean.
-- Latest test runner result is `209 pass / 0 pending / 0 fail`.
+- Latest test runner result is `210 pass / 0 pending / 0 fail`.
 - `tests/layout-check.mjs` has been run and its result is reviewed.
 - `tests/layout-check.mjs` passes, including late-hand and draw-ended discard scenarios.
 - `/` returns HTTP 200 from a local static server.

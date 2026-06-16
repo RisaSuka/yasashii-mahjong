@@ -1,5 +1,5 @@
 import { createPlayers } from "./player.js";
-import { createTiles, sortTiles } from "./tiles.js?v=mvp13-match-result-1";
+import { createTiles, sortTiles } from "./tiles.js?v=mvp131-result-polish-1";
 import { buildWall, drawFromWall } from "./wall.js";
 import { createDefaultStats, saveStats } from "./storage.js";
 

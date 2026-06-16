@@ -260,9 +260,10 @@
   display: grid;
   gap: 4px;
   justify-items: center;
-  border: 1px solid rgba(15, 118, 110, 0.28);
+  border: 1px solid rgba(15, 118, 110, 0.42);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.14);
   padding: 9px;
   color: #102a43;
   font-size: 14px;
@@ -651,21 +652,37 @@
 }
 
 .match-result-note {
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   color: #52606d;
   font-size: 14px;
 }
 
 .match-result-list {
+  counter-reset: match-result;
   display: grid;
-  gap: 6px;
+  gap: 4px;
   margin: 0;
-  padding-left: 24px;
+  padding: 0;
+  list-style: none;
   color: #102a43;
 }
 
 .match-result-list li {
-  padding: 4px 0;
+  counter-increment: match-result;
+  display: grid;
+  grid-template-columns: 2em minmax(4.8em, auto) 1fr;
+  align-items: baseline;
+  column-gap: 8px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: rgba(236, 253, 245, 0.72);
+}
+
+.match-result-list li::before {
+  content: counter(match-result) ".";
+  color: #52606d;
+  font-weight: 800;
+  text-align: right;
 }
 
 .match-result-hand {
@@ -673,7 +690,7 @@
 }
 
 .match-result-text {
-  margin-left: 8px;
+  margin-left: 0;
 }
 
 .discard-area {
