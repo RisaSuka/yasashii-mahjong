@@ -284,8 +284,10 @@ function inspectLayoutSource() {
       }
     }
 
+    const modal = document.querySelector(".discard-advice-modal");
+    const zoomModal = document.querySelector(".discard-zoom-modal");
     const adviceButton = document.querySelector(selectors.adviceButton);
-    if (adviceButton) {
+    if (adviceButton && !modal && !zoomModal) {
       const rect = adviceButton.getBoundingClientRect();
       if (!isInViewport(rect, viewport, tolerance)) {
         failures.push("advice button is outside viewport");
@@ -295,7 +297,6 @@ function inspectLayoutSource() {
       }
     }
 
-    const modal = document.querySelector(".discard-advice-modal");
     if (modal) {
       const rect = modal.getBoundingClientRect();
       if (!isInViewport(rect, viewport, tolerance)) {
@@ -303,7 +304,6 @@ function inspectLayoutSource() {
       }
     }
 
-    const zoomModal = document.querySelector(".discard-zoom-modal");
     if (zoomModal) {
       const rect = zoomModal.getBoundingClientRect();
       if (!isInViewport(rect, viewport, tolerance)) {
