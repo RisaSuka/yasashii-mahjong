@@ -893,17 +893,21 @@
   }
 
   .discard-zoom-backdrop {
-    padding: 5px;
+    padding: max(6px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
   }
 
   .discard-zoom-modal {
-    width: min(90vw, 560px);
-    max-height: min(78dvh, 280px);
+    width: min(560px, calc(100vw - 16px));
+    max-width: calc(100vw - 16px);
+    max-height: min(78dvh, calc(100vh - 16px));
     padding: 8px;
   }
 
   .discard-zoom-header {
     margin-bottom: 4px;
+    margin-left: -3px;
+    margin-right: -3px;
+    padding: 3px;
     font-size: 14px;
   }
 
@@ -919,7 +923,7 @@
   }
 
   .discard-zoom-tiles {
-    grid-template-columns: repeat(auto-fit, minmax(30px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(28px, 1fr));
     gap: 5px;
   }
 

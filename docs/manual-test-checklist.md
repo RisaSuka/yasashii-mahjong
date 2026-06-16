@@ -21,8 +21,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 204.
-- Confirm pass count is 204.
+- Confirm total count is 205.
+- Confirm pass count is 205.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - For smartphone landscape layout work, also run the layout guard described in `docs/layout-test.md`.
@@ -420,7 +420,7 @@ Current expected result after MVP-1.1.6:
 
 Use a real phone in landscape orientation, or browser device toolbar viewports such as 844x390, 896x414, and 932x430.
 
-- Open the app with `?v=mvp12-discard-zoom-1`.
+- Open the app with `?v=mvp12-discard-zoom-2`.
 - Confirm north, west, south, and east discard zones show a small `拡大` hint.
 - Tap/click the north CPU discard zone.
 - Confirm a popup opens with `北 CPU 3の捨て牌`.

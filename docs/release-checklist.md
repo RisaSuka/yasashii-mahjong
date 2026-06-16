@@ -6,7 +6,7 @@ Use this before merging to `main` or publishing with GitHub Pages.
 
 - Branch: `codex/mvp-12-discard-zoom`
 - Scope: MVP-0.1 through MVP-1.2 discard zoom popup
-- Expected automated result: `204 pass / 0 pending / 0 fail`
+- Expected automated result: `205 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
 - Publish status: MVP-1.2 is not published yet.
@@ -31,8 +31,8 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 204.
-- Confirm pass count is 204.
+- Confirm total count is 205.
+- Confirm pass count is 205.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.

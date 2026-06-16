@@ -514,18 +514,22 @@
 }
 
 .discard-zoom-backdrop {
-  position: absolute;
+  position: fixed;
   inset: 0;
-  z-index: 7;
+  z-index: 30;
   display: grid;
   place-items: center;
-  padding: 8px;
+  box-sizing: border-box;
+  padding: max(10px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
   background: rgba(15, 23, 42, 0.16);
+  overflow: hidden;
 }
 
 .discard-zoom-modal {
-  width: min(92vw, 620px);
-  max-height: min(84dvh, 330px);
+  box-sizing: border-box;
+  width: min(620px, calc(100vw - 24px));
+  max-width: calc(100vw - 24px);
+  max-height: min(84dvh, calc(100vh - 24px));
   overflow: auto;
   border: 2px solid rgba(15, 118, 110, 0.52);
   border-radius: 12px;
@@ -535,16 +539,22 @@
 }
 
 .discard-zoom-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 6px;
+  margin: -4px -4px 6px;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.98);
   color: #102a43;
   font-size: 18px;
 }
 
 .discard-zoom-close {
+  flex: 0 0 auto;
   min-height: 36px;
   border: 1px solid #0f766e;
   border-radius: 999px;
@@ -563,9 +573,10 @@
 
 .discard-zoom-tiles {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(42px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
   gap: 8px;
   align-items: start;
+  max-width: 100%;
 }
 
 .discard-zoom-tile {

@@ -5,7 +5,7 @@ Last updated for MVP-1.2 discard zoom popup.
 ## Repository State
 
 - Working branch: `codex/mvp-12-discard-zoom`
-- Automated tests: `204 pass / 0 pending / 0 fail`
+- Automated tests: `205 pass / 0 pending / 0 fail`
 - Layout check: Chrome-based smartphone landscape guard passed all target viewports/scenarios at MVP-1.1.6; MVP-1.2 adds a discard-zoom scenario that must be run before merge/publish
 - Working tree: clean at the time of the latest MVP-1.2 discard zoom work
 - Push: not yet
@@ -184,7 +184,7 @@ Last updated for MVP-1.2 discard zoom popup.
 Before merging into `main`, confirm:
 
 - `git status --short --branch` is clean.
-- Latest test runner result is `204 pass / 0 pending / 0 fail`.
+- Latest test runner result is `205 pass / 0 pending / 0 fail`.
 - `tests/layout-check.mjs` has been run and its result is reviewed.
 - `tests/layout-check.mjs` passes, including late-hand and draw-ended discard scenarios.
 - `/` returns HTTP 200 from a local static server.

@@ -419,6 +419,47 @@ export function registerMatchUiTests() {
     assertEqual(openedPlayerId, "2", "Open zoom should pass the selected player id");
     assertEqual(closed, 1, "Close zoom should call its handler");
   });
+
+  test("MVP-1.2 UI: discard zoom closes from backdrop and Escape", async () => {
+    const { bindControls } = await loadModule("../src/ui/input.js", ["bindControls"]);
+    let closed = 0;
+    let keydownListener = null;
+    const backdrop = createFakeButton();
+    backdrop.classList = {
+      contains(className) {
+        return className === "discard-zoom-backdrop";
+      }
+    };
+    const root = {
+      addEventListener(type, listener) {
+        if (type === "keydown") {
+          keydownListener = listener;
+        }
+      },
+      querySelector() {
+        return null;
+      },
+      querySelectorAll(selector) {
+        if (selector === "[data-action='close-discard-zoom']") {
+          return [backdrop];
+        }
+
+        return [];
+      }
+    };
+
+    bindControls(root, {
+      onCloseDiscardAdvice() {},
+      onCloseDiscardZoom() {
+        closed += 1;
+      }
+    });
+
+    backdrop.listeners.click({ target: backdrop });
+    keydownListener({ key: "Escape" });
+
+    assertEqual(closed, 2, "Backdrop click and Escape should close discard zoom");
+  });
 }
 
 function extractSectionHtml(html, className) {
