@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp14-discard-evaluator-2";
-import { renderGame } from "./ui/render.js?v=mvp14-discard-evaluator-2";
+import { bindControls } from "./ui/input.js?v=mvp14-discard-evaluator-3";
+import { renderGame } from "./ui/render.js?v=mvp14-discard-evaluator-3";
 
-const APP_ASSET_VERSION = "mvp14-discard-evaluator-2";
+const APP_ASSET_VERSION = "mvp14-discard-evaluator-3";
 
 const appRoot = document.querySelector("#app");
 
@@ -426,7 +426,7 @@ function createFallbackRound() {
     doraIndicators: [{ id: "z1-0", suit: "z", rank: 1, copy: 0, red: false }],
     endReason: null,
     players: [
-      createFallbackPlayer(0, "あなぁE, "human", "east", 14),
+      createFallbackPlayer(0, "縺ゅ↑縺・, "human", "east", 14),
       createFallbackPlayer(1, "CPU 1", "cpu", "south", 13),
       createFallbackPlayer(2, "CPU 2", "cpu", "west", 13),
       createFallbackPlayer(3, "CPU 3", "cpu", "north", 13)

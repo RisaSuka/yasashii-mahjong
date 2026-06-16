@@ -8,6 +8,23 @@ export function registerMatchUiTests() {
     assertTrue(!html.includes('data-action="start-round"'), "Initial screen should not expose old START_ROUND entry point");
   });
 
+  test("MVP-1.4 APP: top page script renders the app root", async () => {
+    const harness = createMainStartupHarness();
+
+    try {
+      await import(`../src/main.js?startup-smoke=${Date.now()}`);
+      await waitForStartupRender();
+
+      assertTrue(harness.root.innerHTML.length > 0, "Main script should render into #app");
+      assertTrue(
+        harness.root.innerHTML.includes('data-action="start-match"'),
+        "Main script should render the start-match entry point"
+      );
+    } finally {
+      harness.cleanup();
+    }
+  });
+
   test("MVP-1.0 UI: start-match button dispatches through onStartMatch handler", async () => {
     const { bindControls } = await loadModule("../src/ui/input.js", ["bindControls"]);
     let calledHandler = "";
@@ -781,6 +798,81 @@ function addDiscards(state, count) {
       }))
     }
   };
+}
+
+function createMainStartupHarness() {
+  const originalDocument = globalThis.document;
+  const originalWindow = globalThis.window;
+  const originalLocalStorage = globalThis.localStorage;
+
+  if (originalDocument?.createElement && originalDocument?.body) {
+    const root = originalDocument.createElement("div");
+    root.id = "app";
+    originalDocument.body.appendChild(root);
+
+    return {
+      root,
+      cleanup() {
+        root.remove();
+      }
+    };
+  }
+
+  const root = {
+    innerHTML: "",
+    addEventListener() {},
+    querySelector() {
+      return null;
+    },
+    querySelectorAll() {
+      return [];
+    }
+  };
+
+  globalThis.document = {
+    querySelector(selector) {
+      return selector === "#app" ? root : null;
+    }
+  };
+  globalThis.window = {
+    clearTimeout() {},
+    setTimeout(callback) {
+      callback();
+      return 0;
+    }
+  };
+  globalThis.localStorage = createMemoryStorage();
+
+  return {
+    root,
+    cleanup() {
+      globalThis.document = originalDocument;
+      globalThis.window = originalWindow;
+      globalThis.localStorage = originalLocalStorage;
+    }
+  };
+}
+
+function createMemoryStorage() {
+  const values = new Map();
+
+  return {
+    getItem(key) {
+      return values.has(key) ? values.get(key) : null;
+    },
+    setItem(key, value) {
+      values.set(key, String(value));
+    },
+    removeItem(key) {
+      values.delete(key);
+    }
+  };
+}
+
+async function waitForStartupRender() {
+  await Promise.resolve();
+  await Promise.resolve();
+  await new Promise((resolve) => globalThis.setTimeout(resolve, 20));
 }
 
 function createFakeButton(dataset = {}) {
