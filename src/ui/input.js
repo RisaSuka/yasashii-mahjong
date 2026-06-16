@@ -3,6 +3,7 @@ export function bindControls(root, handlers) {
     if (event.key === "Escape") {
       handlers.onCloseDiscardAdvice?.();
       handlers.onCloseDiscardZoom?.();
+      handlers.onCloseMatchResult?.();
     }
   });
 
@@ -54,6 +55,19 @@ export function bindControls(root, handlers) {
         return;
       }
       handlers.onCloseDiscardZoom?.();
+    });
+  }
+
+  root.querySelector("[data-action='open-match-result']")?.addEventListener("click", () => {
+    handlers.onOpenMatchResult?.();
+  });
+
+  for (const trigger of root.querySelectorAll("[data-action='close-match-result']")) {
+    trigger.addEventListener("click", (event) => {
+      if (trigger.classList?.contains("match-result-backdrop") && event.target !== trigger) {
+        return;
+      }
+      handlers.onCloseMatchResult?.();
     });
   }
 

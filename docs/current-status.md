@@ -1,15 +1,15 @@
 # Current Status
 
-Last updated for MVP-1.2 discard zoom popup.
+Last updated for MVP-1.3 match result popup.
 
 ## Repository State
 
 - Working branch: `codex/mvp-12-discard-zoom`
-- Automated tests: `205 pass / 0 pending / 0 fail`
+- Automated tests: `209 pass / 0 pending / 0 fail`
 - Layout check: Chrome-based smartphone landscape guard passed all target viewports/scenarios at MVP-1.1.6; MVP-1.2 adds a discard-zoom scenario that must be run before merge/publish
-- Working tree: clean at the time of the latest MVP-1.2 discard zoom work
+- Working tree: clean at the time of the latest MVP-1.3 match result work
 - Push: not yet
-- `main` merge: not yet for MVP-1.2
+- `main` merge: not yet for MVP-1.3
 
 ## Implemented MVPs
 
@@ -36,6 +36,7 @@ Last updated for MVP-1.2 discard zoom popup.
 | MVP-1.1.4 | Working branch | Chrome-based smartphone landscape layout guard for detecting clipping, overflow, overlap, and unclickable controls. |
 | MVP-1.1.6 | Working branch | Late-hand landscape discard grids fit 18 discards in all four discard zones and pass the layout guard. |
 | MVP-1.2 | Working branch | Discard areas can be tapped to open a larger discard-list popup for each player. |
+| MVP-1.3 | Working branch | East-only match end screen has a result-history popup based on `roundHistory`. |
 
 ## Current Capabilities
 
@@ -135,7 +136,7 @@ Last updated for MVP-1.2 discard zoom popup.
 - `tests/layout-check.mjs` launches local Chrome through Chrome DevTools Protocol.
 - The check starts a temporary static server and does not require Playwright or Puppeteer packages.
 - Covered viewports: 844x390, 896x414, 932x430, 812x375, and 780x360.
-- Covered scenarios: early, mid, late, draw-ended, actions, and discard-zoom.
+- Covered scenarios: early, mid, late, draw-ended, actions, discard-zoom, match-ended, and result-popup.
 - It checks page overflow, important element visibility, discard clipping, hand clipping, recommended badge clipping, action/advice button clickability, popup bounds, and major overlaps.
 - Screenshots are saved under `test-artifacts/layout/`.
 - `test-artifacts/` is ignored by git.
@@ -150,7 +151,16 @@ Last updated for MVP-1.2 discard zoom popup.
 - Backdrop click and Escape also close the dialog.
 - Opening discard zoom closes the advice popup, and opening advice closes discard zoom.
 - The layout guard includes a `discard-zoom` scenario that opens the human discard dialog with 18 tiles and checks viewport fit, close-button clickability, and tile count.
-- Run `tests/layout-check.mjs` before merging or publishing MVP-1.2.
+- Run `tests/layout-check.mjs` before merging or publishing MVP-1.2 or later.
+
+## MVP-1.3 Match Result Popup
+
+- East 4 match end still shows `東風戦終了`, `4局遊び終わりました。`, and the no-scoring note.
+- `もう一度遊ぶ` remains visible.
+- `結果を見る` opens a fixed popup with the four compact `roundHistory` entries.
+- The result popup shows short beginner-friendly lines such as `東1局: 流局`, `東2局: あなたのツモ`, and `東3局: 南CPUのロン`.
+- The result popup closes with `閉じる`, backdrop click, or Escape.
+- Result, advice, and discard-zoom popups do not stay open at the same time.
 
 ## MVP-1.1 Remaining Visual Polish Candidates
 
@@ -184,7 +194,7 @@ Last updated for MVP-1.2 discard zoom popup.
 Before merging into `main`, confirm:
 
 - `git status --short --branch` is clean.
-- Latest test runner result is `205 pass / 0 pending / 0 fail`.
+- Latest test runner result is `209 pass / 0 pending / 0 fail`.
 - `tests/layout-check.mjs` has been run and its result is reviewed.
 - `tests/layout-check.mjs` passes, including late-hand and draw-ended discard scenarios.
 - `/` returns HTTP 200 from a local static server.

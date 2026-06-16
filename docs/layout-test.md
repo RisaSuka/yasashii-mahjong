@@ -80,6 +80,8 @@ The check renders these scenarios:
 - `draw-ended`: each player has 18 discards and the hand is ended by exhaustive draw
 - `actions`: action buttons and the advice popup are visible
 - `discard-zoom`: the human discard zoom popup is open with 18 discards
+- `match-ended`: the East-only match end summary is visible
+- `result-popup`: the East-only match result popup is open
 
 ## Screenshots
 
@@ -107,6 +109,7 @@ As of MVP-1.1.6, the regular browser tests pass and the layout check passes acro
 - Page-level horizontal and vertical overflow remain within the guard limits.
 - Important action/advice controls remain visible and clickable.
 - MVP-1.2 adds the `discard-zoom` scenario. It checks that the zoom dialog, close button, and 18 enlarged discard tiles fit within the smartphone landscape viewport.
+- MVP-1.3 adds `match-ended` and `result-popup` scenarios. They check that the end summary, replay/result actions, result dialog, close button, and four history entries fit within the smartphone landscape viewport.
 
 The earlier MVP-1.1.4 guard intentionally detected late-hand discard clipping at discard tile 13 and later. MVP-1.1.6 fixes that known failure by fitting the landscape discard grids for 18-tile late-hand states.
 

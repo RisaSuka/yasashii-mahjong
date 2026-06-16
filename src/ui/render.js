@@ -88,8 +88,9 @@ function renderTableLegacy(state, options) {
               <div class="center-secondary">
             ${renderPreviousRoundResult(state.lastRoundResult, round)}
             ${renderLastActionResult(round)}
-            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen && options.discardZoomPlayerId == null)}
-            ${renderDiscardZoomDialog(round, options.discardZoomPlayerId)}
+            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen && options.discardZoomPlayerId == null && !options.matchResultDialogOpen)}
+            ${renderDiscardZoomDialog(round, options.matchResultDialogOpen ? null : options.discardZoomPlayerId)}
+            ${renderMatchResultDialog(state, options.matchResultDialogOpen)}
             ${renderYakuSummary(round)}
             <div class="table-meta-row">
               <span class="table-meta">山 ${round.wall.length}</span>
@@ -140,8 +141,9 @@ function renderTable(state, options) {
             </div>
             ${renderPreviousRoundResult(state.lastRoundResult, round)}
             ${renderLastActionResult(round)}
-            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen && options.discardZoomPlayerId == null)}
-            ${renderDiscardZoomDialog(round, options.discardZoomPlayerId)}
+            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen && options.discardZoomPlayerId == null && !options.matchResultDialogOpen)}
+            ${renderDiscardZoomDialog(round, options.matchResultDialogOpen ? null : options.discardZoomPlayerId)}
+            ${renderMatchResultDialog(state, options.matchResultDialogOpen)}
             ${renderYakuSummary(round)}
           </div>
           ${renderTableDiscardZone(round.players[1], "south", round)}
@@ -195,6 +197,7 @@ function renderMatchEndAction(state) {
       <strong>東風戦終了</strong>
       <span>4局遊び終わりました。</span>
       <span>点数計算はまだ未対応です。</span>
+      <button type="button" class="match-result-button" data-action="open-match-result">結果を見る</button>
       <button type="button" class="restart-match-button" data-action="start-match">もう一度遊ぶ</button>
     </section>
   `;
@@ -334,6 +337,36 @@ function renderDiscardZoomDialog(round, playerId) {
             ? discards.map((tile) => renderTile(tile, "discard-zoom-tile")).join("")
             : `<span class="discard-zoom-empty">まだ捨て牌はありません</span>`}
         </div>
+      </div>
+    </section>
+  `;
+}
+
+function renderMatchResultDialog(state, isOpen) {
+  if (!isOpen || !isMatchFinishedForDisplay(state)) {
+    return "";
+  }
+
+  const history = Array.isArray(state.match?.roundHistory) ? state.match.roundHistory : [];
+
+  return `
+    <section class="match-result-backdrop" data-action="close-match-result" aria-label="今回の結果を閉じる">
+      <div class="match-result-modal" role="dialog" aria-modal="false" aria-label="今回の結果">
+        <div class="match-result-header">
+          <strong>今回の結果</strong>
+          <button type="button" class="match-result-close" data-action="close-match-result">閉じる</button>
+        </div>
+        <p class="match-result-note">点数計算と順位はまだ未対応です。</p>
+        <ol class="match-result-list">
+          ${history.length
+            ? history.map((entry) => `
+              <li>
+                <span class="match-result-hand">${escapeHtml(entry.handLabel || getHandLabel(entry))}</span>
+                <span class="match-result-text">${escapeHtml(formatHistoryResult(entry))}</span>
+              </li>
+            `).join("")
+            : `<li>まだ局履歴がありません</li>`}
+        </ol>
       </div>
     </section>
   `;
@@ -580,6 +613,28 @@ function formatRoundResult(result) {
   }
 
   return "局が終了しました";
+}
+
+function formatHistoryResult(result) {
+  if (result.resultType === "tsumo" || result.winType === "tsumo") {
+    return `${getPlayerResultLabel(result.winnerId)}のツモ`;
+  }
+
+  if (result.resultType === "ron" || result.winType === "ron") {
+    return `${getPlayerResultLabel(result.winnerId)}のロン`;
+  }
+
+  if (result.resultType === "draw" || result.endReason === "exhaustive-draw") {
+    return "流局";
+  }
+
+  return formatRoundResult(result);
+}
+
+function getPlayerResultLabel(playerId) {
+  const labels = ["あなた", "南CPU", "西CPU", "北CPU"];
+
+  return labels[playerId] || "CPU";
 }
 
 function renderRonAction(state, options) {

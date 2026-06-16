@@ -23,7 +23,9 @@ const SCENARIOS = [
   { name: "late", discards: 18, mode: "playing" },
   { name: "draw-ended", discards: 18, mode: "draw-ended" },
   { name: "actions", discards: 9, mode: "actions" },
-  { name: "discard-zoom", discards: 18, mode: "discard-zoom" }
+  { name: "discard-zoom", discards: 18, mode: "discard-zoom" },
+  { name: "match-ended", discards: 18, mode: "match-ended" },
+  { name: "result-popup", discards: 18, mode: "result-popup" }
 ];
 const TOLERANCE = 2;
 
@@ -141,6 +143,34 @@ function setupScenarioSource() {
       };
     }
 
+    if (mode === "match-ended" || mode === "result-popup") {
+      state = {
+        ...state,
+        match: {
+          ...state.match,
+          phase: "ended",
+          status: "ended",
+          handNumber: 4,
+          dealerIndex: 3,
+          roundHistory: [
+            { handLabel: "東1局", handNumber: 1, resultType: "draw" },
+            { handLabel: "東2局", handNumber: 2, resultType: "tsumo", winnerId: 0, winType: "tsumo" },
+            { handLabel: "東3局", handNumber: 3, resultType: "ron", winnerId: 1, winType: "ron" },
+            { handLabel: "東4局", handNumber: 4, resultType: "draw" }
+          ]
+        },
+        round: {
+          ...state.round,
+          handNumber: 4,
+          dealerIndex: 3,
+          wall: [],
+          phase: "ended",
+          endReason: "exhaustive-draw",
+          winningResult: null
+        }
+      };
+    }
+
     if (mode === "actions") {
       state = {
         ...state,
@@ -173,7 +203,8 @@ function setupScenarioSource() {
         }
       ],
       discardAdviceDialogOpen: mode === "actions",
-      discardZoomPlayerId: mode === "discard-zoom" ? 0 : null
+      discardZoomPlayerId: mode === "discard-zoom" ? 0 : null,
+      matchResultDialogOpen: mode === "result-popup"
     });
   }`;
 }
@@ -273,21 +304,26 @@ function inspectLayoutSource() {
       }
     }
 
+    const modal = document.querySelector(".discard-advice-modal");
+    const zoomModal = document.querySelector(".discard-zoom-modal");
+    const resultModal = document.querySelector(".match-result-modal");
+    const activeModal = modal || zoomModal || resultModal;
+
     const actionButtons = [...document.querySelectorAll(".table-action-bar button, .restart-match-button, .next-round-button")];
-    for (const [index, button] of actionButtons.entries()) {
-      const rect = button.getBoundingClientRect();
-      if (!isInViewport(rect, viewport, tolerance)) {
-        failures.push("action button " + index + " is outside viewport");
-      }
-      if (!isClickableAtCenter(button, rect)) {
-        failures.push("action button " + index + " is not clickable at center");
+    if (!activeModal) {
+      for (const [index, button] of actionButtons.entries()) {
+        const rect = button.getBoundingClientRect();
+        if (!isInViewport(rect, viewport, tolerance)) {
+          failures.push("action button " + index + " is outside viewport");
+        }
+        if (!isClickableAtCenter(button, rect)) {
+          failures.push("action button " + index + " is not clickable at center");
+        }
       }
     }
 
-    const modal = document.querySelector(".discard-advice-modal");
-    const zoomModal = document.querySelector(".discard-zoom-modal");
     const adviceButton = document.querySelector(selectors.adviceButton);
-    if (adviceButton && !modal && !zoomModal) {
+    if (adviceButton && !activeModal) {
       const rect = adviceButton.getBoundingClientRect();
       if (!isInViewport(rect, viewport, tolerance)) {
         failures.push("advice button is outside viewport");
@@ -326,6 +362,31 @@ function inspectLayoutSource() {
       const zoomTiles = zoomModal.querySelectorAll(".discard-zoom-tile");
       if (zoomTiles.length < 18) {
         failures.push("discard zoom shows fewer than 18 discard tiles");
+      }
+    }
+
+    if (resultModal) {
+      const rect = resultModal.getBoundingClientRect();
+      if (!isInViewport(rect, viewport, tolerance)) {
+        failures.push("match result popup is outside viewport");
+      }
+
+      const closeButton = resultModal.querySelector("[data-action='close-match-result']");
+      if (!closeButton) {
+        failures.push("match result close button is missing");
+      } else {
+        const closeRect = closeButton.getBoundingClientRect();
+        if (!isInViewport(closeRect, viewport, tolerance)) {
+          failures.push("match result close button is outside viewport");
+        }
+        if (!isClickableAtCenter(closeButton, closeRect)) {
+          failures.push("match result close button is not clickable at center");
+        }
+      }
+
+      const entries = resultModal.querySelectorAll(".match-result-list li");
+      if (entries.length < 4) {
+        failures.push("match result popup shows fewer than 4 history entries");
       }
     }
 

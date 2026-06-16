@@ -5,11 +5,11 @@ Use this before merging to `main` or publishing with GitHub Pages.
 ## Current Release Candidate
 
 - Branch: `codex/mvp-12-discard-zoom`
-- Scope: MVP-0.1 through MVP-1.2 discard zoom popup
-- Expected automated result: `205 pass / 0 pending / 0 fail`
+- Scope: MVP-0.1 through MVP-1.3 match result popup
+- Expected automated result: `209 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-1.2 is not published yet.
+- Publish status: MVP-1.3 is not published yet.
 
 ## Git Safety
 
@@ -31,8 +31,8 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 205.
-- Confirm pass count is 205.
+- Confirm total count is 209.
+- Confirm pass count is 209.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
@@ -44,7 +44,7 @@ node tests/layout-check.mjs
 
 - If Node is not on PATH in the Codex desktop environment, use the bundled Node command documented in `docs/layout-test.md`.
 - Confirm layout-check screenshots are written under `test-artifacts/layout/`.
-- Current layout-check result: all target viewports and scenarios pass, including `late`, `draw-ended`, and `discard-zoom`.
+- Current layout-check result: all target viewports and scenarios pass, including `late`, `draw-ended`, `discard-zoom`, `match-ended`, and `result-popup`.
 
 ## Core Functional Checks
 
@@ -109,6 +109,10 @@ node tests/layout-check.mjs
 - The discard zoom popup shows the selected player label, discard count, and enlarged discard tiles.
 - The discard zoom popup can be closed with the close button, backdrop click, or Escape.
 - Discard zoom and discard-advice popups do not stay open at the same time.
+- East-only match end shows `東風戦終了`, the four-hand completion note, no-scoring note, result-history button, and replay button.
+- `結果を見る` opens a compact `roundHistory` popup.
+- The result popup lists East 1 through East 4 without points or rankings.
+- Result, advice, and discard-zoom popups do not stay open at the same time.
 
 ## Manual Browser Checks
 
@@ -146,6 +150,7 @@ Check:
 - CPU discards remain visible in the center discard ring without making CPU seats dominate the table.
 - The discard-advice reason popup opens and closes in landscape.
 - The discard zoom popup opens and closes in landscape.
+- The match result popup opens and closes in landscape.
 
 ## GitHub Pages Checks
 

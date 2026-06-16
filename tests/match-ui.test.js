@@ -460,6 +460,92 @@ export function registerMatchUiTests() {
 
     assertEqual(closed, 2, "Backdrop click and Escape should close discard zoom");
   });
+
+  test("MVP-1.3 UI: match end summary offers result history", async () => {
+    const html = await renderState(await matchEndedHistoryState());
+
+    assertTrue(html.includes("東風戦終了"), "Match end should show the east-only match end title");
+    assertTrue(html.includes("4局遊び終わりました。"), "Match end should explain that four hands are complete");
+    assertTrue(html.includes("点数計算はまだ未対応です。"), "Match end should explain that scoring is not implemented");
+    assertTrue(html.includes('data-action="start-match"'), "Match end should keep the replay action visible");
+    assertTrue(html.includes('data-action="open-match-result"'), "Match end should offer a result history button");
+  });
+
+  test("MVP-1.3 UI: match result popup lists East 1 through East 4 history", async () => {
+    const html = await renderState(await matchEndedHistoryState(), { matchResultDialogOpen: true });
+
+    assertTrue(html.includes("match-result-modal"), "Result popup should render when opened");
+    assertTrue(html.includes("今回の結果"), "Result popup should include a beginner-friendly heading");
+    assertTrue(html.includes("東1局"), "Result popup should show East 1");
+    assertTrue(html.includes("東2局"), "Result popup should show East 2");
+    assertTrue(html.includes("東3局"), "Result popup should show East 3");
+    assertTrue(html.includes("東4局"), "Result popup should show East 4");
+    assertTrue(html.includes("あなたのツモ"), "Result popup should show human tsumo result");
+    assertTrue(html.includes("南CPUのロン"), "Result popup should show CPU ron result");
+    assertTrue(html.includes("流局"), "Result popup should show draw results");
+    assertTrue(html.includes('data-action="close-match-result"'), "Result popup should include a close action");
+  });
+
+  test("MVP-1.3 UI: match result popup suppresses other popups", async () => {
+    const html = await renderState(await matchEndedHistoryState(), {
+      suggestDiscards: sampleAdvice,
+      discardAdviceDialogOpen: true,
+      discardZoomPlayerId: 0,
+      matchResultDialogOpen: true
+    });
+
+    assertTrue(html.includes("match-result-modal"), "Result popup should render");
+    assertTrue(!html.includes("discard-advice-modal"), "Advice popup should not stay open with result popup");
+    assertTrue(!html.includes("discard-zoom-modal"), "Discard zoom popup should not stay open with result popup");
+  });
+
+  test("MVP-1.3 UI: match result controls dispatch open and close handlers", async () => {
+    const { bindControls } = await loadModule("../src/ui/input.js", ["bindControls"]);
+    let opened = 0;
+    let closed = 0;
+    let keydownListener = null;
+    const openButton = createFakeButton();
+    const closeButton = createFakeButton();
+    const root = {
+      addEventListener(type, listener) {
+        if (type === "keydown") {
+          keydownListener = listener;
+        }
+      },
+      querySelector(selector) {
+        if (selector === "[data-action='open-match-result']") {
+          return openButton;
+        }
+
+        return null;
+      },
+      querySelectorAll(selector) {
+        if (selector === "[data-action='close-match-result']") {
+          return [closeButton];
+        }
+
+        return [];
+      }
+    };
+
+    bindControls(root, {
+      onOpenMatchResult() {
+        opened += 1;
+      },
+      onCloseDiscardAdvice() {},
+      onCloseDiscardZoom() {},
+      onCloseMatchResult() {
+        closed += 1;
+      }
+    });
+
+    openButton.listeners.click();
+    closeButton.listeners.click({ target: closeButton });
+    keydownListener({ key: "Escape" });
+
+    assertEqual(opened, 1, "Open result should call its handler");
+    assertEqual(closed, 2, "Close button and Escape should close result popup");
+  });
 }
 
 function extractSectionHtml(html, className) {
@@ -518,6 +604,36 @@ async function endedHandState(handNumber) {
       roundWind: "east",
       handNumber,
       dealerIndex: handNumber - 1,
+      phase: "ended",
+      endReason: "exhaustive-draw",
+      winningResult: null
+    }
+  };
+}
+
+async function matchEndedHistoryState() {
+  const state = await startMatchState();
+  const roundHistory = [
+    { handLabel: "東1局", handNumber: 1, resultType: "draw" },
+    { handLabel: "東2局", handNumber: 2, resultType: "tsumo", winnerId: 0, winType: "tsumo" },
+    { handLabel: "東3局", handNumber: 3, resultType: "ron", winnerId: 1, winType: "ron" },
+    { handLabel: "東4局", handNumber: 4, resultType: "draw" }
+  ];
+
+  return {
+    ...state,
+    match: {
+      ...state.match,
+      phase: "ended",
+      status: "ended",
+      handNumber: 4,
+      dealerIndex: 3,
+      roundHistory
+    },
+    round: {
+      ...state.round,
+      handNumber: 4,
+      dealerIndex: 3,
       phase: "ended",
       endReason: "exhaustive-draw",
       winningResult: null

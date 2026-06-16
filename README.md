@@ -1,6 +1,10 @@
+# MVP-1.3 match result note
+
+MVP-1.3 improves the East-only match end screen. After East 4 ends, the app shows a short `東風戦終了` summary, keeps `もう一度遊ぶ` visible, and adds a `結果を見る` popup with the four hand results from `roundHistory`. Point calculation and ranking remain out of scope. Current normal tests target `209 pass / 0 pending / 0 fail`, and the layout guard includes match-ended/result-popup scenarios.
+
 # MVP-1.2 discard zoom note
 
-MVP-1.2 adds a discard zoom popup for older-user readability. Tap or click any player's discard area in the smartphone landscape table to open a larger discard list for that player. The popup can be closed with the close button, backdrop click, or Escape key, and it is kept separate from the discard-advice popup. Current normal tests target `205 pass / 0 pending / 0 fail`, and the layout guard includes a discard-zoom open scenario. The current real-device cache-bust version is `mvp12-discard-zoom-2`.
+MVP-1.2 adds a discard zoom popup for older-user readability. Tap or click any player's discard area in the smartphone landscape table to open a larger discard list for that player. The popup can be closed with the close button, backdrop click, or Escape key, and it is kept separate from the discard-advice popup.
 
 # MVP-1.1.6 layout-test note
 

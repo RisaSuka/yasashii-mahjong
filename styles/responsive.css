@@ -940,6 +940,40 @@
     font-size: clamp(18px, 3.3vw, 26px);
   }
 
+  .match-result-backdrop {
+    padding: max(6px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+  }
+
+  .match-result-modal {
+    width: min(460px, calc(100vw - 16px));
+    max-width: calc(100vw - 16px);
+    max-height: min(78dvh, calc(100vh - 16px));
+    padding: 8px;
+  }
+
+  .match-result-header {
+    margin: -3px -3px 5px;
+    padding: 3px;
+    font-size: 14px;
+  }
+
+  .match-result-close,
+  .match-result-button {
+    min-height: 28px;
+    padding: 0 10px;
+    font-size: 11px;
+  }
+
+  .match-result-note,
+  .match-result-list {
+    font-size: 11px;
+  }
+
+  .match-result-list {
+    gap: 3px;
+    padding-left: 18px;
+  }
+
   .seat-east {
     grid-template-rows: auto minmax(88px, 1fr);
   }

@@ -21,8 +21,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 205.
-- Confirm pass count is 205.
+- Confirm total count is 209.
+- Confirm pass count is 209.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - For smartphone landscape layout work, also run the layout guard described in `docs/layout-test.md`.
@@ -389,6 +389,8 @@ Confirm it checks these scenarios:
 - Exhaustive-draw ended hand with late discards.
 - Action-button state with advice popup.
 - Discard zoom popup state with 18 human discards.
+- East-only match ended state.
+- Match result popup state.
 
 Review failures for:
 
@@ -401,6 +403,8 @@ Review failures for:
 - Advice popup outside the viewport.
 - Discard zoom popup outside the viewport.
 - Discard zoom close button hidden or unclickable.
+- Match result popup outside the viewport.
+- Match result close button hidden or unclickable.
 - Overlap between the center information, discard zones, and hand area.
 
 Screenshots are saved under:
@@ -433,6 +437,23 @@ Use a real phone in landscape orientation, or browser device toolbar viewports s
 - Confirm the popup does not create page-level horizontal or vertical scrolling in smartphone landscape.
 - Confirm the close button remains visible and easy to tap.
 - Confirm `次の局へ`, `東風戦終了`, and `もう一度遊ぶ` still work after opening and closing discard zoom.
+
+## 18. MVP-1.3 East-Only Match Result Check
+
+- Play or simulate through East 4.
+- Confirm the end screen shows `東風戦終了`.
+- Confirm it says `4局遊び終わりました。`.
+- Confirm it says `点数計算はまだ未対応です。`.
+- Confirm `もう一度遊ぶ` remains visible and tappable.
+- Tap/click `結果を見る`.
+- Confirm a popup opens with `今回の結果`.
+- Confirm East 1 through East 4 results are listed.
+- Confirm result lines are short, such as `流局`, `あなたのツモ`, or `南CPUのロン`.
+- Confirm no points or rankings are shown.
+- Confirm `閉じる` closes the result popup.
+- Confirm backdrop click and Escape close the result popup.
+- Confirm the result popup does not stay open at the same time as the discard zoom or advice popup.
+- Confirm smartphone landscape does not gain page-level overflow when the result popup is open.
 
 Portrait orientation check:
 
