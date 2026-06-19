@@ -596,9 +596,21 @@ function inspectLayoutSource() {
       failures.push("pon button is outside viewport");
     }
 
-    const meldArea = document.querySelector(".meld-area");
+    const meldArea = document.querySelector(".seat-east .meld-area");
+    const meldRect = meldArea ? toRect(meldArea.getBoundingClientRect()) : null;
     if (meldArea && !isInViewport(meldArea.getBoundingClientRect(), viewport, tolerance)) {
       failures.push("meld area is outside viewport");
+    }
+    if (meldRect && handRect) {
+      const handTiles = [...hand.querySelectorAll(".tile")];
+      for (const [index, tile] of handTiles.entries()) {
+        const tileRect = toRect(tile.getBoundingClientRect());
+        const beforeCount = failures.length;
+        checkOverlap("meld area", meldRect, "hand tile " + index, tileRect, 0);
+        if (failures.length > beforeCount) {
+          break;
+        }
+      }
     }
 
     if (modal) {

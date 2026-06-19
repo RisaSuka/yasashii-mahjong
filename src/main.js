@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp31-human-pon-1";
-import { renderGame } from "./ui/render.js?v=mvp31-human-pon-1";
+import { bindControls } from "./ui/input.js?v=mvp311-pon-layout-fix-1";
+import { renderGame } from "./ui/render.js?v=mvp311-pon-layout-fix-1";
 
-const APP_ASSET_VERSION = "mvp31-human-pon-1";
+const APP_ASSET_VERSION = "mvp311-pon-layout-fix-1";
 
 const appRoot = document.querySelector("#app");
 

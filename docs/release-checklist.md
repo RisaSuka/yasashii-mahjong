@@ -5,11 +5,11 @@ Use this before merging to `main` or publishing with GitHub Pages.
 ## Current Release Candidate
 
 - Branch: `codex/mvp-30-pon-chi-plan`
-- Scope: MVP-0.1 through MVP-3.1 human pon v1
+- Scope: MVP-0.1 through MVP-3.1.1 pon layout stabilization
 - Expected automated result: `318 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-3.1 is not published yet.
+- Publish status: MVP-3.1.1 is not published yet.
 
 ## Git Safety
 
@@ -44,7 +44,7 @@ node tests/layout-check.mjs
 
 - If Node is not on PATH in the Codex desktop environment, use the bundled Node command documented in `docs/layout-test.md`.
 - Confirm layout-check screenshots are written under `test-artifacts/layout/`.
-- Current layout-check result: all target viewports and scenarios pass, including `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `yaku-guide`, `waits`, `riichi-ready`, `riichi-declared`, `cpu-riichi`, `pon-reaction`, `open-melds`, and `cpu-win`.
+- Current layout-check result: all target viewports and scenarios pass, including `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `yaku-guide`, `waits`, `riichi-ready`, `riichi-declared`, `cpu-riichi`, `pon-reaction`, `open-melds`, and `cpu-win`; `open-melds` also checks that the human meld area does not overlap human hand tiles.
 - Run the CPU win reachability diagnostic:
 
 ```powershell
@@ -86,6 +86,8 @@ node scripts/simulate-cpu-win-reachability.mjs
 - Human pon is blocked while the human is in riichi.
 - Ron remains higher priority than pon in the reaction UI.
 - Declaring pon creates a `pon` meld, marks the hand open, and lets the human discard one tile.
+- The post-pon guidance message is cleared after the caller discards.
+- The human pon meld does not overlap human hand tiles in smartphone landscape.
 - Open hands cannot declare riichi.
 - Open yakuhai pon is treated as a yaku.
 - Chi, kan, CPU calls, scoring, furiten, and full call competition remain out of scope.

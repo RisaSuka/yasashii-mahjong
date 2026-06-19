@@ -74,6 +74,9 @@ http://127.0.0.1:8765/tests/test-runner.html
 - Confirm open yakuhai pon is treated as a yaku.
 - Confirm chi, kan, CPU calls, scoring, furiten, and full call competition are not implemented yet.
 - Confirm smartphone landscape keeps the pon buttons and meld area inside the viewport.
+- Confirm the `ポンしました。捨てる牌を選んでください。` guidance disappears after the post-pon discard.
+- Confirm the human pon meld does not overlap the human hand tiles.
+- Confirm the future table layout direction is documented in `docs/future-table-layout-plan.md`.
 
 ## 2. Normal Desktop Flow
 

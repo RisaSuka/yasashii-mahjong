@@ -1,6 +1,6 @@
 import { chooseCpuDiscard, chooseCpuRiichiDiscardOption } from "./cpu/random-cpu.js";
 import { analyzeDiscardWaits } from "./advice/wait-analysis.js";
-import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp31-human-pon-1";
+import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp311-pon-layout-fix-1";
 import { isWinningHand } from "./rules/win-check.js";
 import { detectYaku } from "./rules/yaku.js";
 import { drawFromWall } from "./wall.js";
@@ -799,6 +799,7 @@ function discardTileWithPlayerUpdate(state, playerId, tileId, updatePlayer = (pl
         playerId,
         tile
       },
+      lastActionResult: null,
       phase: "draw"
     }
   };

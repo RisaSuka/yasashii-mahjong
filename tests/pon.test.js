@@ -79,6 +79,7 @@ export function registerPonTests() {
 
     assertEqual(discarded.round.phase, "draw", "Discard after pon should return to draw flow");
     assertEqual(discarded.round.lastDiscard.playerId, 0, "Human discard after pon should become latest discard");
+    assertEqual(discarded.round.lastActionResult ?? null, null, "Discard after pon should clear the pon guidance message");
     assertEqual(advanced.round.currentPlayerIndex, 1, "After pon discard, next player should be south CPU");
   });
 
