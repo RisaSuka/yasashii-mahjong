@@ -475,6 +475,20 @@ Use a real phone in landscape orientation, or browser device toolbar viewports s
 - Confirm beginner help does not stay open at the same time as advice, discard zoom, or result popups.
 - Confirm discard zoom, match result popup, next round, match end, and replay still work after opening and closing beginner help.
 
+## 20. MVP-1.5 CPU Discard Evaluator Check
+
+- Open the app with `?v=mvp15-cpu-evaluator-1`.
+- Start an east-only match.
+- Discard as the human player and wait for CPU turns.
+- Confirm CPU turns continue and do not stall.
+- Confirm CPU players discard tiles after drawing.
+- Confirm CPU discards still look slightly varied across games because the evaluator keeps light randomness.
+- Confirm CPU play does not block ron reaction, skip, exhaustive draw, next round, or match end.
+- Confirm human discard advice still appears when advice is ON.
+- Confirm advice reasons still open and remain beginner-friendly.
+- Confirm advice OFF hides human advice without affecting CPU turns.
+- Confirm discard zoom, beginner help, result popup, and replay still work after several CPU turns.
+
 Portrait orientation check:
 
 - Confirm the page shows: `スマホを横向きにすると、牌とボタンが見やすくなります。`

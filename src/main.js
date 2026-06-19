@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp14-discard-evaluator-3";
-import { renderGame } from "./ui/render.js?v=mvp14-discard-evaluator-3";
+import { bindControls } from "./ui/input.js?v=mvp15-cpu-evaluator-1";
+import { renderGame } from "./ui/render.js?v=mvp15-cpu-evaluator-1";
 
-const APP_ASSET_VERSION = "mvp14-discard-evaluator-3";
+const APP_ASSET_VERSION = "mvp15-cpu-evaluator-1";
 
 const appRoot = document.querySelector("#app");
 

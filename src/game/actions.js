@@ -1,11 +1,14 @@
-import { chooseRandomDiscard } from "./cpu/random-cpu.js";
-import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp14-discard-evaluator-3";
+import { chooseCpuDiscard } from "./cpu/random-cpu.js";
+import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp15-cpu-evaluator-1";
 import { isWinningHand } from "./rules/win-check.js";
 import { detectYaku } from "./rules/yaku.js";
 import { drawFromWall } from "./wall.js";
 import { createDefaultStats, saveStats } from "./storage.js";
 
-const NO_YAKU_MESSAGE = "形は完成していますが、役がありません。\nまずはタンヤオや役牌を狙ってみましょう。";
+const NO_YAKU_MESSAGE = [
+  "\u5f62\u306f\u5b8c\u6210\u3057\u3066\u3044\u307e\u3059\u304c\u3001\u5f79\u304c\u3042\u308a\u307e\u305b\u3093\u3002",
+  "\u307e\u305a\u306f\u30bf\u30f3\u30e4\u30aa\u3084\u5f79\u724c\u3092\u72d9\u3063\u3066\u307f\u307e\u3057\u3087\u3046\u3002"
+].join("\n");
 
 export function dispatchAction(state, action) {
   switch (action.type) {
@@ -261,10 +264,10 @@ function getResultType(round) {
 
 function getHandLabel(round) {
   const windLabels = {
-    east: "東"
+    east: "\u6771"
   };
 
-  return `${windLabels[round.roundWind] || round.roundWind}${round.handNumber}局`;
+  return `${windLabels[round.roundWind] || round.roundWind}${round.handNumber}\u5c40`;
 }
 
 export function declareTsumo(state, playerId) {
@@ -571,8 +574,20 @@ export function cpuDiscard(state, random = Math.random) {
     return state;
   }
 
-  const tile = chooseRandomDiscard(player, random);
+  const tile = chooseCpuDiscard(player, createDiscardEvaluationContext(state, player), random);
   return tile ? discardTile(state, player.id, tile.id) : state;
+}
+
+function createDiscardEvaluationContext(state, player) {
+  return {
+    player,
+    currentPlayerId: player.id,
+    players: state.round.players,
+    round: state.round,
+    match: state.match,
+    doraIndicators: state.round.doraIndicators,
+    discards: state.round.players.map((candidate) => candidate.discards)
+  };
 }
 
 export function endRoundDraw(state, storage) {
