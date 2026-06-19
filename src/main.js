@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp20-svg-tiles-1";
-import { renderGame } from "./ui/render.js?v=mvp20-svg-tiles-1";
+import { bindControls } from "./ui/input.js?v=mvp201-svg-tiles-redesign-1";
+import { renderGame } from "./ui/render.js?v=mvp201-svg-tiles-redesign-1";
 
-const APP_ASSET_VERSION = "mvp20-svg-tiles-1";
+const APP_ASSET_VERSION = "mvp201-svg-tiles-redesign-1";
 
 const appRoot = document.querySelector("#app");
 

@@ -34,6 +34,10 @@ http://127.0.0.1:8765/tests/test-runner.html
 - Confirm `assets/tiles/` contains 34 handmade SVG tile files.
 - Start a match and confirm the human hand uses SVG tile faces instead of only text/color CSS tiles.
 - Confirm manzu, pinzu, souzu, and honors are distinguishable at smartphone landscape size.
+- Confirm souzu bamboo marks are spaced enough that 2 through 9 souzu can be told apart in small discard tiles.
+- Confirm 1 souzu uses its own large green symbol and is not confused with the other souzu tiles.
+- Confirm pinzu circle layouts remain readable in discard rings.
+- Confirm manzu and honor characters are bold enough to read on smartphone landscape.
 - Confirm recommended tile badges and highlights still appear on top of the tile buttons.
 - Confirm discard rings, discard zoom, all-hands review, yaku guide examples, and waits popup all show SVG tile faces.
 - Temporarily simulate a missing tile image if needed and confirm the CSS tile face remains as fallback.

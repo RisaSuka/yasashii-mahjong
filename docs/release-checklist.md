@@ -173,6 +173,9 @@ node scripts/simulate-cpu-win-reachability.mjs
 - Human hand, discards, discard zoom, all-hands popup, yaku guide examples, waits popup, and advice UI render SVG tile faces.
 - Recommended tile badges, selected/focus states, and large tile mode still work.
 - Smartphone landscape layout guard passes after the tile visual swap.
+- MVP-2.0.1 souzu artwork uses spaced bamboo marks rather than dense overlapping bars.
+- Pinzu uses readable circle layouts, manzu uses bold number/`萬` text, and honors use large central characters.
+- Confirm the SVG artwork is original and not copied, traced, or pasted from existing mahjong tile images.
 
 ## Manual Browser Checks
 

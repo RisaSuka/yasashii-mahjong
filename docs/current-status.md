@@ -1,13 +1,13 @@
 # Current Status
 
-Last updated for MVP-2.0 handmade SVG tile set.
+Last updated for MVP-2.0.1 handmade SVG tile redesign.
 
 ## Repository State
 
 - Working branch: `codex/mvp-16-hand-yaku-guide`
-- Automated tests: MVP-2.0 normal tests pass locally (`288 pass / 0 pending / 0 fail`)
+- Automated tests: MVP-2.0.1 normal tests pass locally (`288 pass / 0 pending / 0 fail`)
 - Layout check: Chrome-based smartphone landscape guard passes all target viewports/scenarios, including discard zoom, result popup, yaku-guide popup, waits popup, discard-to-wait popup, CPU win, and all-hands popup scenarios
-- Working tree: clean at the time of the latest MVP-2.0 verification
+- Working tree: clean at the time of the latest MVP-2.0.1 verification
 - Push: not yet
 - `main` merge: not yet for MVP-1.9
 
@@ -48,6 +48,7 @@ Last updated for MVP-2.0 handmade SVG tile set.
 | MVP-1.9 | Working branch | Discard-to-wait helper shows which discard leaves tenpai and what waits remain for 14-tile human turns. |
 | MVP-1.9.1 | Working branch | Round-end `みんなの手を見る` popup reveals all four hands for learning after tsumo, ron, CPU win, or exhaustive draw only. |
 | MVP-2.0 | Working branch | Handmade SVG tile set replaces the primary tile visuals while keeping CSS tile fallback markup. |
+| MVP-2.0.1 | Working branch | SVG tile artwork is redrawn for readability, especially wider spaced souzu bamboo marks and bolder manzu/honor labels. |
 
 ## Current Capabilities
 
@@ -86,6 +87,7 @@ Last updated for MVP-2.0 handmade SVG tile set.
   - `assets/tiles/` contains 34 original SVG faces for manzu, pinzu, souzu, and honors.
   - The UI uses SVG images as the primary tile face in hands, discards, zoom popups, all-hands review, yaku examples, and waits.
   - The existing CSS tile face remains in the markup as a fallback if an SVG image fails to load.
+  - MVP-2.0.1 uses original redrawn SVGs with spaced bamboo grids for souzu, larger dot layouts for pinzu, and bold text-focused manzu/honor faces.
 - localStorage stats:
   - rounds started
   - rounds drawn

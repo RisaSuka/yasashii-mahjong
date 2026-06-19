@@ -2,7 +2,9 @@
 
 MVP-2.0 introduces a handmade SVG tile set under `assets/tiles/` for all 34 tile faces. The UI resolves each tile object to a stable SVG path and renders it through the existing tile markup so clicks, advice badges, large tile mode, discard zoom, all-hands review, yaku examples, and waits remain on the same game data. The previous CSS tile face remains in the DOM as a fallback if an SVG image fails to load.
 
-Current local checks target MVP-2.0 normal tests plus the smartphone landscape layout guard and the CPU win reachability diagnostic.
+MVP-2.0.1 redraws those handmade assets for readability: souzu use wider bamboo marks with clear grid spacing, pinzu use larger circle placement, manzu use bold number/`萬` text, and honors use larger central characters. The redesign is original SVG artwork and does not copy or trace external tile images.
+
+Current local checks target MVP-2.0.1 normal tests plus the smartphone landscape layout guard and the CPU win reachability diagnostic.
 
 # MVP-1.9.1 all-hands learning popup note
 
