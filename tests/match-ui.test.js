@@ -35,7 +35,7 @@ export function registerMatchUiTests() {
 
     try {
       await import(`../src/main.js?startup-smoke=${Date.now()}`);
-      await waitForStartupRender();
+      await waitForStartupRender(harness.root);
 
       assertTrue(harness.root.innerHTML.length > 0, "Main script should render into #app");
       assertTrue(
@@ -1410,10 +1410,16 @@ function createMemoryStorage() {
   };
 }
 
-async function waitForStartupRender() {
-  await Promise.resolve();
-  await Promise.resolve();
-  await new Promise((resolve) => globalThis.setTimeout(resolve, 20));
+async function waitForStartupRender(root) {
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    await Promise.resolve();
+
+    if (root.innerHTML.includes('data-action="start-match"')) {
+      return;
+    }
+
+    await new Promise((resolve) => globalThis.setTimeout(resolve, 50));
+  }
 }
 
 function createFakeButton(dataset = {}) {

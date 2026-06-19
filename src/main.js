@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp202-svg-tiles-traditional-1";
-import { renderGame } from "./ui/render.js?v=mvp202-svg-tiles-traditional-1";
+import { bindControls } from "./ui/input.js?v=mvp20-pages-smoke-fix-1";
+import { renderGame } from "./ui/render.js?v=mvp20-pages-smoke-fix-1";
 
-const APP_ASSET_VERSION = "mvp202-svg-tiles-traditional-1";
+const APP_ASSET_VERSION = "mvp20-pages-smoke-fix-1";
 
 const appRoot = document.querySelector("#app");
 
