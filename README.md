@@ -1,3 +1,9 @@
+# MVP-3.2 human chi note
+
+MVP-3.2 adds the first human-only chi flow. The human can chi only the upper player's suited-number discard, with separate buttons for each possible sequence. Declaring chi removes the selected two hand tiles, creates a `chi` meld with the called discard and source player, marks the hand open, and returns control to the human to discard one tile. Multiple melds now use a wider horizontal meld area near the human seat so pon/chi groups do not overlap the hand in smartphone landscape.
+
+Current local checks target MVP-3.2 normal tests, the smartphone landscape layout guard including `chi-reaction` and `multiple-melds`, and the CPU win reachability diagnostic.
+
 # MVP-3.1.1 pon layout stabilization note
 
 MVP-3.1.1 clears the post-pon guidance after the caller discards, moves the human pon meld away from the hand tiles in smartphone landscape, and strengthens the `open-melds` layout guard so meld/hand overlap is detected. The broader four-direction table redesign is documented in `docs/future-table-layout-plan.md` for future MVP-3.x work.

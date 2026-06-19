@@ -6,7 +6,7 @@ import {
   getYakuDisplayName,
   sortYakuForDisplay
 } from "./yaku-display.js";
-import { getTileSvgPath } from "./tile-assets.js?v=mvp311-pon-layout-fix-1";
+import { getTileSvgPath } from "./tile-assets.js?v=mvp32-human-chi-meld-layout-1";
 import { sortTiles } from "../game/tiles.js";
 
 const WIND_LABELS = {
@@ -183,7 +183,7 @@ function renderTableActionBar(state, options) {
     renderNextRoundAction(state),
     renderRiichiAction(state, options),
     renderRonAction(state, options),
-    renderPonAction(state, options),
+    renderCallAction(state, options),
     renderTsumoAction(state, options)
   ].filter(Boolean).join("");
 
@@ -935,7 +935,7 @@ function renderMelds(player) {
 }
 
 function renderMeld(meld) {
-  const typeLabel = meld.type === "pon" ? "\u30dd\u30f3" : "\u9cf4\u304d";
+  const typeLabel = meld.type === "pon" ? "\u30dd\u30f3" : meld.type === "chi" ? "\u30c1\u30fc" : "\u9cf4\u304d";
   const tiles = meld.tiles || [];
 
   return `
@@ -1207,7 +1207,7 @@ function renderRonAction(state, options) {
   return "";
 }
 
-function renderPonAction(state, options) {
+function renderCallAction(state, options) {
   const round = state.round;
   const human = round.players.find((player) => player.type === "human");
 
@@ -1223,15 +1223,31 @@ function renderPonAction(state, options) {
     return "";
   }
 
-  if (typeof options.canDeclarePon !== "function" || !options.canDeclarePon(state, human.id)) {
+  const canPon = typeof options.canDeclarePon === "function" && options.canDeclarePon(state, human.id);
+  const chiOptions = typeof options.getChiOptions === "function" ? options.getChiOptions(state, human.id) : [];
+
+  if (!canPon && chiOptions.length === 0) {
     return "";
   }
 
   return `
-    <div class="reaction-actions pon-reaction">
-      <button type="button" class="pon-button" data-action="declare-pon">\u30dd\u30f3</button>
+    <div class="reaction-actions call-reaction${canPon ? " pon-reaction" : ""}${chiOptions.length ? " chi-reaction" : ""}">
+      ${canPon ? `<button type="button" class="pon-button" data-action="declare-pon">\u30dd\u30f3</button>` : ""}
+      ${chiOptions.map(renderChiOptionButton).join("")}
       <button type="button" class="skip-ron-button" data-action="skip-ron">\u898b\u9001\u308b</button>
     </div>
+  `;
+}
+
+function renderChiOptionButton(option) {
+  const tileIds = option.handTileIds.join(",");
+  const tiles = option.tiles.map((tile) => renderTile(tile, "chi-option-tile")).join("");
+
+  return `
+    <button type="button" class="chi-button" data-action="declare-chi" data-hand-tile-ids="${tileIds}">
+      <span class="chi-button-label">\u30c1\u30fc</span>
+      <span class="chi-option-tiles" aria-label="\u30c1\u30fc\u5019\u88dc">${tiles}</span>
+    </button>
   `;
 }
 

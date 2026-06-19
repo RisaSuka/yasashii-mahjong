@@ -336,6 +336,7 @@
 
   .ron-button,
   .pon-button,
+  .chi-button,
   .skip-ron-button,
   .tsumo-button {
     min-width: 84px;
@@ -415,7 +416,7 @@
     position: absolute;
     left: 8px;
     top: 6px;
-    max-width: min(36%, 180px);
+    max-width: min(54%, 360px);
     overflow: hidden;
     z-index: 2;
     margin: 0;
@@ -437,6 +438,9 @@
 
   .meld-list {
     gap: 3px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
   }
 
   .meld-tile {
@@ -879,10 +883,20 @@
 
   .table-action-bar .reaction-actions {
     gap: 4px;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-wrap: nowrap;
+  }
+
+  .table-action-bar .chi-option-tile {
+    width: 16px;
+    height: 22px;
   }
 
   .table-action-bar .ron-button,
   .table-action-bar .pon-button,
+  .table-action-bar .chi-button,
   .table-action-bar .skip-ron-button,
   .table-action-bar .riichi-button,
   .table-action-bar .cancel-riichi-button,
@@ -1369,6 +1383,7 @@
 
   .table-action-bar .ron-button,
   .table-action-bar .pon-button,
+  .table-action-bar .chi-button,
   .table-action-bar .skip-ron-button,
   .table-action-bar .riichi-button,
   .table-action-bar .cancel-riichi-button,

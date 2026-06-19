@@ -1,13 +1,13 @@
 # Current Status
 
-Last updated for MVP-3.1.1 pon layout stabilization.
+Last updated for MVP-3.2 human chi v1.
 
 ## Repository State
 
 - Working branch: `codex/mvp-30-pon-chi-plan`
-- Automated tests: MVP-3.1.1 normal tests pass locally (`318 pass / 0 pending / 0 fail`)
-- Layout check: Chrome-based smartphone landscape guard includes pon-reaction and open-melds scenarios; open-melds also guards against human meld/hand-tile overlap
-- Working tree: clean at the time of the latest MVP-3.1 verification
+- Automated tests: MVP-3.2 normal tests pass locally (`326 pass / 0 pending / 0 fail`)
+- Layout check: Chrome-based smartphone landscape guard includes pon-reaction, chi-reaction, open-melds, and multiple-melds scenarios; open/multiple melds guard against human meld/hand-tile overlap
+- Working tree: clean at the time of the latest MVP-3.2 verification
 - Push: not yet
 - `main` merge: not yet for MVP-3.1
 
@@ -54,6 +54,7 @@ Last updated for MVP-3.1.1 pon layout stabilization.
 | MVP-3.0 | Working branch | Pon/chi design document for staged call implementation. |
 | MVP-3.1 | Working branch | Human-only pon v1: pon reaction, open meld state/UI, post-pon discard, and open-hand riichi blocking. |
 | MVP-3.1.1 | Working branch | Clears post-pon guidance after discard, moves the human pon meld away from hand tiles, adds meld/hand overlap guard, and documents the future four-direction table layout direction. |
+| MVP-3.2 | Working branch | Human-only chi v1: chi reaction from the upper player, selectable chi candidates, open chi meld state/UI, post-chi discard, and multiple-meld landscape guard. |
 
 ## Current Capabilities
 
@@ -132,6 +133,16 @@ Last updated for MVP-3.1.1 pon layout stabilization.
   - Open hands cannot declare riichi.
   - Open yakuhai pon can count as yaku.
   - Chi, kan, CPU calls, scoring, furiten, and full call competition remain unsupported.
+- Human chi v1:
+  - Human can chi only the upper player's latest suited-number discard.
+  - Honor tiles cannot be chi.
+  - Multiple chi shapes, such as 3-4-5, 4-5-6, and 5-6-7, are shown as separate candidate buttons.
+  - Human cannot chi while in riichi.
+  - Ron priority remains first; if ron is available, the existing ron/skip reaction is shown before call choices.
+  - Declaring chi removes two selected hand tiles, creates a `chi` meld with `calledTile` and `fromPlayerId`, marks the hand open, and lets the human discard one tile.
+  - Open hands cannot declare riichi.
+  - Multiple melds are displayed horizontally near the human seat and are guarded against overlap with hand tiles in smartphone landscape.
+  - Kan, CPU calls, scoring, furiten, and full call competition remain unsupported.
 - Next-round continuation:
   - `次の局へ` appears after exhaustive draw, tsumo, or ron.
   - The next round creates a fresh wall, dead wall, players, hands, and dealer initial draw.

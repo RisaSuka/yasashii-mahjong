@@ -33,7 +33,9 @@ const SCENARIOS = [
   { name: "riichi-declared", discards: 9, mode: "riichi-declared" },
   { name: "cpu-riichi", discards: 9, mode: "cpu-riichi" },
   { name: "pon-reaction", discards: 9, mode: "pon-reaction" },
+  { name: "chi-reaction", discards: 9, mode: "chi-reaction" },
   { name: "open-melds", discards: 9, mode: "open-melds" },
+  { name: "multiple-melds", discards: 9, mode: "multiple-melds" },
   { name: "cpu-win", discards: 12, mode: "cpu-win" },
   { name: "all-hands-open", discards: 18, mode: "all-hands-open" }
 ];
@@ -117,6 +119,7 @@ function setupScenarioSource() {
     const actionsModule = await import("./src/game/actions.js?layout=" + cacheBust);
     const renderModule = await import("./src/ui/render.js?layout=" + cacheBust);
     const root = document.querySelector("#app");
+    const tile = (id, suit, rank, copy = 0) => ({ id, suit, rank, copy, red: false });
 
     let state = actionsModule.dispatchAction(roundModule.createInitialGameState(), { type: "START_MATCH" });
     state = {
@@ -278,6 +281,41 @@ function setupScenarioSource() {
       };
     }
 
+    if (mode === "chi-reaction") {
+      state = {
+        ...state,
+        round: {
+          ...state.round,
+          phase: "reaction",
+          currentPlayerIndex: 3,
+          lastDiscard: {
+            playerId: 3,
+            tile: tile("layout-chi-p5", "p", 5)
+          },
+          players: state.round.players.map((player) => player.id === 0
+            ? {
+              ...player,
+              hand: [
+                tile("layout-chi-p3", "p", 3),
+                tile("layout-chi-p4a", "p", 4),
+                tile("layout-chi-p4b", "p", 4, 1),
+                tile("layout-chi-p6a", "p", 6),
+                tile("layout-chi-p6b", "p", 6, 1),
+                tile("layout-chi-p7", "p", 7),
+                tile("layout-chi-m1", "m", 1),
+                tile("layout-chi-m2", "m", 2),
+                tile("layout-chi-m3", "m", 3),
+                tile("layout-chi-s2", "s", 2),
+                tile("layout-chi-s3", "s", 3),
+                tile("layout-chi-s4", "s", 4),
+                tile("layout-chi-z5", "z", 5)
+              ]
+            }
+            : player)
+        }
+      };
+    }
+
     if (mode === "open-melds") {
       state = {
         ...state,
@@ -307,10 +345,64 @@ function setupScenarioSource() {
       };
     }
 
+    if (mode === "multiple-melds") {
+      state = {
+        ...state,
+        round: {
+          ...state.round,
+          phase: "discard",
+          currentPlayerIndex: 0,
+          players: state.round.players.map((player) => player.id === 0
+            ? {
+              ...player,
+              isClosed: false,
+              menzen: false,
+              hand: [
+                tile("layout-multi-m1", "m", 1),
+                tile("layout-multi-m2", "m", 2),
+                tile("layout-multi-m3", "m", 3),
+                tile("layout-multi-p7", "p", 7),
+                tile("layout-multi-p8", "p", 8),
+                tile("layout-multi-s2", "s", 2),
+                tile("layout-multi-s3", "s", 3),
+                tile("layout-multi-s4", "s", 4),
+                tile("layout-multi-z6", "z", 6)
+              ],
+              melds: [
+                {
+                  id: "layout-multi-pon-z5",
+                  type: "pon",
+                  tiles: [tile("layout-multi-z5-a", "z", 5), tile("layout-multi-z5-b", "z", 5, 1), tile("layout-multi-z5-c", "z", 5, 2)],
+                  calledTile: tile("layout-multi-z5-c", "z", 5, 2),
+                  fromPlayerId: 1
+                },
+                {
+                  id: "layout-multi-chi-p345",
+                  type: "chi",
+                  tiles: [tile("layout-multi-p3", "p", 3), tile("layout-multi-p4", "p", 4), tile("layout-multi-p5", "p", 5)],
+                  calledTile: tile("layout-multi-p5", "p", 5),
+                  fromPlayerId: 3
+                },
+                {
+                  id: "layout-multi-pon-m9",
+                  type: "pon",
+                  tiles: [tile("layout-multi-m9-a", "m", 9), tile("layout-multi-m9-b", "m", 9, 1), tile("layout-multi-m9-c", "m", 9, 2)],
+                  calledTile: tile("layout-multi-m9-c", "m", 9, 2),
+                  fromPlayerId: 2
+                }
+              ]
+            }
+            : player)
+        }
+      };
+    }
+
     renderModule.renderGame(state, root, {
       canDeclareTsumo: () => mode === "actions",
       canDeclareRon: () => mode === "actions",
       canDeclarePon: () => mode === "pon-reaction",
+      canDeclareChi: () => mode === "chi-reaction" ? actionsModule.canDeclareChi(state, 0) : false,
+      getChiOptions: () => mode === "chi-reaction" ? actionsModule.getChiOptions(state, 0) : [],
       canDeclareRiichi: () => mode === "riichi-ready",
       getRiichiDiscardOptions: () => mode === "riichi-ready"
         ? [
@@ -596,10 +688,35 @@ function inspectLayoutSource() {
       failures.push("pon button is outside viewport");
     }
 
+    const chiButtons = [...document.querySelectorAll("[data-action='declare-chi']")];
+    for (const [index, button] of chiButtons.entries()) {
+      const rect = button.getBoundingClientRect();
+      if (!isInViewport(rect, viewport, tolerance)) {
+        failures.push("chi button " + index + " is outside viewport");
+      }
+      if (!isClickableAtCenter(button, rect)) {
+        failures.push("chi button " + index + " is not clickable at center");
+      }
+      const optionTiles = [...button.querySelectorAll(".chi-option-tile")];
+      if (optionTiles.length < 3) {
+        failures.push("chi button " + index + " does not show a 3-tile option");
+      }
+    }
+
     const meldArea = document.querySelector(".seat-east .meld-area");
     const meldRect = meldArea ? toRect(meldArea.getBoundingClientRect()) : null;
     if (meldArea && !isInViewport(meldArea.getBoundingClientRect(), viewport, tolerance)) {
       failures.push("meld area is outside viewport");
+    }
+    if (meldArea) {
+      const melds = [...meldArea.querySelectorAll(".meld")];
+      for (const [index, meld] of melds.entries()) {
+        const rect = meld.getBoundingClientRect();
+        if (!isInsideRect(rect, meldArea.getBoundingClientRect(), tolerance)) {
+          failures.push("meld " + index + " is clipped inside meld area");
+          break;
+        }
+      }
     }
     if (meldRect && handRect) {
       const handTiles = [...hand.querySelectorAll(".tile")];

@@ -20,7 +20,12 @@ const SCENARIO_ALIASES = {
   "human-pon-ready-yakuhai": "human-pon-ready-yakuhai",
   "human-pon-after-discard": "human-pon-after-discard",
   "human-pon-riichi-blocked": "human-pon-riichi-blocked",
-  "human-pon-yakuhai-win-shape": "human-pon-yakuhai-win-shape"
+  "human-pon-yakuhai-win-shape": "human-pon-yakuhai-win-shape",
+  "human-chi-ready": "human-chi-ready",
+  "human-chi-multiple-options": "human-chi-multiple-options",
+  "human-chi-not-kamicha": "human-chi-not-kamicha",
+  "human-chi-riichi-blocked": "human-chi-riichi-blocked",
+  "human-multiple-melds-layout": "human-multiple-melds-layout"
 };
 
 const SCENARIOS = {
@@ -331,6 +336,110 @@ const SCENARIOS = {
     lastDiscard: {
       playerId: 1,
       tile: "z5"
+    }
+  },
+  "human-chi-ready": {
+    name: "human-chi-ready",
+    description: "Human player can chi the upper player's discard.",
+    phase: "reaction",
+    currentPlayerIndex: 3,
+    hands: {
+      0: "m1 m2 m3 p3 p4 p7 p8 s2 s3 s4 z5 z5 z6"
+    },
+    discards: {
+      3: "p5"
+    },
+    lastDiscard: {
+      playerId: 3,
+      tile: "p5"
+    }
+  },
+  "human-chi-multiple-options": {
+    name: "human-chi-multiple-options",
+    description: "Human player has three chi options on a five discard.",
+    phase: "reaction",
+    currentPlayerIndex: 3,
+    hands: {
+      0: "p3 p4 p4 p6 p6 p7 m1 m2 m3 s2 s3 s4 z5"
+    },
+    discards: {
+      3: "p5"
+    },
+    lastDiscard: {
+      playerId: 3,
+      tile: "p5"
+    }
+  },
+  "human-chi-not-kamicha": {
+    name: "human-chi-not-kamicha",
+    description: "Human player has a sequence shape but the discard is not from the upper player.",
+    phase: "reaction",
+    currentPlayerIndex: 1,
+    hands: {
+      0: "m1 m2 m3 p3 p4 p7 p8 s2 s3 s4 z5 z5 z6"
+    },
+    discards: {
+      1: "p5"
+    },
+    lastDiscard: {
+      playerId: 1,
+      tile: "p5"
+    }
+  },
+  "human-chi-riichi-blocked": {
+    name: "human-chi-riichi-blocked",
+    description: "Human player cannot chi while riichi.",
+    phase: "reaction",
+    currentPlayerIndex: 3,
+    riichi: [0],
+    hands: {
+      0: "m1 m2 m3 p3 p4 p7 p8 s2 s3 s4 z5 z5 z6"
+    },
+    discards: {
+      3: "p5"
+    },
+    lastDiscard: {
+      playerId: 3,
+      tile: "p5"
+    }
+  },
+  "human-multiple-melds-layout": {
+    name: "human-multiple-melds-layout",
+    description: "Human player has multiple open melds for landscape layout checks.",
+    phase: "discard",
+    currentPlayerIndex: 0,
+    hands: {
+      0: "m1 m2 m3 p7 p8 s2 s3 s4 z6"
+    },
+    discards: {
+      1: "z5",
+      3: "p5"
+    },
+    melds: {
+      0: [
+        {
+          type: "pon",
+          tiles: "z5 z5 z5",
+          calledTile: "z5",
+          fromPlayerId: 1
+        },
+        {
+          type: "chi",
+          tiles: "p3 p4 p5",
+          calledTile: "p5",
+          fromPlayerId: 3
+        },
+        {
+          type: "pon",
+          tiles: "m9 m9 m9",
+          calledTile: "m9",
+          fromPlayerId: 2
+        }
+      ]
+    },
+    lastDiscard: {
+      playerId: 3,
+      tile: "p5"
     }
   }
 };

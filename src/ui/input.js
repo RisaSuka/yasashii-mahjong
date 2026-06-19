@@ -153,6 +153,12 @@ export function bindControls(root, handlers) {
     handlers.onDeclarePon?.();
   });
 
+  for (const button of root.querySelectorAll("[data-action='declare-chi']")) {
+    button.addEventListener("click", () => {
+      handlers.onDeclareChi?.((button.dataset.handTileIds || "").split(",").filter(Boolean));
+    });
+  }
+
   root.querySelector("[data-action='skip-ron']")?.addEventListener("click", () => {
     handlers.onSkipRon();
   });

@@ -1,6 +1,6 @@
 import { chooseCpuDiscard, chooseCpuRiichiDiscardOption } from "./cpu/random-cpu.js";
 import { analyzeDiscardWaits } from "./advice/wait-analysis.js";
-import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp311-pon-layout-fix-1";
+import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp32-human-chi-meld-layout-1";
 import { isWinningHand } from "./rules/win-check.js";
 import { detectYaku } from "./rules/yaku.js";
 import { drawFromWall } from "./wall.js";
@@ -25,6 +25,8 @@ export function dispatchAction(state, action) {
       return declareRiichi(state, action.playerId, action.tileId);
     case "DECLARE_PON":
       return declarePon(state, action.playerId);
+    case "DECLARE_CHI":
+      return declareChi(state, action.playerId, action.handTileIds);
     case "DRAW_TILE":
       return drawTile(state, action.playerId, action.storage);
     case "ADVANCE_TURN":
@@ -138,6 +140,10 @@ export function canDeclarePon(state, playerId) {
   return getPonOptions(state, playerId).length > 0;
 }
 
+export function canDeclareChi(state, playerId) {
+  return getChiOptions(state, playerId).length > 0;
+}
+
 export function getPonOptions(state, playerId) {
   if (!state.round || state.round.phase === "ended" || !["draw", "reaction"].includes(state.round.phase)) {
     return [];
@@ -163,6 +169,67 @@ export function getPonOptions(state, playerId) {
     handTileIds: matchingTiles.slice(0, 2).map((tile) => tile.id),
     tiles: [...matchingTiles.slice(0, 2), lastDiscard.tile]
   }];
+}
+
+export function getChiOptions(state, playerId) {
+  if (!state.round || state.round.phase === "ended" || !["draw", "reaction"].includes(state.round.phase)) {
+    return [];
+  }
+
+  const player = state.round.players.find((candidate) => candidate.id === playerId);
+  const lastDiscard = state.round.lastDiscard;
+
+  if (!player || player.type !== "human" || isRiichiPlayer(player) || !lastDiscard?.tile || lastDiscard.playerId === playerId) {
+    return [];
+  }
+
+  if (!isKamichaDiscard(state.round, playerId, lastDiscard.playerId)) {
+    return [];
+  }
+
+  return getChiOptionsForDiscard(lastDiscard.tile, player.hand).map((option, index) => ({
+    ...option,
+    id: `chi-${lastDiscard.tile.id}-${index}`,
+    fromPlayerId: lastDiscard.playerId
+  }));
+}
+
+export function getChiOptionsForDiscard(discardTile, hand) {
+  if (!discardTile || discardTile.suit === "z" || !Array.isArray(hand)) {
+    return [];
+  }
+
+  const candidates = [
+    [discardTile.rank - 2, discardTile.rank - 1],
+    [discardTile.rank - 1, discardTile.rank + 1],
+    [discardTile.rank + 1, discardTile.rank + 2]
+  ];
+
+  return candidates
+    .filter((ranks) => ranks.every((rank) => rank >= 1 && rank <= 9))
+    .map((ranks) => {
+      const handTiles = [];
+      for (const rank of ranks) {
+        const tile = hand.find((candidate) => (
+          candidate.suit === discardTile.suit
+          && candidate.rank === rank
+          && !handTiles.some((usedTile) => usedTile.id === candidate.id)
+        ));
+        if (!tile) {
+          return null;
+        }
+        handTiles.push(tile);
+      }
+
+      const tiles = [...handTiles, discardTile].sort(compareTileForMeld);
+      return {
+        type: "chi",
+        calledTile: discardTile,
+        handTileIds: handTiles.map((tile) => tile.id),
+        tiles
+      };
+    })
+    .filter(Boolean);
 }
 
 export function startMatch(state, options = {}) {
@@ -527,7 +594,7 @@ export function resolveCpuRonAfterDiscard(state) {
 }
 
 export function enterReaction(state, playerId) {
-  if (!canCompleteRonLatestDiscard(state, playerId) && !canDeclarePon(state, playerId)) {
+  if (!canCompleteRonLatestDiscard(state, playerId) && !canDeclarePon(state, playerId) && !canDeclareChi(state, playerId)) {
     return state;
   }
 
@@ -805,8 +872,85 @@ function discardTileWithPlayerUpdate(state, playerId, tileId, updatePlayer = (pl
   };
 }
 
+export function declareChi(state, playerId, handTileIds = []) {
+  const selectedIds = Array.isArray(handTileIds) ? handTileIds : [];
+  const selectedIdsSorted = [...selectedIds].sort();
+  const options = getChiOptions(state, playerId);
+  const option = options.find((candidate) => {
+    const candidateIds = [...candidate.handTileIds].sort();
+    return candidateIds.length === selectedIds.length
+      && candidateIds.every((id, index) => id === selectedIdsSorted[index]);
+  });
+
+  if (!option) {
+    return state;
+  }
+
+  const player = state.round.players.find((candidate) => candidate.id === playerId);
+  const nextMeld = {
+    id: `${state.round.id}-chi-${state.round.turnCount}-${player.melds?.length || 0}`,
+    type: "chi",
+    tiles: option.tiles,
+    calledTile: option.calledTile,
+    fromPlayerId: option.fromPlayerId,
+    openedAtTurn: state.round.turnCount
+  };
+  const handTileIdSet = new Set(option.handTileIds);
+  const nextPlayers = state.round.players.map((candidate) => {
+    if (candidate.id !== playerId) {
+      return candidate;
+    }
+
+    return {
+      ...candidate,
+      hand: candidate.hand.filter((tile) => !handTileIdSet.has(tile.id)),
+      melds: [...(candidate.melds || []), nextMeld],
+      isClosed: false,
+      menzen: false
+    };
+  });
+
+  return {
+    ...state,
+    round: {
+      ...state.round,
+      players: nextPlayers,
+      phase: "discard",
+      currentPlayerIndex: playerId,
+      lastActionResult: {
+        type: "call",
+        callType: "chi",
+        playerId,
+        fromPlayerId: option.fromPlayerId,
+        calledTile: option.calledTile,
+        message: "\u30c1\u30fc\u3057\u307e\u3057\u305f\u3002\u6368\u3066\u308b\u724c\u3092\u9078\u3093\u3067\u304f\u3060\u3055\u3044\u3002"
+      }
+    }
+  };
+}
+
 function isSameTileKind(a, b) {
   return a?.suit === b?.suit && a?.rank === b?.rank;
+}
+
+function isKamichaDiscard(round, playerId, discardPlayerId) {
+  if (!round?.players?.length || discardPlayerId === null || discardPlayerId === undefined) {
+    return false;
+  }
+
+  return discardPlayerId === (playerId + round.players.length - 1) % round.players.length;
+}
+
+function compareTileForMeld(a, b) {
+  if (a.suit !== b.suit) {
+    return a.suit.localeCompare(b.suit);
+  }
+
+  if (a.rank !== b.rank) {
+    return a.rank - b.rank;
+  }
+
+  return String(a.id).localeCompare(String(b.id));
 }
 
 function isLatestDrawTile(state, playerId, tileId) {

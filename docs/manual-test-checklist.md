@@ -21,8 +21,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 318.
-- Confirm pass count is 318.
+- Confirm total count is 326.
+- Confirm pass count is 326.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - For smartphone landscape layout work, also run the layout guard described in `docs/layout-test.md`.
@@ -77,6 +77,22 @@ http://127.0.0.1:8765/tests/test-runner.html
 - Confirm the `ポンしました。捨てる牌を選んでください。` guidance disappears after the post-pon discard.
 - Confirm the human pon meld does not overlap the human hand tiles.
 - Confirm the future table layout direction is documented in `docs/future-table-layout-plan.md`.
+
+## 1.5 MVP-3.2 Human Chi Check
+
+- Use `human-chi-ready` in tests or a debug scenario and confirm `チー` and `見送る` appear when the upper player discards a suited number tile that the human can complete.
+- Use `human-chi-multiple-options` and confirm multiple chi candidate buttons appear when more than one sequence is possible.
+- Confirm each chi button shows the three-tile sequence.
+- Press one `チー` candidate and confirm a visible `鳴き` / `チー` meld appears near the human seat.
+- Confirm the human hand loses the two selected tiles and the called tile appears in the meld.
+- Confirm the human must discard one tile after chi.
+- Confirm the post-chi guidance disappears after that discard.
+- Confirm a non-upper-player discard cannot be chi.
+- Confirm honor tiles cannot be chi.
+- Confirm a riichi human cannot chi.
+- Confirm an open chi hand cannot declare riichi.
+- Confirm multiple melds stay in the dedicated meld area and do not overlap the human hand tiles in smartphone landscape.
+- Confirm kan, CPU calls, scoring, furiten, and full call competition are not implemented yet.
 
 ## 2. Normal Desktop Flow
 

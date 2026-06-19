@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp311-pon-layout-fix-1";
-import { renderGame } from "./ui/render.js?v=mvp311-pon-layout-fix-1";
+import { bindControls } from "./ui/input.js?v=mvp32-human-chi-meld-layout-1";
+import { renderGame } from "./ui/render.js?v=mvp32-human-chi-meld-layout-1";
 
-const APP_ASSET_VERSION = "mvp311-pon-layout-fix-1";
+const APP_ASSET_VERSION = "mvp32-human-chi-meld-layout-1";
 
 const appRoot = document.querySelector("#app");
 
@@ -44,6 +44,8 @@ async function loadGameApi() {
       canDeclareRon: actions.canDeclareRon,
       canDeclareRiichi: actions.canDeclareRiichi,
       canDeclarePon: actions.canDeclarePon,
+      canDeclareChi: actions.canDeclareChi,
+      getChiOptions: actions.getChiOptions,
       getRiichiDiscardOptions: actions.getRiichiDiscardOptions,
       canRonLatestDiscard: actions.canRonLatestDiscard,
       canCompleteRonLatestDiscard: actions.canCompleteRonLatestDiscard,
@@ -69,6 +71,8 @@ function render() {
     canCompleteRonLatestDiscard: gameApi.canCompleteRonLatestDiscard,
     canDeclareRiichi: gameApi.canDeclareRiichi,
     canDeclarePon: gameApi.canDeclarePon,
+    canDeclareChi: gameApi.canDeclareChi,
+    getChiOptions: gameApi.getChiOptions,
     getRiichiDiscardOptions: gameApi.getRiichiDiscardOptions,
     suggestDiscards: gameApi.suggestDiscards,
     suggestYakuTargets: gameApi.suggestYakuTargets,
@@ -109,6 +113,7 @@ function render() {
     onDeclareTsumo: declareHumanTsumo,
     onDeclareRon: declareHumanRon,
     onDeclarePon: declareHumanPon,
+    onDeclareChi: declareHumanChi,
     onSkipRon: skipRon
   });
 }
@@ -379,6 +384,29 @@ function declareHumanPon() {
   render();
 }
 
+function declareHumanChi(handTileIds) {
+  const human = getHumanPlayer();
+
+  if (!human) {
+    return;
+  }
+
+  state = gameApi.dispatchAction(state, {
+    type: "DECLARE_CHI",
+    playerId: human.id,
+    handTileIds
+  });
+  discardAdviceDialogOpen = false;
+  discardZoomPlayerId = null;
+  matchResultDialogOpen = false;
+  beginnerHelpDialogOpen = false;
+  yakuGuideDialogOpen = false;
+  waitsDialogOpen = false;
+  allHandsDialogOpen = false;
+  riichiDeclarationMode = false;
+  render();
+}
+
 function skipRon() {
   state = gameApi.dispatchAction(state, { type: "SKIP_RON" });
   continueAfterReaction();
@@ -405,8 +433,9 @@ function enterReactionIfNeeded() {
 
   const canReactToRon = gameApi.canCompleteRonLatestDiscard?.(state, human.id);
   const canReactToPon = gameApi.canDeclarePon?.(state, human.id);
+  const canReactToChi = gameApi.canDeclareChi?.(state, human.id);
 
-  if (!canReactToRon && !canReactToPon) {
+  if (!canReactToRon && !canReactToPon && !canReactToChi) {
     return false;
   }
 
@@ -588,6 +617,12 @@ function createFallbackGameApi() {
     },
     canDeclarePon() {
       return false;
+    },
+    canDeclareChi() {
+      return false;
+    },
+    getChiOptions() {
+      return [];
     },
     getRiichiDiscardOptions() {
       return [];

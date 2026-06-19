@@ -143,6 +143,7 @@
       import { registerReactionTests } from "./reaction.test.js";
       import { registerRiichiTests } from "./riichi.test.js";
       import { registerPonTests } from "./pon.test.js";
+      import { registerChiTests } from "./chi.test.js";
       import { registerRonTests } from "./ron.test.js";
       import { registerRoundTests } from "./round.test.js";
       import { registerScenarioTests } from "./scenario.test.js";
@@ -160,7 +161,7 @@
       import { registerYakuTests } from "./yaku.test.js";
       import { runTests, tests } from "./test.js";
 
-      globalThis.__TEST_CACHE_BUST__ = "mvp311-pon-layout-fix-1";
+      globalThis.__TEST_CACHE_BUST__ = "mvp32-human-chi-meld-layout-1";
 
       const totalCount = document.querySelector("#total-count");
       const passCount = document.querySelector("#pass-count");
@@ -184,6 +185,7 @@
       registerReactionTests();
       registerRiichiTests();
       registerPonTests();
+      registerChiTests();
       registerRonTests();
       registerScenarioTests();
       registerStorageTests();

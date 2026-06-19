@@ -402,6 +402,8 @@
 }
 
 .ron-button,
+.pon-button,
+.chi-button,
 .skip-ron-button {
   min-width: 96px;
   min-height: 48px;
@@ -411,7 +413,9 @@
   font-weight: 700;
 }
 
-.ron-button {
+.ron-button,
+.pon-button,
+.chi-button {
   background: #0f766e;
   color: #ffffff;
 }
@@ -496,15 +500,18 @@
 
 .meld-list {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 5px;
   min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .meld {
   display: inline-flex;
   align-items: center;
+  flex: 0 0 auto;
   gap: 4px;
 }
 
@@ -517,6 +524,27 @@
 .meld-tile {
   width: 30px;
   height: 42px;
+}
+
+.chi-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.chi-button-label {
+  font-weight: 800;
+}
+
+.chi-option-tiles {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.chi-option-tile {
+  width: 22px;
+  height: 31px;
 }
 
 .seat-turn-indicator {
