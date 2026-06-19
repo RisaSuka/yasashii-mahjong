@@ -56,6 +56,31 @@ export function registerRonTests() {
     );
   });
 
+  test("DECLARE_RON: yakuhai ron scenario wins", async () => {
+    const nextState = await declareRonOrPending(await namedRonState("ron-ready-yakuhai"), 0);
+
+    assertEqual(nextState.round.phase, "ended", "Yakuhai ron should end the round");
+    assertEqual(nextState.round.winningResult?.yakuResult?.some((yaku) => yaku.id === "yakuhai"), true, "Yakuhai should be stored");
+  });
+
+  test("DECLARE_RON: chiitoitsu ron scenario wins", async () => {
+    const nextState = await declareRonOrPending(await namedRonState("ron-ready-chiitoitsu"), 0);
+
+    assertEqual(nextState.round.phase, "ended", "Chiitoitsu ron should end the round");
+    assertEqual(nextState.round.winningResult?.yakuResult?.some((yaku) => yaku.id === "chiitoitsu"), true, "Chiitoitsu should be stored");
+  });
+
+  test("DECLARE_RON: no-yaku ron shape can enter reaction but cannot win", async () => {
+    const state = await namedRonState("no-yaku-ron-shape");
+    const { canCompleteRonLatestDiscard, canDeclareRon, dispatchAction } = await loadRonActions();
+    const nextState = dispatchAction(state, { type: "DECLARE_RON", playerId: 0 });
+
+    assertEqual(canCompleteRonLatestDiscard(state, 0), true, "No-yaku shape should still be recognized as a complete ron shape");
+    assertEqual(canDeclareRon(state, 0), false, "No-yaku shape should not be declarable as ron");
+    assertEqual(nextState.round.phase, "reaction", "No-yaku ron should stay in reaction");
+    assertEqual(nextState.round.lastActionResult?.reason, "no-yaku", "No-yaku ron should store a gentle rejection reason");
+  });
+
   test("DECLARE_RON: non-winning hand is rejected", async () => {
     await implementedRonBaseline();
     const state = await ronReadyState({
@@ -161,7 +186,12 @@ async function implementedRonBaseline() {
 }
 
 async function loadRonActions() {
-  return loadModule("../src/game/actions.js", ["canDeclareRon", "dispatchAction"]);
+  return loadModule("../src/game/actions.js", ["canCompleteRonLatestDiscard", "canDeclareRon", "dispatchAction"]);
+}
+
+async function namedRonState(name) {
+  const { createScenarioState } = await loadModule("../src/game/scenarios.js", ["createScenarioState"]);
+  return createScenarioState(name, { phase: "reaction" });
 }
 
 async function ronReadyState(options = {}) {

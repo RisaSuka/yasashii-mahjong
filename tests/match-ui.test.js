@@ -221,13 +221,45 @@ export function registerMatchUiTests() {
   test("MVP-1.1.2 UI: important win and reaction buttons stay in the table action bar", async () => {
     const state = await startMatchState();
     const tsumoHtml = await renderState(state, { canDeclareTsumo: () => true });
-    const ronHtml = await renderState(state, { canDeclareRon: () => true });
+    const ronState = {
+      ...state,
+      round: {
+        ...state.round,
+        phase: "reaction"
+      }
+    };
+    const ronHtml = await renderState(ronState, { canDeclareRon: () => true });
 
     assertTrue(tsumoHtml.includes("table-action-bar"), "Tsumo action should render inside the stable action bar");
     assertTrue(tsumoHtml.includes('data-action="declare-tsumo"'), "Tsumo button should remain visible in render output");
     assertTrue(ronHtml.includes("table-action-bar"), "Ron reaction actions should render inside the stable action bar");
     assertTrue(ronHtml.includes('data-action="declare-ron"'), "Ron button should remain visible in render output");
     assertTrue(ronHtml.includes('data-action="skip-ron"'), "Skip ron button should remain visible in render output");
+  });
+
+  test("RON UI: yaku-valid ron reaction shows ron and skip buttons", async () => {
+    const state = await scenarioState("ron-ready-tanyao", { phase: "reaction" });
+    const html = await renderState(state, {
+      canDeclareRon: () => true,
+      canCompleteRonLatestDiscard: () => true
+    });
+
+    assertTrue(html.includes("table-action-bar"), "Ron reaction should stay in the table action bar");
+    assertTrue(html.includes('data-action="declare-ron"'), "Ron button should render for yaku-valid ron");
+    assertTrue(html.includes('data-action="skip-ron"'), "Skip button should render for yaku-valid ron");
+  });
+
+  test("RON UI: no-yaku ron shape shows message and skip without ron button", async () => {
+    const state = await scenarioState("no-yaku-ron-shape", { phase: "reaction" });
+    const html = await renderState(state, {
+      canDeclareRon: () => false,
+      canCompleteRonLatestDiscard: () => true
+    });
+
+    assertTrue(html.includes("no-yaku-reaction"), "No-yaku ron shape should render a helpful reaction message");
+    assertTrue(html.includes("役がありません"), "No-yaku reaction should explain that yaku is missing");
+    assertTrue(html.includes('data-action="skip-ron"'), "No-yaku reaction should still let the player continue");
+    assertTrue(!html.includes('data-action="declare-ron"'), "No-yaku reaction should not show a winning ron button");
   });
 
   test("MVP-1.1.1 UI: discard advice reason button and modal render from advice state", async () => {
@@ -757,11 +789,17 @@ async function renderState(state, renderOptions = {}) {
   renderGame(state, root, {
     canDeclareTsumo: () => false,
     canDeclareRon: () => false,
+    canCompleteRonLatestDiscard: () => false,
     suggestDiscards: () => [],
     ...renderOptions
   });
 
   return root.innerHTML;
+}
+
+async function scenarioState(name, options = {}) {
+  const { createScenarioState } = await loadModule("../src/game/scenarios.js", ["createScenarioState"]);
+  return createScenarioState(name, options);
 }
 
 function sampleAdvice() {

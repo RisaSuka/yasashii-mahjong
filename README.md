@@ -1,10 +1,18 @@
+# MVP-1.5 CPU discard evaluator note
+
+MVP-1.5 connects the shared discard evaluator v1 to CPU discards. CPU players now score their hand with `evaluateDiscardCandidates(hand, context)` and discard from the low-score candidates instead of using pure random discard. The CPU still keeps light randomness by choosing from the top evaluated candidates, so it is not a full optimal AI and should not feel perfectly deterministic.
+
+MVP-1.5.1 adds ron verification fixtures and UI checks. Normal shuffled play can make ron feel rare because the human must have a complete shape with yaku and a CPU must discard the exact winning tile. Fixed scenarios now cover tanyao, yakuhai, chiitoitsu, and no-yaku ron-shape checks.
+
+Current local checks target `234 pass / 0 pending / 0 fail`, plus the smartphone landscape layout guard.
+
 # MVP-1.4 discard evaluator note
 
 MVP-1.4 adds a shared discard evaluator v1 for beginner advice and future CPU improvements. `evaluateDiscardCandidates(hand, context)` scores every tile with beginner-readable reasons, and `suggestDiscards(hand, context)` now uses that evaluation so valid hands should keep producing 1 to 3 advice candidates instead of falling back to empty advice. The evaluator is still intentionally lightweight: it does not perform full shanten calculation, danger reading, scoring expectation, riichi, calls, or furiten checks.
 
-The advice UI keeps the existing highlighted hand tiles and reason popup. A compact beginner help popup explains that advice is only a guide, and explains isolated tiles, terminal tiles, honor tiles, pairs, connected number tiles, dora, tanyao, and yakuhai. CPU discards are not connected to the evaluator yet; random CPU play remains in place for MVP-1.4.
+The advice UI keeps the existing highlighted hand tiles and reason popup. A compact beginner help popup explains that advice is only a guide, and explains isolated tiles, terminal tiles, honor tiles, pairs, connected number tiles, dora, tanyao, and yakuhai. CPU discards are connected to the evaluator in MVP-1.5.
 
-Current local checks target `220 pass / 0 pending / 0 fail`, plus the existing smartphone landscape layout guard.
+MVP-1.4 local checks targeted `220 pass / 0 pending / 0 fail`, plus the existing smartphone landscape layout guard.
 
 # MVP-1.3 match result note
 

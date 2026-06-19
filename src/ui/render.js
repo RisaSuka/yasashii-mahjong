@@ -684,16 +684,36 @@ function renderRonAction(state, options) {
   const round = state.round;
   const human = round.players.find((player) => player.type === "human");
 
-  if (!human || typeof options.canDeclareRon !== "function" || !options.canDeclareRon(state, human.id)) {
+  if (!human || round.phase !== "reaction") {
     return "";
   }
 
-  return `
-    <div class="reaction-actions">
-      <button type="button" class="ron-button" data-action="declare-ron">ロン</button>
-      <button type="button" class="skip-ron-button" data-action="skip-ron">見送る</button>
-    </div>
-  `;
+  if (typeof options.canDeclareRon === "function" && options.canDeclareRon(state, human.id)) {
+    return `
+      <div class="reaction-actions">
+        <button type="button" class="ron-button" data-action="declare-ron">ロン</button>
+        <button type="button" class="skip-ron-button" data-action="skip-ron">見送る</button>
+      </div>
+    `;
+  }
+
+  if (typeof options.canCompleteRonLatestDiscard === "function" && options.canCompleteRonLatestDiscard(state, human.id)) {
+    return `
+      <div class="reaction-actions no-yaku-reaction">
+        <span class="reaction-message">${getNoYakuReactionMessage()}</span>
+        <button type="button" class="skip-ron-button" data-action="skip-ron">見送る</button>
+      </div>
+    `;
+  }
+
+  return "";
+}
+
+function getNoYakuReactionMessage() {
+  return [
+    "\u5f62\u306f\u5b8c\u6210\u3057\u3066\u3044\u307e\u3059\u304c\u3001\u5f79\u304c\u3042\u308a\u307e\u305b\u3093\u3002",
+    "\u307e\u305a\u306f\u30bf\u30f3\u30e4\u30aa\u3084\u5f79\u724c\u3092\u72d9\u3063\u3066\u307f\u307e\u3057\u3087\u3046\u3002"
+  ].join(" ");
 }
 
 function renderTsumoAction(state, options) {

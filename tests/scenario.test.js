@@ -33,6 +33,17 @@ export function registerScenarioTests() {
     assertEqual(human.hand.length, 13, "Future ron winner should have 13 tiles before claiming discard");
   });
 
+  test("SCENARIO: ron-ready variants are available for manual checks", async () => {
+    const { createScenarioState, listScenarios } = await loadScenarioModule();
+    const scenarioNames = listScenarios().map((scenario) => scenario.name);
+
+    assertTrue(scenarioNames.includes("ron-ready-tanyao"), "Tanyao ron scenario should be listed");
+    assertTrue(scenarioNames.includes("ron-ready-yakuhai"), "Yakuhai ron scenario should be listed");
+    assertTrue(scenarioNames.includes("ron-ready-chiitoitsu"), "Chiitoitsu ron scenario should be listed");
+    assertEqual(createScenarioState("human-ron-ready-yakuhai").round.lastDiscard.tile.suit, "z", "Yakuhai alias should create an honor discard");
+    assertEqual(createScenarioState("no-yaku-ron-shape").round.lastDiscard.tile.suit, "z", "No-yaku alias should create a ron shape fixture");
+  });
+
   test("SCENARIO: wall, dead wall, hands, and discards have stable counts", async () => {
     const { createScenarioState } = await loadScenarioModule();
     const state = createScenarioState("human-tsumo-ready");

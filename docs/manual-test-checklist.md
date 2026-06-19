@@ -475,6 +475,43 @@ Use a real phone in landscape orientation, or browser device toolbar viewports s
 - Confirm beginner help does not stay open at the same time as advice, discard zoom, or result popups.
 - Confirm discard zoom, match result popup, next round, match end, and replay still work after opening and closing beginner help.
 
+## 20. MVP-1.5 CPU Discard Evaluator Check
+
+- Open the app with `?v=mvp151-ron-check-1`.
+- Start an east-only match.
+- Discard as the human player and wait for CPU turns.
+- Confirm CPU turns continue and do not stall.
+- Confirm CPU players discard tiles after drawing.
+- Confirm CPU discards still look slightly varied across games because the evaluator keeps light randomness.
+- Confirm CPU play does not block ron reaction, skip, exhaustive draw, next round, or match end.
+- Confirm human discard advice still appears when advice is ON.
+- Confirm advice reasons still open and remain beginner-friendly.
+- Confirm advice OFF hides human advice without affecting CPU turns.
+- Confirm discard zoom, beginner help, result popup, and replay still work after several CPU turns.
+
+## 21. MVP-1.5.1 Ron Verification Check
+
+Normal shuffled play may not quickly produce ron. Use deterministic scenarios for manual confirmation.
+
+Recommended browser-console setup:
+
+```js
+const scenarios = await import("./src/game/scenarios.js");
+const actions = await import("./src/game/actions.js");
+let state = scenarios.createScenarioState("ron-ready-tanyao", { phase: "reaction" });
+actions.canDeclareRon(state, 0);
+```
+
+- Confirm `ron-ready-tanyao` returns `true` from `canDeclareRon(state, 0)`.
+- Dispatch `DECLARE_RON` and confirm the round ends as a ron win.
+- Repeat with `ron-ready-yakuhai` and confirm yakuhai ron wins.
+- Repeat with `ron-ready-chiitoitsu` and confirm seven-pairs ron wins.
+- Open/render `no-yaku-ron-shape` in reaction phase.
+- Confirm it is a complete ron shape but `canDeclareRon(state, 0)` is false.
+- Confirm the UI shows a gentle no-yaku message and a `skip ron` / `見送る` action instead of a winning ron button.
+- Confirm skipping ron continues the normal draw/discard flow.
+- Confirm smartphone landscape keeps ron/skip actions inside the action bar.
+
 Portrait orientation check:
 
 - Confirm the page shows: `スマホを横向きにすると、牌とボタンが見やすくなります。`

@@ -4,16 +4,16 @@ Use this before merging to `main` or publishing with GitHub Pages.
 
 ## Current Release Candidate
 
-- Branch: `codex/mvp-14-discard-evaluator`
-- Scope: MVP-0.1 through MVP-1.4 discard evaluator v1
-- Expected automated result: `220 pass / 0 pending / 0 fail`
+- Branch: `codex/mvp-15-cpu-discard-evaluator`
+- Scope: MVP-0.1 through MVP-1.5.1 ron verification scenarios
+- Expected automated result: `234 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-1.4 is not published yet.
+- Publish status: MVP-1.5.1 is not published yet.
 
 ## Git Safety
 
-- Confirm the current branch is `codex/mvp-14-discard-evaluator`.
+- Confirm the current branch is `codex/mvp-15-cpu-discard-evaluator`.
 - Confirm the working tree is clean.
 - Confirm the latest commit is the intended release candidate.
 - Confirm no unreviewed local commits are being skipped.
@@ -31,8 +31,8 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 220.
-- Confirm pass count is 220.
+- Confirm total count is 234.
+- Confirm pass count is 234.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
@@ -52,7 +52,7 @@ node tests/layout-check.mjs
 - Human player receives 14 tiles after dealer draw.
 - CPU players show hand counts.
 - Human can discard one tile.
-- CPU players discard randomly.
+- CPU players discard using the shared discard evaluator with light randomness.
 - Turn returns to the human during normal play.
 - Live wall reaches 0 in simulation or long manual play.
 - Round ends with `exhaustive-draw`.
@@ -119,7 +119,13 @@ node tests/layout-check.mjs
 - Dora, pairs, connected number shapes, and yakuhai pairs are kept more often by the evaluator.
 - Beginner help opens and explains isolated tiles, terminal tiles, honor tiles, pairs, connected numbers, dora, tanyao, and yakuhai.
 - Beginner help, advice, discard zoom, and match result popups do not stay open at the same time.
-- CPU discards remain random in MVP-1.4.
+- CPU discards use low-score evaluator candidates in MVP-1.5.
+- CPU discard selection still has light randomness and is not a full optimal AI.
+- CPU turns continue without stalling after evaluator-guided discard.
+- Ron-ready deterministic scenarios exist for tanyao, yakuhai, chiitoitsu, and no-yaku ron-shape checks.
+- Yaku-valid ron scenarios show ron and skip actions.
+- No-yaku ron-shape shows a helpful no-yaku message and skip action instead of a winning ron button.
+- Smartphone landscape keeps ron/skip actions inside the table action bar.
 
 ## Manual Browser Checks
 

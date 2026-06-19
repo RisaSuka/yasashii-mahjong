@@ -5,7 +5,11 @@ import { createInitialGameState } from "./round.js";
 const SCENARIO_ALIASES = {
   "human-tsumo-standard": "human-tsumo-ready",
   "cpu-tsumo-standard": "cpu-tsumo-ready",
-  "ron-ready-human-ron-on-cpu-discard": "ron-ready-basic"
+  "ron-ready-human-ron-on-cpu-discard": "ron-ready-basic",
+  "human-ron-ready-tanyao": "ron-ready-tanyao",
+  "human-ron-ready-yakuhai": "ron-ready-yakuhai",
+  "human-ron-ready-chiitoitsu": "ron-ready-chiitoitsu",
+  "no-yaku-ron-shape": "ron-ready-basic"
 };
 
 const SCENARIOS = {
@@ -59,6 +63,38 @@ const SCENARIOS = {
     lastDiscard: {
       playerId: 1,
       tile: "s5"
+    }
+  },
+  "ron-ready-yakuhai": {
+    name: "ron-ready-yakuhai",
+    description: "Human player can ron on a CPU discard with yakuhai.",
+    phase: "discard",
+    currentPlayerIndex: 2,
+    hands: {
+      0: "m1 m2 m3 p2 p3 p4 s7 s8 s9 z1 z1 z5 z5"
+    },
+    discards: {
+      1: "z5"
+    },
+    lastDiscard: {
+      playerId: 1,
+      tile: "z5"
+    }
+  },
+  "ron-ready-chiitoitsu": {
+    name: "ron-ready-chiitoitsu",
+    description: "Human player can ron on a CPU discard with seven pairs.",
+    phase: "discard",
+    currentPlayerIndex: 2,
+    hands: {
+      0: "m1 m1 m2 m2 p3 p3 p4 p4 s5 s5 s6 s6 z1"
+    },
+    discards: {
+      1: "z1"
+    },
+    lastDiscard: {
+      playerId: 1,
+      tile: "z1"
     }
   }
 };
