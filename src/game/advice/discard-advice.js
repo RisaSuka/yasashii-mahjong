@@ -38,6 +38,7 @@ export function evaluateDiscardCandidates(hand, context = {}) {
   const pairCount = countPairs(counts);
   const doraKeys = collectDoraKeys(context);
   const nearDoraKeys = collectNearDoraKeys(context);
+  const shapeKeys = analyzeHandShapes(counts);
 
   return tiles
     .map((tile, handIndex) => evaluateTile(tile, {
@@ -49,7 +50,8 @@ export function evaluateDiscardCandidates(hand, context = {}) {
       preferTanyao,
       pairCount,
       doraKeys,
-      nearDoraKeys
+      nearDoraKeys,
+      shapeKeys
     }))
     .sort(compareCandidates);
 }
@@ -61,8 +63,11 @@ export function suggestDiscards(hand, context = {}) {
     return [];
   }
 
-  return evaluateDiscardCandidates(hand, context)
-    .filter(uniqueByTileType())
+  const uniqueCandidates = evaluateDiscardCandidates(hand, context)
+    .filter(uniqueByTileType());
+  const adviceCandidates = preferUnprotectedCandidates(uniqueCandidates);
+
+  return adviceCandidates
     .slice(0, maxSuggestions)
     .map((candidate, index) => ({
       tile: candidate.tile,
@@ -128,6 +133,26 @@ function evaluateTile(tile, context) {
   const keepReasons = [];
   const discardReasons = [];
   let score = 50;
+  const inCompletedSequence = context.shapeKeys.completedSequenceKeys.has(key);
+  const inCompletedTriplet = context.shapeKeys.completedTripletKeys.has(key);
+  const inPair = context.shapeKeys.pairKeys.has(key);
+  const inSequenceCandidate = context.shapeKeys.sequenceCandidateKeys.has(key);
+
+  if (inCompletedSequence) {
+    score += 80;
+    tags.push("completed-sequence");
+    keepReasons.push(REASON_TEXT.sequence);
+  }
+
+  if (inCompletedTriplet) {
+    score += 48;
+    tags.push("completed-triplet");
+    keepReasons.push(REASON_TEXT.pair);
+  }
+
+  if (inSequenceCandidate && !inCompletedSequence) {
+    tags.push("sequence-candidate");
+  }
 
   if (tile.suit === "z") {
     score -= 12;
@@ -142,13 +167,17 @@ function evaluateTile(tile, context) {
   if (isTerminal(tile)) {
     score -= 8;
     tags.push("terminal");
+
+    if (inCompletedSequence) {
+      score += 8;
+    }
   }
 
   if (isSimple(tile)) {
     score += 2;
   }
 
-  if (context.preferTanyao && isTerminalOrHonor(tile) && count === 1) {
+  if (context.preferTanyao && isTerminalOrHonor(tile) && count === 1 && !inCompletedSequence) {
     score -= 14;
     tags.push("tanyao-drop");
     discardReasons.push(REASON_TEXT.tanyaoDirection);
@@ -176,7 +205,7 @@ function evaluateTile(tile, context) {
   tags.push(...sequenceValue.tags);
   keepReasons.push(...sequenceValue.reasons);
 
-  if (sequenceValue.score === 0 && count === 1) {
+  if (sequenceValue.score === 0 && count === 1 && !inCompletedSequence && !inSequenceCandidate) {
     score -= tile.suit === "z" ? 12 : 8;
     tags.push(tile.suit === "z" ? "isolated-honor" : "isolated");
 
@@ -256,6 +285,58 @@ function getSequenceValue(tile, counts) {
   }
 
   return { score, tags, reasons };
+}
+
+function analyzeHandShapes(counts) {
+  const completedSequenceKeys = new Set();
+  const completedTripletKeys = new Set();
+  const pairKeys = new Set();
+  const sequenceCandidateKeys = new Set();
+
+  for (const [key, count] of counts.entries()) {
+    if (count >= 3) {
+      completedTripletKeys.add(key);
+    }
+    if (count >= 2) {
+      pairKeys.add(key);
+    }
+  }
+
+  for (const suit of ["m", "p", "s"]) {
+    for (let start = 1; start <= 7; start += 1) {
+      const first = `${suit}${start}`;
+      const second = `${suit}${start + 1}`;
+      const third = `${suit}${start + 2}`;
+
+      if (counts.has(first) && counts.has(second) && counts.has(third)) {
+        completedSequenceKeys.add(first);
+        completedSequenceKeys.add(second);
+        completedSequenceKeys.add(third);
+      }
+    }
+
+    for (let rank = 1; rank <= 9; rank += 1) {
+      const key = `${suit}${rank}`;
+
+      if (!counts.has(key)) {
+        continue;
+      }
+
+      const hasAdjacent = counts.has(`${suit}${rank - 1}`) || counts.has(`${suit}${rank + 1}`);
+      const hasGapWait = counts.has(`${suit}${rank - 2}`) || counts.has(`${suit}${rank + 2}`);
+
+      if (hasAdjacent || hasGapWait) {
+        sequenceCandidateKeys.add(key);
+      }
+    }
+  }
+
+  return {
+    completedSequenceKeys,
+    completedTripletKeys,
+    pairKeys,
+    sequenceCandidateKeys
+  };
 }
 
 function buildReasons(discardReasons, keepReasons) {
@@ -485,6 +566,20 @@ function uniqueByTileType() {
     seen.add(candidate.typeKey);
     return true;
   };
+}
+
+function preferUnprotectedCandidates(candidates) {
+  const unprotected = candidates.filter((candidate) => !isStronglyProtectedCandidate(candidate));
+
+  return unprotected.length > 0 ? unprotected : candidates;
+}
+
+function isStronglyProtectedCandidate(candidate) {
+  return candidate.tags.includes("completed-sequence")
+    || candidate.tags.includes("completed-triplet")
+    || candidate.tags.includes("pair")
+    || candidate.tags.includes("yakuhai-pair")
+    || candidate.tags.includes("dora");
 }
 
 function hasOwnDiscardNear(tile, ownDiscardKeys) {

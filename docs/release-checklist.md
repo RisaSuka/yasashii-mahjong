@@ -5,11 +5,11 @@ Use this before merging to `main` or publishing with GitHub Pages.
 ## Current Release Candidate
 
 - Branch: `codex/mvp-16-hand-yaku-guide`
-- Scope: MVP-0.1 through MVP-1.8 CPU tsumo/ron support
-- Expected automated result: `264 pass / 0 pending / 0 fail`
+- Scope: MVP-0.1 through MVP-1.8.1 discard evaluator meld protection and CPU win diagnostics
+- Expected automated result: `268 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-1.8 is not published yet.
+- Publish status: MVP-1.8.1 is not published yet.
 
 ## Git Safety
 
@@ -31,8 +31,8 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 264.
-- Confirm pass count is 264.
+- Confirm total count is 268.
+- Confirm pass count is 268.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
@@ -45,6 +45,13 @@ node tests/layout-check.mjs
 - If Node is not on PATH in the Codex desktop environment, use the bundled Node command documented in `docs/layout-test.md`.
 - Confirm layout-check screenshots are written under `test-artifacts/layout/`.
 - Current layout-check result: all target viewports and scenarios pass, including `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `yaku-guide`, `waits`, and `cpu-win`.
+- Run the CPU win reachability diagnostic:
+
+```powershell
+node scripts/simulate-cpu-win-reachability.mjs
+```
+
+- Confirm the diagnostic reports CPU tsumo reachable, CPU ron reachable, and no-yaku CPU shape ignored.
 
 ## Core Functional Checks
 
@@ -53,6 +60,8 @@ node tests/layout-check.mjs
 - CPU players show hand counts.
 - Human can discard one tile.
 - CPU players discard using the shared discard evaluator with light randomness.
+- The discard evaluator protects completed sequences, completed triplets, and pairs before isolated terminal/honor penalties.
+- Completed edge sequences such as `1筒2筒3筒` and `7筒8筒9筒` are not treated as throwaway terminal shapes when weaker tiles exist.
 - Turn returns to the human during normal play.
 - Live wall reaches 0 in simulation or long manual play.
 - Round ends with `exhaustive-draw`.

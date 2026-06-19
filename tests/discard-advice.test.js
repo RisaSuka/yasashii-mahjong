@@ -50,7 +50,7 @@ export function registerDiscardAdviceTests() {
 
   test("DISCARD ADVICE: dragon pairs are preserved", async () => {
     const { suggestDiscards } = await loadDiscardAdviceModule(["suggestDiscards"]);
-    const advice = suggestDiscards(tiles("m2 m3 m4 p3 p4 p5 s4 s5 s6 z5 z5 m9 p1"));
+    const advice = suggestDiscards(tiles("m2 m3 m4 p3 p4 p5 s4 s5 s6 z5 z5 m9 p1 z1"));
 
     assertNoAdviceForTile(advice, "z5", "Dragon pair should be preserved because it can become yakuhai");
   });
@@ -139,6 +139,38 @@ export function registerDiscardAdviceTests() {
     assertTrue(scoreFor(candidates, "p6") > scoreFor(candidates, "z1"), "Adjacent shape should be valued above an isolated honor");
   });
 
+  test("DISCARD EVALUATOR: completed 1-2-3 sequence protects terminal tiles", async () => {
+    const { evaluateDiscardCandidates, suggestDiscards } = await loadDiscardAdviceModule([
+      "evaluateDiscardCandidates",
+      "suggestDiscards"
+    ]);
+    const hand = tiles("p1 p2 p3 p4 p4 p5 p5 s4 s6 s6 s7 s8 z5 z5");
+    const candidates = evaluateDiscardCandidates(hand);
+    const advice = suggestDiscards(hand);
+
+    assertTrue(candidateFor(candidates, "p1").tags.includes("completed-sequence"), "1 pin should be marked as part of a completed sequence");
+    assertTrue(candidateFor(candidates, "p2").tags.includes("completed-sequence"), "2 pin should be marked as part of a completed sequence");
+    assertTrue(candidateFor(candidates, "p3").tags.includes("completed-sequence"), "3 pin should be marked as part of a completed sequence");
+    assertNoAdviceForTile(advice, "p1", "1 pin in 1-2-3 should not be a top advice candidate");
+    assertNoAdviceForTile(advice, "p3", "3 pin in 1-2-3 should not be a top advice candidate");
+  });
+
+  test("DISCARD EVALUATOR: completed 7-8-9 sequence protects the 9 tile", async () => {
+    const { evaluateDiscardCandidates } = await loadDiscardAdviceModule(["evaluateDiscardCandidates"]);
+    const candidates = evaluateDiscardCandidates(tiles("s7 s8 s9 m2 m3 m4 p4 p5 p6 z1 z2 z3 m7"));
+
+    assertTrue(candidateFor(candidates, "s9").tags.includes("completed-sequence"), "9 sou should be marked as part of a completed sequence");
+    assertTrue(scoreFor(candidates, "s9") > scoreFor(candidates, "z1"), "9 sou in 7-8-9 should be valued above an isolated honor");
+  });
+
+  test("DISCARD EVALUATOR: completed triplets are protected", async () => {
+    const { evaluateDiscardCandidates } = await loadDiscardAdviceModule(["evaluateDiscardCandidates"]);
+    const candidates = evaluateDiscardCandidates(tiles("m5 m5 m5 p2 p3 p4 s4 s5 s6 m8 m9 z1 z2"));
+
+    assertTrue(candidateFor(candidates, "m5").tags.includes("completed-triplet"), "Triplet tiles should be marked");
+    assertTrue(scoreFor(candidates, "m5") > scoreFor(candidates, "z1"), "Completed triplet should be valued above an isolated honor");
+  });
+
   test("DISCARD EVALUATOR: dora and nearby dora are kept more often", async () => {
     const { evaluateDiscardCandidates } = await loadDiscardAdviceModule(["evaluateDiscardCandidates"]);
     const hand = tiles("m2 m5 m6 p1 p9 s1 s9 z1 z2 z3 p4 p5 s5");
@@ -194,10 +226,16 @@ function assertNoAdviceForTile(advice, tilePrefix, message) {
 }
 
 function scoreFor(candidates, tilePrefix) {
+  const found = candidateFor(candidates, tilePrefix);
+
+  return found.score;
+}
+
+function candidateFor(candidates, tilePrefix) {
   const found = candidates.find((entry) => entry.tileId.startsWith(tilePrefix));
 
   assertTrue(Boolean(found), `Expected candidate for ${tilePrefix}`);
-  return found.score;
+  return found;
 }
 
 function tiles(pattern) {

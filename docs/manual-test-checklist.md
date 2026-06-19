@@ -21,12 +21,13 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 264.
-- Confirm pass count is 264.
+- Confirm total count is 268.
+- Confirm pass count is 268.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - For smartphone landscape layout work, also run the layout guard described in `docs/layout-test.md`.
 - If `tests/layout-check.mjs` fails, review the reported viewport/scenario and screenshots under `test-artifacts/layout/` before continuing UI fixes.
+- For CPU win reachability diagnostics, run `node scripts/simulate-cpu-win-reachability.mjs` and confirm CPU tsumo, CPU ron, and no-yaku rejection are reported.
 
 ## 2. Normal Desktop Flow
 
@@ -45,6 +46,14 @@ http://127.0.0.1:8765/tests/test-runner.html
 - Wait for CPU turns.
 - Confirm CPU discard counts increase.
 - Confirm the turn returns to the human when no win ends the round.
+
+## 2.1 MVP-1.8.1 Discard Evaluator Sanity
+
+- Start a round and turn advice ON.
+- Confirm completed number runs such as `1筒2筒3筒` are not highlighted as the first discard candidates when weaker isolated tiles exist.
+- Confirm pairs and triplets are not casually suggested before isolated honors or weak isolated terminals.
+- Confirm `助言を見る` gives a readable reason for the suggested tile.
+- Confirm CPU turns continue normally and do not stall after the evaluator change.
 
 ## 3. Tsumo Win Check
 

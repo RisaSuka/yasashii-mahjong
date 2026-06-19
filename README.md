@@ -1,3 +1,9 @@
+# MVP-1.8.1 discard evaluator stability note
+
+MVP-1.8.1 strengthens the shared discard evaluator so completed sequences such as `1筒2筒3筒` and `7筒8筒9筒`, completed triplets, pairs, dora, and connected number shapes are protected before isolated terminal/honor penalties are applied. This reduces unnatural advice and CPU discards that break an already completed meld. A lightweight CPU win reachability diagnostic is available at `scripts/simulate-cpu-win-reachability.mjs`; it checks that CPU tsumo, CPU ron, and no-yaku CPU rejection paths are still reachable without adding any win-rate boost.
+
+Current local checks target MVP-1.8.1 normal tests plus the smartphone landscape layout guard. CPU win frequency is still not tuned; this step only improves evaluator sanity and diagnostics.
+
 # MVP-1.8 CPU win note
 
 MVP-1.8 lets CPU players win when they already have a valid yaku hand. CPU tsumo is resolved after a CPU draw, and CPU ron is resolved after a discard when the human ron reaction is not taking priority. CPU no-yaku completed shapes are ignored, and the result is stored in `winningResult`, `lastRoundResult`, and `roundHistory` for the next-round and match-result UI.

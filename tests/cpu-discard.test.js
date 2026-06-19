@@ -73,6 +73,16 @@ export function registerCpuDiscardTests() {
     assertEqual(nextCpu.discards.at(-1).id, expectedBest.tileId, "CPU discard pile should store the evaluator candidate");
   });
 
+  test("CPU DISCARD: evaluator protects completed sequences for CPU choices", async () => {
+    const { chooseCpuDiscardCandidate } = await loadCpuModule(["chooseCpuDiscardCandidate"]);
+    const player = createCpuPlayer("p1 p2 p3 m2 m3 m4 s4 s5 s6 p7 p8 z1 z2 z3");
+    const candidate = chooseCpuDiscardCandidate(player, {}, () => 0);
+
+    assertTrue(!candidate.tileId.startsWith("p1"), "CPU should avoid breaking 1-2-3 sequence at the edge");
+    assertTrue(!candidate.tileId.startsWith("p2"), "CPU should avoid breaking 1-2-3 sequence in the middle");
+    assertTrue(!candidate.tileId.startsWith("p3"), "CPU should avoid breaking 1-2-3 sequence at the edge");
+  });
+
   test("CPU DISCARD: action keeps round moving into draw phase", async () => {
     const { dispatchAction } = await loadModule("../src/game/actions.js", ["dispatchAction"]);
     const state = await startedCpuState();

@@ -21,11 +21,12 @@ export function chooseCpuDiscardCandidate(player, context = {}, random = Math.ra
     return null;
   }
 
-  const candidates = evaluateDiscardCandidates(player.hand, {
+  const evaluatedCandidates = evaluateDiscardCandidates(player.hand, {
     ...context,
     player,
     currentPlayerId: player.id
-  }).slice(0, CPU_CANDIDATE_LIMIT);
+  });
+  const candidates = preferUnprotectedCandidates(evaluatedCandidates).slice(0, CPU_CANDIDATE_LIMIT);
 
   if (!candidates.length) {
     const tile = chooseRandomDiscard(player, random);
@@ -54,6 +55,20 @@ function chooseWeightedCandidateIndex(candidateCount, random) {
   }
 
   return normalizedWeights.length - 1;
+}
+
+function preferUnprotectedCandidates(candidates) {
+  const unprotected = candidates.filter((candidate) => !isStronglyProtectedCandidate(candidate));
+
+  return unprotected.length > 0 ? unprotected : candidates;
+}
+
+function isStronglyProtectedCandidate(candidate) {
+  return candidate.tags.includes("completed-sequence")
+    || candidate.tags.includes("completed-triplet")
+    || candidate.tags.includes("pair")
+    || candidate.tags.includes("yakuhai-pair")
+    || candidate.tags.includes("dora");
 }
 
 function createFallbackCandidate(tile) {
