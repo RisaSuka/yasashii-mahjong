@@ -8,6 +8,28 @@ export function registerMatchUiTests() {
     assertTrue(!html.includes('data-action="start-round"'), "Initial screen should not expose old START_ROUND entry point");
   });
 
+  test("MVP-2.0 UI: hand tiles render SVG images with CSS fallback markup", async () => {
+    const state = await startMatchState();
+    state.settings.discardAdviceEnabled = true;
+    const suggestedTileId = state.round.players[0].hand[0].id;
+    const html = await renderState(state, {
+      suggestDiscards: () => [
+        {
+          tileId: suggestedTileId,
+          priority: 1,
+          label: "recommended",
+          reason: "SVG rendering should keep the recommendation marker."
+        }
+      ]
+    });
+
+    assertTrue(html.includes("tile-image"), "Rendered tiles should include SVG image elements");
+    assertTrue(html.includes('data-tile-image="./assets/tiles/'), "Rendered tiles should expose their SVG asset path");
+    assertTrue(html.includes("tile-face"), "Rendered tiles should keep CSS tile fallback markup");
+    assertTrue(html.includes("aria-label="), "Rendered tiles should keep accessible labels");
+    assertTrue(html.includes("advice-suggested"), "Recommended tile highlighting should still render");
+  });
+
   test("MVP-1.4 APP: top page script renders the app root", async () => {
     const harness = createMainStartupHarness();
 
@@ -669,6 +691,7 @@ export function registerMatchUiTests() {
     assertTrue(html.includes("discard-zoom-modal"), "Discard zoom modal should render when a player is selected");
     assertTrue(html.includes("東 あなた"), "Zoom modal should show the selected player name");
     assertTrue(html.includes('data-action="close-discard-zoom"'), "Zoom modal should include a close action");
+    assertTrue(modalHtml.includes('data-tile-image="./assets/tiles/'), "Discard zoom tiles should render SVG assets");
     assertEqual(countZoomDiscardTiles(modalHtml), 18, "Zoom modal should show the selected player's 18 discards");
   });
 
@@ -869,6 +892,7 @@ export function registerMatchUiTests() {
     assertTrue(openHtml.includes("data-player-id=\"3\""), "North CPU hand should be included after round end");
     assertTrue(openHtml.includes("all-hands-winner"), "Winner should be highlighted when the hand ends by win");
     assertTrue((openHtml.match(/all-hands-tile/g) || []).length >= 40, "All-hands popup should render visible CSS tiles for the hands");
+    assertTrue(openHtml.includes('data-tile-image="./assets/tiles/'), "All-hands popup should render SVG tile assets");
     assertTrue(openHtml.includes('data-action="close-all-hands"'), "All-hands popup should include a close action");
   });
 
@@ -885,6 +909,23 @@ export function registerMatchUiTests() {
     assertEqual(displayedLabels.slice(0, 6).join(" "), "1 3 9 1 2 9", "CPU display hand should start in sorted suit/rank order");
     assertEqual(displayedLabels.slice(-4).join(" "), "東 西 白 中", "CPU display hand should place honors after suited tiles");
     assertEqual(south.hand.map((tile) => tile.id).join(","), originalOrder, "Rendering all-hands must not mutate the CPU hand array");
+  });
+
+  test("MVP-2.0 UI: yaku guide and waits examples render SVG tile assets", async () => {
+    const yakuHtml = await renderState(await startMatchState(), {
+      yakuGuideDialogOpen: true,
+      suggestYakuTargets: () => sampleYakuGuide()
+    });
+    const waitsHtml = await renderState(await startMatchState(), {
+      waitsDialogOpen: true,
+      analyzeWaits: () => sampleWaitInfo(),
+      analyzeDiscardWaits: () => sampleDiscardWaitInfo()
+    });
+
+    assertTrue(yakuHtml.includes("yaku-guide-tile"), "Yaku guide should render example tiles");
+    assertTrue(yakuHtml.includes('data-tile-image="./assets/tiles/'), "Yaku guide examples should render SVG assets");
+    assertTrue(waitsHtml.includes("waits-tile"), "Waits dialog should render wait tiles");
+    assertTrue(waitsHtml.includes('data-tile-image="./assets/tiles/'), "Waits dialog should render SVG assets");
   });
 
   test("MVP-1.9.1 UI: all-hands popup suppresses other popups", async () => {

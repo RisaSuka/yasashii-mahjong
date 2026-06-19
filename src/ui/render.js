@@ -6,6 +6,7 @@ import {
   getYakuDisplayName,
   sortYakuForDisplay
 } from "./yaku-display.js";
+import { getTileSvgPath } from "./tile-assets.js?v=mvp20-svg-tiles-1";
 import { sortTiles } from "../game/tiles.js";
 
 const WIND_LABELS = {
@@ -1098,9 +1099,15 @@ function renderTile(tile, extraClass = "") {
   const mainLabel = getTileMainLabel(tile);
   const suitLabel = getTileSuitLabel(tile);
   const visualCue = getTileVisualCue(tile);
+  const tileLabel = getTileLabel(tile);
+  const svgPath = getTileSvgPath(tile);
+  const svgClass = svgPath ? " has-svg" : "";
+  const imageAttribute = svgPath ? ` data-tile-image="${escapeHtml(svgPath)}"` : "";
+  const className = `tile${suitClass}${svgClass} ${extraClass}`.trim();
 
   return `
-    <span class="tile${suitClass} ${extraClass}">
+    <span class="${className}" title="${escapeHtml(tileLabel)}" aria-label="${escapeHtml(tileLabel)}"${imageAttribute}>
+      ${svgPath ? `<img class="tile-image" src="${escapeHtml(svgPath)}" alt="" aria-hidden="true" onerror="this.hidden=true;this.closest('.tile').classList.remove('has-svg')">` : ""}
       <span class="tile-face">
         <span class="tile-symbol">${escapeHtml(mainLabel)}</span>
         ${suitLabel ? `

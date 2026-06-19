@@ -1,3 +1,9 @@
+# MVP-2.0 SVG tile set note
+
+MVP-2.0 introduces a handmade SVG tile set under `assets/tiles/` for all 34 tile faces. The UI resolves each tile object to a stable SVG path and renders it through the existing tile markup so clicks, advice badges, large tile mode, discard zoom, all-hands review, yaku examples, and waits remain on the same game data. The previous CSS tile face remains in the DOM as a fallback if an SVG image fails to load.
+
+Current local checks target MVP-2.0 normal tests plus the smartphone landscape layout guard and the CPU win reachability diagnostic.
+
 # MVP-1.9.1 all-hands learning popup note
 
 MVP-1.9.1 adds a round-end learning popup. After tsumo, ron, CPU win, or exhaustive draw, the action bar shows `みんなの手を見る`. The popup reveals all four players' hands only after the hand is over, highlights the winner when there is one, shows the winning tile/yaku when available, and keeps point calculation marked as unsupported. CPU hands remain hidden during normal play.

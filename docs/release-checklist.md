@@ -5,11 +5,11 @@ Use this before merging to `main` or publishing with GitHub Pages.
 ## Current Release Candidate
 
 - Branch: `codex/mvp-16-hand-yaku-guide`
-- Scope: MVP-0.1 through MVP-1.9.1 all-hands learning popup
-- Expected automated result: `284 pass / 0 pending / 0 fail`
+- Scope: MVP-0.1 through MVP-2.0 handmade SVG tile set
+- Expected automated result: `288 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-1.8.2 is not published yet.
+- Publish status: MVP-2.0 is not published yet.
 
 ## Git Safety
 
@@ -31,8 +31,8 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 284.
-- Confirm pass count is 284.
+- Confirm total count is 288.
+- Confirm pass count is 288.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
@@ -165,6 +165,15 @@ node scripts/simulate-cpu-win-reachability.mjs
 - The all-hands popup closes by button, backdrop click, and Escape, and does not overlap other popups.
 - Smartphone landscape layout guard includes the all-hands popup scenario.
 
+## MVP-2.0 SVG Tile Set Checks
+
+- `assets/tiles/` contains 34 original SVG tile faces.
+- Tile rendering resolves manzu, pinzu, souzu, and honor tile objects to the expected SVG paths.
+- CSS tile fallback markup remains present for image-load failure.
+- Human hand, discards, discard zoom, all-hands popup, yaku guide examples, waits popup, and advice UI render SVG tile faces.
+- Recommended tile badges, selected/focus states, and large tile mode still work.
+- Smartphone landscape layout guard passes after the tile visual swap.
+
 ## Manual Browser Checks
 
 Use:
@@ -216,7 +225,7 @@ Check:
 - Confirm `tests/test-runner.html` works from a static server.
 - Confirm there are no external dependencies that GitHub Pages must install.
 - Confirm README describes the current MVP scope and known missing features.
-- Confirm `docs/current-status.md` reflects MVP-1.8 and 264 pass.
+- Confirm `docs/current-status.md` reflects MVP-2.0 and 288 pass.
 - Confirm `docs/manual-test-checklist.md` includes smartphone landscape checks.
 - Confirm `docs/manual-test-checklist.md` includes next-round checks.
 - Confirm `docs/layout-test.md` reflects the current layout guard result.

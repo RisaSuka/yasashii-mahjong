@@ -121,6 +121,7 @@ As of MVP-1.1.6, the regular browser tests pass and the layout check passes acro
 - MVP-1.8 adds the `cpu-win` scenario. It checks that a CPU win display and the next-round action remain inside the smartphone landscape viewport.
 - MVP-1.9 adds the `waits-after-discard` scenario. It checks that discard-to-wait rows, wait tiles, and the close button stay inside the waits popup in smartphone landscape.
 - MVP-1.9.1 adds the `all-hands-open` scenario. It checks that the all-hands dialog, close button, and four player hand sections stay inside the smartphone landscape viewport without page-level overflow.
+- MVP-2.0 keeps the same scenarios after switching primary tile faces to handmade SVG assets, so the guard catches tile-size regressions in the hand, discard ring, zoom popup, all-hands popup, yaku guide, and waits popup.
 
 The earlier MVP-1.1.4 guard intentionally detected late-hand discard clipping at discard tile 13 and later. MVP-1.1.6 fixes that known failure by fitting the landscape discard grids for 18-tile late-hand states.
 

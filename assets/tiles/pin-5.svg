@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 112" role="img">
+  <defs>
+    <linearGradient id="tileBase" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.76" stop-color="#fffdf8"/>
+      <stop offset="1" stop-color="#d7c8ad"/>
+    </linearGradient>
+    <filter id="tileShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="1.2" flood-color="#0f172a" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+  <rect x="5" y="4" width="70" height="104" rx="10" fill="url(#tileBase)" stroke="#175cd3" stroke-width="3" filter="url(#tileShadow)"/>
+  <rect x="12" y="11" width="56" height="85" rx="7" fill="#fff" stroke="#175cd3" stroke-opacity="0.42" stroke-width="2"/>
+  <circle cx="29" cy="36" r="7.6" fill="#fff" stroke="#175cd3" stroke-width="4"/>
+  <circle cx="29" cy="36" r="2.6" fill="#175cd3"/>
+  <circle cx="51" cy="36" r="7.6" fill="#fff" stroke="#087443" stroke-width="4"/>
+  <circle cx="51" cy="36" r="2.6" fill="#087443"/>
+  <circle cx="40" cy="52" r="7.6" fill="#fff" stroke="#b42318" stroke-width="4"/>
+  <circle cx="40" cy="52" r="2.6" fill="#b42318"/>
+  <circle cx="29" cy="68" r="7.6" fill="#fff" stroke="#175cd3" stroke-width="4"/>
+  <circle cx="29" cy="68" r="2.6" fill="#175cd3"/>
+  <circle cx="51" cy="68" r="7.6" fill="#fff" stroke="#087443" stroke-width="4"/>
+  <circle cx="51" cy="68" r="2.6" fill="#087443"/>
+  <text x="62" y="87" text-anchor="middle" dominant-baseline="middle" font-family="Arial, 'Noto Sans JP', sans-serif" font-size="13" font-weight="900" fill="#175cd3">5</text>
+  <rect x="16" y="96" width="48" height="5" rx="3" fill="#8b7355" opacity="0.26"/>
+</svg>

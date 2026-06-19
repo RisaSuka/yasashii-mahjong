@@ -21,13 +21,23 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 284.
-- Confirm pass count is 284.
+- Confirm total count is 288.
+- Confirm pass count is 288.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - For smartphone landscape layout work, also run the layout guard described in `docs/layout-test.md`.
 - If `tests/layout-check.mjs` fails, review the reported viewport/scenario and screenshots under `test-artifacts/layout/` before continuing UI fixes.
 - For CPU win reachability diagnostics, run `node scripts/simulate-cpu-win-reachability.mjs` and confirm CPU tsumo, CPU ron, and no-yaku rejection are reported.
+
+## 1.1 MVP-2.0 SVG Tile Visual Check
+
+- Confirm `assets/tiles/` contains 34 handmade SVG tile files.
+- Start a match and confirm the human hand uses SVG tile faces instead of only text/color CSS tiles.
+- Confirm manzu, pinzu, souzu, and honors are distinguishable at smartphone landscape size.
+- Confirm recommended tile badges and highlights still appear on top of the tile buttons.
+- Confirm discard rings, discard zoom, all-hands review, yaku guide examples, and waits popup all show SVG tile faces.
+- Temporarily simulate a missing tile image if needed and confirm the CSS tile face remains as fallback.
+- Confirm large tile mode still scales tiles cleanly.
 
 ## 2. Normal Desktop Flow
 

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 112" role="img">
+  <defs>
+    <linearGradient id="tileBase" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.76" stop-color="#fffdf8"/>
+      <stop offset="1" stop-color="#d7c8ad"/>
+    </linearGradient>
+    <filter id="tileShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="1.2" flood-color="#0f172a" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+  <rect x="5" y="4" width="70" height="104" rx="10" fill="url(#tileBase)" stroke="#087443" stroke-width="3" filter="url(#tileShadow)"/>
+  <rect x="12" y="11" width="56" height="85" rx="7" fill="#fff" stroke="#087443" stroke-opacity="0.42" stroke-width="2"/>
+  <path d="M24 60c9-23 25-30 38-17-15 0-20 8-21 20 8-4 15-3 20 2-10 2-17 8-24 17-3-10-8-16-13-22Z" fill="#087443"/>
+  <circle cx="49" cy="44" r="3" fill="#fff"/>
+  <path d="M55 43l9-4-6 9z" fill="#f59e0b"/>
+  <text x="62" y="87" text-anchor="middle" dominant-baseline="middle" font-family="Arial, 'Noto Sans JP', sans-serif" font-size="13" font-weight="900" fill="#087443">1</text>
+  <rect x="16" y="96" width="48" height="5" rx="3" fill="#8b7355" opacity="0.26"/>
+</svg>

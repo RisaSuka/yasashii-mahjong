@@ -39,6 +39,31 @@
   background: rgba(111, 85, 46, 0.2);
 }
 
+.tile.has-svg {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.tile.has-svg::before {
+  display: none;
+}
+
+.tile-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.tile.has-svg .tile-face {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .tile-face {
   display: grid;
   grid-template-rows: 1fr auto;
