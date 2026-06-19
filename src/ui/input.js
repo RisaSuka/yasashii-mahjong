@@ -6,6 +6,7 @@ export function bindControls(root, handlers) {
       handlers.onCloseMatchResult?.();
       handlers.onCloseBeginnerHelp?.();
       handlers.onCloseYakuGuide?.();
+      handlers.onCloseWaits?.();
     }
   });
 
@@ -96,6 +97,19 @@ export function bindControls(root, handlers) {
         return;
       }
       handlers.onCloseYakuGuide?.();
+    });
+  }
+
+  root.querySelector("[data-action='open-waits']")?.addEventListener("click", () => {
+    handlers.onOpenWaits?.();
+  });
+
+  for (const trigger of root.querySelectorAll("[data-action='close-waits']")) {
+    trigger.addEventListener("click", (event) => {
+      if (trigger.classList?.contains("waits-backdrop") && event.target !== trigger) {
+        return;
+      }
+      handlers.onCloseWaits?.();
     });
   }
 

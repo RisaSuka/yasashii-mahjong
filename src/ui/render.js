@@ -76,10 +76,11 @@ function renderTableLegacy(state, options) {
   ];
   const discardAdvice = getDiscardAdvice(state, options);
   const yakuGuide = getYakuGuide(state, options);
+  const waitInfo = getWaitInfo(state, options);
 
   return `
     <main class="table" aria-label="4人麻雀卓">
-      ${seats.map((player) => renderSeat(player, round, discardAdvice, yakuGuide)).join("")}
+      ${seats.map((player) => renderSeat(player, round, discardAdvice, yakuGuide, waitInfo)).join("")}
       <section class="center-panel">
         <div class="table-discard-ring">
           ${renderTableDiscardZone(round.players[3], "north", round)}
@@ -93,11 +94,12 @@ function renderTableLegacy(state, options) {
               <div class="center-secondary">
             ${renderPreviousRoundResult(state.lastRoundResult, round)}
             ${renderLastActionResult(round)}
-            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen && options.discardZoomPlayerId == null && !options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen)}
-            ${renderDiscardZoomDialog(round, options.matchResultDialogOpen || options.beginnerHelpDialogOpen || options.yakuGuideDialogOpen ? null : options.discardZoomPlayerId)}
-            ${renderMatchResultDialog(state, options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen)}
-            ${renderBeginnerHelpDialog(options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen)}
-            ${renderYakuGuideDialog(yakuGuide, options.yakuGuideDialogOpen)}
+            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen && options.discardZoomPlayerId == null && !options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen)}
+            ${renderDiscardZoomDialog(round, options.matchResultDialogOpen || options.beginnerHelpDialogOpen || options.yakuGuideDialogOpen || options.waitsDialogOpen ? null : options.discardZoomPlayerId)}
+            ${renderMatchResultDialog(state, options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen)}
+            ${renderBeginnerHelpDialog(options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen)}
+            ${renderYakuGuideDialog(yakuGuide, options.yakuGuideDialogOpen && !options.waitsDialogOpen)}
+            ${renderWaitsDialog(waitInfo, options.waitsDialogOpen)}
             ${renderYakuSummary(round)}
             <div class="table-meta-row">
               <span class="table-meta">山 ${round.wall.length}</span>
@@ -124,10 +126,11 @@ function renderTable(state, options) {
   ];
   const discardAdvice = getDiscardAdvice(state, options);
   const yakuGuide = getYakuGuide(state, options);
+  const waitInfo = getWaitInfo(state, options);
 
   return `
     <main class="table" aria-label="4人麻雀卓">
-      ${seats.map((player) => renderSeat(player, round, discardAdvice, yakuGuide)).join("")}
+      ${seats.map((player) => renderSeat(player, round, discardAdvice, yakuGuide, waitInfo)).join("")}
       <section class="center-panel">
         <div class="table-discard-ring">
           ${renderTableDiscardZone(round.players[3], "north", round)}
@@ -149,11 +152,12 @@ function renderTable(state, options) {
             </div>
             ${renderPreviousRoundResult(state.lastRoundResult, round)}
             ${renderLastActionResult(round)}
-            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen && options.discardZoomPlayerId == null && !options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen)}
-            ${renderDiscardZoomDialog(round, options.matchResultDialogOpen || options.beginnerHelpDialogOpen || options.yakuGuideDialogOpen ? null : options.discardZoomPlayerId)}
-            ${renderMatchResultDialog(state, options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen)}
-            ${renderBeginnerHelpDialog(options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen)}
-            ${renderYakuGuideDialog(yakuGuide, options.yakuGuideDialogOpen)}
+            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen && options.discardZoomPlayerId == null && !options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen)}
+            ${renderDiscardZoomDialog(round, options.matchResultDialogOpen || options.beginnerHelpDialogOpen || options.yakuGuideDialogOpen || options.waitsDialogOpen ? null : options.discardZoomPlayerId)}
+            ${renderMatchResultDialog(state, options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen)}
+            ${renderBeginnerHelpDialog(options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen)}
+            ${renderYakuGuideDialog(yakuGuide, options.yakuGuideDialogOpen && !options.waitsDialogOpen)}
+            ${renderWaitsDialog(waitInfo, options.waitsDialogOpen)}
             ${renderYakuSummary(round)}
           </div>
           ${renderTableDiscardZone(round.players[1], "south", round)}
@@ -298,6 +302,91 @@ function getYakuGuide(state, options) {
     match: state.match,
     maxTargets: 3
   });
+}
+
+function getWaitInfo(state, options) {
+  const round = state.round;
+
+  if (!round || typeof options.analyzeWaits !== "function") {
+    return null;
+  }
+
+  const human = round.players.find((player) => player.type === "human");
+
+  if (!human) {
+    return null;
+  }
+
+  return options.analyzeWaits(human.hand, {
+    round,
+    player: human,
+    match: state.match
+  });
+}
+
+function renderWaitsButton(waitInfo) {
+  const hasWaits = waitInfo?.isTenpai && Array.isArray(waitInfo.waits) && waitInfo.waits.length > 0;
+
+  return `
+    <button type="button" class="waits-trigger${hasWaits ? " has-waits" : ""}" data-action="open-waits">
+      ${hasWaits ? "\u5f85\u3061\u3042\u308a" : "\u5f85\u3061"}
+    </button>
+  `;
+}
+
+function renderWaitsDialog(waitInfo, isOpen) {
+  if (!isOpen) {
+    return "";
+  }
+
+  const waits = Array.isArray(waitInfo?.waits) ? waitInfo.waits : [];
+
+  return `
+    <section class="waits-backdrop" data-action="close-waits" aria-label="\u5f85\u3061\u724c\u3092\u9589\u3058\u308b">
+      <div class="waits-modal" role="dialog" aria-modal="false" aria-label="\u5f85\u3061\u724c">
+        <div class="waits-header">
+          <div>
+            <strong>\u5f85\u3061\u724c</strong>
+            <span>\u4eca\u306e13\u679a\u306b1\u679a\u6765\u305f\u3089\u5f62\u304c\u5b8c\u6210\u3059\u308b\u724c\u306e\u76ee\u5b89\u3067\u3059\u3002</span>
+          </div>
+          <button type="button" class="waits-close" data-action="close-waits">\u9589\u3058\u308b</button>
+        </div>
+        ${waits.length ? renderWaitsList(waits) : `
+          <p class="waits-empty">${escapeHtml(waitInfo?.message || "\u307e\u3060\u30c6\u30f3\u30d1\u30a4\u3067\u306f\u3042\u308a\u307e\u305b\u3093\u3002")}</p>
+          <p class="waits-note">\u5f79\u30ac\u30a4\u30c9\u3084\u52a9\u8a00\u3092\u898b\u306a\u304c\u3089\u3001\u5f62\u3092\u5c11\u3057\u305a\u3064\u6574\u3048\u3066\u3044\u304d\u307e\u3057\u3087\u3046\u3002</p>
+        `}
+      </div>
+    </section>
+  `;
+}
+
+function renderWaitsList(waits) {
+  return `
+    <ol class="waits-list">
+      ${waits.map((wait) => `
+        <li class="waits-item${wait.hasYaku ? " has-yaku" : " no-yaku"}">
+          <div class="waits-tile-line">
+            ${renderTile(wait.tile, "waits-tile")}
+            <div>
+              <strong>${escapeHtml(wait.tileLabel || "")}</strong>
+              <span>${escapeHtml(wait.message || "")}</span>
+            </div>
+          </div>
+          ${wait.hasYaku
+            ? `<p class="waits-yaku">\u5f79: ${escapeHtml(formatWaitYaku(wait.yaku))}</p>`
+            : `<p class="waits-no-yaku">\u5f79\u306a\u3057\u306b\u306a\u308a\u305d\u3046\u3067\u3059\u3002\u30bf\u30f3\u30e4\u30aa\u3084\u5f79\u724c\u3092\u610f\u8b58\u3059\u308b\u3068\u4e0a\u304c\u308a\u3084\u3059\u304f\u306a\u308a\u307e\u3059\u3002</p>`}
+        </li>
+      `).join("")}
+    </ol>
+  `;
+}
+
+function formatWaitYaku(yaku = []) {
+  if (!Array.isArray(yaku) || yaku.length === 0) {
+    return "\u306a\u3057";
+  }
+
+  return sortYakuForDisplay(yaku).map((entry) => getYakuDisplayName(entry)).join("\u3001");
 }
 
 function renderDiscardAdviceButton(advice) {
@@ -582,7 +671,7 @@ function renderWinTermHelp(winType) {
   return `<div class="term-help">${lines.map((line) => `<span>${escapeHtml(line)}</span>`).join("")}</div>`;
 }
 
-function renderSeat(player, round, discardAdvice, yakuGuide) {
+function renderSeat(player, round, discardAdvice, yakuGuide, waitInfo) {
   const isCurrent = round.currentPlayerIndex === player.id;
   const positionClass = `seat-${player.wind}`;
   const currentClass = isCurrent ? " current" : "";
@@ -595,6 +684,7 @@ function renderSeat(player, round, discardAdvice, yakuGuide) {
         <span class="seat-meta seat-header-actions">
           ${player.type === "human" ? renderSeatAdviceButton(discardAdvice) : ""}
           ${player.type === "human" ? renderYakuGuideButton(yakuGuide) : ""}
+          ${player.type === "human" ? renderWaitsButton(waitInfo) : ""}
           ${currentIndicator}
         </span>
       </div>

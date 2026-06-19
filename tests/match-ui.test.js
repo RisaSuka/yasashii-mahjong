@@ -529,6 +529,110 @@ export function registerMatchUiTests() {
     assertEqual(closed, 2, "Close button and Escape should close yaku guide");
   });
 
+  test("MVP-1.7 UI: waits button and dialog render", async () => {
+    const closedHtml = await renderState(await startMatchState(), { analyzeWaits: sampleWaitInfo });
+    const openHtml = await renderState(await startMatchState(), {
+      analyzeWaits: sampleWaitInfo,
+      waitsDialogOpen: true
+    });
+
+    assertTrue(closedHtml.includes('data-action="open-waits"'), "Waits button should render in the human seat");
+    assertTrue(closedHtml.includes("has-waits"), "Tenpai wait button should indicate waits are available");
+    assertTrue(!closedHtml.includes("waits-modal"), "Waits dialog should stay closed by default");
+    assertTrue(openHtml.includes("waits-modal"), "Waits dialog should render when opened");
+    assertTrue(openHtml.includes('data-action="close-waits"'), "Waits dialog should include a close action");
+    assertTrue(openHtml.includes("waits-tile"), "Waits dialog should render wait tiles with CSS tile markup");
+    assertTrue(openHtml.includes("waits-yaku"), "Yaku-valid waits should show yaku information");
+  });
+
+  test("MVP-1.7 UI: waits dialog can show non-tenpai guidance", async () => {
+    const html = await renderState(await startMatchState(), {
+      analyzeWaits: () => ({
+        isTenpai: false,
+        waits: [],
+        message: "\u307e\u3060\u30c6\u30f3\u30d1\u30a4\u3067\u306f\u3042\u308a\u307e\u305b\u3093\u3002"
+      }),
+      waitsDialogOpen: true
+    });
+
+    assertTrue(html.includes("waits-modal"), "Waits dialog should open even when not tenpai");
+    assertTrue(html.includes("waits-empty"), "Non-tenpai state should show an empty guidance message");
+    assertTrue(!html.includes("waits-list"), "Non-tenpai state should not render wait candidates");
+  });
+
+  test("MVP-1.7 UI: waits dialog suppresses other popups", async () => {
+    const state = await matchEndedHistoryState();
+    const html = await renderState(addDiscards(state, 4), {
+      suggestDiscards: sampleAdvice,
+      suggestYakuTargets: sampleYakuGuide,
+      analyzeWaits: sampleWaitInfo,
+      discardAdviceDialogOpen: true,
+      discardZoomPlayerId: 0,
+      matchResultDialogOpen: true,
+      beginnerHelpDialogOpen: true,
+      yakuGuideDialogOpen: true,
+      waitsDialogOpen: true
+    });
+
+    assertTrue(html.includes("waits-modal"), "Waits dialog should render");
+    assertTrue(!html.includes("discard-advice-modal"), "Advice modal should be suppressed by waits dialog");
+    assertTrue(!html.includes("discard-zoom-modal"), "Discard zoom modal should be suppressed by waits dialog");
+    assertTrue(!html.includes("match-result-modal"), "Match result modal should be suppressed by waits dialog");
+    assertTrue(!html.includes("beginner-help-modal"), "Beginner help modal should be suppressed by waits dialog");
+    assertTrue(!html.includes("yaku-guide-modal"), "Yaku guide modal should be suppressed by waits dialog");
+  });
+
+  test("MVP-1.7 UI: waits controls dispatch open and close handlers", async () => {
+    const { bindControls } = await loadModule("../src/ui/input.js", ["bindControls"]);
+    let opened = 0;
+    let closed = 0;
+    let keydownListener = null;
+    const openButton = createFakeButton();
+    const closeButton = createFakeButton();
+    const root = {
+      addEventListener(type, listener) {
+        if (type === "keydown") {
+          keydownListener = listener;
+        }
+      },
+      querySelector(selector) {
+        if (selector === "[data-action='open-waits']") {
+          return openButton;
+        }
+
+        return null;
+      },
+      querySelectorAll(selector) {
+        if (selector === "[data-action='close-waits']") {
+          return [closeButton];
+        }
+
+        return [];
+      }
+    };
+
+    bindControls(root, {
+      onCloseDiscardAdvice() {},
+      onCloseDiscardZoom() {},
+      onCloseMatchResult() {},
+      onCloseBeginnerHelp() {},
+      onCloseYakuGuide() {},
+      onOpenWaits() {
+        opened += 1;
+      },
+      onCloseWaits() {
+        closed += 1;
+      }
+    });
+
+    openButton.listeners.click();
+    closeButton.listeners.click({ target: closeButton });
+    keydownListener({ key: "Escape" });
+
+    assertEqual(opened, 1, "Open waits button should call its handler");
+    assertEqual(closed, 2, "Close button and Escape should close waits dialog");
+  });
+
   test("MVP-1.2 UI: discard zoom controls render for all four center discard zones", async () => {
     const html = await renderState(addDiscards(await startMatchState(), 6));
 
@@ -928,6 +1032,31 @@ function sampleYakuGuide() {
       exampleTiles: tilesForUi("z5 z5 z5")
     }
   ];
+}
+
+function sampleWaitInfo() {
+  return {
+    isTenpai: true,
+    message: "5\u7b52\u304c\u6765\u308b\u3068\u4e0a\u304c\u308c\u307e\u3059\u3002",
+    waits: [
+      {
+        tile: { id: "wait-p5", suit: "p", rank: 5, copy: 0, red: false },
+        tileLabel: "5\u7b52",
+        canWin: true,
+        hasYaku: true,
+        yaku: [{ id: "tanyao", name: "\u65ad\u4e48\u4e5d", han: 1 }],
+        message: "5\u7b52\u304c\u6765\u308b\u3068\u4e0a\u304c\u308c\u307e\u3059\u3002"
+      },
+      {
+        tile: { id: "wait-m9", suit: "m", rank: 9, copy: 0, red: false },
+        tileLabel: "9\u842c",
+        canWin: false,
+        hasYaku: false,
+        yaku: [],
+        message: "9\u842c\u3067\u5f62\u306f\u5b8c\u6210\u3057\u307e\u3059\u304c\u3001\u5f79\u304c\u3042\u308a\u307e\u305b\u3093\u3002"
+      }
+    ]
+  };
 }
 
 function addDiscards(state, count) {

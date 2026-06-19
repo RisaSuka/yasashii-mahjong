@@ -1,3 +1,9 @@
+# MVP-1.7 tenpai waits note
+
+MVP-1.7 adds a beginner tenpai/wait helper. For a 13-tile human hand, the app checks which tile kinds would complete the hand, then shows whether each wait appears to have yaku or would only complete the shape without yaku. The helper opens from a compact `待ち` / `待ちあり` button near the human seat and is intentionally a guide, not full shanten calculation.
+
+Current local checks target `255 pass / 0 pending / 0 fail`, plus the smartphone landscape layout guard including the waits popup scenario.
+
 # MVP-1.6 hand yaku guide note
 
 MVP-1.6 adds a beginner hand-yaku guide. The app can look at the human hand and suggest 1 to 3 easy-to-understand yaku targets such as tanyao, yakuhai, chiitoitsu, and toitoi. The guide opens from a compact `役ガイド` button near the human seat, explains why the yaku may fit the current hand, and shows CSS-tile completion examples. It is a learning aid, not a promise of the best possible strategy.

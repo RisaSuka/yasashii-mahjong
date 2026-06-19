@@ -21,8 +21,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 244.
-- Confirm pass count is 244.
+- Confirm total count is 255.
+- Confirm pass count is 255.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - For smartphone landscape layout work, also run the layout guard described in `docs/layout-test.md`.
@@ -170,6 +170,19 @@ Verify:
 - Confirm opening `役ガイド` closes advice, discard zoom, result, and beginner help popups instead of stacking them.
 - Confirm advice ON/OFF and suggested discard highlights still work after closing the guide.
 - Confirm smartphone landscape keeps the yaku-guide popup inside the viewport.
+
+## 7B. Tenpai / Wait Helper Check
+
+- Start a match and confirm the `待ち` or `待ちあり` button is visible near the human seat.
+- Open the wait helper.
+- If the hand is not tenpai, confirm it says the hand is not tenpai yet.
+- In a deterministic tenpai state or automated test, confirm wait tiles are shown as CSS tiles.
+- Confirm yaku-valid waits show a `役:` line.
+- Confirm shape-complete no-yaku waits explain that the shape is complete but yaku is missing.
+- Confirm the close button closes the popup.
+- Confirm Escape closes the popup on desktop.
+- Confirm opening waits closes advice, yaku guide, discard zoom, result, and beginner help popups instead of stacking them.
+- Confirm smartphone landscape keeps the waits popup inside the viewport.
 
 ## 8. Exhaustive Draw Check
 

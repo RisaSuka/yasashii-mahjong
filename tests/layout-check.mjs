@@ -26,7 +26,8 @@ const SCENARIOS = [
   { name: "discard-zoom", discards: 18, mode: "discard-zoom" },
   { name: "match-ended", discards: 18, mode: "match-ended" },
   { name: "result-popup", discards: 18, mode: "result-popup" },
-  { name: "yaku-guide", discards: 9, mode: "yaku-guide" }
+  { name: "yaku-guide", discards: 9, mode: "yaku-guide" },
+  { name: "waits", discards: 9, mode: "waits" }
 ];
 const TOLERANCE = 2;
 
@@ -207,6 +208,29 @@ function setupScenarioSource() {
       discardZoomPlayerId: mode === "discard-zoom" ? 0 : null,
       matchResultDialogOpen: mode === "result-popup",
       yakuGuideDialogOpen: mode === "yaku-guide",
+      waitsDialogOpen: mode === "waits",
+      analyzeWaits: () => ({
+        isTenpai: true,
+        message: "5筒が来ると上がれます。",
+        waits: [
+          {
+            tile: { id: "wait-p5", suit: "p", rank: 5, copy: 0, red: false },
+            tileLabel: "5筒",
+            canWin: true,
+            hasYaku: true,
+            yaku: [{ id: "tanyao", name: "断么九", han: 1 }],
+            message: "5筒が来ると上がれます。"
+          },
+          {
+            tile: { id: "wait-m9", suit: "m", rank: 9, copy: 0, red: false },
+            tileLabel: "9萬",
+            canWin: false,
+            hasYaku: false,
+            yaku: [],
+            message: "9萬で形は完成しますが、役がありません。"
+          }
+        ]
+      }),
       suggestYakuTargets: () => [
         {
           id: "tanyao",
@@ -345,7 +369,8 @@ function inspectLayoutSource() {
     const zoomModal = document.querySelector(".discard-zoom-modal");
     const resultModal = document.querySelector(".match-result-modal");
     const yakuGuideModal = document.querySelector(".yaku-guide-modal");
-    const activeModal = modal || zoomModal || resultModal || yakuGuideModal;
+    const waitsModal = document.querySelector(".waits-modal");
+    const activeModal = modal || zoomModal || resultModal || yakuGuideModal || waitsModal;
 
     const actionButtons = [...document.querySelectorAll(".table-action-bar button, .restart-match-button, .next-round-button")];
     if (!activeModal) {
@@ -461,6 +486,38 @@ function inspectLayoutSource() {
         const tileRect = tile.getBoundingClientRect();
         if (!isInsideRect(tileRect, rect, tolerance)) {
           failures.push("yaku guide example tile " + (index + 1) + " is clipped inside popup");
+          break;
+        }
+      }
+    }
+
+    if (waitsModal) {
+      const rect = waitsModal.getBoundingClientRect();
+      if (!isInViewport(rect, viewport, tolerance)) {
+        failures.push("waits popup is outside viewport");
+      }
+
+      const closeButton = waitsModal.querySelector("[data-action='close-waits']");
+      if (!closeButton) {
+        failures.push("waits close button is missing");
+      } else {
+        const closeRect = closeButton.getBoundingClientRect();
+        if (!isInViewport(closeRect, viewport, tolerance)) {
+          failures.push("waits close button is outside viewport");
+        }
+        if (!isClickableAtCenter(closeButton, closeRect)) {
+          failures.push("waits close button is not clickable at center");
+        }
+      }
+
+      const waitTiles = [...waitsModal.querySelectorAll(".waits-tile")];
+      if (waitTiles.length === 0) {
+        failures.push("waits popup has no wait tiles");
+      }
+      for (const [index, tile] of waitTiles.entries()) {
+        const tileRect = tile.getBoundingClientRect();
+        if (!isInsideRect(tileRect, rect, tolerance)) {
+          failures.push("wait tile " + (index + 1) + " is clipped inside popup");
           break;
         }
       }

@@ -1,7 +1,7 @@
-﻿import { bindControls } from "./ui/input.js?v=mvp16-yaku-guide-1";
-import { renderGame } from "./ui/render.js?v=mvp16-yaku-guide-1";
+import { bindControls } from "./ui/input.js?v=mvp17-tenpai-waits-1";
+import { renderGame } from "./ui/render.js?v=mvp17-tenpai-waits-1";
 
-const APP_ASSET_VERSION = "mvp16-yaku-guide-1";
+const APP_ASSET_VERSION = "mvp17-tenpai-waits-1";
 
 const appRoot = document.querySelector("#app");
 
@@ -13,6 +13,7 @@ let discardZoomPlayerId = null;
 let matchResultDialogOpen = false;
 let beginnerHelpDialogOpen = false;
 let yakuGuideDialogOpen = false;
+let waitsDialogOpen = false;
 
 init();
 
@@ -26,12 +27,13 @@ async function init() {
 
 async function loadGameApi() {
   try {
-    const [actions, round, storage, advice, yakuGuide] = await Promise.all([
+    const [actions, round, storage, advice, yakuGuide, waits] = await Promise.all([
       import(`./game/actions.js?v=${APP_ASSET_VERSION}`),
       import(`./game/round.js?v=${APP_ASSET_VERSION}`),
       import(`./game/storage.js?v=${APP_ASSET_VERSION}`),
       import(`./game/advice/discard-advice.js?v=${APP_ASSET_VERSION}`),
-      import(`./game/advice/yaku-guide.js?v=${APP_ASSET_VERSION}`)
+      import(`./game/advice/yaku-guide.js?v=${APP_ASSET_VERSION}`),
+      import(`./game/advice/wait-analysis.js?v=${APP_ASSET_VERSION}`)
     ]);
 
     return {
@@ -44,6 +46,7 @@ async function loadGameApi() {
       loadStats: storage.loadStats,
       suggestDiscards: advice.suggestDiscards,
       suggestYakuTargets: yakuGuide.suggestYakuTargets,
+      analyzeWaits: waits.analyzeWaits,
       loadDiscardAdviceSettings: advice.loadDiscardAdviceSettings,
       saveDiscardAdviceSettings: advice.saveDiscardAdviceSettings
     };
@@ -63,7 +66,8 @@ function render() {
     discardZoomPlayerId,
     matchResultDialogOpen,
     beginnerHelpDialogOpen,
-    yakuGuideDialogOpen
+    yakuGuideDialogOpen,
+    waitsDialogOpen
   });
   bindControls(appRoot, {
     onStartMatch: startMatch,
@@ -81,6 +85,8 @@ function render() {
     onCloseBeginnerHelp: closeBeginnerHelp,
     onOpenYakuGuide: openYakuGuide,
     onCloseYakuGuide: closeYakuGuide,
+    onOpenWaits: openWaits,
+    onCloseWaits: closeWaits,
     onDiscardTile: discardHumanTile,
     onDeclareTsumo: declareHumanTsumo,
     onDeclareRon: declareHumanRon,
@@ -95,6 +101,7 @@ function startMatch() {
   matchResultDialogOpen = false;
   beginnerHelpDialogOpen = false;
   yakuGuideDialogOpen = false;
+  waitsDialogOpen = false;
   state = gameApi.dispatchAction(state, { type: "START_MATCH" });
   render();
   scheduleCpuIfNeeded();
@@ -107,6 +114,7 @@ function startNextRound() {
   matchResultDialogOpen = false;
   beginnerHelpDialogOpen = false;
   yakuGuideDialogOpen = false;
+  waitsDialogOpen = false;
   state = gameApi.dispatchAction(state, { type: "START_NEXT_ROUND" });
   render();
   scheduleCpuIfNeeded();
@@ -131,6 +139,7 @@ function toggleDiscardAdvice() {
   matchResultDialogOpen = false;
   beginnerHelpDialogOpen = false;
   yakuGuideDialogOpen = false;
+  waitsDialogOpen = false;
   render();
 }
 
@@ -140,6 +149,7 @@ function openDiscardAdvice() {
   matchResultDialogOpen = false;
   beginnerHelpDialogOpen = false;
   yakuGuideDialogOpen = false;
+  waitsDialogOpen = false;
   render();
 }
 
@@ -154,6 +164,7 @@ function openDiscardZoom(playerId) {
   matchResultDialogOpen = false;
   beginnerHelpDialogOpen = false;
   yakuGuideDialogOpen = false;
+  waitsDialogOpen = false;
   render();
 }
 
@@ -168,6 +179,7 @@ function openMatchResult() {
   matchResultDialogOpen = true;
   beginnerHelpDialogOpen = false;
   yakuGuideDialogOpen = false;
+  waitsDialogOpen = false;
   render();
 }
 
@@ -182,6 +194,7 @@ function openBeginnerHelp() {
   matchResultDialogOpen = false;
   beginnerHelpDialogOpen = true;
   yakuGuideDialogOpen = false;
+  waitsDialogOpen = false;
   render();
 }
 
@@ -196,11 +209,27 @@ function openYakuGuide() {
   matchResultDialogOpen = false;
   beginnerHelpDialogOpen = false;
   yakuGuideDialogOpen = true;
+  waitsDialogOpen = false;
   render();
 }
 
 function closeYakuGuide() {
   yakuGuideDialogOpen = false;
+  render();
+}
+
+function openWaits() {
+  discardAdviceDialogOpen = false;
+  discardZoomPlayerId = null;
+  matchResultDialogOpen = false;
+  beginnerHelpDialogOpen = false;
+  yakuGuideDialogOpen = false;
+  waitsDialogOpen = true;
+  render();
+}
+
+function closeWaits() {
+  waitsDialogOpen = false;
   render();
 }
 
@@ -221,6 +250,7 @@ function discardHumanTile(tileId) {
   matchResultDialogOpen = false;
   beginnerHelpDialogOpen = false;
   yakuGuideDialogOpen = false;
+  waitsDialogOpen = false;
   handleAfterDiscard();
 }
 
@@ -399,6 +429,13 @@ function createFallbackGameApi() {
     },
     suggestYakuTargets() {
       return [];
+    },
+    analyzeWaits() {
+      return {
+        isTenpai: false,
+        waits: [],
+        message: ""
+      };
     },
     loadDiscardAdviceSettings() {
       return {

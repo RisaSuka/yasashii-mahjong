@@ -5,11 +5,11 @@ Use this before merging to `main` or publishing with GitHub Pages.
 ## Current Release Candidate
 
 - Branch: `codex/mvp-16-hand-yaku-guide`
-- Scope: MVP-0.1 through MVP-1.6 hand yaku guide
-- Expected automated result: `244 pass / 0 pending / 0 fail`
+- Scope: MVP-0.1 through MVP-1.7 tenpai waits helper
+- Expected automated result: `255 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-1.6 is not published yet.
+- Publish status: MVP-1.7 is not published yet.
 
 ## Git Safety
 
@@ -31,8 +31,8 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 244.
-- Confirm pass count is 244.
+- Confirm total count is 255.
+- Confirm pass count is 255.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
@@ -44,7 +44,7 @@ node tests/layout-check.mjs
 
 - If Node is not on PATH in the Codex desktop environment, use the bundled Node command documented in `docs/layout-test.md`.
 - Confirm layout-check screenshots are written under `test-artifacts/layout/`.
-- Current layout-check result: all target viewports and scenarios pass, including `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, and `yaku-guide`.
+- Current layout-check result: all target viewports and scenarios pass, including `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `yaku-guide`, and `waits`.
 
 ## Core Functional Checks
 
@@ -133,6 +133,13 @@ node tests/layout-check.mjs
 - The yaku-guide popup closes with the close button, backdrop click, or Escape.
 - Yaku guide, beginner help, advice, discard zoom, and match result popups do not stay open at the same time.
 - Smartphone landscape layout guard includes the yaku-guide popup.
+- `analyzeWaits` detects waits for 13-tile human hands by trying all 34 tile kinds.
+- Tenpai waits show CSS wait tiles and whether the wait has yaku.
+- Shape-complete no-yaku waits show a gentle no-yaku explanation.
+- Non-tenpai hands show a gentle not-yet-tenpai message.
+- The waits popup closes with the close button, backdrop click, or Escape.
+- Waits, yaku guide, beginner help, advice, discard zoom, and match result popups do not stay open at the same time.
+- Smartphone landscape layout guard includes the waits popup.
 
 ## Manual Browser Checks
 
@@ -173,6 +180,8 @@ Check:
 - The match result popup opens and closes in landscape.
 - The yaku-guide popup opens and closes in landscape.
 - The yaku-guide completion examples are visible and do not overflow the viewport.
+- The waits popup opens and closes in landscape.
+- Wait tiles and close controls stay within the viewport.
 
 ## GitHub Pages Checks
 
@@ -182,7 +191,7 @@ Check:
 - Confirm `tests/test-runner.html` works from a static server.
 - Confirm there are no external dependencies that GitHub Pages must install.
 - Confirm README describes the current MVP scope and known missing features.
-- Confirm `docs/current-status.md` reflects MVP-1.6 and 244 pass.
+- Confirm `docs/current-status.md` reflects MVP-1.7 and 255 pass.
 - Confirm `docs/manual-test-checklist.md` includes smartphone landscape checks.
 - Confirm `docs/manual-test-checklist.md` includes next-round checks.
 - Confirm `docs/layout-test.md` reflects the current layout guard result.

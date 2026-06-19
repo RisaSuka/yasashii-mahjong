@@ -1,15 +1,15 @@
 # Current Status
 
-Last updated for MVP-1.6 hand yaku guide.
+Last updated for MVP-1.7 tenpai waits helper.
 
 ## Repository State
 
 - Working branch: `codex/mvp-16-hand-yaku-guide`
-- Automated tests: `244 pass / 0 pending / 0 fail`
-- Layout check: Chrome-based smartphone landscape guard passes all target viewports/scenarios, including discard zoom, result popup, and yaku-guide popup scenarios
-- Working tree: clean at the time of the latest MVP-1.6 verification
+- Automated tests: `255 pass / 0 pending / 0 fail`
+- Layout check: Chrome-based smartphone landscape guard passes all target viewports/scenarios, including discard zoom, result popup, yaku-guide popup, and waits popup scenarios
+- Working tree: clean at the time of the latest MVP-1.7 verification
 - Push: not yet
-- `main` merge: not yet for MVP-1.6
+- `main` merge: not yet for MVP-1.7
 
 ## Implemented MVPs
 
@@ -41,6 +41,7 @@ Last updated for MVP-1.6 hand yaku guide.
 | MVP-1.5 | Working branch | CPU discards use the shared evaluator and choose from low-score candidates with light randomness. |
 | MVP-1.5.1 | Working branch | Ron verification scenarios and UI checks clarify that normal ron is rare but the ron path works. |
 | MVP-1.6 | Working branch | Beginner yaku guide suggests likely hand targets with gentle explanations and CSS-tile completion examples. |
+| MVP-1.7 | Working branch | Tenpai/wait helper shows which tile would complete a 13-tile human hand and whether that wait has yaku. |
 
 ## Current Capabilities
 
@@ -188,6 +189,17 @@ Last updated for MVP-1.6 hand yaku guide.
 - Completion examples use the existing CSS tile structure rather than image assets.
 - The yaku-guide popup does not stay open at the same time as advice, discard zoom, match result, or beginner help popups.
 - The discard evaluator is not coupled to yaku-guide scoring yet; this keeps MVP-1.6 focused on explanation and avoids destabilizing CPU/advice behavior.
+
+## MVP-1.7 Tenpai Waits Helper
+
+- `analyzeWaits(hand, context)` is a UI-independent pure helper for 13-tile human hands.
+- It tries all 34 tile kinds, skips impossible fifth copies, and reuses the existing winning-shape and yaku detection.
+- The result includes `isTenpai`, `waits`, `tileLabel`, `hasYaku`, `yaku`, and beginner-readable messages.
+- Yaku is checked in a ron-like context so the helper can explain shape-complete but no-yaku waits.
+- The UI adds a compact `待ち` / `待ちあり` button near the human seat.
+- The waits popup shows CSS tile wait examples, yaku-valid waits, no-yaku waits, or a gentle non-tenpai message.
+- The waits popup does not stay open at the same time as advice, discard zoom, result, beginner help, or yaku-guide popups.
+- Full shanten calculation, furiten, danger reading, and CPU wait display remain out of scope.
 
 ## MVP-1.5 CPU Discard Evaluator Connection
 

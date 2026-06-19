@@ -147,6 +147,7 @@
       import { registerTileTests } from "./tiles.test.js";
       import { registerTsumoTests } from "./tsumo.test.js";
       import { registerWallTests } from "./wall.test.js";
+      import { registerWaitAnalysisTests } from "./wait-analysis.test.js";
       import { registerWinCheckTests } from "./win-check.test.js";
       import { registerYakuDisplayTests } from "./yaku-display.test.js";
       import { registerYakuGuideTests } from "./yaku-guide.test.js";
@@ -155,7 +156,7 @@
       import { registerYakuTests } from "./yaku.test.js";
       import { runTests, tests } from "./test.js";
 
-      globalThis.__TEST_CACHE_BUST__ = "mvp16-yaku-guide-1";
+      globalThis.__TEST_CACHE_BUST__ = "mvp17-tenpai-waits-1";
 
       const totalCount = document.querySelector("#total-count");
       const passCount = document.querySelector("#pass-count");
@@ -178,6 +179,7 @@
       registerRonTests();
       registerScenarioTests();
       registerStorageTests();
+      registerWaitAnalysisTests();
       registerWinCheckTests();
       registerTsumoTests();
       registerYakuTests();
