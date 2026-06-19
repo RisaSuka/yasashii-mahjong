@@ -828,7 +828,8 @@
   .table-action-bar .skip-ron-button,
   .table-action-bar .tsumo-button,
   .table-action-bar .next-round-button,
-  .table-action-bar .restart-match-button {
+  .table-action-bar .restart-match-button,
+  .table-action-bar .all-hands-button {
     min-width: 58px;
     min-height: 28px;
     padding: 0 8px;
@@ -837,14 +838,32 @@
   }
 
   .match-ended-summary {
-    gap: 1px;
-    padding: 4px 6px;
+    grid-template-columns: repeat(3, minmax(0, auto));
+    align-items: center;
+    gap: 2px 4px;
+    padding: 3px 5px;
     font-size: 10px;
     background: rgba(255, 255, 255, 0.94);
   }
 
+  .match-ended-summary strong {
+    grid-column: 1 / -1;
+    line-height: 1.05;
+  }
+
+  .match-ended-summary span {
+    display: none;
+  }
+
+  .match-ended-summary .match-result-button,
+  .match-ended-summary .all-hands-button,
   .match-ended-summary .restart-match-button {
     margin-top: 1px;
+    min-width: 54px;
+    min-height: 26px;
+    padding: 0 6px;
+    font-size: 10px;
+    line-height: 1.05;
   }
 
   .yaku-summary {
@@ -1292,7 +1311,8 @@
   .table-action-bar .skip-ron-button,
   .table-action-bar .tsumo-button,
   .table-action-bar .next-round-button,
-  .table-action-bar .restart-match-button {
+  .table-action-bar .restart-match-button,
+  .table-action-bar .all-hands-button {
     min-width: 52px;
     min-height: 26px;
     padding: 0 6px;

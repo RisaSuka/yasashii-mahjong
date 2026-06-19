@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp191-all-hands-popup-1";
-import { renderGame } from "./ui/render.js?v=mvp191-all-hands-popup-1";
+import { bindControls } from "./ui/input.js?v=mvp191-all-hands-sorted-1";
+import { renderGame } from "./ui/render.js?v=mvp191-all-hands-sorted-1";
 
-const APP_ASSET_VERSION = "mvp191-all-hands-popup-1";
+const APP_ASSET_VERSION = "mvp191-all-hands-sorted-1";
 
 const appRoot = document.querySelector("#app");
 

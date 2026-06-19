@@ -872,6 +872,21 @@ export function registerMatchUiTests() {
     assertTrue(openHtml.includes('data-action="close-all-hands"'), "All-hands popup should include a close action");
   });
 
+  test("MVP-1.9.1 UI: all-hands popup sorts CPU hands for display without mutating state", async () => {
+    const state = await matchEndedHistoryState();
+    const south = state.round.players[1];
+    south.hand = tilesForUi("z7 p9 m1 s4 z1 p1 m9 s1 z5 m3 p2 s9 z3");
+    const originalOrder = south.hand.map((tile) => tile.id).join(",");
+    const html = await renderState(state, { allHandsDialogOpen: true });
+    const southSection = getTaggedSection(html, 'data-player-id="1"');
+    const displayedLabels = getTileSymbols(southSection).slice(0, south.hand.length);
+
+    assertTrue(southSection.includes("all-hands-item"), "South CPU all-hands section should render");
+    assertEqual(displayedLabels.slice(0, 6).join(" "), "1 3 9 1 2 9", "CPU display hand should start in sorted suit/rank order");
+    assertEqual(displayedLabels.slice(-4).join(" "), "東 西 白 中", "CPU display hand should place honors after suited tiles");
+    assertEqual(south.hand.map((tile) => tile.id).join(","), originalOrder, "Rendering all-hands must not mutate the CPU hand array");
+  });
+
   test("MVP-1.9.1 UI: all-hands popup suppresses other popups", async () => {
     const html = await renderState(await matchEndedHistoryState(), {
       suggestDiscards: sampleAdvice,
@@ -1263,6 +1278,26 @@ function tilesForUi(pattern) {
     copy: index % 4,
     red: false
   }));
+}
+
+function getTaggedSection(html, marker) {
+  const markerIndex = html.indexOf(marker);
+  if (markerIndex < 0) {
+    return "";
+  }
+
+  const sectionStart = html.lastIndexOf("<section", markerIndex);
+  const sectionEnd = html.indexOf("</section>", markerIndex);
+
+  if (sectionStart < 0 || sectionEnd < 0) {
+    return "";
+  }
+
+  return html.slice(sectionStart, sectionEnd + "</section>".length);
+}
+
+function getTileSymbols(html) {
+  return Array.from(html.matchAll(/class="tile-symbol">([^<]+)<\/span>/g)).map((match) => match[1]);
 }
 
 function createMainStartupHarness() {

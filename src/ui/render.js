@@ -6,6 +6,7 @@ import {
   getYakuDisplayName,
   sortYakuForDisplay
 } from "./yaku-display.js";
+import { sortTiles } from "../game/tiles.js";
 
 const WIND_LABELS = {
   east: "東",
@@ -704,6 +705,7 @@ function renderAllHandsDialog(state, isOpen) {
 function renderAllHandsPlayer(player, winnerId, winningTile, yakuResult) {
   const isWinner = player.id === winnerId;
   const label = `${WIND_LABELS[player.wind]} ${player.name}`;
+  const sortedHand = sortTiles(player.hand || []);
   const yakuText = isWinner && yakuResult.length
     ? sortYakuForDisplay(yakuResult).map((entry) => getYakuDisplayName(entry)).join("、")
     : "";
@@ -715,7 +717,7 @@ function renderAllHandsPlayer(player, winnerId, winningTile, yakuResult) {
         ${isWinner ? `<span class="all-hands-winner-badge">上がり</span>` : ""}
       </div>
       <div class="all-hands-tiles">
-        ${player.hand.map((tile) => renderTile(tile, "all-hands-tile")).join("")}
+        ${sortedHand.map((tile) => renderTile(tile, "all-hands-tile")).join("")}
         ${isWinner && winningTile ? `
           <span class="all-hands-winning-tile">
             <span>上がり牌</span>
