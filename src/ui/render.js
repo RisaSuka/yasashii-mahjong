@@ -75,10 +75,11 @@ function renderTableLegacy(state, options) {
     round.players[0]
   ];
   const discardAdvice = getDiscardAdvice(state, options);
+  const yakuGuide = getYakuGuide(state, options);
 
   return `
     <main class="table" aria-label="4人麻雀卓">
-      ${seats.map((player) => renderSeat(player, round, discardAdvice)).join("")}
+      ${seats.map((player) => renderSeat(player, round, discardAdvice, yakuGuide)).join("")}
       <section class="center-panel">
         <div class="table-discard-ring">
           ${renderTableDiscardZone(round.players[3], "north", round)}
@@ -92,10 +93,11 @@ function renderTableLegacy(state, options) {
               <div class="center-secondary">
             ${renderPreviousRoundResult(state.lastRoundResult, round)}
             ${renderLastActionResult(round)}
-            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen && options.discardZoomPlayerId == null && !options.matchResultDialogOpen && !options.beginnerHelpDialogOpen)}
-            ${renderDiscardZoomDialog(round, options.matchResultDialogOpen || options.beginnerHelpDialogOpen ? null : options.discardZoomPlayerId)}
-            ${renderMatchResultDialog(state, options.matchResultDialogOpen && !options.beginnerHelpDialogOpen)}
-            ${renderBeginnerHelpDialog(options.beginnerHelpDialogOpen)}
+            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen && options.discardZoomPlayerId == null && !options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen)}
+            ${renderDiscardZoomDialog(round, options.matchResultDialogOpen || options.beginnerHelpDialogOpen || options.yakuGuideDialogOpen ? null : options.discardZoomPlayerId)}
+            ${renderMatchResultDialog(state, options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen)}
+            ${renderBeginnerHelpDialog(options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen)}
+            ${renderYakuGuideDialog(yakuGuide, options.yakuGuideDialogOpen)}
             ${renderYakuSummary(round)}
             <div class="table-meta-row">
               <span class="table-meta">山 ${round.wall.length}</span>
@@ -121,10 +123,11 @@ function renderTable(state, options) {
     round.players[0]
   ];
   const discardAdvice = getDiscardAdvice(state, options);
+  const yakuGuide = getYakuGuide(state, options);
 
   return `
     <main class="table" aria-label="4人麻雀卓">
-      ${seats.map((player) => renderSeat(player, round, discardAdvice)).join("")}
+      ${seats.map((player) => renderSeat(player, round, discardAdvice, yakuGuide)).join("")}
       <section class="center-panel">
         <div class="table-discard-ring">
           ${renderTableDiscardZone(round.players[3], "north", round)}
@@ -146,10 +149,11 @@ function renderTable(state, options) {
             </div>
             ${renderPreviousRoundResult(state.lastRoundResult, round)}
             ${renderLastActionResult(round)}
-            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen && options.discardZoomPlayerId == null && !options.matchResultDialogOpen && !options.beginnerHelpDialogOpen)}
-            ${renderDiscardZoomDialog(round, options.matchResultDialogOpen || options.beginnerHelpDialogOpen ? null : options.discardZoomPlayerId)}
-            ${renderMatchResultDialog(state, options.matchResultDialogOpen && !options.beginnerHelpDialogOpen)}
-            ${renderBeginnerHelpDialog(options.beginnerHelpDialogOpen)}
+            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen && options.discardZoomPlayerId == null && !options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen)}
+            ${renderDiscardZoomDialog(round, options.matchResultDialogOpen || options.beginnerHelpDialogOpen || options.yakuGuideDialogOpen ? null : options.discardZoomPlayerId)}
+            ${renderMatchResultDialog(state, options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen)}
+            ${renderBeginnerHelpDialog(options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen)}
+            ${renderYakuGuideDialog(yakuGuide, options.yakuGuideDialogOpen)}
             ${renderYakuSummary(round)}
           </div>
           ${renderTableDiscardZone(round.players[1], "south", round)}
@@ -275,6 +279,27 @@ function getDiscardAdvice(state, options) {
   });
 }
 
+function getYakuGuide(state, options) {
+  const round = state.round;
+
+  if (!round || typeof options.suggestYakuTargets !== "function") {
+    return [];
+  }
+
+  const human = round.players.find((player) => player.type === "human");
+
+  if (!human) {
+    return [];
+  }
+
+  return options.suggestYakuTargets(human.hand, {
+    round,
+    player: human,
+    match: state.match,
+    maxTargets: 3
+  });
+}
+
 function renderDiscardAdviceButton(advice) {
   if (!Array.isArray(advice) || advice.length === 0) {
     return "";
@@ -313,6 +338,72 @@ function renderDiscardAdviceDialog(advice, isOpen) {
       </ol>
       </div>
     </section>
+  `;
+}
+
+function renderYakuGuideButton(targets) {
+  if (!Array.isArray(targets) || targets.length === 0) {
+    return `<span class="seat-yaku-guide-placeholder" aria-hidden="true">\u5f79\u30ac\u30a4\u30c9</span>`;
+  }
+
+  return `
+    <button type="button" class="yaku-guide-trigger" data-action="open-yaku-guide">
+      \u5f79\u30ac\u30a4\u30c9
+    </button>
+  `;
+}
+
+function renderYakuGuideDialog(targets, isOpen) {
+  if (!isOpen || !Array.isArray(targets) || targets.length === 0) {
+    return "";
+  }
+
+  return `
+    <section class="yaku-guide-backdrop" data-action="close-yaku-guide" aria-label="\u5f79\u30ac\u30a4\u30c9\u3092\u9589\u3058\u308b">
+      <div class="yaku-guide-modal" role="dialog" aria-modal="false" aria-label="\u4eca\u306e\u624b\u3067\u72d9\u3044\u3084\u3059\u3044\u5f79">
+        <div class="yaku-guide-header">
+          <div>
+            <strong>\u4eca\u306e\u624b\u3067\u72d9\u3044\u3084\u3059\u3044\u5f79</strong>
+            <span>\u7d76\u5bfe\u6b63\u89e3\u3067\u306f\u306a\u304f\u3001\u8ff7\u3063\u305f\u6642\u306e\u76ee\u5b89\u3067\u3059\u3002</span>
+          </div>
+          <button type="button" class="yaku-guide-close" data-action="close-yaku-guide">\u9589\u3058\u308b</button>
+        </div>
+        <ol class="yaku-guide-list">
+          ${targets.map((target) => `
+            <li class="yaku-guide-item yaku-guide-${escapeHtml(target.id)}">
+              <div class="yaku-guide-item-header">
+                <strong>${escapeHtml(target.name)}${target.reading ? `\uff08${escapeHtml(target.reading)}\uff09` : ""}</strong>
+              </div>
+              <p>${escapeHtml(target.description || "")}</p>
+              <p>${escapeHtml(target.why || "")}</p>
+              <div class="yaku-guide-example">
+                <span>\u5b8c\u6210\u30a4\u30e1\u30fc\u30b8\uff08\u4f8b\uff09</span>
+                <div class="yaku-guide-example-tiles">
+                  ${(target.exampleTiles || []).map((tile) => renderTile(tile, "yaku-guide-tile")).join("")}
+                </div>
+              </div>
+              ${renderYakuGuideHints(target)}
+            </li>
+          `).join("")}
+        </ol>
+      </div>
+    </section>
+  `;
+}
+
+function renderYakuGuideHints(target) {
+  const keepHints = Array.isArray(target.keepHints) ? target.keepHints : [];
+  const discardHints = Array.isArray(target.discardHints) ? target.discardHints : [];
+
+  if (!keepHints.length && !discardHints.length) {
+    return "";
+  }
+
+  return `
+    <div class="yaku-guide-hints">
+      ${keepHints.length ? `<span>\u6b8b\u3057\u305f\u3044: ${escapeHtml(keepHints.join("\u3001"))}</span>` : ""}
+      ${discardHints.length ? `<span>\u5207\u308a\u3084\u3059\u3044: ${escapeHtml(discardHints.join("\u3001"))}</span>` : ""}
+    </div>
   `;
 }
 
@@ -491,7 +582,7 @@ function renderWinTermHelp(winType) {
   return `<div class="term-help">${lines.map((line) => `<span>${escapeHtml(line)}</span>`).join("")}</div>`;
 }
 
-function renderSeat(player, round, discardAdvice) {
+function renderSeat(player, round, discardAdvice, yakuGuide) {
   const isCurrent = round.currentPlayerIndex === player.id;
   const positionClass = `seat-${player.wind}`;
   const currentClass = isCurrent ? " current" : "";
@@ -503,6 +594,7 @@ function renderSeat(player, round, discardAdvice) {
         <span class="seat-name">${WIND_LABELS[player.wind]} ${player.name}</span>
         <span class="seat-meta seat-header-actions">
           ${player.type === "human" ? renderSeatAdviceButton(discardAdvice) : ""}
+          ${player.type === "human" ? renderYakuGuideButton(yakuGuide) : ""}
           ${currentIndicator}
         </span>
       </div>

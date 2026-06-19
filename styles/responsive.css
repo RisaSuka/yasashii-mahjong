@@ -854,6 +854,14 @@
     line-height: 1;
   }
 
+  .yaku-guide-trigger,
+  .seat-yaku-guide-placeholder {
+    min-height: 22px;
+    padding: 0 8px;
+    font-size: 10px;
+    line-height: 1;
+  }
+
   .discard-advice-modal {
     width: min(86vw, 520px);
     max-height: min(78dvh, 250px);
@@ -984,6 +992,77 @@
     grid-template-columns: 1.5em minmax(3.8em, auto) 1fr;
     column-gap: 4px;
     padding: 2px 5px;
+  }
+
+  .yaku-guide-backdrop {
+    padding: max(6px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+  }
+
+  .yaku-guide-modal {
+    width: min(680px, calc(100vw - 16px));
+    max-width: calc(100vw - 16px);
+    max-height: min(84dvh, calc(100vh - 16px));
+    padding: 7px;
+  }
+
+  .yaku-guide-header {
+    margin: -2px -2px 4px;
+    padding: 2px;
+    gap: 8px;
+    font-size: 13px;
+  }
+
+  .yaku-guide-header span {
+    font-size: 10.5px;
+  }
+
+  .yaku-guide-close {
+    min-height: 27px;
+    padding: 0 9px;
+    font-size: 11px;
+  }
+
+  .yaku-guide-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 5px;
+  }
+
+  .yaku-guide-item {
+    gap: 4px;
+    padding: 5px;
+  }
+
+  .yaku-guide-item-header {
+    font-size: 11.5px;
+  }
+
+  .yaku-guide-item p {
+    font-size: 10.5px;
+    line-height: 1.25;
+  }
+
+  .yaku-guide-example > span,
+  .yaku-guide-hints {
+    font-size: 9.5px;
+    line-height: 1.2;
+  }
+
+  .yaku-guide-example-tiles {
+    gap: 2px;
+  }
+
+  .yaku-guide-tile {
+    width: clamp(18px, 3.4vw, 27px);
+    height: clamp(25px, 4.8vw, 38px);
+  }
+
+  .yaku-guide-tile .tile-symbol {
+    font-size: clamp(11px, 2vw, 16px);
+  }
+
+  .yaku-guide-tile .tile-suit-label,
+  .yaku-guide-tile .tile-visual-cue {
+    font-size: 5.5px;
   }
 
   .seat-east {

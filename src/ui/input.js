@@ -5,6 +5,7 @@ export function bindControls(root, handlers) {
       handlers.onCloseDiscardZoom?.();
       handlers.onCloseMatchResult?.();
       handlers.onCloseBeginnerHelp?.();
+      handlers.onCloseYakuGuide?.();
     }
   });
 
@@ -82,6 +83,19 @@ export function bindControls(root, handlers) {
         return;
       }
       handlers.onCloseBeginnerHelp?.();
+    });
+  }
+
+  root.querySelector("[data-action='open-yaku-guide']")?.addEventListener("click", () => {
+    handlers.onOpenYakuGuide?.();
+  });
+
+  for (const trigger of root.querySelectorAll("[data-action='close-yaku-guide']")) {
+    trigger.addEventListener("click", (event) => {
+      if (trigger.classList?.contains("yaku-guide-backdrop") && event.target !== trigger) {
+        return;
+      }
+      handlers.onCloseYakuGuide?.();
     });
   }
 

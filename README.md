@@ -1,3 +1,9 @@
+# MVP-1.6 hand yaku guide note
+
+MVP-1.6 adds a beginner hand-yaku guide. The app can look at the human hand and suggest 1 to 3 easy-to-understand yaku targets such as tanyao, yakuhai, chiitoitsu, and toitoi. The guide opens from a compact `役ガイド` button near the human seat, explains why the yaku may fit the current hand, and shows CSS-tile completion examples. It is a learning aid, not a promise of the best possible strategy.
+
+Current local checks target `244 pass / 0 pending / 0 fail`, plus the smartphone landscape layout guard including the yaku-guide popup scenario.
+
 # MVP-1.5 CPU discard evaluator note
 
 MVP-1.5 connects the shared discard evaluator v1 to CPU discards. CPU players now score their hand with `evaluateDiscardCandidates(hand, context)` and discard from the low-score candidates instead of using pure random discard. The CPU still keeps light randomness by choosing from the top evaluated candidates, so it is not a full optimal AI and should not feel perfectly deterministic.

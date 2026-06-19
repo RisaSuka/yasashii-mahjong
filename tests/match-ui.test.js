@@ -445,6 +445,90 @@ export function registerMatchUiTests() {
     assertEqual(closed, 2, "Close button and Escape should close beginner help");
   });
 
+  test("MVP-1.6 UI: yaku guide button and dialog render", async () => {
+    const closedHtml = await renderState(await startMatchState(), { suggestYakuTargets: sampleYakuGuide });
+    const openHtml = await renderState(await startMatchState(), {
+      suggestYakuTargets: sampleYakuGuide,
+      yakuGuideDialogOpen: true
+    });
+
+    assertTrue(closedHtml.includes('data-action="open-yaku-guide"'), "Yaku guide button should render in the human seat");
+    assertTrue(!closedHtml.includes("yaku-guide-modal"), "Yaku guide should stay closed by default");
+    assertTrue(openHtml.includes("yaku-guide-modal"), "Yaku guide modal should render when opened");
+    assertTrue(openHtml.includes('data-action="close-yaku-guide"'), "Yaku guide modal should include a close action");
+    assertTrue(openHtml.includes("yaku-guide-example-tiles"), "Yaku guide should show example tiles");
+    assertTrue(openHtml.includes("yaku-guide-tile"), "Yaku guide should render tile examples with CSS tile markup");
+  });
+
+  test("MVP-1.6 UI: yaku guide suppresses advice, zoom, result, and beginner help popups", async () => {
+    const state = await matchEndedHistoryState();
+    const html = await renderState(addDiscards(state, 4), {
+      suggestDiscards: sampleAdvice,
+      suggestYakuTargets: sampleYakuGuide,
+      discardAdviceDialogOpen: true,
+      discardZoomPlayerId: 0,
+      matchResultDialogOpen: true,
+      beginnerHelpDialogOpen: true,
+      yakuGuideDialogOpen: true
+    });
+
+    assertTrue(html.includes("yaku-guide-modal"), "Yaku guide should render");
+    assertTrue(!html.includes("discard-advice-modal"), "Advice modal should be suppressed by yaku guide");
+    assertTrue(!html.includes("discard-zoom-modal"), "Discard zoom modal should be suppressed by yaku guide");
+    assertTrue(!html.includes("match-result-modal"), "Match result modal should be suppressed by yaku guide");
+    assertTrue(!html.includes("beginner-help-modal"), "Beginner help modal should be suppressed by yaku guide");
+  });
+
+  test("MVP-1.6 UI: yaku guide controls dispatch open and close handlers", async () => {
+    const { bindControls } = await loadModule("../src/ui/input.js", ["bindControls"]);
+    let opened = 0;
+    let closed = 0;
+    let keydownListener = null;
+    const openButton = createFakeButton();
+    const closeButton = createFakeButton();
+    const root = {
+      addEventListener(type, listener) {
+        if (type === "keydown") {
+          keydownListener = listener;
+        }
+      },
+      querySelector(selector) {
+        if (selector === "[data-action='open-yaku-guide']") {
+          return openButton;
+        }
+
+        return null;
+      },
+      querySelectorAll(selector) {
+        if (selector === "[data-action='close-yaku-guide']") {
+          return [closeButton];
+        }
+
+        return [];
+      }
+    };
+
+    bindControls(root, {
+      onCloseDiscardAdvice() {},
+      onCloseDiscardZoom() {},
+      onCloseMatchResult() {},
+      onCloseBeginnerHelp() {},
+      onOpenYakuGuide() {
+        opened += 1;
+      },
+      onCloseYakuGuide() {
+        closed += 1;
+      }
+    });
+
+    openButton.listeners.click();
+    closeButton.listeners.click({ target: closeButton });
+    keydownListener({ key: "Escape" });
+
+    assertEqual(opened, 1, "Open yaku guide button should call its handler");
+    assertEqual(closed, 2, "Close button and Escape should close yaku guide");
+  });
+
   test("MVP-1.2 UI: discard zoom controls render for all four center discard zones", async () => {
     const html = await renderState(addDiscards(await startMatchState(), 6));
 
@@ -819,6 +903,33 @@ function sampleAdvice() {
   ];
 }
 
+function sampleYakuGuide() {
+  return [
+    {
+      id: "tanyao",
+      name: "\u65ad\u4e48\u4e5d",
+      reading: "\u30bf\u30f3\u30e4\u30aa",
+      priority: 80,
+      description: "1\u30fb9\u30fb\u5b57\u724c\u3092\u4f7f\u308f\u306a\u3044\u5f79\u3067\u3059\u3002",
+      why: "2\u301c8\u306e\u6570\u724c\u304c\u591a\u3044\u306e\u3067\u72d9\u3044\u3084\u3059\u305d\u3046\u3067\u3059\u3002",
+      keepHints: ["2\u301c8\u306e\u6570\u724c"],
+      discardHints: ["1\u30fb9\u30fb\u5b57\u724c"],
+      exampleTiles: tilesForUi("m2 m3 m4 p4 p5 p6 s3 s4 s5")
+    },
+    {
+      id: "yakuhai",
+      name: "\u5f79\u724c",
+      reading: "\u30e4\u30af\u30cf\u30a4",
+      priority: 70,
+      description: "\u767d\u30fb\u767c\u30fb\u4e2d\u30923\u679a\u305d\u308d\u3048\u308b\u5f79\u3067\u3059\u3002",
+      why: "\u767d\u304c2\u679a\u3042\u308b\u306e\u3067\u5019\u88dc\u3067\u3059\u3002",
+      keepHints: ["\u5f79\u724c"],
+      discardHints: ["\u5b64\u7acb\u724c"],
+      exampleTiles: tilesForUi("z5 z5 z5")
+    }
+  ];
+}
+
 function addDiscards(state, count) {
   return {
     ...state,
@@ -836,6 +947,16 @@ function addDiscards(state, count) {
       }))
     }
   };
+}
+
+function tilesForUi(pattern) {
+  return pattern.split(/\s+/).filter(Boolean).map((token, index) => ({
+    id: `guide-ui-${token}-${index}`,
+    suit: token[0],
+    rank: Number(token.slice(1)),
+    copy: index % 4,
+    red: false
+  }));
 }
 
 function createMainStartupHarness() {

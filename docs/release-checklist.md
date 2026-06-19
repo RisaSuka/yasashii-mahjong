@@ -4,16 +4,16 @@ Use this before merging to `main` or publishing with GitHub Pages.
 
 ## Current Release Candidate
 
-- Branch: `codex/mvp-15-cpu-discard-evaluator`
-- Scope: MVP-0.1 through MVP-1.5.1 ron verification scenarios
-- Expected automated result: `234 pass / 0 pending / 0 fail`
+- Branch: `codex/mvp-16-hand-yaku-guide`
+- Scope: MVP-0.1 through MVP-1.6 hand yaku guide
+- Expected automated result: `244 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-1.5.1 is not published yet.
+- Publish status: MVP-1.6 is not published yet.
 
 ## Git Safety
 
-- Confirm the current branch is `codex/mvp-15-cpu-discard-evaluator`.
+- Confirm the current branch is `codex/mvp-16-hand-yaku-guide`.
 - Confirm the working tree is clean.
 - Confirm the latest commit is the intended release candidate.
 - Confirm no unreviewed local commits are being skipped.
@@ -31,8 +31,8 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 234.
-- Confirm pass count is 234.
+- Confirm total count is 244.
+- Confirm pass count is 244.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
@@ -44,7 +44,7 @@ node tests/layout-check.mjs
 
 - If Node is not on PATH in the Codex desktop environment, use the bundled Node command documented in `docs/layout-test.md`.
 - Confirm layout-check screenshots are written under `test-artifacts/layout/`.
-- Current layout-check result: all target viewports and scenarios pass, including `late`, `draw-ended`, `discard-zoom`, `match-ended`, and `result-popup`.
+- Current layout-check result: all target viewports and scenarios pass, including `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, and `yaku-guide`.
 
 ## Core Functional Checks
 
@@ -126,6 +126,13 @@ node tests/layout-check.mjs
 - Yaku-valid ron scenarios show ron and skip actions.
 - No-yaku ron-shape shows a helpful no-yaku message and skip action instead of a winning ron button.
 - Smartphone landscape keeps ron/skip actions inside the table action bar.
+- `suggestYakuTargets` returns beginner yaku targets for tanyao, yakuhai, chiitoitsu, toitoi, or no-yaku caution.
+- `役ガイド` opens a popup with 1 to 3 current-hand yaku suggestions.
+- The yaku guide includes yaku name, reading, beginner description, why text, keep/discard hints, and CSS-tile completion examples.
+- The yaku guide states that suggestions are a guide, not an absolute correct answer.
+- The yaku-guide popup closes with the close button, backdrop click, or Escape.
+- Yaku guide, beginner help, advice, discard zoom, and match result popups do not stay open at the same time.
+- Smartphone landscape layout guard includes the yaku-guide popup.
 
 ## Manual Browser Checks
 
@@ -164,6 +171,8 @@ Check:
 - The discard-advice reason popup opens and closes in landscape.
 - The discard zoom popup opens and closes in landscape.
 - The match result popup opens and closes in landscape.
+- The yaku-guide popup opens and closes in landscape.
+- The yaku-guide completion examples are visible and do not overflow the viewport.
 
 ## GitHub Pages Checks
 
@@ -173,7 +182,7 @@ Check:
 - Confirm `tests/test-runner.html` works from a static server.
 - Confirm there are no external dependencies that GitHub Pages must install.
 - Confirm README describes the current MVP scope and known missing features.
-- Confirm `docs/current-status.md` reflects MVP-1.1.x and 199 pass.
+- Confirm `docs/current-status.md` reflects MVP-1.6 and 244 pass.
 - Confirm `docs/manual-test-checklist.md` includes smartphone landscape checks.
 - Confirm `docs/manual-test-checklist.md` includes next-round checks.
 - Confirm `docs/layout-test.md` reflects the current layout guard result.

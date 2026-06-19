@@ -773,6 +773,153 @@
   line-height: 1.45;
 }
 
+.yaku-guide-trigger,
+.seat-yaku-guide-placeholder {
+  min-height: 30px;
+  border: 1px solid #0f766e;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #0f3f36;
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.seat-yaku-guide-placeholder {
+  display: inline-flex;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.yaku-guide-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 34;
+  display: grid;
+  place-items: center;
+  padding: 12px;
+  background: rgba(15, 23, 42, 0.2);
+}
+
+.yaku-guide-modal {
+  box-sizing: border-box;
+  width: min(700px, calc(100vw - 24px));
+  max-width: calc(100vw - 24px);
+  max-height: min(86dvh, calc(100vh - 24px));
+  overflow: auto;
+  border: 2px solid #0f766e;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 18px 42px rgba(16, 42, 67, 0.3);
+  padding: 12px;
+}
+
+.yaku-guide-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin: -4px -4px 8px;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.97);
+  color: #102a43;
+}
+
+.yaku-guide-header strong,
+.yaku-guide-header span {
+  display: block;
+}
+
+.yaku-guide-header span {
+  margin-top: 2px;
+  color: #52606d;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.yaku-guide-close {
+  min-height: 36px;
+  border: 1px solid #0f766e;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #0f3f36;
+  padding: 0 14px;
+  font-weight: 800;
+}
+
+.yaku-guide-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.yaku-guide-item {
+  display: grid;
+  gap: 6px;
+  border: 1px solid rgba(15, 118, 110, 0.18);
+  border-radius: 8px;
+  background: rgba(240, 253, 250, 0.8);
+  padding: 8px;
+}
+
+.yaku-guide-item-header {
+  color: #0f3f36;
+  font-size: 15px;
+}
+
+.yaku-guide-item p {
+  margin: 0;
+  color: #243b53;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.yaku-guide-example {
+  display: grid;
+  gap: 4px;
+}
+
+.yaku-guide-example > span,
+.yaku-guide-hints {
+  color: #52606d;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.yaku-guide-example-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.yaku-guide-tile {
+  width: 30px;
+  height: 42px;
+}
+
+.yaku-guide-tile .tile-symbol {
+  font-size: 17px;
+}
+
+.yaku-guide-tile .tile-suit-label,
+.yaku-guide-tile .tile-visual-cue {
+  font-size: 7px;
+}
+
+.yaku-guide-hints {
+  display: grid;
+  gap: 2px;
+}
+
 .discard-area {
   display: grid;
   gap: 4px;

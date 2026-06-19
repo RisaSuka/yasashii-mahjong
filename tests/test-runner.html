@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ja">
   <head>
     <meta charset="utf-8">
@@ -103,23 +103,23 @@
   <body>
     <main>
       <h1>MVP-0.1 Test Runner</h1>
-      <p>陞溷､慚夂ｹ晢ｽｩ郢ｧ・､郢晄じﾎ帷ｹ晢ｽｪ邵ｺ・ｪ邵ｺ蜉ｱ繝ｻ郢晄じﾎ帷ｹｧ・ｦ郢ｧ・ｶ陞ｳ貅ｯ・｡蠕後Θ郢ｧ・ｹ郢晏現縲堤ｸｺ蜷ｶﾂ・ｨame core隴幢ｽｪ陞ｳ貅ｯ・｣繝ｻ繝ｻ鬯・・蟯ｼ邵ｺ・ｯ隴幢ｽｪ陞ｳ貅ｯ・｣繝ｻ竊堤ｸｺ蜉ｱ窶ｻ髯ｦ・ｨ驕会ｽｺ邵ｺ蜉ｱ竏ｪ邵ｺ蜷ｶﾂ繝ｻ/p>
+      <p>髯樊ｺｷ・､諷壼､ゑｽｹ譎｢・ｽ・ｩ驛｢・ｧ繝ｻ・､驛｢譎・§・主ｸｷ・ｹ譎｢・ｽ・ｪ驍ｵ・ｺ繝ｻ・ｪ驍ｵ・ｺ陷会ｽｱ郢晢ｽｻ驛｢譎・§・主ｸｷ・ｹ・ｧ繝ｻ・ｦ驛｢・ｧ繝ｻ・ｶ髯橸ｽｳ雋・ｽｯ繝ｻ・｡陟募ｾ湖倬Δ・ｧ繝ｻ・ｹ驛｢譎冗樟邵ｲ蝣､・ｸ・ｺ陷ｷ・ｶ・つ繝ｻ・ｨame core髫ｴ蟷｢・ｽ・ｪ髯橸ｽｳ雋・ｽｯ繝ｻ・｣郢晢ｽｻ郢晢ｽｻ鬯ｯ繝ｻ繝ｻ陝ｯ・ｼ驍ｵ・ｺ繝ｻ・ｯ髫ｴ蟷｢・ｽ・ｪ髯橸ｽｳ雋・ｽｯ繝ｻ・｣郢晢ｽｻ遶雁､・ｸ・ｺ陷会ｽｱ遯ｶ・ｻ鬮ｯ・ｦ繝ｻ・ｨ鬩穂ｼ夲ｽｽ・ｺ驍ｵ・ｺ陷会ｽｱ遶擾ｽｪ驍ｵ・ｺ陷ｷ・ｶ・つ郢晢ｽｻ/p>
 
-      <section class="summary" aria-label="郢昴・縺帷ｹ晁ご・ｵ蜈域｣｡郢ｧ・ｵ郢晄ｧｭﾎ懃ｹ晢ｽｼ">
+      <section class="summary" aria-label="驛｢譏ｴ繝ｻ邵ｺ蟶ｷ・ｹ譎√＃繝ｻ・ｵ陷亥沺・｣・｡驛｢・ｧ繝ｻ・ｵ驛｢譎・ｽｧ・ｭ・取㏍・ｹ譎｢・ｽ・ｼ">
         <div class="summary-item">
-          <span>陷ｷ驛・ｽｨ繝ｻ/span>
+          <span>髯ｷ・ｷ鬩帙・・ｽ・ｨ郢晢ｽｻ/span>
           <strong id="total-count">0</strong>
         </div>
         <div class="summary-item">
-          <span>隰御ｻ咏ｲ･</span>
+          <span>髫ｰ蠕｡・ｻ蜥擾ｽｲ・･</span>
           <strong id="pass-count">0</strong>
         </div>
         <div class="summary-item">
-          <span>陞滂ｽｱ隰ｨ繝ｻ/span>
+          <span>髯樊ｻゑｽｽ・ｱ髫ｰ・ｨ郢晢ｽｻ/span>
           <strong id="fail-count">0</strong>
         </div>
         <div class="summary-item">
-          <span>隴幢ｽｪ陞ｳ貅ｯ・｣繝ｻ/span>
+          <span>髫ｴ蟷｢・ｽ・ｪ髯橸ｽｳ雋・ｽｯ繝ｻ・｣郢晢ｽｻ/span>
           <strong id="pending-count">0</strong>
         </div>
       </section>
@@ -149,12 +149,13 @@
       import { registerWallTests } from "./wall.test.js";
       import { registerWinCheckTests } from "./win-check.test.js";
       import { registerYakuDisplayTests } from "./yaku-display.test.js";
+      import { registerYakuGuideTests } from "./yaku-guide.test.js";
       import { registerYakuIntegrationTests } from "./yaku-integration.test.js";
       import { registerYakuMessageTests } from "./yaku-message.test.js";
       import { registerYakuTests } from "./yaku.test.js";
       import { runTests, tests } from "./test.js";
 
-      globalThis.__TEST_CACHE_BUST__ = "mvp151-ron-check-1";
+      globalThis.__TEST_CACHE_BUST__ = "mvp16-yaku-guide-1";
 
       const totalCount = document.querySelector("#total-count");
       const passCount = document.querySelector("#pass-count");
@@ -182,6 +183,7 @@
       registerYakuTests();
       registerYakuIntegrationTests();
       registerYakuDisplayTests();
+      registerYakuGuideTests();
       registerYakuMessageTests();
 
       function renderResults(results) {

@@ -25,7 +25,8 @@ const SCENARIOS = [
   { name: "actions", discards: 9, mode: "actions" },
   { name: "discard-zoom", discards: 18, mode: "discard-zoom" },
   { name: "match-ended", discards: 18, mode: "match-ended" },
-  { name: "result-popup", discards: 18, mode: "result-popup" }
+  { name: "result-popup", discards: 18, mode: "result-popup" },
+  { name: "yaku-guide", discards: 9, mode: "yaku-guide" }
 ];
 const TOLERANCE = 2;
 
@@ -204,7 +205,43 @@ function setupScenarioSource() {
       ],
       discardAdviceDialogOpen: mode === "actions",
       discardZoomPlayerId: mode === "discard-zoom" ? 0 : null,
-      matchResultDialogOpen: mode === "result-popup"
+      matchResultDialogOpen: mode === "result-popup",
+      yakuGuideDialogOpen: mode === "yaku-guide",
+      suggestYakuTargets: () => [
+        {
+          id: "tanyao",
+          name: "断么九",
+          reading: "タンヤオ",
+          priority: 80,
+          description: "1・9・字牌を使わない役です。",
+          why: "2〜8の数牌が多いので、狙いやすそうです。",
+          keepHints: ["2〜8の数牌"],
+          discardHints: ["1・9・字牌"],
+          exampleTiles: [
+            { id: "guide-m2", suit: "m", rank: 2, copy: 0, red: false },
+            { id: "guide-m3", suit: "m", rank: 3, copy: 0, red: false },
+            { id: "guide-m4", suit: "m", rank: 4, copy: 0, red: false },
+            { id: "guide-p4", suit: "p", rank: 4, copy: 0, red: false },
+            { id: "guide-p5", suit: "p", rank: 5, copy: 0, red: false },
+            { id: "guide-p6", suit: "p", rank: 6, copy: 0, red: false }
+          ]
+        },
+        {
+          id: "yakuhai",
+          name: "役牌",
+          reading: "ヤクハイ",
+          priority: 70,
+          description: "白・發・中などを3枚そろえる役です。",
+          why: "役牌候補がある時に分かりやすい役です。",
+          keepHints: ["役牌"],
+          discardHints: ["孤立牌"],
+          exampleTiles: [
+            { id: "guide-z5a", suit: "z", rank: 5, copy: 0, red: false },
+            { id: "guide-z5b", suit: "z", rank: 5, copy: 1, red: false },
+            { id: "guide-z5c", suit: "z", rank: 5, copy: 2, red: false }
+          ]
+        }
+      ]
     });
   }`;
 }
@@ -307,7 +344,8 @@ function inspectLayoutSource() {
     const modal = document.querySelector(".discard-advice-modal");
     const zoomModal = document.querySelector(".discard-zoom-modal");
     const resultModal = document.querySelector(".match-result-modal");
-    const activeModal = modal || zoomModal || resultModal;
+    const yakuGuideModal = document.querySelector(".yaku-guide-modal");
+    const activeModal = modal || zoomModal || resultModal || yakuGuideModal;
 
     const actionButtons = [...document.querySelectorAll(".table-action-bar button, .restart-match-button, .next-round-button")];
     if (!activeModal) {
@@ -392,6 +430,38 @@ function inspectLayoutSource() {
         const entryRect = entry.getBoundingClientRect();
         if (!isInsideRect(entryRect, rect, tolerance)) {
           failures.push("match result entry " + (index + 1) + " is clipped inside popup");
+        }
+      }
+    }
+
+    if (yakuGuideModal) {
+      const rect = yakuGuideModal.getBoundingClientRect();
+      if (!isInViewport(rect, viewport, tolerance)) {
+        failures.push("yaku guide popup is outside viewport");
+      }
+
+      const closeButton = yakuGuideModal.querySelector("[data-action='close-yaku-guide']");
+      if (!closeButton) {
+        failures.push("yaku guide close button is missing");
+      } else {
+        const closeRect = closeButton.getBoundingClientRect();
+        if (!isInViewport(closeRect, viewport, tolerance)) {
+          failures.push("yaku guide close button is outside viewport");
+        }
+        if (!isClickableAtCenter(closeButton, closeRect)) {
+          failures.push("yaku guide close button is not clickable at center");
+        }
+      }
+
+      const guideTiles = [...yakuGuideModal.querySelectorAll(".yaku-guide-tile")];
+      if (guideTiles.length === 0) {
+        failures.push("yaku guide popup has no example tiles");
+      }
+      for (const [index, tile] of guideTiles.entries()) {
+        const tileRect = tile.getBoundingClientRect();
+        if (!isInsideRect(tileRect, rect, tolerance)) {
+          failures.push("yaku guide example tile " + (index + 1) + " is clipped inside popup");
+          break;
         }
       }
     }

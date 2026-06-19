@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp151-ron-check-1";
-import { renderGame } from "./ui/render.js?v=mvp151-ron-check-1";
+﻿import { bindControls } from "./ui/input.js?v=mvp16-yaku-guide-1";
+import { renderGame } from "./ui/render.js?v=mvp16-yaku-guide-1";
 
-const APP_ASSET_VERSION = "mvp151-ron-check-1";
+const APP_ASSET_VERSION = "mvp16-yaku-guide-1";
 
 const appRoot = document.querySelector("#app");
 
@@ -12,6 +12,7 @@ let discardAdviceDialogOpen = false;
 let discardZoomPlayerId = null;
 let matchResultDialogOpen = false;
 let beginnerHelpDialogOpen = false;
+let yakuGuideDialogOpen = false;
 
 init();
 
@@ -25,11 +26,12 @@ async function init() {
 
 async function loadGameApi() {
   try {
-    const [actions, round, storage, advice] = await Promise.all([
+    const [actions, round, storage, advice, yakuGuide] = await Promise.all([
       import(`./game/actions.js?v=${APP_ASSET_VERSION}`),
       import(`./game/round.js?v=${APP_ASSET_VERSION}`),
       import(`./game/storage.js?v=${APP_ASSET_VERSION}`),
-      import(`./game/advice/discard-advice.js?v=${APP_ASSET_VERSION}`)
+      import(`./game/advice/discard-advice.js?v=${APP_ASSET_VERSION}`),
+      import(`./game/advice/yaku-guide.js?v=${APP_ASSET_VERSION}`)
     ]);
 
     return {
@@ -41,6 +43,7 @@ async function loadGameApi() {
       createInitialGameState: round.createInitialGameState,
       loadStats: storage.loadStats,
       suggestDiscards: advice.suggestDiscards,
+      suggestYakuTargets: yakuGuide.suggestYakuTargets,
       loadDiscardAdviceSettings: advice.loadDiscardAdviceSettings,
       saveDiscardAdviceSettings: advice.saveDiscardAdviceSettings
     };
@@ -55,10 +58,12 @@ function render() {
     canDeclareRon: gameApi.canDeclareRon,
     canCompleteRonLatestDiscard: gameApi.canCompleteRonLatestDiscard,
     suggestDiscards: gameApi.suggestDiscards,
+    suggestYakuTargets: gameApi.suggestYakuTargets,
     discardAdviceDialogOpen,
     discardZoomPlayerId,
     matchResultDialogOpen,
-    beginnerHelpDialogOpen
+    beginnerHelpDialogOpen,
+    yakuGuideDialogOpen
   });
   bindControls(appRoot, {
     onStartMatch: startMatch,
@@ -74,6 +79,8 @@ function render() {
     onCloseMatchResult: closeMatchResult,
     onOpenBeginnerHelp: openBeginnerHelp,
     onCloseBeginnerHelp: closeBeginnerHelp,
+    onOpenYakuGuide: openYakuGuide,
+    onCloseYakuGuide: closeYakuGuide,
     onDiscardTile: discardHumanTile,
     onDeclareTsumo: declareHumanTsumo,
     onDeclareRon: declareHumanRon,
@@ -87,6 +94,7 @@ function startMatch() {
   discardZoomPlayerId = null;
   matchResultDialogOpen = false;
   beginnerHelpDialogOpen = false;
+  yakuGuideDialogOpen = false;
   state = gameApi.dispatchAction(state, { type: "START_MATCH" });
   render();
   scheduleCpuIfNeeded();
@@ -98,6 +106,7 @@ function startNextRound() {
   discardZoomPlayerId = null;
   matchResultDialogOpen = false;
   beginnerHelpDialogOpen = false;
+  yakuGuideDialogOpen = false;
   state = gameApi.dispatchAction(state, { type: "START_NEXT_ROUND" });
   render();
   scheduleCpuIfNeeded();
@@ -121,6 +130,7 @@ function toggleDiscardAdvice() {
   discardZoomPlayerId = null;
   matchResultDialogOpen = false;
   beginnerHelpDialogOpen = false;
+  yakuGuideDialogOpen = false;
   render();
 }
 
@@ -129,6 +139,7 @@ function openDiscardAdvice() {
   discardZoomPlayerId = null;
   matchResultDialogOpen = false;
   beginnerHelpDialogOpen = false;
+  yakuGuideDialogOpen = false;
   render();
 }
 
@@ -142,6 +153,7 @@ function openDiscardZoom(playerId) {
   discardZoomPlayerId = Number(playerId);
   matchResultDialogOpen = false;
   beginnerHelpDialogOpen = false;
+  yakuGuideDialogOpen = false;
   render();
 }
 
@@ -155,6 +167,7 @@ function openMatchResult() {
   discardZoomPlayerId = null;
   matchResultDialogOpen = true;
   beginnerHelpDialogOpen = false;
+  yakuGuideDialogOpen = false;
   render();
 }
 
@@ -168,11 +181,26 @@ function openBeginnerHelp() {
   discardZoomPlayerId = null;
   matchResultDialogOpen = false;
   beginnerHelpDialogOpen = true;
+  yakuGuideDialogOpen = false;
   render();
 }
 
 function closeBeginnerHelp() {
   beginnerHelpDialogOpen = false;
+  render();
+}
+
+function openYakuGuide() {
+  discardAdviceDialogOpen = false;
+  discardZoomPlayerId = null;
+  matchResultDialogOpen = false;
+  beginnerHelpDialogOpen = false;
+  yakuGuideDialogOpen = true;
+  render();
+}
+
+function closeYakuGuide() {
+  yakuGuideDialogOpen = false;
   render();
 }
 
@@ -192,6 +220,7 @@ function discardHumanTile(tileId) {
   discardZoomPlayerId = null;
   matchResultDialogOpen = false;
   beginnerHelpDialogOpen = false;
+  yakuGuideDialogOpen = false;
   handleAfterDiscard();
 }
 
@@ -366,6 +395,9 @@ function createFallbackGameApi() {
       };
     },
     suggestDiscards() {
+      return [];
+    },
+    suggestYakuTargets() {
       return [];
     },
     loadDiscardAdviceSettings() {

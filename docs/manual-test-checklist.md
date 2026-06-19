@@ -21,8 +21,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 210.
-- Confirm pass count is 210.
+- Confirm total count is 244.
+- Confirm pass count is 244.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - For smartphone landscape layout work, also run the layout guard described in `docs/layout-test.md`.
@@ -154,6 +154,22 @@ Verify:
 - Confirm discard tiles remain compact but still readable.
 - Confirm horizontal scrolling does not squeeze or collapse tiles.
 - Confirm large tile mode does not break tile proportions.
+
+## 7A. Hand Yaku Guide Check
+
+- Start a match and confirm the `役ガイド` button is visible near the human seat.
+- Open `役ガイド`.
+- Confirm the popup title says `今の手で狙いやすい役`.
+- Confirm 1 to 3 yaku candidates are shown.
+- Confirm each candidate has a yaku name, reading, beginner description, and why text.
+- Confirm the popup says the guide is a rough aid, not an absolute correct answer.
+- Confirm each candidate shows a `完成イメージ（例）` with CSS tiles.
+- Confirm keep hints and discard hints are short and readable.
+- Confirm the close button closes the popup.
+- Confirm Escape closes the popup on desktop.
+- Confirm opening `役ガイド` closes advice, discard zoom, result, and beginner help popups instead of stacking them.
+- Confirm advice ON/OFF and suggested discard highlights still work after closing the guide.
+- Confirm smartphone landscape keeps the yaku-guide popup inside the viewport.
 
 ## 8. Exhaustive Draw Check
 

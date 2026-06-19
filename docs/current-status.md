@@ -1,15 +1,15 @@
 # Current Status
 
-Last updated for MVP-1.5.1 ron verification scenarios.
+Last updated for MVP-1.6 hand yaku guide.
 
 ## Repository State
 
-- Working branch: `codex/mvp-15-cpu-discard-evaluator`
-- Automated tests: `234 pass / 0 pending / 0 fail`
-- Layout check: Chrome-based smartphone landscape guard passed all target viewports/scenarios at MVP-1.1.6; MVP-1.2 adds a discard-zoom scenario that must be run before merge/publish
-- Working tree: clean at the time of the latest MVP-1.5.1 verification
+- Working branch: `codex/mvp-16-hand-yaku-guide`
+- Automated tests: `244 pass / 0 pending / 0 fail`
+- Layout check: Chrome-based smartphone landscape guard passes all target viewports/scenarios, including discard zoom, result popup, and yaku-guide popup scenarios
+- Working tree: clean at the time of the latest MVP-1.6 verification
 - Push: not yet
-- `main` merge: not yet for MVP-1.5
+- `main` merge: not yet for MVP-1.6
 
 ## Implemented MVPs
 
@@ -40,6 +40,7 @@ Last updated for MVP-1.5.1 ron verification scenarios.
 | MVP-1.4 | Working branch | Shared discard evaluator v1 scores every tile for beginner advice and future CPU use; beginner help popup added. |
 | MVP-1.5 | Working branch | CPU discards use the shared evaluator and choose from low-score candidates with light randomness. |
 | MVP-1.5.1 | Working branch | Ron verification scenarios and UI checks clarify that normal ron is rare but the ron path works. |
+| MVP-1.6 | Working branch | Beginner yaku guide suggests likely hand targets with gentle explanations and CSS-tile completion examples. |
 
 ## Current Capabilities
 
@@ -175,6 +176,18 @@ Last updated for MVP-1.5.1 ron verification scenarios.
 - Advice reasons remain short and beginner-friendly.
 - CPU discard behavior is connected to the evaluator in MVP-1.5.
 - A beginner help popup explains that advice is a guide, not an absolute answer, and introduces isolated tiles, terminals, honors, pairs, connected numbers, dora, tanyao, and yakuhai.
+
+## MVP-1.6 Hand Yaku Guide
+
+- `suggestYakuTargets(hand, context)` is a UI-independent pure guide for beginner yaku targets.
+- It returns 1 to 3 compact yaku suggestions with `name`, `reading`, `description`, `why`, `keepHints`, `discardHints`, and `exampleTiles`.
+- MVP-1.6 covers tanyao, yakuhai, chiitoitsu, toitoi, and a no-yaku caution fallback.
+- The guide favors tanyao when 2-8 suited tiles are common, yakuhai when dragon/seat/round wind pairs are present, chiitoitsu when many pairs exist, and toitoi when pairs/triplets are common.
+- The UI adds a small `役ガイド` button near the human seat.
+- The popup says the suggestions are a guide, not an absolute answer.
+- Completion examples use the existing CSS tile structure rather than image assets.
+- The yaku-guide popup does not stay open at the same time as advice, discard zoom, match result, or beginner help popups.
+- The discard evaluator is not coupled to yaku-guide scoring yet; this keeps MVP-1.6 focused on explanation and avoids destabilizing CPU/advice behavior.
 
 ## MVP-1.5 CPU Discard Evaluator Connection
 

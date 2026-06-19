@@ -82,6 +82,7 @@ The check renders these scenarios:
 - `discard-zoom`: the human discard zoom popup is open with 18 discards
 - `match-ended`: the East-only match end summary is visible
 - `result-popup`: the East-only match result popup is open
+- `yaku-guide`: the beginner hand-yaku guide popup is open
 
 ## Screenshots
 
@@ -112,6 +113,7 @@ As of MVP-1.1.6, the regular browser tests pass and the layout check passes acro
 - MVP-1.3 adds `match-ended` and `result-popup` scenarios. They check that the end summary, replay/result actions, result dialog, close button, and four history entries fit within the smartphone landscape viewport.
 - MVP-1.4 keeps the existing layout scenarios and adds a compact beginner help popup. If future help content grows, add a dedicated `beginner-help-open` scenario before merging the UI change.
 - MVP-1.5.1 keeps ron/reaction controls covered by the existing `actions` scenario, which renders the table action bar with ron/skip style controls in smartphone landscape.
+- MVP-1.6 adds the `yaku-guide` scenario. It checks that the guide dialog, close button, and CSS-tile completion examples fit within the smartphone landscape viewport.
 
 The earlier MVP-1.1.4 guard intentionally detected late-hand discard clipping at discard tile 13 and later. MVP-1.1.6 fixes that known failure by fitting the landscape discard grids for 18-tile late-hand states.
 
