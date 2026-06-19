@@ -1,15 +1,15 @@
 # Current Status
 
-Last updated for MVP-2.1 human riichi v1.
+Last updated for MVP-2.2 CPU riichi v1.
 
 ## Repository State
 
 - Working branch: `codex/mvp-21-human-riichi`
-- Automated tests: MVP-2.1 normal tests pass locally (`299 pass / 0 pending / 0 fail`)
-- Layout check: Chrome-based smartphone landscape guard passes all target viewports/scenarios, including discard zoom, result popup, yaku-guide popup, waits popup, discard-to-wait popup, CPU win, and all-hands popup scenarios
-- Working tree: clean at the time of the latest MVP-2.1 verification
+- Automated tests: MVP-2.2 normal tests pass locally (`307 pass / 0 pending / 0 fail`)
+- Layout check: Chrome-based smartphone landscape guard passes all target viewports/scenarios, including discard zoom, result popup, yaku-guide popup, waits popup, discard-to-wait popup, human riichi, CPU riichi, CPU win, and all-hands popup scenarios
+- Working tree: clean at the time of the latest MVP-2.2 verification
 - Push: not yet
-- `main` merge: not yet for MVP-1.9
+- `main` merge: not yet for MVP-2.2
 
 ## Implemented MVPs
 
@@ -50,6 +50,7 @@ Last updated for MVP-2.1 human riichi v1.
 | MVP-2.0 | Working branch | Handmade SVG tile set replaces the primary tile visuals while keeping CSS tile fallback markup. |
 | MVP-2.0.1 | Working branch | SVG tile artwork is redrawn for readability, especially wider spaced souzu bamboo marks and bolder manzu/honor labels. |
 | MVP-2.1 | Working branch | Human-only riichi v1: tenpai discard selection, riichi state, tsumogiri lock, and riichi yaku on human wins. |
+| MVP-2.2 | Working branch | CPU riichi v1: CPU players may declare riichi from tenpai discards, keep light randomness, use tsumogiri after riichi, and gain riichi yaku on CPU wins. |
 
 ## Current Capabilities
 
@@ -112,6 +113,12 @@ Last updated for MVP-2.1 human riichi v1.
   - After riichi, the human can discard only the latest drawn tile.
   - Human tsumo/ron after riichi includes the `riichi` yaku.
   - Riichi sticks, point movement, ippatsu, uradora, furiten, kan after riichi, and CPU riichi remain unsupported.
+- CPU riichi v1:
+  - CPU players can declare riichi when a discard leaves tenpai.
+  - CPU riichi choice favors yaku-valid waits and wider waits, with RNG so it is not fully fixed.
+  - After CPU riichi, the CPU discards only the latest drawn tile.
+  - CPU tsumo/ron after riichi includes the `riichi` yaku.
+  - Riichi sticks, point movement, ippatsu, uradora, furiten, kan after riichi, and CPU difficulty settings remain unsupported.
 - Next-round continuation:
   - `次の局へ` appears after exhaustive draw, tsumo, or ron.
   - The next round creates a fresh wall, dead wall, players, hands, and dealer initial draw.

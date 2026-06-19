@@ -1,6 +1,6 @@
-import { chooseCpuDiscard } from "./cpu/random-cpu.js";
+import { chooseCpuDiscard, chooseCpuRiichiDiscardOption } from "./cpu/random-cpu.js";
 import { analyzeDiscardWaits } from "./advice/wait-analysis.js";
-import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp21-human-riichi-1";
+import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp22-cpu-riichi-1";
 import { isWinningHand } from "./rules/win-check.js";
 import { detectYaku } from "./rules/yaku.js";
 import { drawFromWall } from "./wall.js";
@@ -94,13 +94,21 @@ export function canCpuDeclareTsumo(state, playerId) {
 }
 
 export function getRiichiDiscardOptions(state, playerId) {
+  return getRiichiDiscardOptionsForPlayer(state, playerId, { allowedType: "human" });
+}
+
+export function getCpuRiichiDiscardOptions(state, playerId) {
+  return getRiichiDiscardOptionsForPlayer(state, playerId, { allowedType: "cpu" });
+}
+
+function getRiichiDiscardOptionsForPlayer(state, playerId, options = {}) {
   if (!state.round || state.round.phase !== "discard" || state.round.currentPlayerIndex !== playerId) {
     return [];
   }
 
   const player = state.round.players.find((candidate) => candidate.id === playerId);
 
-  if (!player || player.type !== "human" || player.isRiichi || player.riichi) {
+  if (!player || (options.allowedType && player.type !== options.allowedType) || player.isRiichi || player.riichi) {
     return [];
   }
 
@@ -117,6 +125,10 @@ export function getRiichiDiscardOptions(state, playerId) {
 
 export function canDeclareRiichi(state, playerId) {
   return getRiichiDiscardOptions(state, playerId).length > 0;
+}
+
+export function canCpuDeclareRiichi(state, playerId) {
+  return getCpuRiichiDiscardOptions(state, playerId).length > 0;
 }
 
 export function startMatch(state, options = {}) {
@@ -614,14 +626,17 @@ function isRiichiPlayer(player) {
 }
 
 export function declareRiichi(state, playerId, tileId) {
-  if (!canDeclareRiichi(state, playerId)) {
-    return state;
-  }
+  return declareRiichiForPlayer(state, playerId, tileId, { allowedType: "human" });
+}
 
-  const options = getRiichiDiscardOptions(state, playerId);
-  const isRiichiTile = options.some((option) => option.discardTileId === tileId);
+function declareCpuRiichi(state, playerId, tileId) {
+  return declareRiichiForPlayer(state, playerId, tileId, { allowedType: "cpu" });
+}
 
-  if (!isRiichiTile) {
+function declareRiichiForPlayer(state, playerId, tileId, options = {}) {
+  const riichiOptions = getRiichiDiscardOptionsForPlayer(state, playerId, options);
+
+  if (riichiOptions.length === 0 || !riichiOptions.some((option) => option.discardTileId === tileId)) {
     return state;
   }
 
@@ -763,7 +778,19 @@ export function cpuDiscard(state, random = Math.random) {
     return state;
   }
 
-  const tile = chooseCpuDiscard(player, createDiscardEvaluationContext(state, player), random);
+  if (isRiichiPlayer(player)) {
+    const tsumogiriTile = state.round.lastDraw?.playerId === player.id ? state.round.lastDraw.tile : null;
+    return tsumogiriTile ? discardTile(state, player.id, tsumogiriTile.id) : state;
+  }
+
+  const context = createDiscardEvaluationContext(state, player);
+  const riichiOption = chooseCpuRiichiDiscardOption(player, getCpuRiichiDiscardOptions(state, player.id), context, random);
+
+  if (riichiOption?.discardTileId) {
+    return declareCpuRiichi(state, player.id, riichiOption.discardTileId);
+  }
+
+  const tile = chooseCpuDiscard(player, context, random);
   return tile ? discardTile(state, player.id, tile.id) : state;
 }
 

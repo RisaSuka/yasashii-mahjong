@@ -1,3 +1,11 @@
+# MVP-2.2 CPU riichi note
+
+MVP-2.2 lets CPU players declare riichi when their 14-tile hand can discard into tenpai. CPU riichi is not automatic every time: the CPU favors yaku-valid waits and multi-wait options, then uses RNG so the behavior is not completely fixed. After declaring riichi, CPU players also discard only the latest drawn tile. CPU tsumo/ron after riichi includes `riichi` in the yaku result.
+
+This does not add riichi sticks, point movement, ippatsu, uradora, furiten checks, kan after riichi, or CPU difficulty settings.
+
+Current local checks target MVP-2.2 normal tests plus the smartphone landscape layout guard and the CPU win reachability diagnostic.
+
 # MVP-2.1 human riichi note
 
 MVP-2.1 adds the first human-only riichi flow. When the human hand can discard into tenpai, the action bar shows `リーチ`; pressing it enters a discard-selection mode and highlights only tiles that leave tenpai. After declaring riichi, the player is locked to tsumogiri on future turns. If the riichi player later wins by tsumo or ron, the yaku result includes `立直`.

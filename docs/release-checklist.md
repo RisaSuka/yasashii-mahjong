@@ -5,11 +5,11 @@ Use this before merging to `main` or publishing with GitHub Pages.
 ## Current Release Candidate
 
 - Branch: `codex/mvp-21-human-riichi`
-- Scope: MVP-0.1 through MVP-2.1 human riichi v1
-- Expected automated result: `299 pass / 0 pending / 0 fail`
+- Scope: MVP-0.1 through MVP-2.2 CPU riichi v1
+- Expected automated result: `307 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-2.0 is not published yet.
+- Publish status: MVP-2.2 is not published yet.
 
 ## Git Safety
 
@@ -31,8 +31,8 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 299.
-- Confirm pass count is 299.
+- Confirm total count is 307.
+- Confirm pass count is 307.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
@@ -44,7 +44,7 @@ node tests/layout-check.mjs
 
 - If Node is not on PATH in the Codex desktop environment, use the bundled Node command documented in `docs/layout-test.md`.
 - Confirm layout-check screenshots are written under `test-artifacts/layout/`.
-- Current layout-check result: all target viewports and scenarios pass, including `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `yaku-guide`, `waits`, and `cpu-win`.
+- Current layout-check result: all target viewports and scenarios pass, including `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `yaku-guide`, `waits`, `riichi-ready`, `riichi-declared`, `cpu-riichi`, and `cpu-win`.
 - Run the CPU win reachability diagnostic:
 
 ```powershell
@@ -75,7 +75,11 @@ node scripts/simulate-cpu-win-reachability.mjs
 - Riichi declaration mode highlights only riichi-valid discard tiles.
 - After human riichi, only the latest drawn tile can be discarded.
 - Human tsumo/ron after riichi includes the `riichi` yaku.
-- Riichi sticks, point movement, ippatsu, uradora, furiten, kan after riichi, and CPU riichi remain out of scope.
+- CPU riichi is possible from tenpai-after-discard hands, uses RNG, and favors yaku-valid/multi-wait options.
+- After CPU riichi, CPU players discard only the latest drawn tile.
+- CPU tsumo/ron after riichi includes the `riichi` yaku.
+- CPU riichi shows a compact seat badge.
+- Riichi sticks, point movement, ippatsu, uradora, furiten, kan after riichi, and CPU difficulty settings remain out of scope.
 - Winning result still shows yaku names, han, total han, explanations, and furigana.
 - Yaku display order remains beginner-friendly.
 - CSS tile display keeps manzu, pinzu, souzu, and honor tiles visually distinct.

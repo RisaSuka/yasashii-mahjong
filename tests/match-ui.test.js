@@ -328,6 +328,14 @@ export function registerMatchUiTests() {
     assertEqual(canceled, 1, "Cancel riichi button should call the cancel handler");
   });
 
+  test("MVP-2.2 UI: CPU riichi shows a compact seat badge", async () => {
+    const state = await scenarioState("cpu-riichi-tsumo-ready");
+    const html = await renderState(state);
+
+    assertTrue(html.includes("seat-riichi-badge"), "CPU riichi should render the shared riichi seat badge");
+    assertTrue(html.includes("seat-south"), "CPU riichi badge should stay inside the CPU seat markup");
+  });
+
   test("RON UI: yaku-valid ron reaction shows ron and skip buttons", async () => {
     const state = await scenarioState("ron-ready-tanyao", { phase: "reaction" });
     const html = await renderState(state, {

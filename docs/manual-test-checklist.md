@@ -21,8 +21,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 299.
-- Confirm pass count is 299.
+- Confirm total count is 307.
+- Confirm pass count is 307.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - For smartphone landscape layout work, also run the layout guard described in `docs/layout-test.md`.
@@ -52,6 +52,16 @@ http://127.0.0.1:8765/tests/test-runner.html
 - Confirm riichi tsumo and riichi ron show `立直` in the yaku result.
 - Confirm riichi sticks, point movement, ippatsu, uradora, furiten, kan after riichi, and CPU riichi are not implemented yet.
 - Confirm smartphone landscape keeps the riichi button/status inside the action bar.
+
+## 1.3 MVP-2.2 CPU Riichi Check
+
+- Use `cpu-riichi-ready` in tests or a debug scenario and confirm a CPU can declare riichi when a discard leaves tenpai.
+- Confirm CPU riichi does not happen every time when RNG says to skip.
+- Confirm a CPU that has declared riichi shows a compact `リーチ` badge near its seat.
+- Confirm a CPU that has declared riichi discards only the latest drawn tile on later turns.
+- Confirm CPU riichi tsumo and CPU riichi ron include `立直` in the yaku result.
+- Confirm human riichi, human ron/tsumo, CPU win, waits, yaku guide, and all-hands popup still work.
+- Confirm riichi sticks, point movement, ippatsu, uradora, furiten, kan after riichi, and CPU difficulty settings are not implemented yet.
 
 ## 2. Normal Desktop Flow
 

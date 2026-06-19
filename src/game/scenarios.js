@@ -12,7 +12,11 @@ const SCENARIO_ALIASES = {
   "no-yaku-ron-shape": "ron-ready-basic",
   "human-riichi-tsumo-ready": "human-riichi-tsumo-ready",
   "human-riichi-ron-ready": "human-riichi-ron-ready",
-  "human-not-riichi-ready": "human-not-riichi-ready"
+  "human-not-riichi-ready": "human-not-riichi-ready",
+  "cpu-riichi-ready": "cpu-riichi-ready",
+  "cpu-riichi-tsumo-ready": "cpu-riichi-tsumo-ready",
+  "cpu-riichi-ron-ready": "cpu-riichi-ron-ready",
+  "cpu-not-riichi-ready": "cpu-not-riichi-ready"
 };
 
 const SCENARIOS = {
@@ -189,6 +193,54 @@ const SCENARIOS = {
     currentPlayerIndex: 0,
     hands: {
       0: "m1 m2 m4 m5 m7 m9 p1 p3 p6 s2 s5 s8 z1 z3"
+    },
+    discards: {}
+  },
+  "cpu-riichi-ready": {
+    name: "cpu-riichi-ready",
+    description: "CPU player 1 can declare riichi by discarding an extra honor tile.",
+    phase: "discard",
+    currentPlayerIndex: 1,
+    hands: {
+      1: "m1 m2 m3 m4 m5 m6 p1 p2 p3 s7 s8 s9 z1 z2"
+    },
+    discards: {}
+  },
+  "cpu-riichi-tsumo-ready": {
+    name: "cpu-riichi-tsumo-ready",
+    description: "CPU player 1 is already riichi with a complete tsumo shape.",
+    phase: "discard",
+    currentPlayerIndex: 1,
+    riichi: [1],
+    hands: {
+      1: "m1 m2 m3 m4 m5 m6 p1 p2 p3 s7 s8 s9 z1 z1"
+    },
+    discards: {}
+  },
+  "cpu-riichi-ron-ready": {
+    name: "cpu-riichi-ron-ready",
+    description: "CPU player 1 is already riichi and can ron on the latest human discard.",
+    phase: "draw",
+    currentPlayerIndex: 0,
+    riichi: [1],
+    hands: {
+      1: "m1 m2 m3 m4 m5 m6 p1 p2 p3 s7 s8 s9 z1"
+    },
+    discards: {
+      0: "z1"
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "z1"
+    }
+  },
+  "cpu-not-riichi-ready": {
+    name: "cpu-not-riichi-ready",
+    description: "CPU player 1 has a 14-tile hand that does not leave tenpai after any discard.",
+    phase: "discard",
+    currentPlayerIndex: 1,
+    hands: {
+      1: "m1 m2 m4 m5 m7 m9 p1 p3 p6 s2 s5 s8 z1 z3"
     },
     discards: {}
   }

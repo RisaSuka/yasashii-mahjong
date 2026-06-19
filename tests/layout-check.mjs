@@ -31,6 +31,7 @@ const SCENARIOS = [
   { name: "waits-after-discard", discards: 9, mode: "waits-after-discard" },
   { name: "riichi-ready", discards: 9, mode: "riichi-ready" },
   { name: "riichi-declared", discards: 9, mode: "riichi-declared" },
+  { name: "cpu-riichi", discards: 9, mode: "cpu-riichi" },
   { name: "cpu-win", discards: 12, mode: "cpu-win" },
   { name: "all-hands-open", discards: 18, mode: "all-hands-open" }
 ];
@@ -235,6 +236,22 @@ function setupScenarioSource() {
             tile: drawnTile
           },
           players: state.round.players.map((player) => player.id === 0
+            ? {
+              ...player,
+              isRiichi: true,
+              riichi: true
+            }
+            : player)
+        }
+      };
+    }
+
+    if (mode === "cpu-riichi") {
+      state = {
+        ...state,
+        round: {
+          ...state.round,
+          players: state.round.players.map((player) => player.id === 1
             ? {
               ...player,
               isRiichi: true,

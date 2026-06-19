@@ -85,14 +85,95 @@ export function registerRiichiTests() {
 
     assertEqual(hasYaku(nextState, "riichi"), false, "Non-riichi win should not include riichi");
   });
+
+  test("CPU RIICHI: tenpai-after-discard CPU hand can declare riichi", async () => {
+    const state = await scenarioState("cpu-riichi-ready");
+    const { canCpuDeclareRiichi, getCpuRiichiDiscardOptions } = await loadRiichiActions([
+      "canCpuDeclareRiichi",
+      "getCpuRiichiDiscardOptions"
+    ]);
+    const options = getCpuRiichiDiscardOptions(state, 1);
+
+    assertEqual(canCpuDeclareRiichi(state, 1), true, "CPU should be able to declare riichi from a tenpai discard");
+    assertTrue(options.length > 0, "CPU riichi discard options should be listed");
+    assertTrue(options.some((option) => option.discardTile.suit === "z" && option.discardTile.rank === 2), "Extra honor tile should be a CPU riichi discard option");
+  });
+
+  test("CPU RIICHI: non-tenpai CPU hand does not declare riichi", async () => {
+    const state = await scenarioState("cpu-not-riichi-ready");
+    const { canCpuDeclareRiichi, getCpuRiichiDiscardOptions, dispatchAction } = await loadRiichiActions([
+      "canCpuDeclareRiichi",
+      "getCpuRiichiDiscardOptions",
+      "dispatchAction"
+    ]);
+    const nextState = dispatchAction(state, { type: "CPU_DISCARD", random: () => 0 });
+
+    assertEqual(canCpuDeclareRiichi(state, 1), false, "CPU should not be riichi-ready from a non-tenpai-after-discard hand");
+    assertEqual(getCpuRiichiDiscardOptions(state, 1).length, 0, "CPU should have no riichi discard options");
+    assertEqual(nextState.round.players[1].isRiichi || false, false, "CPU normal discard should not mark riichi");
+  });
+
+  test("CPU RIICHI: rng can prevent CPU riichi", async () => {
+    const state = await scenarioState("cpu-riichi-ready");
+    const { dispatchAction } = await loadRiichiActions(["dispatchAction"]);
+    const nextState = dispatchAction(state, { type: "CPU_DISCARD", random: () => 0.99 });
+
+    assertEqual(nextState.round.players[1].isRiichi || false, false, "High rng should let CPU skip riichi");
+    assertEqual(nextState.round.players[1].hand.length, 13, "CPU should still discard normally when skipping riichi");
+  });
+
+  test("CPU RIICHI: CPU_DISCARD can declare riichi with deterministic rng", async () => {
+    const state = await scenarioState("cpu-riichi-ready");
+    const { dispatchAction, getCpuRiichiDiscardOptions } = await loadRiichiActions([
+      "dispatchAction",
+      "getCpuRiichiDiscardOptions"
+    ]);
+    const option = getCpuRiichiDiscardOptions(state, 1)[0];
+    const nextState = dispatchAction(state, { type: "CPU_DISCARD", random: () => 0 });
+    const cpu = nextState.round.players[1];
+
+    assertEqual(cpu.isRiichi, true, "CPU discard action should mark isRiichi when it declares");
+    assertEqual(cpu.riichi, true, "CPU discard action should keep legacy riichi flag true");
+    assertEqual(cpu.hand.length, 13, "CPU riichi declaration should discard one tile");
+    assertEqual(cpu.discards.at(-1).id, option.discardTileId, "CPU riichi discard should use a riichi option");
+  });
+
+  test("CPU RIICHI: after CPU riichi only the latest drawn tile is discarded", async () => {
+    const state = await cpuRiichiDrawState();
+    const { dispatchAction } = await loadRiichiActions(["dispatchAction"]);
+    const drawnTileId = state.round.lastDraw.tile.id;
+    const nextState = dispatchAction(state, { type: "CPU_DISCARD", random: () => 0 });
+
+    assertEqual(nextState.round.lastDiscard.tile.id, drawnTileId, "CPU riichi should force tsumogiri");
+    assertEqual(nextState.round.players[1].hand.length, state.round.players[1].hand.length - 1, "CPU tsumogiri should remove one tile");
+  });
+
+  test("CPU RIICHI: riichi tsumo stores riichi yaku", async () => {
+    const state = await scenarioState("cpu-riichi-tsumo-ready");
+    const { dispatchAction } = await loadRiichiActions(["dispatchAction"]);
+    const nextState = dispatchAction(state, { type: "DECLARE_TSUMO", playerId: 1 });
+
+    assertEqual(nextState.round.phase, "ended", "CPU riichi tsumo should end the round");
+    assertTrue(hasYaku(nextState, "riichi"), "CPU tsumo result should include riichi yaku");
+  });
+
+  test("CPU RIICHI: riichi ron stores riichi yaku", async () => {
+    const state = await scenarioState("cpu-riichi-ron-ready");
+    const { resolveCpuRonAfterDiscard } = await loadRiichiActions(["resolveCpuRonAfterDiscard"]);
+    const nextState = resolveCpuRonAfterDiscard(state);
+
+    assertEqual(nextState.round.phase, "ended", "CPU riichi ron should end the round");
+    assertTrue(hasYaku(nextState, "riichi"), "CPU ron result should include riichi yaku");
+  });
 }
 
-async function loadRiichiActions() {
+async function loadRiichiActions(extraExports = []) {
   return loadModule("../src/game/actions.js", [
     "canDeclareRiichi",
     "getRiichiDiscardOptions",
     "canDeclareRon",
-    "dispatchAction"
+    "dispatchAction",
+    ...extraExports
   ]);
 }
 
@@ -120,6 +201,33 @@ async function riichiDrawState() {
       },
       wall: declared.round.wall.slice(1),
       players: declared.round.players.map((player) => player.id === 0
+        ? {
+          ...player,
+          hand: [...player.hand, drawTile]
+        }
+        : player)
+    }
+  };
+}
+
+async function cpuRiichiDrawState() {
+  const state = await scenarioState("cpu-riichi-ready");
+  const { dispatchAction } = await loadRiichiActions(["getCpuRiichiDiscardOptions"]);
+  const declared = dispatchAction(state, { type: "CPU_DISCARD", random: () => 0 });
+  const drawTile = declared.round.wall[0];
+
+  return {
+    ...declared,
+    round: {
+      ...declared.round,
+      phase: "discard",
+      currentPlayerIndex: 1,
+      lastDraw: {
+        playerId: 1,
+        tile: drawTile
+      },
+      wall: declared.round.wall.slice(1),
+      players: declared.round.players.map((player) => player.id === 1
         ? {
           ...player,
           hand: [...player.hand, drawTile]
