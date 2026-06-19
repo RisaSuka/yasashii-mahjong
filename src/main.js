@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp15-cpu-evaluator-1";
-import { renderGame } from "./ui/render.js?v=mvp15-cpu-evaluator-1";
+import { bindControls } from "./ui/input.js?v=mvp151-ron-check-1";
+import { renderGame } from "./ui/render.js?v=mvp151-ron-check-1";
 
-const APP_ASSET_VERSION = "mvp15-cpu-evaluator-1";
+const APP_ASSET_VERSION = "mvp151-ron-check-1";
 
 const appRoot = document.querySelector("#app");
 
@@ -37,6 +37,7 @@ async function loadGameApi() {
       canDeclareTsumo: actions.canDeclareTsumo,
       canDeclareRon: actions.canDeclareRon,
       canRonLatestDiscard: actions.canRonLatestDiscard,
+      canCompleteRonLatestDiscard: actions.canCompleteRonLatestDiscard,
       createInitialGameState: round.createInitialGameState,
       loadStats: storage.loadStats,
       suggestDiscards: advice.suggestDiscards,
@@ -52,6 +53,7 @@ function render() {
   renderGame(state, appRoot, {
     canDeclareTsumo: gameApi.canDeclareTsumo,
     canDeclareRon: gameApi.canDeclareRon,
+    canCompleteRonLatestDiscard: gameApi.canCompleteRonLatestDiscard,
     suggestDiscards: gameApi.suggestDiscards,
     discardAdviceDialogOpen,
     discardZoomPlayerId,
@@ -237,7 +239,7 @@ function handleAfterDiscard() {
 function enterReactionIfNeeded() {
   const human = getHumanPlayer();
 
-  if (!human || !gameApi.canRonLatestDiscard?.(state, human.id)) {
+  if (!human || !gameApi.canCompleteRonLatestDiscard?.(state, human.id)) {
     return false;
   }
 
@@ -382,6 +384,9 @@ function createFallbackGameApi() {
       return false;
     },
     canRonLatestDiscard() {
+      return false;
+    },
+    canCompleteRonLatestDiscard() {
       return false;
     },
     dispatchAction(currentState, action) {

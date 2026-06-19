@@ -1,5 +1,5 @@
 import { chooseCpuDiscard } from "./cpu/random-cpu.js";
-import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp15-cpu-evaluator-1";
+import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp151-ron-check-1";
 import { isWinningHand } from "./rules/win-check.js";
 import { detectYaku } from "./rules/yaku.js";
 import { drawFromWall } from "./wall.js";
@@ -320,34 +320,58 @@ export function canDeclareRon(state, playerId) {
 }
 
 export function canRonLatestDiscard(state, playerId) {
-  if (!state.round || state.round.phase === "ended") {
+  const ronShape = getRonShapeResult(state, playerId);
+
+  if (!ronShape?.winning) {
     return false;
+  }
+
+  return detectYaku(ronShape.handTiles, createRonYakuContext(state, ronShape.player, ronShape.result)).length > 0;
+}
+
+export function canCompleteRonLatestDiscard(state, playerId) {
+  return Boolean(getRonShapeResult(state, playerId)?.winning);
+}
+
+function getRonShapeResult(state, playerId) {
+  if (!state.round || state.round.phase === "ended") {
+    return null;
   }
 
   const lastDiscard = state.round.lastDiscard;
 
   if (!lastDiscard?.tile || lastDiscard.playerId === null || lastDiscard.playerId === playerId) {
-    return false;
+    return null;
   }
 
   const player = state.round.players.find((candidate) => candidate.id === playerId);
 
   if (!player || player.type !== "human") {
-    return false;
+    return null;
   }
 
   const handTiles = [...player.hand, lastDiscard.tile];
   const result = isWinningHand(handTiles);
 
   if (!result.winning) {
-    return false;
+    return {
+      winning: false,
+      player,
+      handTiles,
+      result
+    };
   }
 
-  return detectYaku(handTiles, createRonYakuContext(state, player, result)).length > 0;
+  return {
+    winning: true,
+    player,
+    handTiles,
+    result
+  };
 }
 
 export function enterReaction(state, playerId) {
-  if (!canRonLatestDiscard(state, playerId)) {
+  if (!canCompleteRonLatestDiscard(state, playerId)) {
     return state;
   }
 

@@ -2,7 +2,9 @@
 
 MVP-1.5 connects the shared discard evaluator v1 to CPU discards. CPU players now score their hand with `evaluateDiscardCandidates(hand, context)` and discard from the low-score candidates instead of using pure random discard. The CPU still keeps light randomness by choosing from the top evaluated candidates, so it is not a full optimal AI and should not feel perfectly deterministic.
 
-Current local checks target `227 pass / 0 pending / 0 fail`, plus the smartphone landscape layout guard.
+MVP-1.5.1 adds ron verification fixtures and UI checks. Normal shuffled play can make ron feel rare because the human must have a complete shape with yaku and a CPU must discard the exact winning tile. Fixed scenarios now cover tanyao, yakuhai, chiitoitsu, and no-yaku ron-shape checks.
+
+Current local checks target `234 pass / 0 pending / 0 fail`, plus the smartphone landscape layout guard.
 
 # MVP-1.4 discard evaluator note
 

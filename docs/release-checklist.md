@@ -5,11 +5,11 @@ Use this before merging to `main` or publishing with GitHub Pages.
 ## Current Release Candidate
 
 - Branch: `codex/mvp-15-cpu-discard-evaluator`
-- Scope: MVP-0.1 through MVP-1.5 CPU discard evaluator connection
-- Expected automated result: `227 pass / 0 pending / 0 fail`
+- Scope: MVP-0.1 through MVP-1.5.1 ron verification scenarios
+- Expected automated result: `234 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-1.5 is not published yet.
+- Publish status: MVP-1.5.1 is not published yet.
 
 ## Git Safety
 
@@ -31,8 +31,8 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 227.
-- Confirm pass count is 227.
+- Confirm total count is 234.
+- Confirm pass count is 234.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
@@ -122,6 +122,10 @@ node tests/layout-check.mjs
 - CPU discards use low-score evaluator candidates in MVP-1.5.
 - CPU discard selection still has light randomness and is not a full optimal AI.
 - CPU turns continue without stalling after evaluator-guided discard.
+- Ron-ready deterministic scenarios exist for tanyao, yakuhai, chiitoitsu, and no-yaku ron-shape checks.
+- Yaku-valid ron scenarios show ron and skip actions.
+- No-yaku ron-shape shows a helpful no-yaku message and skip action instead of a winning ron button.
+- Smartphone landscape keeps ron/skip actions inside the table action bar.
 
 ## Manual Browser Checks
 

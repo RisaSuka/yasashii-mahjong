@@ -66,6 +66,16 @@ export function registerReactionTests() {
     assertEqual(continued.round.currentPlayerIndex, 2, "No-ron flow should advance to next player");
   });
 
+  test("REACTION: no-yaku winning shape enters reaction for a helpful message", async () => {
+    const { canCompleteRonLatestDiscard, canRonLatestDiscard } = await loadReactionActions();
+    const state = await noYakuRonBeforeReaction();
+    const nextState = await dispatch(state, { type: "ENTER_REACTION", playerId: 0 });
+
+    assertEqual(canCompleteRonLatestDiscard(state, 0), true, "No-yaku winning shape should be detected");
+    assertEqual(canRonLatestDiscard(state, 0), false, "No-yaku winning shape should not be declarable");
+    assertEqual(nextState.round.phase, "reaction", "No-yaku winning shape should still enter reaction");
+  });
+
   test("REACTION: own discard does not enter reaction", async () => {
     const state = await ronReadyBeforeReaction({ lastDiscardPlayerId: 0 });
     const { canRonLatestDiscard } = await loadReactionActions();
@@ -167,7 +177,7 @@ async function continueNormallyAfterNoReactionOrPending(state) {
 }
 
 async function loadReactionActions() {
-  return loadModule("../src/game/actions.js", ["canRonLatestDiscard", "dispatchAction"]);
+  return loadModule("../src/game/actions.js", ["canCompleteRonLatestDiscard", "canRonLatestDiscard", "dispatchAction"]);
 }
 
 async function dispatch(state, action) {
@@ -225,6 +235,11 @@ async function nonWinningBeforeReaction() {
       })
     }
   };
+}
+
+async function noYakuRonBeforeReaction() {
+  const { createScenarioState } = await loadModule("../src/game/scenarios.js", ["createScenarioState"]);
+  return createScenarioState("no-yaku-ron-shape", { phase: "draw" });
 }
 
 function tiles(pattern) {

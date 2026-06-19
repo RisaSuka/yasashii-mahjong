@@ -1,13 +1,13 @@
 # Current Status
 
-Last updated for MVP-1.5 CPU discard evaluator connection.
+Last updated for MVP-1.5.1 ron verification scenarios.
 
 ## Repository State
 
 - Working branch: `codex/mvp-15-cpu-discard-evaluator`
-- Automated tests: `227 pass / 0 pending / 0 fail`
+- Automated tests: `234 pass / 0 pending / 0 fail`
 - Layout check: Chrome-based smartphone landscape guard passed all target viewports/scenarios at MVP-1.1.6; MVP-1.2 adds a discard-zoom scenario that must be run before merge/publish
-- Working tree: clean at the time of the latest MVP-1.5 verification
+- Working tree: clean at the time of the latest MVP-1.5.1 verification
 - Push: not yet
 - `main` merge: not yet for MVP-1.5
 
@@ -39,6 +39,7 @@ Last updated for MVP-1.5 CPU discard evaluator connection.
 | MVP-1.3.1 | Working branch | East-only match end screen has a polished result-history popup based on `roundHistory`. |
 | MVP-1.4 | Working branch | Shared discard evaluator v1 scores every tile for beginner advice and future CPU use; beginner help popup added. |
 | MVP-1.5 | Working branch | CPU discards use the shared evaluator and choose from low-score candidates with light randomness. |
+| MVP-1.5.1 | Working branch | Ron verification scenarios and UI checks clarify that normal ron is rare but the ron path works. |
 
 ## Current Capabilities
 
@@ -183,6 +184,15 @@ Last updated for MVP-1.5 CPU discard evaluator connection.
 - Tests can inject `rng` so CPU discard behavior remains stable and verifiable.
 - A safe fallback remains for invalid or empty candidate evaluation.
 - CPU discard remains intentionally lightweight; full shanten calculation, danger reading, and point expectation are still out of scope.
+
+## MVP-1.5.1 Ron Verification
+
+- Normal shuffled play can make ron feel rare because the player needs a complete winning shape with yaku and a CPU must discard the exact winning tile.
+- `canRonLatestDiscard` still means yaku-valid ron is declarable.
+- `canCompleteRonLatestDiscard` detects complete ron shapes even when no yaku exists, so the UI can show a helpful no-yaku explanation and a skip button.
+- Added deterministic scenarios for `ron-ready-tanyao`, `ron-ready-yakuhai`, `ron-ready-chiitoitsu`, and `no-yaku-ron-shape`.
+- Ron reaction UI is covered for yaku-valid ron and no-yaku ron-shape states.
+- CPU evaluator discards can make obvious bad discards less common, so deterministic ron scenarios are the recommended manual verification path.
 
 ## MVP-1.1 Remaining Visual Polish Candidates
 
