@@ -76,6 +76,8 @@ node scripts/simulate-cpu-win-reachability.mjs
 - After human riichi, only the latest drawn tile can be discarded.
 - Human tsumo/ron after riichi includes the `riichi` yaku.
 - CPU riichi is possible from tenpai-after-discard hands, uses RNG, and favors yaku-valid/multi-wait options.
+- CPU riichi probability remains at the MVP-2.2 values: yaku-valid waits 70%, multi-wait or multiple yaku-valid waits 80%, no-yaku waits 15%.
+- Real-device review noted that short CPU win streaks can happen, but human wins were also confirmed; CPU difficulty settings remain a future candidate.
 - After CPU riichi, CPU players discard only the latest drawn tile.
 - CPU tsumo/ron after riichi includes the `riichi` yaku.
 - CPU riichi shows a compact seat badge.

@@ -116,6 +116,8 @@ Last updated for MVP-2.2 CPU riichi v1.
 - CPU riichi v1:
   - CPU players can declare riichi when a discard leaves tenpai.
   - CPU riichi choice favors yaku-valid waits and wider waits, with RNG so it is not fully fixed.
+  - Current CPU riichi rates are intentionally unchanged after real-device review: yaku-valid waits 70%, multi-wait or multiple yaku-valid waits 80%, no-yaku waits 15%.
+  - Short streaks of CPU wins can happen, but real-device review also confirmed the human can win back-to-back; CPU difficulty settings remain a future candidate.
   - After CPU riichi, the CPU discards only the latest drawn tile.
   - CPU tsumo/ron after riichi includes the `riichi` yaku.
   - Riichi sticks, point movement, ippatsu, uradora, furiten, kan after riichi, and CPU difficulty settings remain unsupported.
