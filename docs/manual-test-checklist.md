@@ -21,8 +21,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 272.
-- Confirm pass count is 272.
+- Confirm total count is 283.
+- Confirm pass count is 283.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - For smartphone landscape layout work, also run the layout guard described in `docs/layout-test.md`.
@@ -60,6 +60,18 @@ http://127.0.0.1:8765/tests/test-runner.html
 - Confirm dragon pairs such as `白白`, `發發`, and `中中` are not recommended ahead of weaker candidates.
 - In pair-heavy hands, confirm ordinary pairs are not over-penalized and yakuhai pairs are especially protected.
 - Confirm CPU turns still continue when CPU hands include yakuhai pairs.
+
+## 2.3 MVP-1.9.1 All-Hands Learning Popup
+
+- End a hand by human tsumo/ron, CPU tsumo/ron, or exhaustive draw.
+- Confirm `みんなの手を見る` appears only after the hand ends.
+- Confirm it opens a popup with East/human, South CPU, West CPU, and North CPU hands.
+- Confirm CPU hands are not visible during normal play.
+- Confirm the winner is marked when there is a win, and yaku/winning-tile information appears when available.
+- Confirm the popup says point calculation is still unsupported.
+- Confirm the popup closes with the close button, backdrop click, and Escape.
+- Confirm opening all-hands closes advice, discard zoom, match result, beginner help, yaku guide, and waits popups.
+- Confirm smartphone landscape keeps the popup within the viewport and does not add page-level scrolling.
 
 ## 3. Tsumo Win Check
 

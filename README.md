@@ -1,3 +1,9 @@
+# MVP-1.9.1 all-hands learning popup note
+
+MVP-1.9.1 adds a round-end learning popup. After tsumo, ron, CPU win, or exhaustive draw, the action bar shows `みんなの手を見る`. The popup reveals all four players' hands only after the hand is over, highlights the winner when there is one, shows the winning tile/yaku when available, and keeps point calculation marked as unsupported. CPU hands remain hidden during normal play.
+
+Current local checks target MVP-1.9.1 normal tests plus the smartphone landscape layout guard, including the all-hands popup scenario, and the CPU win reachability diagnostic.
+
 # MVP-1.9 discard-to-wait helper note
 
 MVP-1.9 extends the tenpai helper for the common 14-tile human turn. `analyzeDiscardWaits(hand, context)` tries each possible discard, reuses the existing wait analyzer on the remaining 13 tiles, and shows which discard leaves which waits. The waits popup now includes a compact `切ると待ち` section, and discard advice gets a light boost for unprotected discards that leave yaku-valid tenpai without overriding completed meld or yakuhai-pair protection.

@@ -1,13 +1,13 @@
 # Current Status
 
-Last updated for MVP-1.9 discard-to-wait helper.
+Last updated for MVP-1.9.1 all-hands learning popup.
 
 ## Repository State
 
 - Working branch: `codex/mvp-16-hand-yaku-guide`
-- Automated tests: MVP-1.9 normal tests pass locally
-- Layout check: Chrome-based smartphone landscape guard passes all target viewports/scenarios, including discard zoom, result popup, yaku-guide popup, waits popup, discard-to-wait popup, and CPU win scenarios
-- Working tree: clean at the time of the latest MVP-1.9 verification
+- Automated tests: MVP-1.9.1 normal tests pass locally
+- Layout check: Chrome-based smartphone landscape guard passes all target viewports/scenarios, including discard zoom, result popup, yaku-guide popup, waits popup, discard-to-wait popup, CPU win, and all-hands popup scenarios
+- Working tree: clean at the time of the latest MVP-1.9.1 verification
 - Push: not yet
 - `main` merge: not yet for MVP-1.9
 
@@ -46,6 +46,7 @@ Last updated for MVP-1.9 discard-to-wait helper.
 | MVP-1.8.1 | Working branch | Discard evaluator protects completed sequences/triplets/pairs more strongly and adds a CPU win reachability diagnostic. |
 | MVP-1.8.2 | Working branch | Yakuhai pairs and pair-heavy chiitoitsu/toitoi direction are protected more strongly in advice and CPU discard selection. |
 | MVP-1.9 | Working branch | Discard-to-wait helper shows which discard leaves tenpai and what waits remain for 14-tile human turns. |
+| MVP-1.9.1 | Working branch | Round-end `みんなの手を見る` popup reveals all four hands for learning after tsumo, ron, CPU win, or exhaustive draw only. |
 
 ## Current Capabilities
 

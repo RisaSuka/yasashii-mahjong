@@ -29,7 +29,8 @@ const SCENARIOS = [
   { name: "yaku-guide", discards: 9, mode: "yaku-guide" },
   { name: "waits", discards: 9, mode: "waits" },
   { name: "waits-after-discard", discards: 9, mode: "waits-after-discard" },
-  { name: "cpu-win", discards: 12, mode: "cpu-win" }
+  { name: "cpu-win", discards: 12, mode: "cpu-win" },
+  { name: "all-hands-open", discards: 18, mode: "all-hands-open" }
 ];
 const TOLERANCE = 2;
 
@@ -175,7 +176,7 @@ function setupScenarioSource() {
       };
     }
 
-    if (mode === "cpu-win") {
+    if (mode === "cpu-win" || mode === "all-hands-open") {
       state = {
         ...state,
         round: {
@@ -232,6 +233,7 @@ function setupScenarioSource() {
       matchResultDialogOpen: mode === "result-popup",
       yakuGuideDialogOpen: mode === "yaku-guide",
       waitsDialogOpen: mode === "waits" || mode === "waits-after-discard",
+      allHandsDialogOpen: mode === "all-hands-open",
       analyzeWaits: () => mode === "waits-after-discard"
         ? ({
           isTenpai: false,
@@ -455,7 +457,8 @@ function inspectLayoutSource() {
     const resultModal = document.querySelector(".match-result-modal");
     const yakuGuideModal = document.querySelector(".yaku-guide-modal");
     const waitsModal = document.querySelector(".waits-modal");
-    const activeModal = modal || zoomModal || resultModal || yakuGuideModal || waitsModal;
+    const allHandsModal = document.querySelector(".all-hands-modal");
+    const activeModal = modal || zoomModal || resultModal || yakuGuideModal || waitsModal || allHandsModal;
 
     const actionButtons = [...document.querySelectorAll(".table-action-bar button, .restart-match-button, .next-round-button")];
     if (!activeModal) {
@@ -613,6 +616,41 @@ function inspectLayoutSource() {
         if (!isInsideRect(itemRect, rect, tolerance)) {
           failures.push("discard wait option " + (index + 1) + " is clipped inside popup");
           break;
+        }
+      }
+    }
+
+    if (allHandsModal) {
+      const rect = allHandsModal.getBoundingClientRect();
+      if (!isInViewport(rect, viewport, tolerance)) {
+        failures.push("all-hands popup is outside viewport");
+      }
+
+      const closeButton = allHandsModal.querySelector("[data-action='close-all-hands']");
+      if (!closeButton) {
+        failures.push("all-hands close button is missing");
+      } else {
+        const closeRect = closeButton.getBoundingClientRect();
+        if (!isInViewport(closeRect, viewport, tolerance)) {
+          failures.push("all-hands close button is outside viewport");
+        }
+        if (!isClickableAtCenter(closeButton, closeRect)) {
+          failures.push("all-hands close button is not clickable at center");
+        }
+      }
+
+      const handItems = [...allHandsModal.querySelectorAll(".all-hands-item")];
+      if (handItems.length < 4) {
+        failures.push("all-hands popup shows fewer than 4 player hands");
+      }
+      const handTiles = [...allHandsModal.querySelectorAll(".all-hands-tile")];
+      if (handTiles.length < 40) {
+        failures.push("all-hands popup shows too few hand tiles");
+      }
+      for (const [index, item] of handItems.entries()) {
+        const itemRect = item.getBoundingClientRect();
+        if (itemRect.width <= 0 || itemRect.height <= 0) {
+          failures.push("all-hands item " + (index + 1) + " has no size");
         }
       }
     }

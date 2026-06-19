@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp19-discard-waits-1";
-import { renderGame } from "./ui/render.js?v=mvp19-discard-waits-1";
+import { bindControls } from "./ui/input.js?v=mvp191-all-hands-popup-1";
+import { renderGame } from "./ui/render.js?v=mvp191-all-hands-popup-1";
 
-const APP_ASSET_VERSION = "mvp19-discard-waits-1";
+const APP_ASSET_VERSION = "mvp191-all-hands-popup-1";
 
 const appRoot = document.querySelector("#app");
 
@@ -14,6 +14,7 @@ let matchResultDialogOpen = false;
 let beginnerHelpDialogOpen = false;
 let yakuGuideDialogOpen = false;
 let waitsDialogOpen = false;
+let allHandsDialogOpen = false;
 
 init();
 
@@ -71,7 +72,8 @@ function render() {
     matchResultDialogOpen,
     beginnerHelpDialogOpen,
     yakuGuideDialogOpen,
-    waitsDialogOpen
+    waitsDialogOpen,
+    allHandsDialogOpen
   });
   bindControls(appRoot, {
     onStartMatch: startMatch,
@@ -91,6 +93,8 @@ function render() {
     onCloseYakuGuide: closeYakuGuide,
     onOpenWaits: openWaits,
     onCloseWaits: closeWaits,
+    onOpenAllHands: openAllHands,
+    onCloseAllHands: closeAllHands,
     onDiscardTile: discardHumanTile,
     onDeclareTsumo: declareHumanTsumo,
     onDeclareRon: declareHumanRon,
@@ -106,6 +110,7 @@ function startMatch() {
   beginnerHelpDialogOpen = false;
   yakuGuideDialogOpen = false;
   waitsDialogOpen = false;
+  allHandsDialogOpen = false;
   state = gameApi.dispatchAction(state, { type: "START_MATCH" });
   render();
   scheduleCpuIfNeeded();
@@ -119,6 +124,7 @@ function startNextRound() {
   beginnerHelpDialogOpen = false;
   yakuGuideDialogOpen = false;
   waitsDialogOpen = false;
+  allHandsDialogOpen = false;
   state = gameApi.dispatchAction(state, { type: "START_NEXT_ROUND" });
   render();
   scheduleCpuIfNeeded();
@@ -144,6 +150,7 @@ function toggleDiscardAdvice() {
   beginnerHelpDialogOpen = false;
   yakuGuideDialogOpen = false;
   waitsDialogOpen = false;
+  allHandsDialogOpen = false;
   render();
 }
 
@@ -154,6 +161,7 @@ function openDiscardAdvice() {
   beginnerHelpDialogOpen = false;
   yakuGuideDialogOpen = false;
   waitsDialogOpen = false;
+  allHandsDialogOpen = false;
   render();
 }
 
@@ -169,6 +177,7 @@ function openDiscardZoom(playerId) {
   beginnerHelpDialogOpen = false;
   yakuGuideDialogOpen = false;
   waitsDialogOpen = false;
+  allHandsDialogOpen = false;
   render();
 }
 
@@ -184,6 +193,7 @@ function openMatchResult() {
   beginnerHelpDialogOpen = false;
   yakuGuideDialogOpen = false;
   waitsDialogOpen = false;
+  allHandsDialogOpen = false;
   render();
 }
 
@@ -199,6 +209,7 @@ function openBeginnerHelp() {
   beginnerHelpDialogOpen = true;
   yakuGuideDialogOpen = false;
   waitsDialogOpen = false;
+  allHandsDialogOpen = false;
   render();
 }
 
@@ -214,6 +225,7 @@ function openYakuGuide() {
   beginnerHelpDialogOpen = false;
   yakuGuideDialogOpen = true;
   waitsDialogOpen = false;
+  allHandsDialogOpen = false;
   render();
 }
 
@@ -229,11 +241,32 @@ function openWaits() {
   beginnerHelpDialogOpen = false;
   yakuGuideDialogOpen = false;
   waitsDialogOpen = true;
+  allHandsDialogOpen = false;
   render();
 }
 
 function closeWaits() {
   waitsDialogOpen = false;
+  render();
+}
+
+function openAllHands() {
+  if (state.round?.phase !== "ended") {
+    return;
+  }
+
+  discardAdviceDialogOpen = false;
+  discardZoomPlayerId = null;
+  matchResultDialogOpen = false;
+  beginnerHelpDialogOpen = false;
+  yakuGuideDialogOpen = false;
+  waitsDialogOpen = false;
+  allHandsDialogOpen = true;
+  render();
+}
+
+function closeAllHands() {
+  allHandsDialogOpen = false;
   render();
 }
 
@@ -255,6 +288,7 @@ function discardHumanTile(tileId) {
   beginnerHelpDialogOpen = false;
   yakuGuideDialogOpen = false;
   waitsDialogOpen = false;
+  allHandsDialogOpen = false;
   handleAfterDiscard();
 }
 

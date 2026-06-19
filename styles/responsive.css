@@ -1173,6 +1173,79 @@
     font-size: 6px;
   }
 
+  .all-hands-backdrop {
+    padding: max(6px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+  }
+
+  .all-hands-modal {
+    width: min(720px, calc(100vw - 16px));
+    max-width: calc(100vw - 16px);
+    max-height: min(84dvh, calc(100vh - 16px));
+    padding: 7px;
+  }
+
+  .all-hands-header {
+    margin: -2px -2px 4px;
+    padding: 2px;
+    gap: 8px;
+    font-size: 13px;
+  }
+
+  .all-hands-header span,
+  .all-hands-note,
+  .all-hands-yaku,
+  .all-hands-winning-tile {
+    font-size: 10.5px;
+    line-height: 1.25;
+  }
+
+  .all-hands-close {
+    min-height: 27px;
+    padding: 0 9px;
+    font-size: 11px;
+  }
+
+  .all-hands-note {
+    margin-bottom: 4px;
+  }
+
+  .all-hands-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5px;
+  }
+
+  .all-hands-item {
+    gap: 4px;
+    padding: 5px;
+  }
+
+  .all-hands-player-header {
+    font-size: 11.5px;
+  }
+
+  .all-hands-winner-badge {
+    padding: 1px 6px;
+    font-size: 10px;
+  }
+
+  .all-hands-tiles {
+    gap: 3px;
+  }
+
+  .all-hands-tile {
+    width: clamp(22px, 3.8vw, 31px);
+    height: clamp(31px, 5.2vw, 43px);
+  }
+
+  .all-hands-tile .tile-symbol {
+    font-size: clamp(13px, 2.2vw, 18px);
+  }
+
+  .all-hands-tile .tile-suit-label,
+  .all-hands-tile .tile-visual-cue {
+    font-size: 5.5px;
+  }
+
   .seat-east {
     grid-template-rows: auto minmax(88px, 1fr);
   }

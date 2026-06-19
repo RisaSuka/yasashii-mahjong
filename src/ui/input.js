@@ -7,6 +7,7 @@ export function bindControls(root, handlers) {
       handlers.onCloseBeginnerHelp?.();
       handlers.onCloseYakuGuide?.();
       handlers.onCloseWaits?.();
+      handlers.onCloseAllHands?.();
     }
   });
 
@@ -110,6 +111,19 @@ export function bindControls(root, handlers) {
         return;
       }
       handlers.onCloseWaits?.();
+    });
+  }
+
+  root.querySelector("[data-action='open-all-hands']")?.addEventListener("click", () => {
+    handlers.onOpenAllHands?.();
+  });
+
+  for (const trigger of root.querySelectorAll("[data-action='close-all-hands']")) {
+    trigger.addEventListener("click", (event) => {
+      if (trigger.classList?.contains("all-hands-backdrop") && event.target !== trigger) {
+        return;
+      }
+      handlers.onCloseAllHands?.();
     });
   }
 

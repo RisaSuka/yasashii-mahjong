@@ -77,6 +77,7 @@ function renderTableLegacy(state, options) {
   const discardAdvice = getDiscardAdvice(state, options);
   const yakuGuide = getYakuGuide(state, options);
   const waitInfo = getWaitInfo(state, options);
+  const allHandsOpen = Boolean(options.allHandsDialogOpen);
 
   return `
     <main class="table" aria-label="4人麻雀卓">
@@ -94,12 +95,13 @@ function renderTableLegacy(state, options) {
               <div class="center-secondary">
             ${renderPreviousRoundResult(state.lastRoundResult, round)}
             ${renderLastActionResult(round)}
-            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen && options.discardZoomPlayerId == null && !options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen)}
-            ${renderDiscardZoomDialog(round, options.matchResultDialogOpen || options.beginnerHelpDialogOpen || options.yakuGuideDialogOpen || options.waitsDialogOpen ? null : options.discardZoomPlayerId)}
-            ${renderMatchResultDialog(state, options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen)}
-            ${renderBeginnerHelpDialog(options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen)}
-            ${renderYakuGuideDialog(yakuGuide, options.yakuGuideDialogOpen && !options.waitsDialogOpen)}
-            ${renderWaitsDialog(waitInfo, options.waitsDialogOpen)}
+            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen && options.discardZoomPlayerId == null && !options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
+            ${renderDiscardZoomDialog(round, options.matchResultDialogOpen || options.beginnerHelpDialogOpen || options.yakuGuideDialogOpen || options.waitsDialogOpen || allHandsOpen ? null : options.discardZoomPlayerId)}
+            ${renderMatchResultDialog(state, options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
+            ${renderBeginnerHelpDialog(options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
+            ${renderYakuGuideDialog(yakuGuide, options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
+            ${renderWaitsDialog(waitInfo, options.waitsDialogOpen && !allHandsOpen)}
+            ${renderAllHandsDialog(state, allHandsOpen)}
             ${renderYakuSummary(round)}
             <div class="table-meta-row">
               <span class="table-meta">山 ${round.wall.length}</span>
@@ -127,6 +129,7 @@ function renderTable(state, options) {
   const discardAdvice = getDiscardAdvice(state, options);
   const yakuGuide = getYakuGuide(state, options);
   const waitInfo = getWaitInfo(state, options);
+  const allHandsOpen = Boolean(options.allHandsDialogOpen);
 
   return `
     <main class="table" aria-label="4人麻雀卓">
@@ -152,12 +155,13 @@ function renderTable(state, options) {
             </div>
             ${renderPreviousRoundResult(state.lastRoundResult, round)}
             ${renderLastActionResult(round)}
-            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen && options.discardZoomPlayerId == null && !options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen)}
-            ${renderDiscardZoomDialog(round, options.matchResultDialogOpen || options.beginnerHelpDialogOpen || options.yakuGuideDialogOpen || options.waitsDialogOpen ? null : options.discardZoomPlayerId)}
-            ${renderMatchResultDialog(state, options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen)}
-            ${renderBeginnerHelpDialog(options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen)}
-            ${renderYakuGuideDialog(yakuGuide, options.yakuGuideDialogOpen && !options.waitsDialogOpen)}
-            ${renderWaitsDialog(waitInfo, options.waitsDialogOpen)}
+            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen && options.discardZoomPlayerId == null && !options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
+            ${renderDiscardZoomDialog(round, options.matchResultDialogOpen || options.beginnerHelpDialogOpen || options.yakuGuideDialogOpen || options.waitsDialogOpen || allHandsOpen ? null : options.discardZoomPlayerId)}
+            ${renderMatchResultDialog(state, options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
+            ${renderBeginnerHelpDialog(options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
+            ${renderYakuGuideDialog(yakuGuide, options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
+            ${renderWaitsDialog(waitInfo, options.waitsDialogOpen && !allHandsOpen)}
+            ${renderAllHandsDialog(state, allHandsOpen)}
             ${renderYakuSummary(round)}
           </div>
           ${renderTableDiscardZone(round.players[1], "south", round)}
@@ -171,6 +175,7 @@ function renderTable(state, options) {
 function renderTableActionBar(state, options) {
   const actions = [
     renderMatchEndAction(state),
+    renderAllHandsAction(state),
     renderNextRoundAction(state),
     renderRonAction(state, options),
     renderTsumoAction(state, options)
@@ -212,6 +217,7 @@ function renderMatchEndAction(state) {
       <span>4局遊び終わりました。</span>
       <span>点数計算はまだ未対応です。</span>
       <button type="button" class="match-result-button" data-action="open-match-result">結果を見る</button>
+      <button type="button" class="all-hands-button match-all-hands-button" data-action="open-all-hands">みんなの手を見る</button>
       <button type="button" class="restart-match-button" data-action="start-match">もう一度遊ぶ</button>
     </section>
   `;
@@ -243,6 +249,22 @@ function renderNextRoundAction(state) {
   return `
     <button type="button" class="next-round-button" data-action="start-next-round">
       次の局へ
+    </button>
+  `;
+}
+
+function renderAllHandsAction(state) {
+  if (state.round?.phase !== "ended") {
+    return "";
+  }
+
+  if (isMatchFinishedForDisplay(state)) {
+    return "";
+  }
+
+  return `
+    <button type="button" class="all-hands-button" data-action="open-all-hands">
+      みんなの手を見る
     </button>
   `;
 }
@@ -638,6 +660,70 @@ function renderMatchResultDialog(state, isOpen) {
             : `<li>まだ局履歴がありません</li>`}
         </ol>
       </div>
+    </section>
+  `;
+}
+
+function renderAllHandsDialog(state, isOpen) {
+  const round = state.round;
+
+  if (!isOpen || round?.phase !== "ended") {
+    return "";
+  }
+
+  const winnerId = round.winningResult?.winnerId;
+  const winningTile = round.winningResult?.winningTile || round.lastDiscard?.tile || null;
+  const yakuResult = Array.isArray(round.winningResult?.yakuResult) ? round.winningResult.yakuResult : [];
+  const resultLabel = round.endReason === "win"
+    ? formatRoundResult({
+      endReason: "win",
+      winType: round.winningResult?.winType,
+      winnerId
+    })
+    : formatRoundResult({ endReason: "exhaustive-draw" });
+
+  return `
+    <section class="all-hands-backdrop" data-action="close-all-hands" aria-label="みんなの手牌を閉じる">
+      <div class="all-hands-modal" role="dialog" aria-modal="false" aria-label="みんなの手牌">
+        <div class="all-hands-header">
+          <div>
+            <strong>みんなの手牌</strong>
+            <span>${escapeHtml(resultLabel)}のあとだけ見られる学習用の表示です。</span>
+          </div>
+          <button type="button" class="all-hands-close" data-action="close-all-hands">閉じる</button>
+        </div>
+        <p class="all-hands-note">点数計算と順位はまだ未対応です。</p>
+        <div class="all-hands-list">
+          ${round.players.map((player) => renderAllHandsPlayer(player, winnerId, winningTile, yakuResult)).join("")}
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function renderAllHandsPlayer(player, winnerId, winningTile, yakuResult) {
+  const isWinner = player.id === winnerId;
+  const label = `${WIND_LABELS[player.wind]} ${player.name}`;
+  const yakuText = isWinner && yakuResult.length
+    ? sortYakuForDisplay(yakuResult).map((entry) => getYakuDisplayName(entry)).join("、")
+    : "";
+
+  return `
+    <section class="all-hands-item${isWinner ? " all-hands-winner" : ""}" data-player-id="${player.id}">
+      <div class="all-hands-player-header">
+        <strong>${escapeHtml(label)}の手牌</strong>
+        ${isWinner ? `<span class="all-hands-winner-badge">上がり</span>` : ""}
+      </div>
+      <div class="all-hands-tiles">
+        ${player.hand.map((tile) => renderTile(tile, "all-hands-tile")).join("")}
+        ${isWinner && winningTile ? `
+          <span class="all-hands-winning-tile">
+            <span>上がり牌</span>
+            ${renderTile(winningTile, "all-hands-tile")}
+          </span>
+        ` : ""}
+      </div>
+      ${yakuText ? `<p class="all-hands-yaku">役: ${escapeHtml(yakuText)}</p>` : ""}
     </section>
   `;
 }

@@ -5,8 +5,8 @@ Use this before merging to `main` or publishing with GitHub Pages.
 ## Current Release Candidate
 
 - Branch: `codex/mvp-16-hand-yaku-guide`
-- Scope: MVP-0.1 through MVP-1.8.2 yakuhai pair protection and CPU win diagnostics
-- Expected automated result: `272 pass / 0 pending / 0 fail`
+- Scope: MVP-0.1 through MVP-1.9.1 all-hands learning popup
+- Expected automated result: `283 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
 - Publish status: MVP-1.8.2 is not published yet.
@@ -31,8 +31,8 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 272.
-- Confirm pass count is 272.
+- Confirm total count is 283.
+- Confirm pass count is 283.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
@@ -159,6 +159,11 @@ node scripts/simulate-cpu-win-reachability.mjs
 - CPU completed shapes without yaku are ignored.
 - CPU win results are stored in `lastRoundResult` and `roundHistory`.
 - CPU win states show the next-round action and fit in the smartphone landscape layout guard.
+- Round-ended states show `みんなの手を見る` for learning review.
+- The all-hands popup shows all four players' hands only after tsumo, ron, CPU win, or exhaustive draw.
+- CPU hands remain hidden during normal play.
+- The all-hands popup closes by button, backdrop click, and Escape, and does not overlap other popups.
+- Smartphone landscape layout guard includes the all-hands popup scenario.
 
 ## Manual Browser Checks
 
@@ -215,6 +220,7 @@ Check:
 - Confirm `docs/manual-test-checklist.md` includes smartphone landscape checks.
 - Confirm `docs/manual-test-checklist.md` includes next-round checks.
 - Confirm `docs/layout-test.md` reflects the current layout guard result.
+- Confirm `docs/manual-test-checklist.md` includes all-hands learning popup checks.
 
 ## Do Not Release If
 

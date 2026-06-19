@@ -840,6 +840,116 @@ export function registerMatchUiTests() {
     assertTrue(html.includes('data-action="start-next-round"'), "CPU ron display should offer next round");
   });
 
+  test("MVP-1.9.1 UI: all-hands action appears after every round end type", async () => {
+    const { dispatchAction, resolveCpuRonAfterDiscard } = await loadModule("../src/game/actions.js", ["dispatchAction", "resolveCpuRonAfterDiscard"]);
+    const humanTsumo = dispatchAction(await scenarioState("human-tsumo-ready"), { type: "DECLARE_TSUMO", playerId: 0 });
+    const humanRon = dispatchAction(await scenarioState("ron-ready-tanyao", { phase: "reaction" }), { type: "DECLARE_RON", playerId: 0 });
+    const cpuTsumo = dispatchAction(await scenarioState("cpu-tsumo-ready-yakuhai"), { type: "DECLARE_TSUMO", playerId: 1 });
+    const cpuRon = resolveCpuRonAfterDiscard(await scenarioState("cpu-ron-ready-yakuhai"));
+    const draw = await endedHandState(2);
+
+    for (const endedState of [humanTsumo, humanRon, cpuTsumo, cpuRon, draw]) {
+      const html = await renderState(endedState);
+      assertTrue(html.includes('data-action="open-all-hands"'), "Ended round should offer the all-hands learning popup");
+    }
+  });
+
+  test("MVP-1.9.1 UI: all-hands popup shows four hands only after round end", async () => {
+    const { dispatchAction } = await loadModule("../src/game/actions.js", ["dispatchAction"]);
+    const playingHtml = await renderState(await startMatchState(), { allHandsDialogOpen: true });
+    const wonState = dispatchAction(await scenarioState("cpu-tsumo-ready-yakuhai"), { type: "DECLARE_TSUMO", playerId: 1 });
+    const openHtml = await renderState(wonState, { allHandsDialogOpen: true });
+
+    assertTrue(!playingHtml.includes("all-hands-modal"), "All-hands popup should not render during play");
+    assertTrue(openHtml.includes("all-hands-modal"), "All-hands popup should render after the round ends");
+    assertEqual((openHtml.match(/all-hands-item/g) || []).length, 4, "All-hands popup should include all four players");
+    assertTrue(openHtml.includes("data-player-id=\"0\""), "Human hand should be included");
+    assertTrue(openHtml.includes("data-player-id=\"1\""), "South CPU hand should be included after round end");
+    assertTrue(openHtml.includes("data-player-id=\"2\""), "West CPU hand should be included after round end");
+    assertTrue(openHtml.includes("data-player-id=\"3\""), "North CPU hand should be included after round end");
+    assertTrue(openHtml.includes("all-hands-winner"), "Winner should be highlighted when the hand ends by win");
+    assertTrue((openHtml.match(/all-hands-tile/g) || []).length >= 40, "All-hands popup should render visible CSS tiles for the hands");
+    assertTrue(openHtml.includes('data-action="close-all-hands"'), "All-hands popup should include a close action");
+  });
+
+  test("MVP-1.9.1 UI: all-hands popup suppresses other popups", async () => {
+    const html = await renderState(await matchEndedHistoryState(), {
+      suggestDiscards: sampleAdvice,
+      suggestYakuTargets: sampleYakuGuide,
+      analyzeWaits: sampleWaitInfo,
+      discardAdviceDialogOpen: true,
+      discardZoomPlayerId: 0,
+      matchResultDialogOpen: true,
+      beginnerHelpDialogOpen: true,
+      yakuGuideDialogOpen: true,
+      waitsDialogOpen: true,
+      allHandsDialogOpen: true
+    });
+
+    assertTrue(html.includes("all-hands-modal"), "All-hands popup should render as the active learning overlay");
+    assertTrue(!html.includes("discard-advice-modal"), "Advice popup should be suppressed by all-hands popup");
+    assertTrue(!html.includes("discard-zoom-modal"), "Discard zoom popup should be suppressed by all-hands popup");
+    assertTrue(!html.includes("match-result-modal"), "Match result popup should be suppressed by all-hands popup");
+    assertTrue(!html.includes("beginner-help-modal"), "Beginner help popup should be suppressed by all-hands popup");
+    assertTrue(!html.includes("yaku-guide-modal"), "Yaku guide popup should be suppressed by all-hands popup");
+    assertTrue(!html.includes("waits-modal"), "Waits popup should be suppressed by all-hands popup");
+  });
+
+  test("MVP-1.9.1 UI: all-hands controls dispatch open and close handlers", async () => {
+    const { bindControls } = await loadModule("../src/ui/input.js", ["bindControls"]);
+    let opened = 0;
+    let closed = 0;
+    let keydownListener = null;
+    const openButton = createFakeButton();
+    const closeButton = createFakeButton();
+    const backdrop = createFakeButton();
+    backdrop.classList = {
+      contains(className) {
+        return className === "all-hands-backdrop";
+      }
+    };
+    const root = {
+      addEventListener(type, listener) {
+        if (type === "keydown") {
+          keydownListener = listener;
+        }
+      },
+      querySelector(selector) {
+        return selector === "[data-action='open-all-hands']" ? openButton : null;
+      },
+      querySelectorAll(selector) {
+        if (selector === "[data-action='close-all-hands']") {
+          return [closeButton, backdrop];
+        }
+
+        return [];
+      }
+    };
+
+    bindControls(root, {
+      onOpenAllHands() {
+        opened += 1;
+      },
+      onCloseDiscardAdvice() {},
+      onCloseDiscardZoom() {},
+      onCloseMatchResult() {},
+      onCloseBeginnerHelp() {},
+      onCloseYakuGuide() {},
+      onCloseWaits() {},
+      onCloseAllHands() {
+        closed += 1;
+      }
+    });
+
+    openButton.listeners.click();
+    closeButton.listeners.click({ target: closeButton });
+    backdrop.listeners.click({ target: backdrop });
+    keydownListener({ key: "Escape" });
+
+    assertEqual(opened, 1, "Open all-hands button should call its handler");
+    assertEqual(closed, 3, "Close button, backdrop, and Escape should close all-hands popup");
+  });
+
   test("MVP-1.3.1 UI: match result popup handles empty history", async () => {
     const state = await matchEndedHistoryState();
     const html = await renderState({
