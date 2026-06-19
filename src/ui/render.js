@@ -307,7 +307,7 @@ function getYakuGuide(state, options) {
 function getWaitInfo(state, options) {
   const round = state.round;
 
-  if (!round || typeof options.analyzeWaits !== "function") {
+  if (!round) {
     return null;
   }
 
@@ -317,19 +317,41 @@ function getWaitInfo(state, options) {
     return null;
   }
 
-  return options.analyzeWaits(human.hand, {
+  const context = {
     round,
     player: human,
     match: state.match
-  });
+  };
+  const waitInfo = typeof options.analyzeWaits === "function"
+    ? options.analyzeWaits(human.hand, context)
+    : {
+      isTenpai: false,
+      waits: [],
+      message: ""
+    };
+  const discardWaitInfo = typeof options.analyzeDiscardWaits === "function"
+    ? options.analyzeDiscardWaits(human.hand, context)
+    : {
+      hasTenpaiDiscard: false,
+      options: [],
+      message: ""
+    };
+
+  return {
+    ...waitInfo,
+    discardWaitOptions: Array.isArray(discardWaitInfo.options) ? discardWaitInfo.options : [],
+    hasTenpaiDiscard: Boolean(discardWaitInfo.hasTenpaiDiscard),
+    discardWaitMessage: discardWaitInfo.message || ""
+  };
 }
 
 function renderWaitsButton(waitInfo) {
   const hasWaits = waitInfo?.isTenpai && Array.isArray(waitInfo.waits) && waitInfo.waits.length > 0;
+  const hasDiscardWaits = waitInfo?.hasTenpaiDiscard && Array.isArray(waitInfo.discardWaitOptions) && waitInfo.discardWaitOptions.length > 0;
 
   return `
-    <button type="button" class="waits-trigger${hasWaits ? " has-waits" : ""}" data-action="open-waits">
-      ${hasWaits ? "\u5f85\u3061\u3042\u308a" : "\u5f85\u3061"}
+    <button type="button" class="waits-trigger${hasWaits || hasDiscardWaits ? " has-waits" : ""}" data-action="open-waits">
+      ${hasDiscardWaits ? "\u5207\u308b\u3068\u5f85\u3061" : hasWaits ? "\u5f85\u3061\u3042\u308a" : "\u5f85\u3061"}
     </button>
   `;
 }
@@ -340,6 +362,8 @@ function renderWaitsDialog(waitInfo, isOpen) {
   }
 
   const waits = Array.isArray(waitInfo?.waits) ? waitInfo.waits : [];
+  const discardWaitOptions = getDisplayDiscardWaitOptions(waitInfo?.discardWaitOptions);
+  const hasAnyGuidance = waits.length > 0 || discardWaitOptions.length > 0;
 
   return `
     <section class="waits-backdrop" data-action="close-waits" aria-label="\u5f85\u3061\u724c\u3092\u9589\u3058\u308b">
@@ -347,21 +371,80 @@ function renderWaitsDialog(waitInfo, isOpen) {
         <div class="waits-header">
           <div>
             <strong>\u5f85\u3061\u724c</strong>
-            <span>\u4eca\u306e13\u679a\u306b1\u679a\u6765\u305f\u3089\u5f62\u304c\u5b8c\u6210\u3059\u308b\u724c\u306e\u76ee\u5b89\u3067\u3059\u3002</span>
+            <span>\u4e0a\u304c\u308a\u306b\u8fd1\u3044\u304b\u3001\u4f55\u3092\u5207\u308b\u3068\u5f85\u3061\u304c\u6b8b\u308b\u304b\u306e\u76ee\u5b89\u3067\u3059\u3002</span>
           </div>
           <button type="button" class="waits-close" data-action="close-waits">\u9589\u3058\u308b</button>
         </div>
-        ${waits.length ? renderWaitsList(waits) : `
+        ${discardWaitOptions.length ? renderDiscardWaitOptions(discardWaitOptions) : ""}
+        ${waits.length ? renderWaitsList(waits) : ""}
+        ${!hasAnyGuidance ? `
           <p class="waits-empty">${escapeHtml(waitInfo?.message || "\u307e\u3060\u30c6\u30f3\u30d1\u30a4\u3067\u306f\u3042\u308a\u307e\u305b\u3093\u3002")}</p>
           <p class="waits-note">\u5f79\u30ac\u30a4\u30c9\u3084\u52a9\u8a00\u3092\u898b\u306a\u304c\u3089\u3001\u5f62\u3092\u5c11\u3057\u305a\u3064\u6574\u3048\u3066\u3044\u304d\u307e\u3057\u3087\u3046\u3002</p>
-        `}
+        ` : ""}
       </div>
     </section>
   `;
 }
 
+function getDisplayDiscardWaitOptions(options = []) {
+  const seen = new Set();
+  const uniqueOptions = [];
+
+  for (const option of Array.isArray(options) ? options : []) {
+    const key = option.discardTile ? `${option.discardTile.suit}${option.discardTile.rank}` : option.discardTileId;
+    if (!key || seen.has(key)) {
+      continue;
+    }
+    seen.add(key);
+    uniqueOptions.push(option);
+    if (uniqueOptions.length >= 4) {
+      break;
+    }
+  }
+
+  return uniqueOptions;
+}
+
+function renderDiscardWaitOptions(options) {
+  return `
+    <section class="discard-waits-section">
+      <h3>\u5207\u308b\u3068\u5f85\u3061</h3>
+      <ol class="discard-waits-list">
+        ${options.map((option) => renderDiscardWaitOption(option)).join("")}
+      </ol>
+    </section>
+  `;
+}
+
+function renderDiscardWaitOption(option) {
+  const waits = Array.isArray(option.waits) ? option.waits : [];
+  const displayWaits = waits.slice(0, 4);
+  const hasYakuWait = waits.some((wait) => wait.hasYaku);
+
+  return `
+    <li class="discard-waits-item${hasYakuWait ? " has-yaku" : " no-yaku"}">
+      <div class="discard-waits-discard">
+        <span>\u5207\u308b</span>
+        ${renderTile(option.discardTile, "waits-tile discard-waits-discard-tile")}
+        <strong>${escapeHtml(option.discardTileLabel || "")}</strong>
+      </div>
+      <div class="discard-waits-result">
+        <span>${escapeHtml(option.message || "")}</span>
+        <div class="discard-waits-tiles">
+          ${displayWaits.map((wait) => renderTile(wait.tile, "waits-tile")).join("")}
+        </div>
+        ${hasYakuWait
+          ? `<p class="waits-yaku">\u5f79\u3042\u308a\u5f85\u3061: ${escapeHtml(formatWaitYaku(waits.flatMap((wait) => wait.hasYaku ? wait.yaku : [])))}</p>`
+          : `<p class="waits-no-yaku">\u5f79\u306a\u3057\u306b\u306a\u308a\u305d\u3046\u3067\u3059\u3002</p>`}
+      </div>
+    </li>
+  `;
+}
+
 function renderWaitsList(waits) {
   return `
+    <section class="current-waits-section">
+      <h3>\u4eca\u306e\u5f85\u3061</h3>
     <ol class="waits-list">
       ${waits.map((wait) => `
         <li class="waits-item${wait.hasYaku ? " has-yaku" : " no-yaku"}">
@@ -378,6 +461,7 @@ function renderWaitsList(waits) {
         </li>
       `).join("")}
     </ol>
+    </section>
   `;
 }
 

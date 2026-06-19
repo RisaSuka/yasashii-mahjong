@@ -545,6 +545,24 @@ export function registerMatchUiTests() {
     assertTrue(openHtml.includes("waits-yaku"), "Yaku-valid waits should show yaku information");
   });
 
+  test("MVP-1.9 UI: waits dialog shows discard-to-wait guidance", async () => {
+    const closedHtml = await renderState(await startMatchState(), {
+      analyzeWaits: sampleWaitInfo,
+      analyzeDiscardWaits: sampleDiscardWaitInfo
+    });
+    const openHtml = await renderState(await startMatchState(), {
+      analyzeWaits: sampleWaitInfo,
+      analyzeDiscardWaits: sampleDiscardWaitInfo,
+      waitsDialogOpen: true
+    });
+
+    assertTrue(closedHtml.includes("\u5207\u308b\u3068\u5f85\u3061"), "Waits button should show discard-to-wait state");
+    assertTrue(openHtml.includes("discard-waits-section"), "Waits dialog should include discard-to-wait guidance");
+    assertTrue(openHtml.includes("discard-waits-item"), "Discard-to-wait options should render as compact items");
+    assertTrue(openHtml.includes("discard-waits-tiles"), "Discard-to-wait options should show wait tiles");
+    assertTrue(openHtml.includes("current-waits-section"), "Current 13-tile waits can still render in the same dialog");
+  });
+
   test("MVP-1.7 UI: waits dialog can show non-tenpai guidance", async () => {
     const html = await renderState(await startMatchState(), {
       analyzeWaits: () => ({
@@ -1076,6 +1094,33 @@ function sampleWaitInfo() {
         hasYaku: false,
         yaku: [],
         message: "9\u842c\u3067\u5f62\u306f\u5b8c\u6210\u3057\u307e\u3059\u304c\u3001\u5f79\u304c\u3042\u308a\u307e\u305b\u3093\u3002"
+      }
+    ]
+  };
+}
+
+function sampleDiscardWaitInfo() {
+  return {
+    hasTenpaiDiscard: true,
+    message: "1\u842c\u3092\u5207\u308b\u3068\u5f85\u3061\u304c\u6b8b\u308a\u307e\u3059\u3002",
+    options: [
+      {
+        discardTile: { id: "discard-m1", suit: "m", rank: 1, copy: 0, red: false },
+        discardTileId: "discard-m1",
+        discardTileLabel: "1\u842c",
+        isTenpaiAfterDiscard: true,
+        hasYakuWait: true,
+        message: "1\u842c\u3092\u5207\u308b\u30685\u7b52\u5f85\u3061\u306b\u306a\u308a\u307e\u3059\u3002",
+        waits: [
+          {
+            tile: { id: "wait-p5", suit: "p", rank: 5, copy: 0, red: false },
+            tileLabel: "5\u7b52",
+            canWin: true,
+            hasYaku: true,
+            yaku: [{ id: "tanyao", name: "\u65ad\u4e48\u4e5d", han: 1 }],
+            message: "5\u7b52\u304c\u6765\u308b\u3068\u4e0a\u304c\u308c\u307e\u3059\u3002"
+          }
+        ]
       }
     ]
   };

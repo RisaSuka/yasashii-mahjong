@@ -248,6 +248,21 @@ export function registerDiscardAdviceTests() {
     assertNoAdviceForTile(advice, "z2", "Self wind pair should be protected from advice");
   });
 
+  test("DISCARD EVALUATOR: discard-to-tenpai option receives a light advice boost", async () => {
+    const { evaluateDiscardCandidates, suggestDiscards } = await loadDiscardAdviceModule([
+      "evaluateDiscardCandidates",
+      "suggestDiscards"
+    ]);
+    const hand = tiles("m2 m3 p2 p3 p4 s3 s4 s5 m6 m7 m8 p6 p6 z1");
+    const candidates = evaluateDiscardCandidates(hand);
+    const advice = suggestDiscards(hand);
+    const east = candidateFor(candidates, "z1");
+
+    assertTrue(east.tags.includes("tenpai-after-discard"), "Discard that leaves yaku-valid tenpai should be tagged");
+    assertAdviceIncludesTile(advice, "z1", "Discard that leaves tenpai should become an advice candidate when unprotected");
+    assertNoAdviceForTile(advice, "p2", "Completed sequence should remain protected despite tenpai boost");
+  });
+
   test("DISCARD ADVICE: evaluator fallback still returns advice for connected hands", async () => {
     const { suggestDiscards } = await loadDiscardAdviceModule(["suggestDiscards"]);
     const advice = suggestDiscards(tiles("m2 m3 m4 p3 p4 p5 s4 s5 s6 m6 m7 p7 p8"));

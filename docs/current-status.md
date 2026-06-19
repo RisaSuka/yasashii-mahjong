@@ -1,15 +1,15 @@
 # Current Status
 
-Last updated for MVP-1.8.2 yakuhai pair protection and pair-heavy hand direction.
+Last updated for MVP-1.9 discard-to-wait helper.
 
 ## Repository State
 
 - Working branch: `codex/mvp-16-hand-yaku-guide`
-- Automated tests: `272 pass / 0 pending / 0 fail`
-- Layout check: Chrome-based smartphone landscape guard passes all target viewports/scenarios, including discard zoom, result popup, yaku-guide popup, waits popup, and CPU win scenarios
-- Working tree: clean at the time of the latest MVP-1.8.2 verification
+- Automated tests: MVP-1.9 normal tests pass locally
+- Layout check: Chrome-based smartphone landscape guard passes all target viewports/scenarios, including discard zoom, result popup, yaku-guide popup, waits popup, discard-to-wait popup, and CPU win scenarios
+- Working tree: clean at the time of the latest MVP-1.9 verification
 - Push: not yet
-- `main` merge: not yet for MVP-1.8.2
+- `main` merge: not yet for MVP-1.9
 
 ## Implemented MVPs
 
@@ -45,6 +45,7 @@ Last updated for MVP-1.8.2 yakuhai pair protection and pair-heavy hand direction
 | MVP-1.8 | Working branch | CPU players can resolve yaku-valid tsumo or ron wins; no-yaku CPU completed shapes are ignored. |
 | MVP-1.8.1 | Working branch | Discard evaluator protects completed sequences/triplets/pairs more strongly and adds a CPU win reachability diagnostic. |
 | MVP-1.8.2 | Working branch | Yakuhai pairs and pair-heavy chiitoitsu/toitoi direction are protected more strongly in advice and CPU discard selection. |
+| MVP-1.9 | Working branch | Discard-to-wait helper shows which discard leaves tenpai and what waits remain for 14-tile human turns. |
 
 ## Current Capabilities
 
@@ -203,6 +204,16 @@ Last updated for MVP-1.8.2 yakuhai pair protection and pair-heavy hand direction
 - The waits popup shows CSS tile wait examples, yaku-valid waits, no-yaku waits, or a gentle non-tenpai message.
 - The waits popup does not stay open at the same time as advice, discard zoom, result, beginner help, or yaku-guide popups.
 - Full shanten calculation, furiten, danger reading, and CPU wait display remain out of scope.
+
+## MVP-1.9 Discard-To-Wait Helper
+
+- `analyzeDiscardWaits(hand, context)` is a UI-independent pure helper for 14-tile human hands.
+- It removes each possible discard by `tileId`, analyzes the remaining 13-tile hand with `analyzeWaits`, and returns compact discard-to-wait options.
+- Each option includes `discardTile`, `discardTileId`, `discardTileLabel`, `waits`, `hasYakuWait`, and a beginner-readable message.
+- The waits popup adds a compact `切ると待ち` section while preserving the existing 13-tile waits section.
+- Yaku-valid and no-yaku waits remain separated so the UI can explain when the shape completes but no yaku is visible.
+- Discard advice receives a small boost for unprotected discards that leave yaku-valid tenpai, while completed meld, dora, and yakuhai-pair protection stay stronger.
+- Full shanten count, complete ukeire counting, furiten, and danger reading remain out of scope.
 
 ## MVP-1.8 CPU Tsumo/Ron Support
 

@@ -147,6 +147,9 @@ node scripts/simulate-cpu-win-reachability.mjs
 - `analyzeWaits` detects waits for 13-tile human hands by trying all 34 tile kinds.
 - Tenpai waits show CSS wait tiles and whether the wait has yaku.
 - Shape-complete no-yaku waits show a gentle no-yaku explanation.
+- `analyzeDiscardWaits` detects which discard from a 14-tile human hand leaves tenpai.
+- The waits popup shows `切ると待ち` rows with discard tile, wait tile(s), and yaku/no-yaku guidance.
+- Discard-to-wait advice boosts unprotected tenpai-making discards without breaking completed meld or yakuhai-pair protection.
 - Non-tenpai hands show a gentle not-yet-tenpai message.
 - The waits popup closes with the close button, backdrop click, or Escape.
 - Waits, yaku guide, beginner help, advice, discard zoom, and match result popups do not stay open at the same time.

@@ -1,3 +1,5 @@
+import { analyzeDiscardWaits } from "./wait-analysis.js";
+
 const STORAGE_KEY = "jun-chan-mahjong:advice-settings";
 const DEFAULT_MAX_SUGGESTIONS = 3;
 const VALID_SUITS = new Set(["m", "p", "s", "z"]);
@@ -41,6 +43,7 @@ export function evaluateDiscardCandidates(hand, context = {}) {
   const nearDoraKeys = collectNearDoraKeys(context);
   const shapeKeys = analyzeHandShapes(counts);
   const yakuhaiRanks = collectYakuhaiRanks(context);
+  const discardWaitOptions = collectDiscardWaitOptionsByTileId(tiles, context);
 
   return tiles
     .map((tile, handIndex) => evaluateTile(tile, {
@@ -55,7 +58,8 @@ export function evaluateDiscardCandidates(hand, context = {}) {
       doraKeys,
       nearDoraKeys,
       shapeKeys,
-      yakuhaiRanks
+      yakuhaiRanks,
+      discardWaitOptions
     }))
     .sort(compareCandidates);
 }
@@ -143,6 +147,7 @@ function evaluateTile(tile, context) {
   const inSequenceCandidate = context.shapeKeys.sequenceCandidateKeys.has(key);
   const isYakuhaiTile = tile.suit === "z" && context.yakuhaiRanks.has(tile.rank);
   const isYakuhaiPair = isYakuhaiTile && count >= 2;
+  const discardWaitOption = context.discardWaitOptions.get(tile.id);
 
   if (inCompletedSequence) {
     score += 80;
@@ -257,6 +262,18 @@ function evaluateTile(tile, context) {
     keepReasons.push(REASON_TEXT.nearDora);
   }
 
+  if (discardWaitOption) {
+    if (discardWaitOption.hasYakuWait) {
+      score -= 16;
+      tags.push("tenpai-after-discard");
+      discardReasons.push("\u3053\u308c\u3092\u5207\u308b\u3068\u5f85\u3061\u304c\u6b8b\u308a\u307e\u3059\u3002");
+    } else {
+      score -= 6;
+      tags.push("no-yaku-tenpai-after-discard");
+      discardReasons.push("\u3053\u308c\u3092\u5207\u308b\u3068\u5f62\u306f\u5b8c\u6210\u3057\u305d\u3046\u3067\u3059\u304c\u3001\u5f79\u306b\u6ce8\u610f\u304c\u5fc5\u8981\u3067\u3059\u3002");
+    }
+  }
+
   const reasons = buildReasons(discardReasons, keepReasons);
 
   return {
@@ -268,6 +285,28 @@ function evaluateTile(tile, context) {
     handIndex: context.handIndex,
     typeKey: key
   };
+}
+
+function collectDiscardWaitOptionsByTileId(tiles, context) {
+  const optionMap = new Map();
+
+  if (tiles.length !== 14) {
+    return optionMap;
+  }
+
+  try {
+    const result = analyzeDiscardWaits(tiles, context);
+
+    for (const option of result.options || []) {
+      if (typeof option.discardTileId === "string") {
+        optionMap.set(option.discardTileId, option);
+      }
+    }
+  } catch {
+    return new Map();
+  }
+
+  return optionMap;
 }
 
 function getSequenceValue(tile, counts) {

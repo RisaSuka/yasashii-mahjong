@@ -118,6 +118,7 @@ As of MVP-1.1.6, the regular browser tests pass and the layout check passes acro
 - MVP-1.6 adds the `yaku-guide` scenario. It checks that the guide dialog, close button, and CSS-tile completion examples fit within the smartphone landscape viewport.
 - MVP-1.7 adds the `waits` scenario. It checks that the waits dialog, close button, and wait tiles fit within the smartphone landscape viewport.
 - MVP-1.8 adds the `cpu-win` scenario. It checks that a CPU win display and the next-round action remain inside the smartphone landscape viewport.
+- MVP-1.9 adds the `waits-after-discard` scenario. It checks that discard-to-wait rows, wait tiles, and the close button stay inside the waits popup in smartphone landscape.
 
 The earlier MVP-1.1.4 guard intentionally detected late-hand discard clipping at discard tile 13 and later. MVP-1.1.6 fixes that known failure by fitting the landscape discard grids for 18-tile late-hand states.
 

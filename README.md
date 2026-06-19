@@ -1,3 +1,9 @@
+# MVP-1.9 discard-to-wait helper note
+
+MVP-1.9 extends the tenpai helper for the common 14-tile human turn. `analyzeDiscardWaits(hand, context)` tries each possible discard, reuses the existing wait analyzer on the remaining 13 tiles, and shows which discard leaves which waits. The waits popup now includes a compact `切ると待ち` section, and discard advice gets a light boost for unprotected discards that leave yaku-valid tenpai without overriding completed meld or yakuhai-pair protection.
+
+Current local checks target MVP-1.9 normal tests plus the smartphone landscape layout guard, including the discard-to-wait popup scenario, and the CPU win reachability diagnostic.
+
 # MVP-1.8.2 yakuhai pair protection note
 
 MVP-1.8.2 strengthens yakuhai pair protection in the shared discard evaluator. Dragon pairs such as `白白`, `發發`, and `中中`, plus round-wind and self-wind pairs when context is available, are treated as important yaku-pair shapes. Pair-heavy hands also get a small chiitoitsu/toitoi direction bonus so the evaluator is less likely to casually break pairs when isolated alternatives exist. This affects both beginner discard advice and CPU discard selection because both use the same evaluator.

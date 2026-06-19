@@ -61,6 +61,51 @@ export function analyzeWaits(hand, context = {}) {
 export const findWinningWaits = analyzeWaits;
 export const getTenpaiInfo = analyzeWaits;
 
+export function analyzeDiscardWaits(hand, context = {}) {
+  const tiles = Array.isArray(hand) ? hand.filter(isValidTile) : [];
+
+  if (tiles.length !== 14) {
+    return {
+      hasTenpaiDiscard: false,
+      options: [],
+      message: "\u5207\u3063\u305f\u5f8c\u306e\u5f85\u3061\u3092\u8abf\u3079\u308b\u306b\u306f\u300114\u679a\u306e\u624b\u724c\u304c\u5fc5\u8981\u3067\u3059\u3002"
+    };
+  }
+
+  const options = [];
+
+  for (let index = 0; index < tiles.length; index += 1) {
+    const discardTile = tiles[index];
+    const remainingTiles = tiles.filter((_, candidateIndex) => candidateIndex !== index);
+    const waitInfo = analyzeWaits(remainingTiles, context);
+
+    if (!waitInfo.isTenpai || waitInfo.waits.length === 0) {
+      continue;
+    }
+
+    options.push({
+      discardTile,
+      discardTileId: discardTile.id,
+      discardTileLabel: getTileLabel(discardTile),
+      isTenpaiAfterDiscard: true,
+      waits: waitInfo.waits,
+      hasYakuWait: waitInfo.waits.some((wait) => wait.hasYaku),
+      message: createDiscardWaitMessage(discardTile, waitInfo.waits)
+    });
+  }
+
+  options.sort(compareDiscardWaitOptions);
+
+  return {
+    hasTenpaiDiscard: options.length > 0,
+    options,
+    message: createDiscardWaitSummary(options)
+  };
+}
+
+export const analyzeWaitsAfterDiscard = analyzeDiscardWaits;
+export const getDiscardTenpaiOptions = analyzeDiscardWaits;
+
 function createWaitYakuContext(context, result, winningTile) {
   const player = context.player || {};
 
@@ -90,12 +135,61 @@ function createSummaryMessage(waits) {
   return "\u5f62\u306f\u5b8c\u6210\u3059\u308b\u5f85\u3061\u304c\u3042\u308a\u307e\u3059\u304c\u3001\u5f79\u304c\u898b\u3048\u306b\u304f\u3044\u624b\u3067\u3059\u3002";
 }
 
+function createDiscardWaitSummary(options) {
+  if (options.length === 0) {
+    return "\u307e\u3060\u30c6\u30f3\u30d1\u30a4\u306b\u306a\u308b\u5207\u308a\u65b9\u306f\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3002";
+  }
+
+  const yakuOptions = options.filter((option) => option.hasYakuWait);
+
+  if (yakuOptions.length > 0) {
+    return `${yakuOptions[0].discardTileLabel}\u3092\u5207\u308b\u3068\u5f85\u3061\u304c\u6b8b\u308a\u307e\u3059\u3002`;
+  }
+
+  return "\u5f62\u306f\u5b8c\u6210\u3059\u308b\u5f85\u3061\u304c\u6b8b\u308a\u307e\u3059\u304c\u3001\u5f79\u304c\u898b\u3048\u306b\u304f\u3044\u5207\u308a\u65b9\u3067\u3059\u3002";
+}
+
+function createDiscardWaitMessage(discardTile, waits) {
+  const yakuWaits = waits.filter((wait) => wait.hasYaku);
+  const waitLabels = (yakuWaits.length > 0 ? yakuWaits : waits)
+    .map((wait) => wait.tileLabel)
+    .join("\u30fb");
+
+  if (yakuWaits.length > 0) {
+    return `${getTileLabel(discardTile)}\u3092\u5207\u308b\u3068${waitLabels}\u5f85\u3061\u306b\u306a\u308a\u307e\u3059\u3002`;
+  }
+
+  return `${getTileLabel(discardTile)}\u3092\u5207\u308b\u3068${waitLabels}\u3067\u5f62\u306f\u5b8c\u6210\u3057\u307e\u3059\u304c\u3001\u5f79\u304c\u3042\u308a\u307e\u305b\u3093\u3002`;
+}
+
 function compareWaits(a, b) {
   if (a.hasYaku !== b.hasYaku) {
     return a.hasYaku ? -1 : 1;
   }
 
   return tileSortValue(a.tile) - tileSortValue(b.tile);
+}
+
+function compareDiscardWaitOptions(a, b) {
+  if (a.hasYakuWait !== b.hasYakuWait) {
+    return a.hasYakuWait ? -1 : 1;
+  }
+
+  const yakuWaitDiff = countYakuWaits(b.waits) - countYakuWaits(a.waits);
+  if (yakuWaitDiff !== 0) {
+    return yakuWaitDiff;
+  }
+
+  const waitCountDiff = b.waits.length - a.waits.length;
+  if (waitCountDiff !== 0) {
+    return waitCountDiff;
+  }
+
+  return tileSortValue(a.discardTile) - tileSortValue(b.discardTile);
+}
+
+function countYakuWaits(waits) {
+  return waits.filter((wait) => wait.hasYaku).length;
 }
 
 function createTileKinds() {

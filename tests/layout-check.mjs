@@ -28,6 +28,7 @@ const SCENARIOS = [
   { name: "result-popup", discards: 18, mode: "result-popup" },
   { name: "yaku-guide", discards: 9, mode: "yaku-guide" },
   { name: "waits", discards: 9, mode: "waits" },
+  { name: "waits-after-discard", discards: 9, mode: "waits-after-discard" },
   { name: "cpu-win", discards: 12, mode: "cpu-win" }
 ];
 const TOLERANCE = 2;
@@ -230,11 +231,17 @@ function setupScenarioSource() {
       discardZoomPlayerId: mode === "discard-zoom" ? 0 : null,
       matchResultDialogOpen: mode === "result-popup",
       yakuGuideDialogOpen: mode === "yaku-guide",
-      waitsDialogOpen: mode === "waits",
-      analyzeWaits: () => ({
-        isTenpai: true,
-        message: "5 pin completes the hand.",
-        waits: [
+      waitsDialogOpen: mode === "waits" || mode === "waits-after-discard",
+      analyzeWaits: () => mode === "waits-after-discard"
+        ? ({
+          isTenpai: false,
+          message: "A 14-tile hand uses discard-to-wait guidance.",
+          waits: []
+        })
+        : ({
+          isTenpai: true,
+          message: "5 pin completes the hand.",
+          waits: [
           {
             tile: { id: "wait-p5", suit: "p", rank: 5, copy: 0, red: false },
             tileLabel: "5 pin",
@@ -251,8 +258,64 @@ function setupScenarioSource() {
             yaku: [],
             message: "9 man completes the shape, but there is no yaku."
           }
-        ]
-      }),
+          ]
+        }),
+      analyzeDiscardWaits: () => mode === "waits-after-discard"
+        ? ({
+          hasTenpaiDiscard: true,
+          message: "Discard 1 man to keep waits.",
+          options: [
+            {
+              discardTile: { id: "discard-m1", suit: "m", rank: 1, copy: 0, red: false },
+              discardTileId: "discard-m1",
+              discardTileLabel: "1 man",
+              isTenpaiAfterDiscard: true,
+              hasYakuWait: true,
+              message: "Discard 1 man for a 5 pin wait.",
+              waits: [
+                {
+                  tile: { id: "wait-p5", suit: "p", rank: 5, copy: 0, red: false },
+                  tileLabel: "5 pin",
+                  canWin: true,
+                  hasYaku: true,
+                  yaku: [{ id: "tanyao", name: "Tanyao", han: 1 }],
+                  message: "5 pin completes the hand."
+                },
+                {
+                  tile: { id: "wait-s8", suit: "s", rank: 8, copy: 0, red: false },
+                  tileLabel: "8 sou",
+                  canWin: true,
+                  hasYaku: true,
+                  yaku: [{ id: "tanyao", name: "Tanyao", han: 1 }],
+                  message: "8 sou completes the hand."
+                }
+              ]
+            },
+            {
+              discardTile: { id: "discard-z1", suit: "z", rank: 1, copy: 0, red: false },
+              discardTileId: "discard-z1",
+              discardTileLabel: "East",
+              isTenpaiAfterDiscard: true,
+              hasYakuWait: false,
+              message: "Discard east for a shape-complete no-yaku wait.",
+              waits: [
+                {
+                  tile: { id: "wait-m9", suit: "m", rank: 9, copy: 0, red: false },
+                  tileLabel: "9 man",
+                  canWin: false,
+                  hasYaku: false,
+                  yaku: [],
+                  message: "9 man completes the shape, but no yaku."
+                }
+              ]
+            }
+          ]
+        })
+        : ({
+          hasTenpaiDiscard: false,
+          options: [],
+          message: ""
+        }),
       suggestYakuTargets: () => [
         {
           id: "tanyao",
@@ -540,6 +603,15 @@ function inspectLayoutSource() {
         const tileRect = tile.getBoundingClientRect();
         if (!isInsideRect(tileRect, rect, tolerance)) {
           failures.push("wait tile " + (index + 1) + " is clipped inside popup");
+          break;
+        }
+      }
+
+      const discardWaitItems = [...waitsModal.querySelectorAll(".discard-waits-item")];
+      for (const [index, item] of discardWaitItems.entries()) {
+        const itemRect = item.getBoundingClientRect();
+        if (!isInsideRect(itemRect, rect, tolerance)) {
+          failures.push("discard wait option " + (index + 1) + " is clipped inside popup");
           break;
         }
       }

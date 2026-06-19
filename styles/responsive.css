@@ -1116,6 +1116,31 @@
     gap: 5px;
   }
 
+  .current-waits-section h3,
+  .discard-waits-section h3 {
+    font-size: 12px;
+  }
+
+  .discard-waits-list {
+    gap: 5px;
+  }
+
+  .discard-waits-item {
+    grid-template-columns: minmax(56px, auto) minmax(0, 1fr);
+    gap: 5px;
+    padding: 5px;
+  }
+
+  .discard-waits-discard,
+  .discard-waits-result > span {
+    font-size: 10.5px;
+    line-height: 1.25;
+  }
+
+  .discard-waits-tiles {
+    gap: 3px;
+  }
+
   .waits-item {
     gap: 4px;
     padding: 5px;

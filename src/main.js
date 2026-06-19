@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp182-yakuhai-pair-protect-1";
-import { renderGame } from "./ui/render.js?v=mvp182-yakuhai-pair-protect-1";
+import { bindControls } from "./ui/input.js?v=mvp19-discard-waits-1";
+import { renderGame } from "./ui/render.js?v=mvp19-discard-waits-1";
 
-const APP_ASSET_VERSION = "mvp182-yakuhai-pair-protect-1";
+const APP_ASSET_VERSION = "mvp19-discard-waits-1";
 
 const appRoot = document.querySelector("#app");
 
@@ -48,6 +48,7 @@ async function loadGameApi() {
       suggestDiscards: advice.suggestDiscards,
       suggestYakuTargets: yakuGuide.suggestYakuTargets,
       analyzeWaits: waits.analyzeWaits,
+      analyzeDiscardWaits: waits.analyzeDiscardWaits,
       loadDiscardAdviceSettings: advice.loadDiscardAdviceSettings,
       saveDiscardAdviceSettings: advice.saveDiscardAdviceSettings
     };
@@ -63,6 +64,8 @@ function render() {
     canCompleteRonLatestDiscard: gameApi.canCompleteRonLatestDiscard,
     suggestDiscards: gameApi.suggestDiscards,
     suggestYakuTargets: gameApi.suggestYakuTargets,
+    analyzeWaits: gameApi.analyzeWaits,
+    analyzeDiscardWaits: gameApi.analyzeDiscardWaits,
     discardAdviceDialogOpen,
     discardZoomPlayerId,
     matchResultDialogOpen,
@@ -455,6 +458,13 @@ function createFallbackGameApi() {
       return {
         isTenpai: false,
         waits: [],
+        message: ""
+      };
+    },
+    analyzeDiscardWaits() {
+      return {
+        hasTenpaiDiscard: false,
+        options: [],
         message: ""
       };
     },

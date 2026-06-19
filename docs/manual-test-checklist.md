@@ -199,6 +199,10 @@ Verify:
 - Confirm the popup says the guide is a rough aid, not an absolute correct answer.
 - Confirm each candidate shows a `完成イメージ（例）` with CSS tiles.
 - Confirm keep hints and discard hints are short and readable.
+- On a 14-tile human turn, open the wait helper and confirm the `切ると待ち` section appears when any discard leaves tenpai.
+- Confirm each discard-to-wait row shows the discard tile, remaining wait tile(s), and whether the wait has yaku.
+- Confirm a hand with no discard-to-tenpai option shows a gentle message instead of empty UI.
+- Confirm discard-to-wait advice does not recommend breaking completed melds or yakuhai pairs when safer alternatives exist.
 - Confirm the close button closes the popup.
 - Confirm Escape closes the popup on desktop.
 - Confirm opening `役ガイド` closes advice, discard zoom, result, and beginner help popups instead of stacking them.
