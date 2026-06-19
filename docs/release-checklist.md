@@ -5,8 +5,8 @@ Use this before merging to `main` or publishing with GitHub Pages.
 ## Current Release Candidate
 
 - Branch: `codex/mvp-30-pon-chi-plan`
-- Scope: MVP-0.1 through MVP-3.2 human chi v1
-- Expected automated result: `326 pass / 0 pending / 0 fail`
+- Scope: MVP-0.1 through MVP-3.3 call stability
+- Expected automated result: `333 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
 - Publish status: MVP-3.1.1 is not published yet.
@@ -31,8 +31,8 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 326.
-- Confirm pass count is 326.
+- Confirm total count is 333.
+- Confirm pass count is 333.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
@@ -44,7 +44,7 @@ node tests/layout-check.mjs
 
 - If Node is not on PATH in the Codex desktop environment, use the bundled Node command documented in `docs/layout-test.md`.
 - Confirm layout-check screenshots are written under `test-artifacts/layout/`.
-- Current layout-check result: all target viewports and scenarios pass, including `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `yaku-guide`, `waits`, `riichi-ready`, `riichi-declared`, `cpu-riichi`, `pon-reaction`, `chi-reaction`, `open-melds`, `multiple-melds`, and `cpu-win`; `open-melds` and `multiple-melds` also check that the human meld area does not overlap human hand tiles.
+- Current layout-check result: all target viewports and scenarios pass, including `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `yaku-guide`, `waits`, `riichi-ready`, `riichi-declared`, `cpu-riichi`, `pon-reaction`, `chi-reaction`, `open-melds`, `multiple-melds`, `open-tanyao-win`, `open-yakuhai-win`, and `cpu-win`; `open-melds` and `multiple-melds` also check that the human meld area does not overlap human hand tiles.
 - Run the CPU win reachability diagnostic:
 
 ```powershell
@@ -95,6 +95,10 @@ node scripts/simulate-cpu-win-reachability.mjs
 - Declaring chi creates a `chi` meld, marks the hand open, and lets the human discard one tile.
 - Non-upper-player discards, honor discards, and human riichi all block chi.
 - Multiple open melds remain in a horizontal meld area and do not overlap the human hand tiles in smartphone landscape.
+- Open yakuhai and open tanyao wins keep correct yaku results.
+- Open no-yaku completed shapes are rejected.
+- Open tsumo does not receive menzen-tsumo.
+- Next-round setup clears melds.
 - Kan, CPU calls, scoring, furiten, and full call competition remain out of scope.
 - Winning result still shows yaku names, han, total han, explanations, and furigana.
 - Yaku display order remains beginner-friendly.

@@ -133,6 +133,7 @@
 
     <script type="module">
       import { registerActionTests } from "./actions.test.js";
+      import { registerCallStabilityTests } from "./call-stability.test.js";
       import { registerCpuDiscardTests } from "./cpu-discard.test.js";
       import { registerCpuWinTests } from "./cpu-win.test.js";
       import { registerDiscardAdviceTests } from "./discard-advice.test.js";
@@ -161,7 +162,7 @@
       import { registerYakuTests } from "./yaku.test.js";
       import { runTests, tests } from "./test.js";
 
-      globalThis.__TEST_CACHE_BUST__ = "mvp32-human-chi-meld-layout-1";
+      globalThis.__TEST_CACHE_BUST__ = "mvp33-call-stability-1";
 
       const totalCount = document.querySelector("#total-count");
       const passCount = document.querySelector("#pass-count");
@@ -175,6 +176,7 @@
       registerWallTests();
       registerRoundTests();
       registerActionTests();
+      registerCallStabilityTests();
       registerCpuDiscardTests();
       registerCpuWinTests();
       registerDiscardAdviceTests();

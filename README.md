@@ -1,3 +1,9 @@
+# MVP-3.3 call stability note
+
+MVP-3.3 is a stabilization pass for the new pon/chi work. It verifies that open yakuhai pon and open chi tanyao can win, open complete shapes without yaku are rejected, open tsumo does not receive menzen-tsumo, fresh rounds clear melds, and ron still has priority over call buttons. Layout guard scenarios now cover chi reactions, multiple melds, and open-hand win results.
+
+Current local checks target MVP-3.3 normal tests, the smartphone landscape layout guard including open-hand call scenarios, and the CPU win reachability diagnostic.
+
 # MVP-3.2 human chi note
 
 MVP-3.2 adds the first human-only chi flow. The human can chi only the upper player's suited-number discard, with separate buttons for each possible sequence. Declaring chi removes the selected two hand tiles, creates a `chi` meld with the called discard and source player, marks the hand open, and returns control to the human to discard one tile. Multiple melds now use a wider horizontal meld area near the human seat so pon/chi groups do not overlap the hand in smartphone landscape.

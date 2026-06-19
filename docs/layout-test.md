@@ -92,6 +92,8 @@ The check renders these scenarios:
 - `chi-reaction`: the human chi reaction candidate buttons are visible and clickable
 - `open-melds`: an open pon meld is visible near the human seat and does not overlap human hand tiles
 - `multiple-melds`: multiple human melds are visible in a horizontal meld area and do not overlap human hand tiles
+- `open-tanyao-win`: an open chi/tanyao win result remains inside the landscape layout
+- `open-yakuhai-win`: an open yakuhai win result remains inside the landscape layout
 - `cpu-win`: a CPU win result is visible with the next-round action
 - `all-hands-open`: the round-end all-hands learning popup is open
 
@@ -132,6 +134,7 @@ As of MVP-1.1.6, the regular browser tests pass and the layout check passes acro
 - MVP-3.1 adds `pon-reaction` and `open-melds` scenarios so pon/skip actions and the human meld area stay inside the smartphone landscape table.
 - MVP-3.1.1 strengthens `open-melds` so a human meld overlapping human hand tiles fails the guard instead of slipping through as a visual-only problem.
 - MVP-3.2 adds `chi-reaction` and `multiple-melds` scenarios so chi candidate buttons are clickable and multiple horizontal melds stay separated from the human hand.
+- MVP-3.3 adds `open-tanyao-win` and `open-yakuhai-win` scenarios so open-hand win results and next-round actions stay inside the smartphone landscape table.
 - MVP-1.8 adds the `cpu-win` scenario. It checks that a CPU win display and the next-round action remain inside the smartphone landscape viewport.
 - MVP-1.9 adds the `waits-after-discard` scenario. It checks that discard-to-wait rows, wait tiles, and the close button stay inside the waits popup in smartphone landscape.
 - MVP-1.9.1 adds the `all-hands-open` scenario. It checks that the all-hands dialog, close button, and four player hand sections stay inside the smartphone landscape viewport without page-level overflow.

@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp32-human-chi-meld-layout-1";
-import { renderGame } from "./ui/render.js?v=mvp32-human-chi-meld-layout-1";
+import { bindControls } from "./ui/input.js?v=mvp33-call-stability-1";
+import { renderGame } from "./ui/render.js?v=mvp33-call-stability-1";
 
-const APP_ASSET_VERSION = "mvp32-human-chi-meld-layout-1";
+const APP_ASSET_VERSION = "mvp33-call-stability-1";
 
 const appRoot = document.querySelector("#app");
 

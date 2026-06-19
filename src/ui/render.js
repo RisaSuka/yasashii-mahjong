@@ -6,7 +6,7 @@ import {
   getYakuDisplayName,
   sortYakuForDisplay
 } from "./yaku-display.js";
-import { getTileSvgPath } from "./tile-assets.js?v=mvp32-human-chi-meld-layout-1";
+import { getTileSvgPath } from "./tile-assets.js?v=mvp33-call-stability-1";
 import { sortTiles } from "../game/tiles.js";
 
 const WIND_LABELS = {

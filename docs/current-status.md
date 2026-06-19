@@ -1,13 +1,13 @@
 # Current Status
 
-Last updated for MVP-3.2 human chi v1.
+Last updated for MVP-3.3 call stability.
 
 ## Repository State
 
 - Working branch: `codex/mvp-30-pon-chi-plan`
-- Automated tests: MVP-3.2 normal tests pass locally (`326 pass / 0 pending / 0 fail`)
-- Layout check: Chrome-based smartphone landscape guard includes pon-reaction, chi-reaction, open-melds, and multiple-melds scenarios; open/multiple melds guard against human meld/hand-tile overlap
-- Working tree: clean at the time of the latest MVP-3.2 verification
+- Automated tests: MVP-3.3 normal tests pass locally (`333 pass / 0 pending / 0 fail`)
+- Layout check: Chrome-based smartphone landscape guard includes pon-reaction, chi-reaction, open-melds, multiple-melds, open-tanyao-win, and open-yakuhai-win scenarios; open/multiple melds guard against human meld/hand-tile overlap
+- Working tree: clean at the time of the latest MVP-3.3 verification
 - Push: not yet
 - `main` merge: not yet for MVP-3.1
 
@@ -55,6 +55,7 @@ Last updated for MVP-3.2 human chi v1.
 | MVP-3.1 | Working branch | Human-only pon v1: pon reaction, open meld state/UI, post-pon discard, and open-hand riichi blocking. |
 | MVP-3.1.1 | Working branch | Clears post-pon guidance after discard, moves the human pon meld away from hand tiles, adds meld/hand overlap guard, and documents the future four-direction table layout direction. |
 | MVP-3.2 | Working branch | Human-only chi v1: chi reaction from the upper player, selectable chi candidates, open chi meld state/UI, post-chi discard, and multiple-meld landscape guard. |
+| MVP-3.3 | Working branch | Call stability pass: open yakuhai/tanyao wins, open no-yaku rejection, no menzen-tsumo on open hands, next-round meld clearing, and open-hand layout scenarios. |
 
 ## Current Capabilities
 
@@ -143,6 +144,13 @@ Last updated for MVP-3.2 human chi v1.
   - Open hands cannot declare riichi.
   - Multiple melds are displayed horizontally near the human seat and are guarded against overlap with hand tiles in smartphone landscape.
   - Kan, CPU calls, scoring, furiten, and full call competition remain unsupported.
+- Call stability checks:
+  - Open yakuhai pon can win and keeps yakuhai in `yakuResult`.
+  - Open chi tanyao can win under the kuitan-ari beginner policy.
+  - Open complete shapes with no yaku are rejected with the existing no-yaku guidance.
+  - Open tsumo never receives menzen-tsumo.
+  - Next rounds create fresh empty meld arrays.
+  - Round-end/result UI and all-hands review keep rendering open melds.
 - Next-round continuation:
   - `次の局へ` appears after exhaustive draw, tsumo, or ron.
   - The next round creates a fresh wall, dead wall, players, hands, and dealer initial draw.

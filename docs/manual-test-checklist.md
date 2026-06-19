@@ -21,8 +21,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 326.
-- Confirm pass count is 326.
+- Confirm total count is 333.
+- Confirm pass count is 333.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - For smartphone landscape layout work, also run the layout guard described in `docs/layout-test.md`.
@@ -93,6 +93,18 @@ http://127.0.0.1:8765/tests/test-runner.html
 - Confirm an open chi hand cannot declare riichi.
 - Confirm multiple melds stay in the dedicated meld area and do not overlap the human hand tiles in smartphone landscape.
 - Confirm kan, CPU calls, scoring, furiten, and full call competition are not implemented yet.
+
+## 1.6 MVP-3.3 Call Stability Check
+
+- Confirm open yakuhai pon can still win and shows yakuhai in the result.
+- Confirm open chi tanyao can win under the kuitan-ari beginner policy.
+- Confirm open complete no-yaku hands do not win and show the no-yaku guidance.
+- Confirm open tsumo does not receive menzen-tsumo.
+- Confirm open hands cannot declare riichi.
+- Confirm pon/chi after-discard guidance disappears after the caller discards.
+- Confirm multiple melds still allow a discard and turn advance.
+- Confirm starting the next round clears all `melds`.
+- Confirm result display and all-hands review still render after open-hand wins.
 
 ## 2. Normal Desktop Flow
 

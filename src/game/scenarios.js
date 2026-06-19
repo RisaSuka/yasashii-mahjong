@@ -25,7 +25,10 @@ const SCENARIO_ALIASES = {
   "human-chi-multiple-options": "human-chi-multiple-options",
   "human-chi-not-kamicha": "human-chi-not-kamicha",
   "human-chi-riichi-blocked": "human-chi-riichi-blocked",
-  "human-multiple-melds-layout": "human-multiple-melds-layout"
+  "human-multiple-melds-layout": "human-multiple-melds-layout",
+  "human-open-tanyao-win-shape": "human-open-tanyao-win-shape",
+  "human-open-no-yaku-win-shape": "human-open-no-yaku-win-shape",
+  "human-open-yakuhai-ron-ready": "human-open-yakuhai-ron-ready"
 };
 
 const SCENARIOS = {
@@ -440,6 +443,84 @@ const SCENARIOS = {
     lastDiscard: {
       playerId: 3,
       tile: "p5"
+    }
+  },
+  "human-open-tanyao-win-shape": {
+    name: "human-open-tanyao-win-shape",
+    description: "Human player has an open chi and a complete tanyao tsumo shape.",
+    phase: "discard",
+    currentPlayerIndex: 0,
+    hands: {
+      0: "m2 m3 m4 p2 p3 p4 s6 s7 s8 m5 m5"
+    },
+    discards: {
+      3: "p5"
+    },
+    melds: {
+      0: [
+        {
+          type: "chi",
+          tiles: "p3 p4 p5",
+          calledTile: "p5",
+          fromPlayerId: 3
+        }
+      ]
+    },
+    lastDiscard: {
+      playerId: 3,
+      tile: "p5"
+    }
+  },
+  "human-open-no-yaku-win-shape": {
+    name: "human-open-no-yaku-win-shape",
+    description: "Human player has an open complete shape with no yaku.",
+    phase: "discard",
+    currentPlayerIndex: 0,
+    hands: {
+      0: "m1 m2 m3 p7 p8 p9 s1 s2 s3 z1 z1"
+    },
+    discards: {
+      3: "p5"
+    },
+    melds: {
+      0: [
+        {
+          type: "chi",
+          tiles: "p3 p4 p5",
+          calledTile: "p5",
+          fromPlayerId: 3
+        }
+      ]
+    },
+    lastDiscard: {
+      playerId: 3,
+      tile: "p5"
+    }
+  },
+  "human-open-yakuhai-ron-ready": {
+    name: "human-open-yakuhai-ron-ready",
+    description: "Human player can ron with an open yakuhai pon hand.",
+    phase: "reaction",
+    currentPlayerIndex: 1,
+    hands: {
+      0: "m1 m2 m3 p2 p3 p4 s7 s8 s9 m9"
+    },
+    discards: {
+      1: "m9"
+    },
+    melds: {
+      0: [
+        {
+          type: "pon",
+          tiles: "z5 z5 z5",
+          calledTile: "z5",
+          fromPlayerId: 1
+        }
+      ]
+    },
+    lastDiscard: {
+      playerId: 1,
+      tile: "m9"
     }
   }
 };

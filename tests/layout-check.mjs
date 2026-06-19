@@ -36,6 +36,8 @@ const SCENARIOS = [
   { name: "chi-reaction", discards: 9, mode: "chi-reaction" },
   { name: "open-melds", discards: 9, mode: "open-melds" },
   { name: "multiple-melds", discards: 9, mode: "multiple-melds" },
+  { name: "open-tanyao-win", discards: 9, mode: "open-tanyao-win" },
+  { name: "open-yakuhai-win", discards: 9, mode: "open-yakuhai-win" },
   { name: "cpu-win", discards: 12, mode: "cpu-win" },
   { name: "all-hands-open", discards: 18, mode: "all-hands-open" }
 ];
@@ -391,6 +393,50 @@ function setupScenarioSource() {
                   fromPlayerId: 2
                 }
               ]
+            }
+            : player)
+        }
+      };
+    }
+
+    if (mode === "open-tanyao-win" || mode === "open-yakuhai-win") {
+      const openMeld = mode === "open-tanyao-win"
+        ? {
+          id: "layout-open-chi-p345",
+          type: "chi",
+          tiles: [tile("layout-open-p3", "p", 3), tile("layout-open-p4", "p", 4), tile("layout-open-p5", "p", 5)],
+          calledTile: tile("layout-open-p5", "p", 5),
+          fromPlayerId: 3
+        }
+        : {
+          id: "layout-open-pon-z5",
+          type: "pon",
+          tiles: [tile("layout-open-z5-a", "z", 5), tile("layout-open-z5-b", "z", 5, 1), tile("layout-open-z5-c", "z", 5, 2)],
+          calledTile: tile("layout-open-z5-c", "z", 5, 2),
+          fromPlayerId: 1
+        };
+      state = {
+        ...state,
+        round: {
+          ...state.round,
+          phase: "ended",
+          endReason: "win",
+          winningResult: {
+            winnerId: 0,
+            winType: "tsumo",
+            winningTile: tile("layout-open-win-m5", "m", 5),
+            handType: "standard",
+            handTiles: state.round.players[0].hand,
+            yakuResult: mode === "open-tanyao-win"
+              ? [{ id: "tanyao", name: "Tanyao", han: 1 }]
+              : [{ id: "yakuhai", name: "Yakuhai", han: 1 }]
+          },
+          players: state.round.players.map((player) => player.id === 0
+            ? {
+              ...player,
+              isClosed: false,
+              menzen: false,
+              melds: [openMeld]
             }
             : player)
         }
