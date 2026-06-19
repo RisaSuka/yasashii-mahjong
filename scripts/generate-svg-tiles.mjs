@@ -38,10 +38,10 @@ function label(x, y, value, size, color, weight = 900, family = "Georgia, 'Yu Mi
   return `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" font-family="${family}" font-size="${size}" font-weight="${weight}" fill="${color}">${value}</text>`;
 }
 
-function pinDot(x, y, color = COLORS.blue, size = 7.3) {
-  return `<circle cx="${x}" cy="${y}" r="${size + 3.2}" fill="#fffef9" stroke="${color}" stroke-width="2.6"/>
-  <circle cx="${x}" cy="${y}" r="${size}" fill="none" stroke="${color}" stroke-width="3"/>
-  <circle cx="${x}" cy="${y}" r="${Math.max(2.1, size * 0.35)}" fill="${color}"/>`;
+function pinDot(x, y, color = COLORS.blue, size = 7.4) {
+  return `<circle cx="${x}" cy="${y}" r="${size + 3.6}" fill="#fffef9" stroke="${color}" stroke-width="2.8"/>
+  <circle cx="${x}" cy="${y}" r="${size}" fill="none" stroke="${color}" stroke-width="3.2"/>
+  <circle cx="${x}" cy="${y}" r="${Math.max(2.2, size * 0.35)}" fill="${color}"/>`;
 }
 
 function largePinOne() {
@@ -51,17 +51,27 @@ function largePinOne() {
   <circle cx="40" cy="52" r="2.3" fill="#fffef9"/>`;
 }
 
-function bambooUnit(x, y, color = COLORS.green) {
+function bambooUnit(x, y, color = COLORS.green, scale = 1) {
+  const width = 11.8 * scale;
+  const height = 24 * scale;
+  const bandWidth = 13.6 * scale;
+  const bandHeight = 3.4 * scale;
+  const dotRadius = 2.2 * scale;
+
   return `<g>
-    <rect x="${x - 4.4}" y="${y - 9}" width="8.8" height="18" rx="3.4" fill="${color}"/>
-    <rect x="${x - 5.6}" y="${y - 1.6}" width="11.2" height="3.2" rx="1.6" fill="#fffef9" opacity="0.92"/>
-    <circle cx="${x}" cy="${y - 6}" r="2.1" fill="#fffef9" opacity="0.86"/>
-    <circle cx="${x}" cy="${y + 6}" r="2.1" fill="#fffef9" opacity="0.86"/>
+    <rect x="${round(x - width / 2)}" y="${round(y - height / 2)}" width="${round(width)}" height="${round(height)}" rx="${round(4.4 * scale)}" fill="${color}"/>
+    <rect x="${round(x - bandWidth / 2)}" y="${round(y - bandHeight / 2)}" width="${round(bandWidth)}" height="${round(bandHeight)}" rx="${round(1.7 * scale)}" fill="#fffef9" opacity="0.94"/>
+    <circle cx="${x}" cy="${round(y - height * 0.27)}" r="${round(dotRadius)}" fill="#fffef9" opacity="0.9"/>
+    <circle cx="${x}" cy="${round(y + height * 0.27)}" r="${round(dotRadius)}" fill="#fffef9" opacity="0.9"/>
   </g>`;
 }
 
 function souGrid(points, redIndexes = []) {
-  return points.map(([x, y], index) => bambooUnit(x, y, redIndexes.includes(index) ? COLORS.red : COLORS.green)).join("\n  ");
+  return points.map(([x, y, scale = 1], index) => bambooUnit(x, y, redIndexes.includes(index) ? COLORS.red : COLORS.green, scale)).join("\n  ");
+}
+
+function round(value) {
+  return Number(value.toFixed(2));
 }
 
 const kanjiNumbers = [
@@ -102,27 +112,27 @@ for (let rank = 1; rank <= 9; rank += 1) {
   const dots = rank === 1
     ? largePinOne()
     : pinDots[rank]
-      .map(([x, y], index) => pinDot(x, y, rank >= 5 && index >= Math.floor(pinDots[rank].length / 2) ? COLORS.red : COLORS.blue, rank >= 7 ? 5.7 : 6.3))
+      .map(([x, y], index) => pinDot(x, y, rank >= 5 && index >= Math.floor(pinDots[rank].length / 2) ? COLORS.red : COLORS.blue, rank >= 7 ? 6.1 : 6.7))
       .join("\n  ");
   writeTile(`pin-${rank}.svg`, `${dots}\n  ${label(62, 88, String(rank), 12, COLORS.blue, 900, "Arial, sans-serif")}`, COLORS.blue);
 }
 
-const souOne = `<path d="M22 66c7-23 22-37 38-31-9 5-14 12-15 21 7-4 14-3 19 2-10 4-17 10-24 20-4-9-10-13-18-12Z" fill="${COLORS.green}"/>
-  <path d="M25 65c8 0 16 4 23 13" fill="none" stroke="#0f5132" stroke-width="3" stroke-linecap="round"/>
-  <circle cx="50" cy="39" r="3.2" fill="#fffef9"/>
-  <path d="M57 39l8-4-5 8z" fill="#f59e0b"/>
-  <path d="M20 72c8-3 14-1 19 5" fill="none" stroke="${COLORS.red}" stroke-width="3" stroke-linecap="round"/>`;
+const souOne = `<path d="M18 64c8-27 25-40 43-35-10 6-16 14-17 24 8-5 16-3 22 3-12 4-20 11-28 22-5-9-11-14-20-14Z" fill="${COLORS.green}"/>
+  <path d="M23 64c9 0 18 5 26 14" fill="none" stroke="#0f5132" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="51" cy="38" r="3.5" fill="#fffef9"/>
+  <path d="M59 38l8-4-5 9z" fill="#f59e0b"/>
+  <path d="M18 73c8-4 16-1 22 6" fill="none" stroke="${COLORS.red}" stroke-width="3.4" stroke-linecap="round"/>`;
 writeTile("sou-1.svg", `${souOne}\n  ${label(62, 88, "1", 12, COLORS.green, 900, "Arial, sans-serif")}`, COLORS.green);
 
 const souPoints = {
-  2: [[40, 36], [40, 68]],
-  3: [[32, 34], [40, 52], [48, 70]],
-  4: [[30, 36], [50, 36], [30, 68], [50, 68]],
-  5: [[30, 34], [50, 34], [40, 52], [30, 70], [50, 70]],
-  6: [[30, 32], [50, 32], [30, 52], [50, 52], [30, 72], [50, 72]],
-  7: [[26, 32], [40, 32], [54, 32], [31, 52], [49, 52], [31, 72], [49, 72]],
-  8: [[26, 32], [40, 32], [54, 32], [31, 50], [49, 50], [26, 72], [40, 72], [54, 72]],
-  9: [[26, 32], [40, 32], [54, 32], [26, 52], [40, 52], [54, 52], [26, 72], [40, 72], [54, 72]]
+  2: [[40, 36, 1.08], [40, 68, 1.08]],
+  3: [[31, 34, 1.02], [40, 52, 1.02], [49, 70, 1.02]],
+  4: [[30, 36, 1], [50, 36, 1], [30, 68, 1], [50, 68, 1]],
+  5: [[29, 34, 0.98], [51, 34, 0.98], [40, 52, 0.98], [29, 70, 0.98], [51, 70, 0.98]],
+  6: [[30, 31, 0.9], [50, 31, 0.9], [30, 52, 0.9], [50, 52, 0.9], [30, 73, 0.9], [50, 73, 0.9]],
+  7: [[26, 31, 0.82], [40, 31, 0.82], [54, 31, 0.82], [31, 52, 0.86], [49, 52, 0.86], [31, 73, 0.86], [49, 73, 0.86]],
+  8: [[26, 31, 0.8], [40, 31, 0.8], [54, 31, 0.8], [31, 51, 0.84], [49, 51, 0.84], [26, 73, 0.8], [40, 73, 0.8], [54, 73, 0.8]],
+  9: [[26, 31, 0.78], [40, 31, 0.78], [54, 31, 0.78], [26, 52, 0.78], [40, 52, 0.78], [54, 52, 0.78], [26, 73, 0.78], [40, 73, 0.78], [54, 73, 0.78]]
 };
 const souRedIndexes = {
   5: [2],

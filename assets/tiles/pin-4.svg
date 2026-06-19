@@ -11,18 +11,18 @@
   </defs>
   <rect x="5" y="4" width="70" height="104" rx="10" fill="url(#tileBase)" stroke="#b7aa8d" stroke-width="3" filter="url(#tileShadow)"/>
   <rect x="11" y="10" width="58" height="88" rx="7" fill="#fffef9" stroke="#173b8f" stroke-opacity="0.34" stroke-width="2"/>
-  <circle cx="30" cy="36" r="9.5" fill="#fffef9" stroke="#173b8f" stroke-width="2.6"/>
-  <circle cx="30" cy="36" r="6.3" fill="none" stroke="#173b8f" stroke-width="3"/>
-  <circle cx="30" cy="36" r="2.2049999999999996" fill="#173b8f"/>
-  <circle cx="50" cy="36" r="9.5" fill="#fffef9" stroke="#173b8f" stroke-width="2.6"/>
-  <circle cx="50" cy="36" r="6.3" fill="none" stroke="#173b8f" stroke-width="3"/>
-  <circle cx="50" cy="36" r="2.2049999999999996" fill="#173b8f"/>
-  <circle cx="30" cy="68" r="9.5" fill="#fffef9" stroke="#173b8f" stroke-width="2.6"/>
-  <circle cx="30" cy="68" r="6.3" fill="none" stroke="#173b8f" stroke-width="3"/>
-  <circle cx="30" cy="68" r="2.2049999999999996" fill="#173b8f"/>
-  <circle cx="50" cy="68" r="9.5" fill="#fffef9" stroke="#173b8f" stroke-width="2.6"/>
-  <circle cx="50" cy="68" r="6.3" fill="none" stroke="#173b8f" stroke-width="3"/>
-  <circle cx="50" cy="68" r="2.2049999999999996" fill="#173b8f"/>
+  <circle cx="30" cy="36" r="10.3" fill="#fffef9" stroke="#173b8f" stroke-width="2.8"/>
+  <circle cx="30" cy="36" r="6.7" fill="none" stroke="#173b8f" stroke-width="3.2"/>
+  <circle cx="30" cy="36" r="2.3449999999999998" fill="#173b8f"/>
+  <circle cx="50" cy="36" r="10.3" fill="#fffef9" stroke="#173b8f" stroke-width="2.8"/>
+  <circle cx="50" cy="36" r="6.7" fill="none" stroke="#173b8f" stroke-width="3.2"/>
+  <circle cx="50" cy="36" r="2.3449999999999998" fill="#173b8f"/>
+  <circle cx="30" cy="68" r="10.3" fill="#fffef9" stroke="#173b8f" stroke-width="2.8"/>
+  <circle cx="30" cy="68" r="6.7" fill="none" stroke="#173b8f" stroke-width="3.2"/>
+  <circle cx="30" cy="68" r="2.3449999999999998" fill="#173b8f"/>
+  <circle cx="50" cy="68" r="10.3" fill="#fffef9" stroke="#173b8f" stroke-width="2.8"/>
+  <circle cx="50" cy="68" r="6.7" fill="none" stroke="#173b8f" stroke-width="3.2"/>
+  <circle cx="50" cy="68" r="2.3449999999999998" fill="#173b8f"/>
   <text x="62" y="88" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif" font-size="12" font-weight="900" fill="#173b8f">4</text>
   <rect x="17" y="96" width="46" height="5" rx="3" fill="#8b7355" opacity="0.22"/>
 </svg>
