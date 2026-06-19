@@ -847,6 +847,26 @@
     margin-top: 1px;
   }
 
+  .yaku-summary {
+    gap: 1px;
+    max-height: 30px;
+    overflow: hidden;
+    padding: 2px 5px;
+    font-size: 9px;
+    line-height: 1.12;
+  }
+
+  .yaku-summary .yaku-description,
+  .yaku-summary .term-help {
+    display: none;
+  }
+
+  .yaku-summary .yaku-item {
+    display: inline-flex;
+    gap: 3px;
+    justify-content: center;
+  }
+
   .discard-advice-trigger {
     min-height: 22px;
     padding: 0 9px;

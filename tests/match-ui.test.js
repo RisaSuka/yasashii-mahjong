@@ -800,6 +800,28 @@ export function registerMatchUiTests() {
     assertTrue(html.includes('data-action="close-match-result"'), "Result popup should include a close action");
   });
 
+  test("MVP-1.8 UI: CPU tsumo win keeps next-round action visible", async () => {
+    const { dispatchAction } = await loadModule("../src/game/actions.js", ["dispatchAction"]);
+    const state = await scenarioState("cpu-tsumo-ready-yakuhai");
+    const wonState = dispatchAction(state, { type: "DECLARE_TSUMO", playerId: 1 });
+    const html = await renderState(wonState);
+
+    assertTrue(html.includes("CPU 1"), "CPU tsumo display should include the CPU winner name");
+    assertTrue(html.includes("table-action-bar"), "CPU tsumo display should keep the action bar");
+    assertTrue(html.includes('data-action="start-next-round"'), "CPU tsumo display should offer next round");
+  });
+
+  test("MVP-1.8 UI: CPU ron win keeps next-round action visible", async () => {
+    const { resolveCpuRonAfterDiscard } = await loadModule("../src/game/actions.js", ["resolveCpuRonAfterDiscard"]);
+    const state = await scenarioState("cpu-ron-ready-yakuhai");
+    const wonState = resolveCpuRonAfterDiscard(state);
+    const html = await renderState(wonState);
+
+    assertTrue(html.includes("CPU 1"), "CPU ron display should include the CPU winner name");
+    assertTrue(html.includes("table-action-bar"), "CPU ron display should keep the action bar");
+    assertTrue(html.includes('data-action="start-next-round"'), "CPU ron display should offer next round");
+  });
+
   test("MVP-1.3.1 UI: match result popup handles empty history", async () => {
     const state = await matchEndedHistoryState();
     const html = await renderState({

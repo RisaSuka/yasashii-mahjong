@@ -1,5 +1,5 @@
 import { chooseCpuDiscard } from "./cpu/random-cpu.js";
-import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp151-ron-check-1";
+import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp18-cpu-win-1";
 import { isWinningHand } from "./rules/win-check.js";
 import { detectYaku } from "./rules/yaku.js";
 import { drawFromWall } from "./wall.js";
@@ -35,6 +35,8 @@ export function dispatchAction(state, action) {
       return declareTsumo(state, action.playerId);
     case "DECLARE_RON":
       return declareRon(state, action.playerId);
+    case "RESOLVE_CPU_RON":
+      return resolveCpuRonAfterDiscard(state);
     case "END_ROUND_DRAW":
       return endRoundDraw(state, action.storage);
     case "TOGGLE_LARGE_TILE_MODE":
@@ -80,6 +82,12 @@ export function canDeclareTsumo(state, playerId) {
   }
 
   return detectYaku(player.hand, createTsumoYakuContext(state, player, result)).length > 0;
+}
+
+export function canCpuDeclareTsumo(state, playerId) {
+  const player = state.round?.players.find((candidate) => candidate.id === playerId);
+
+  return player?.type === "cpu" && canDeclareTsumo(state, playerId);
 }
 
 export function startMatch(state, options = {}) {
@@ -233,6 +241,7 @@ function createLastRoundResult(round) {
     winnerId: round.winningResult.winnerId,
     winType: round.winningResult.winType,
     fromPlayerId: round.winningResult.fromPlayerId,
+    loserId: round.winningResult.loserId ?? round.winningResult.fromPlayerId,
     winningTile: round.winningResult.winningTile,
     handType: round.winningResult.handType,
     yakuResult: round.winningResult.yakuResult
@@ -246,6 +255,7 @@ function createRoundHistoryEntry(result) {
     handNumber: result.handNumber,
     resultType: result.resultType,
     winnerId: result.winnerId,
+    loserId: result.loserId,
     winType: result.winType
   };
 }
@@ -333,7 +343,7 @@ export function canCompleteRonLatestDiscard(state, playerId) {
   return Boolean(getRonShapeResult(state, playerId)?.winning);
 }
 
-function getRonShapeResult(state, playerId) {
+function getRonShapeResult(state, playerId, options = {}) {
   if (!state.round || state.round.phase === "ended") {
     return null;
   }
@@ -345,8 +355,9 @@ function getRonShapeResult(state, playerId) {
   }
 
   const player = state.round.players.find((candidate) => candidate.id === playerId);
+  const humanOnly = options.humanOnly !== false;
 
-  if (!player || player.type !== "human") {
+  if (!player || (humanOnly && player.type !== "human")) {
     return null;
   }
 
@@ -367,6 +378,75 @@ function getRonShapeResult(state, playerId) {
     player,
     handTiles,
     result
+  };
+}
+
+export function findCpuRonWinner(state) {
+  if (!state.round || state.round.phase === "ended") {
+    return null;
+  }
+
+  const lastDiscard = state.round.lastDiscard;
+
+  if (!lastDiscard?.tile || lastDiscard.playerId === null) {
+    return null;
+  }
+
+  for (const player of state.round.players) {
+    if (player.type !== "cpu" || player.id === lastDiscard.playerId) {
+      continue;
+    }
+
+    const ronShape = getRonShapeResult(state, player.id, { humanOnly: false });
+
+    if (!ronShape?.winning) {
+      continue;
+    }
+
+    const yakuResult = detectYaku(ronShape.handTiles, createRonYakuContext(state, ronShape.player, ronShape.result));
+
+    if (yakuResult.length === 0) {
+      continue;
+    }
+
+    return {
+      player: ronShape.player,
+      result: ronShape.result,
+      handTiles: ronShape.handTiles,
+      winningTile: lastDiscard.tile,
+      fromPlayerId: lastDiscard.playerId,
+      yakuResult
+    };
+  }
+
+  return null;
+}
+
+export function resolveCpuRonAfterDiscard(state) {
+  const cpuRon = findCpuRonWinner(state);
+
+  if (!cpuRon) {
+    return state;
+  }
+
+  return {
+    ...state,
+    round: {
+      ...state.round,
+      lastActionResult: null,
+      phase: "ended",
+      endReason: "win",
+      winningResult: {
+        winnerId: cpuRon.player.id,
+        winType: "ron",
+        fromPlayerId: cpuRon.fromPlayerId,
+        loserId: cpuRon.fromPlayerId,
+        winningTile: cpuRon.winningTile,
+        handType: cpuRon.result.type,
+        handTiles: cpuRon.handTiles,
+        yakuResult: cpuRon.yakuResult
+      }
+    }
   };
 }
 
@@ -442,6 +522,7 @@ export function declareRon(state, playerId) {
         winnerId: playerId,
         winType: "ron",
         fromPlayerId: state.round.lastDiscard.playerId,
+        loserId: state.round.lastDiscard.playerId,
         winningTile,
         handType: result.type,
         handTiles,

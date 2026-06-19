@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp17-tenpai-waits-1";
-import { renderGame } from "./ui/render.js?v=mvp17-tenpai-waits-1";
+import { bindControls } from "./ui/input.js?v=mvp18-cpu-win-1";
+import { renderGame } from "./ui/render.js?v=mvp18-cpu-win-1";
 
-const APP_ASSET_VERSION = "mvp17-tenpai-waits-1";
+const APP_ASSET_VERSION = "mvp18-cpu-win-1";
 
 const appRoot = document.querySelector("#app");
 
@@ -42,6 +42,7 @@ async function loadGameApi() {
       canDeclareRon: actions.canDeclareRon,
       canRonLatestDiscard: actions.canRonLatestDiscard,
       canCompleteRonLatestDiscard: actions.canCompleteRonLatestDiscard,
+      resolveCpuRonAfterDiscard: actions.resolveCpuRonAfterDiscard,
       createInitialGameState: round.createInitialGameState,
       loadStats: storage.loadStats,
       suggestDiscards: advice.suggestDiscards,
@@ -292,6 +293,10 @@ function handleAfterDiscard() {
     return;
   }
 
+  if (resolveCpuRonIfNeeded()) {
+    return;
+  }
+
   continueAfterDiscard();
 }
 
@@ -309,6 +314,22 @@ function enterReactionIfNeeded() {
   });
   render();
   return state.round?.phase === "reaction";
+}
+
+function resolveCpuRonIfNeeded() {
+  if (typeof gameApi.resolveCpuRonAfterDiscard !== "function") {
+    return false;
+  }
+
+  const previousPhase = state.round?.phase;
+  state = gameApi.resolveCpuRonAfterDiscard(state);
+
+  if (previousPhase !== "ended" && state.round?.phase === "ended") {
+    render();
+    return true;
+  }
+
+  return false;
 }
 
 function continueAfterDiscard() {
@@ -457,6 +478,9 @@ function createFallbackGameApi() {
     },
     canCompleteRonLatestDiscard() {
       return false;
+    },
+    resolveCpuRonAfterDiscard(currentState) {
+      return currentState;
     },
     dispatchAction(currentState, action) {
       if (action.type === "TOGGLE_LARGE_TILE_MODE") {

@@ -1,3 +1,9 @@
+# MVP-1.8 CPU win note
+
+MVP-1.8 lets CPU players win when they already have a valid yaku hand. CPU tsumo is resolved after a CPU draw, and CPU ron is resolved after a discard when the human ron reaction is not taking priority. CPU no-yaku completed shapes are ignored, and the result is stored in `winningResult`, `lastRoundResult`, and `roundHistory` for the next-round and match-result UI.
+
+Current local checks target `264 pass / 0 pending / 0 fail`, plus the smartphone landscape layout guard including the CPU win scenario.
+
 # MVP-1.7 tenpai waits note
 
 MVP-1.7 adds a beginner tenpai/wait helper. For a 13-tile human hand, the app checks which tile kinds would complete the hand, then shows whether each wait appears to have yaku or would only complete the shape without yaku. The helper opens from a compact `待ち` / `待ちあり` button near the human seat and is intentionally a guide, not full shanten calculation.

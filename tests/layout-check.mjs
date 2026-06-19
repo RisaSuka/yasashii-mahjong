@@ -27,7 +27,8 @@ const SCENARIOS = [
   { name: "match-ended", discards: 18, mode: "match-ended" },
   { name: "result-popup", discards: 18, mode: "result-popup" },
   { name: "yaku-guide", discards: 9, mode: "yaku-guide" },
-  { name: "waits", discards: 9, mode: "waits" }
+  { name: "waits", discards: 9, mode: "waits" },
+  { name: "cpu-win", discards: 12, mode: "cpu-win" }
 ];
 const TOLERANCE = 2;
 
@@ -155,10 +156,10 @@ function setupScenarioSource() {
           handNumber: 4,
           dealerIndex: 3,
           roundHistory: [
-            { handLabel: "東1局", handNumber: 1, resultType: "draw" },
-            { handLabel: "東2局", handNumber: 2, resultType: "tsumo", winnerId: 0, winType: "tsumo" },
-            { handLabel: "東3局", handNumber: 3, resultType: "ron", winnerId: 1, winType: "ron" },
-            { handLabel: "東4局", handNumber: 4, resultType: "draw" }
+            { handLabel: "譚ｱ1螻", handNumber: 1, resultType: "draw" },
+            { handLabel: "譚ｱ2螻", handNumber: 2, resultType: "tsumo", winnerId: 0, winType: "tsumo" },
+            { handLabel: "譚ｱ3螻", handNumber: 3, resultType: "ron", winnerId: 1, winType: "ron" },
+            { handLabel: "譚ｱ4螻", handNumber: 4, resultType: "draw" }
           ]
         },
         round: {
@@ -169,6 +170,27 @@ function setupScenarioSource() {
           phase: "ended",
           endReason: "exhaustive-draw",
           winningResult: null
+        }
+      };
+    }
+
+    if (mode === "cpu-win") {
+      state = {
+        ...state,
+        round: {
+          ...state.round,
+          phase: "ended",
+          endReason: "win",
+          winningResult: {
+            winnerId: 1,
+            winType: "ron",
+            fromPlayerId: 0,
+            loserId: 0,
+            winningTile: { id: "cpu-win-z5", suit: "z", rank: 5, copy: 0, red: false },
+            handType: "standard",
+            handTiles: state.round.players[1].hand,
+            yakuResult: [{ id: "yakuhai", name: "Yakuhai", han: 1 }]
+          }
         }
       };
     }
@@ -211,36 +233,36 @@ function setupScenarioSource() {
       waitsDialogOpen: mode === "waits",
       analyzeWaits: () => ({
         isTenpai: true,
-        message: "5筒が来ると上がれます。",
+        message: "5 pin completes the hand.",
         waits: [
           {
             tile: { id: "wait-p5", suit: "p", rank: 5, copy: 0, red: false },
-            tileLabel: "5筒",
+            tileLabel: "5 pin",
             canWin: true,
             hasYaku: true,
-            yaku: [{ id: "tanyao", name: "断么九", han: 1 }],
-            message: "5筒が来ると上がれます。"
+            yaku: [{ id: "tanyao", name: "Tanyao", han: 1 }],
+            message: "5 pin completes the hand."
           },
           {
             tile: { id: "wait-m9", suit: "m", rank: 9, copy: 0, red: false },
-            tileLabel: "9萬",
+            tileLabel: "9 man",
             canWin: false,
             hasYaku: false,
             yaku: [],
-            message: "9萬で形は完成しますが、役がありません。"
+            message: "9 man completes the shape, but there is no yaku."
           }
         ]
       }),
       suggestYakuTargets: () => [
         {
           id: "tanyao",
-          name: "断么九",
-          reading: "タンヤオ",
+          name: "Tanyao",
+          reading: "Tanyao",
           priority: 80,
-          description: "1・9・字牌を使わない役です。",
-          why: "2〜8の数牌が多いので、狙いやすそうです。",
-          keepHints: ["2〜8の数牌"],
-          discardHints: ["1・9・字牌"],
+          description: "A hand without terminals or honors.",
+          why: "Many middle number tiles are present.",
+          keepHints: ["Keep 2-8 suited tiles"],
+          discardHints: ["Terminals and honors are easier to discard"],
           exampleTiles: [
             { id: "guide-m2", suit: "m", rank: 2, copy: 0, red: false },
             { id: "guide-m3", suit: "m", rank: 3, copy: 0, red: false },
@@ -252,13 +274,13 @@ function setupScenarioSource() {
         },
         {
           id: "yakuhai",
-          name: "役牌",
-          reading: "ヤクハイ",
+          name: "Yakuhai",
+          reading: "Yakuhai",
           priority: 70,
-          description: "白・發・中などを3枚そろえる役です。",
-          why: "役牌候補がある時に分かりやすい役です。",
-          keepHints: ["役牌"],
-          discardHints: ["孤立牌"],
+          description: "A triplet of dragons or value winds.",
+          why: "A value-tile pair can become a yaku.",
+          keepHints: ["Keep value tiles"],
+          discardHints: ["Isolated tiles"],
           exampleTiles: [
             { id: "guide-z5a", suit: "z", rank: 5, copy: 0, red: false },
             { id: "guide-z5b", suit: "z", rank: 5, copy: 1, red: false },

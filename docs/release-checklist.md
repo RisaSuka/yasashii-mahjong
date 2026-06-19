@@ -5,11 +5,11 @@ Use this before merging to `main` or publishing with GitHub Pages.
 ## Current Release Candidate
 
 - Branch: `codex/mvp-16-hand-yaku-guide`
-- Scope: MVP-0.1 through MVP-1.7 tenpai waits helper
-- Expected automated result: `255 pass / 0 pending / 0 fail`
+- Scope: MVP-0.1 through MVP-1.8 CPU tsumo/ron support
+- Expected automated result: `264 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-1.7 is not published yet.
+- Publish status: MVP-1.8 is not published yet.
 
 ## Git Safety
 
@@ -31,8 +31,8 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 255.
-- Confirm pass count is 255.
+- Confirm total count is 264.
+- Confirm pass count is 264.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
@@ -44,7 +44,7 @@ node tests/layout-check.mjs
 
 - If Node is not on PATH in the Codex desktop environment, use the bundled Node command documented in `docs/layout-test.md`.
 - Confirm layout-check screenshots are written under `test-artifacts/layout/`.
-- Current layout-check result: all target viewports and scenarios pass, including `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `yaku-guide`, and `waits`.
+- Current layout-check result: all target viewports and scenarios pass, including `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `yaku-guide`, `waits`, and `cpu-win`.
 
 ## Core Functional Checks
 
@@ -140,6 +140,11 @@ node tests/layout-check.mjs
 - The waits popup closes with the close button, backdrop click, or Escape.
 - Waits, yaku guide, beginner help, advice, discard zoom, and match result popups do not stay open at the same time.
 - Smartphone landscape layout guard includes the waits popup.
+- CPU tsumo with yaku ends the round and stores `winningResult`.
+- CPU ron on a human discard with yaku ends the round and stores `winnerId`, `fromPlayerId`, and `loserId`.
+- CPU completed shapes without yaku are ignored.
+- CPU win results are stored in `lastRoundResult` and `roundHistory`.
+- CPU win states show the next-round action and fit in the smartphone landscape layout guard.
 
 ## Manual Browser Checks
 
@@ -182,6 +187,7 @@ Check:
 - The yaku-guide completion examples are visible and do not overflow the viewport.
 - The waits popup opens and closes in landscape.
 - Wait tiles and close controls stay within the viewport.
+- CPU tsumo/ron win display remains readable and the next-round button remains tappable.
 
 ## GitHub Pages Checks
 
@@ -191,7 +197,7 @@ Check:
 - Confirm `tests/test-runner.html` works from a static server.
 - Confirm there are no external dependencies that GitHub Pages must install.
 - Confirm README describes the current MVP scope and known missing features.
-- Confirm `docs/current-status.md` reflects MVP-1.7 and 255 pass.
+- Confirm `docs/current-status.md` reflects MVP-1.8 and 264 pass.
 - Confirm `docs/manual-test-checklist.md` includes smartphone landscape checks.
 - Confirm `docs/manual-test-checklist.md` includes next-round checks.
 - Confirm `docs/layout-test.md` reflects the current layout guard result.

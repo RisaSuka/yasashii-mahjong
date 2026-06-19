@@ -21,8 +21,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 255.
-- Confirm pass count is 255.
+- Confirm total count is 264.
+- Confirm pass count is 264.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - For smartphone landscape layout work, also run the layout guard described in `docs/layout-test.md`.
@@ -103,6 +103,25 @@ Then verify:
 - The `見送る` button is visible.
 - Click `見送る`.
 - Confirm the next player draws and the table returns to normal discard flow.
+
+## 4A. CPU Win Check
+
+Use automated tests as the primary acceptance check for MVP-1.8. For deterministic manual checks, use the scenarios:
+
+- `cpu-tsumo-ready-yakuhai`
+- `cpu-ron-ready-yakuhai`
+- `cpu-no-yaku-win-shape`
+
+Verify:
+
+- CPU tsumo with yaku ends the round.
+- CPU ron on a human discard with yaku ends the round.
+- CPU no-yaku completed shapes do not end the round.
+- CPU win display shows the CPU winner and win type.
+- `谺｡縺ｮ螻縺ｸ` is visible after CPU win.
+- Pressing `谺｡縺ｮ螻縺ｸ` starts the next hand.
+- East-only match result history includes CPU tsumo/ron entries.
+- Human ron reaction still takes priority when the human can react to a CPU discard.
 
 ## 5. No-Yaku Rejection Message Check
 

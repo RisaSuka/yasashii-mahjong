@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ja">
   <head>
     <meta charset="utf-8">
@@ -134,6 +134,7 @@
     <script type="module">
       import { registerActionTests } from "./actions.test.js";
       import { registerCpuDiscardTests } from "./cpu-discard.test.js";
+      import { registerCpuWinTests } from "./cpu-win.test.js";
       import { registerDiscardAdviceTests } from "./discard-advice.test.js";
       import { registerHandSortTests } from "./hand-sort.test.js";
       import { registerMatchTests } from "./match.test.js";
@@ -156,7 +157,7 @@
       import { registerYakuTests } from "./yaku.test.js";
       import { runTests, tests } from "./test.js";
 
-      globalThis.__TEST_CACHE_BUST__ = "mvp17-tenpai-waits-1";
+      globalThis.__TEST_CACHE_BUST__ = "mvp18-cpu-win-1";
 
       const totalCount = document.querySelector("#total-count");
       const passCount = document.querySelector("#pass-count");
@@ -170,6 +171,7 @@
       registerRoundTests();
       registerActionTests();
       registerCpuDiscardTests();
+      registerCpuWinTests();
       registerDiscardAdviceTests();
       registerHandSortTests();
       registerMatchTests();

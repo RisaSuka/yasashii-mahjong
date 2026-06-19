@@ -1,15 +1,15 @@
 # Current Status
 
-Last updated for MVP-1.7 tenpai waits helper.
+Last updated for MVP-1.8 CPU tsumo/ron support.
 
 ## Repository State
 
 - Working branch: `codex/mvp-16-hand-yaku-guide`
-- Automated tests: `255 pass / 0 pending / 0 fail`
-- Layout check: Chrome-based smartphone landscape guard passes all target viewports/scenarios, including discard zoom, result popup, yaku-guide popup, and waits popup scenarios
-- Working tree: clean at the time of the latest MVP-1.7 verification
+- Automated tests: `264 pass / 0 pending / 0 fail`
+- Layout check: Chrome-based smartphone landscape guard passes all target viewports/scenarios, including discard zoom, result popup, yaku-guide popup, waits popup, and CPU win scenarios
+- Working tree: clean at the time of the latest MVP-1.8 verification
 - Push: not yet
-- `main` merge: not yet for MVP-1.7
+- `main` merge: not yet for MVP-1.8
 
 ## Implemented MVPs
 
@@ -42,6 +42,7 @@ Last updated for MVP-1.7 tenpai waits helper.
 | MVP-1.5.1 | Working branch | Ron verification scenarios and UI checks clarify that normal ron is rare but the ron path works. |
 | MVP-1.6 | Working branch | Beginner yaku guide suggests likely hand targets with gentle explanations and CSS-tile completion examples. |
 | MVP-1.7 | Working branch | Tenpai/wait helper shows which tile would complete a 13-tile human hand and whether that wait has yaku. |
+| MVP-1.8 | Working branch | CPU players can resolve yaku-valid tsumo or ron wins; no-yaku CPU completed shapes are ignored. |
 
 ## Current Capabilities
 
@@ -200,6 +201,16 @@ Last updated for MVP-1.7 tenpai waits helper.
 - The waits popup shows CSS tile wait examples, yaku-valid waits, no-yaku waits, or a gentle non-tenpai message.
 - The waits popup does not stay open at the same time as advice, discard zoom, result, beginner help, or yaku-guide popups.
 - Full shanten calculation, furiten, danger reading, and CPU wait display remain out of scope.
+
+## MVP-1.8 CPU Tsumo/Ron Support
+
+- CPU players can win by tsumo when their drawn hand is a winning shape with yaku.
+- CPU players can win by ron on the latest discard when the human ron reaction is not taking priority.
+- CPU ron currently chooses the first yaku-valid CPU winner found; multiple ron and head-bump rules remain out of scope.
+- CPU no-yaku completed shapes are ignored and normal play continues.
+- CPU wins store `winnerId`, `winType`, `fromPlayerId`/`loserId` for ron, `yakuResult`, and compact history data.
+- East-only next-round flow and the match result popup show CPU tsumo/ron results.
+- Added deterministic scenarios: `cpu-tsumo-ready-yakuhai`, `cpu-ron-ready-yakuhai`, and `cpu-no-yaku-win-shape`.
 
 ## MVP-1.5 CPU Discard Evaluator Connection
 

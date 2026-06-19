@@ -33,6 +33,16 @@ const SCENARIOS = {
     },
     discards: {}
   },
+  "cpu-tsumo-ready-yakuhai": {
+    name: "cpu-tsumo-ready-yakuhai",
+    description: "CPU player 1 has a yakuhai tsumo winning hand.",
+    phase: "discard",
+    currentPlayerIndex: 1,
+    hands: {
+      1: "m1 m2 m3 p2 p3 p4 s7 s8 s9 z5 z5 z5 m9 m9"
+    },
+    discards: {}
+  },
   "ron-ready-basic": {
     name: "ron-ready-basic",
     description: "Future ron setup: CPU 1 has discarded a tile that completes the human pair.",
@@ -95,6 +105,40 @@ const SCENARIOS = {
     lastDiscard: {
       playerId: 1,
       tile: "z1"
+    }
+  },
+  "cpu-ron-ready-yakuhai": {
+    name: "cpu-ron-ready-yakuhai",
+    description: "CPU player 1 can ron on a human discard with yakuhai.",
+    phase: "draw",
+    currentPlayerIndex: 0,
+    hands: {
+      1: "m1 m2 m3 p2 p3 p4 s7 s8 s9 z5 z5 m9 m9"
+    },
+    discards: {
+      0: "z5"
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "z5"
+    }
+  },
+  "cpu-no-yaku-win-shape": {
+    name: "cpu-no-yaku-win-shape",
+    description: "CPU player 1 has a complete ron shape but no yaku.",
+    phase: "draw",
+    currentPlayerIndex: 0,
+    hands: {
+      1: "m1 m2 m3 p1 p2 p3 s7 s8 s9 m4 m5 p9 p9",
+      2: "z1 z2 z3 z4 z5 z6 z7 m7 m8 m9 p4 p5 p6",
+      3: "z1 z2 z3 z4 z5 z6 z7 s1 s2 s3 p7 p8 s4"
+    },
+    discards: {
+      0: "m6"
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "m6"
     }
   }
 };
