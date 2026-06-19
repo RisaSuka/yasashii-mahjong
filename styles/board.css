@@ -416,6 +416,46 @@
   color: #0f766e;
 }
 
+.riichi-button,
+.cancel-riichi-button {
+  min-width: 92px;
+  min-height: 44px;
+  border: 2px solid #0f766e;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.riichi-button {
+  background: #0f766e;
+  color: #ffffff;
+}
+
+.cancel-riichi-button {
+  background: #ffffff;
+  color: #0f766e;
+}
+
+.riichi-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.riichi-message,
+.riichi-status,
+.seat-riichi-badge {
+  border: 1px solid rgba(15, 118, 110, 0.28);
+  border-radius: 999px;
+  background: rgba(217, 232, 223, 0.9);
+  color: #0f4f47;
+  padding: 4px 8px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
 .seat-header {
   display: flex;
   align-items: center;

@@ -259,6 +259,75 @@ export function registerMatchUiTests() {
     assertTrue(ronHtml.includes('data-action="skip-ron"'), "Skip ron button should remain visible in render output");
   });
 
+  test("MVP-2.1 UI: riichi-ready hand shows riichi action", async () => {
+    const state = await scenarioState("human-riichi-ready");
+    const html = await renderState(state, {
+      canDeclareRiichi: () => true,
+      getRiichiDiscardOptions: () => []
+    });
+
+    assertTrue(html.includes("table-action-bar"), "Riichi action should render inside the stable action bar");
+    assertTrue(html.includes('data-action="declare-riichi"'), "Riichi-ready hand should show the riichi button");
+  });
+
+  test("MVP-2.1 UI: riichi declaration mode highlights only riichi discard candidates", async () => {
+    const state = await scenarioState("human-riichi-ready");
+    const candidate = state.round.players[0].hand.find((tile) => tile.suit === "z" && tile.rank === 2);
+    const html = await renderState(state, {
+      riichiDeclarationMode: true,
+      canDeclareRiichi: () => true,
+      getRiichiDiscardOptions: () => [
+        {
+          discardTile: candidate,
+          discardTileId: candidate.id,
+          waits: [{ tileLabel: "東", hasYaku: false }]
+        }
+      ]
+    });
+
+    assertTrue(html.includes("riichi-actions"), "Riichi declaration mode should render guidance");
+    assertTrue(html.includes("riichi-candidate"), "Riichi discard candidate should be highlighted");
+    assertTrue(html.includes('data-action="cancel-riichi"'), "Riichi declaration mode should be cancellable");
+  });
+
+  test("MVP-2.1 UI: riichi input controls dispatch start and cancel handlers", async () => {
+    const { bindControls } = await loadModule("../src/ui/input.js", ["bindControls"]);
+    let started = 0;
+    let canceled = 0;
+    const startButton = createFakeButton();
+    const cancelButton = createFakeButton();
+    const root = {
+      querySelector(selector) {
+        if (selector === "[data-action='declare-riichi']") {
+          return startButton;
+        }
+
+        if (selector === "[data-action='cancel-riichi']") {
+          return cancelButton;
+        }
+
+        return null;
+      },
+      querySelectorAll() {
+        return [];
+      }
+    };
+
+    bindControls(root, {
+      onDeclareRiichi() {
+        started += 1;
+      },
+      onCancelRiichi() {
+        canceled += 1;
+      }
+    });
+    startButton.listeners.click();
+    cancelButton.listeners.click();
+
+    assertEqual(started, 1, "Riichi button should call the start handler");
+    assertEqual(canceled, 1, "Cancel riichi button should call the cancel handler");
+  });
+
   test("RON UI: yaku-valid ron reaction shows ron and skip buttons", async () => {
     const state = await scenarioState("ron-ready-tanyao", { phase: "reaction" });
     const html = await renderState(state, {

@@ -127,6 +127,14 @@ export function bindControls(root, handlers) {
     });
   }
 
+  root.querySelector("[data-action='declare-riichi']")?.addEventListener("click", () => {
+    handlers.onDeclareRiichi?.();
+  });
+
+  root.querySelector("[data-action='cancel-riichi']")?.addEventListener("click", () => {
+    handlers.onCancelRiichi?.();
+  });
+
   for (const button of root.querySelectorAll("[data-action='discard-tile']")) {
     button.addEventListener("click", () => {
       handlers.onDiscardTile(button.dataset.tileId);

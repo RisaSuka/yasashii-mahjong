@@ -29,6 +29,8 @@ const SCENARIOS = [
   { name: "yaku-guide", discards: 9, mode: "yaku-guide" },
   { name: "waits", discards: 9, mode: "waits" },
   { name: "waits-after-discard", discards: 9, mode: "waits-after-discard" },
+  { name: "riichi-ready", discards: 9, mode: "riichi-ready" },
+  { name: "riichi-declared", discards: 9, mode: "riichi-declared" },
   { name: "cpu-win", discards: 12, mode: "cpu-win" },
   { name: "all-hands-open", discards: 18, mode: "all-hands-open" }
 ];
@@ -211,9 +213,51 @@ function setupScenarioSource() {
       };
     }
 
+    if (mode === "riichi-ready" || mode === "riichi-declared") {
+      state = {
+        ...state,
+        round: {
+          ...state.round,
+          phase: "discard",
+          currentPlayerIndex: 0
+        }
+      };
+    }
+
+    if (mode === "riichi-declared") {
+      const drawnTile = state.round.players[0].hand[state.round.players[0].hand.length - 1];
+      state = {
+        ...state,
+        round: {
+          ...state.round,
+          lastDraw: {
+            playerId: 0,
+            tile: drawnTile
+          },
+          players: state.round.players.map((player) => player.id === 0
+            ? {
+              ...player,
+              isRiichi: true,
+              riichi: true
+            }
+            : player)
+        }
+      };
+    }
+
     renderModule.renderGame(state, root, {
       canDeclareTsumo: () => mode === "actions",
       canDeclareRon: () => mode === "actions",
+      canDeclareRiichi: () => mode === "riichi-ready",
+      getRiichiDiscardOptions: () => mode === "riichi-ready"
+        ? [
+          {
+            discardTile: state.round.players[0].hand[0],
+            discardTileId: state.round.players[0].hand[0]?.id,
+            waits: [{ tileLabel: "5 pin", hasYaku: true }]
+          }
+        ]
+        : [],
       suggestDiscards: () => [
         {
           tileId: state.round.players[0].hand[0]?.id,

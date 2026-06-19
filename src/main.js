@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp20-pages-smoke-fix-1";
-import { renderGame } from "./ui/render.js?v=mvp20-pages-smoke-fix-1";
+import { bindControls } from "./ui/input.js?v=mvp21-human-riichi-1";
+import { renderGame } from "./ui/render.js?v=mvp21-human-riichi-1";
 
-const APP_ASSET_VERSION = "mvp20-pages-smoke-fix-1";
+const APP_ASSET_VERSION = "mvp21-human-riichi-1";
 
 const appRoot = document.querySelector("#app");
 
@@ -15,6 +15,7 @@ let beginnerHelpDialogOpen = false;
 let yakuGuideDialogOpen = false;
 let waitsDialogOpen = false;
 let allHandsDialogOpen = false;
+let riichiDeclarationMode = false;
 
 init();
 
@@ -41,6 +42,8 @@ async function loadGameApi() {
       dispatchAction: actions.dispatchAction,
       canDeclareTsumo: actions.canDeclareTsumo,
       canDeclareRon: actions.canDeclareRon,
+      canDeclareRiichi: actions.canDeclareRiichi,
+      getRiichiDiscardOptions: actions.getRiichiDiscardOptions,
       canRonLatestDiscard: actions.canRonLatestDiscard,
       canCompleteRonLatestDiscard: actions.canCompleteRonLatestDiscard,
       resolveCpuRonAfterDiscard: actions.resolveCpuRonAfterDiscard,
@@ -63,6 +66,8 @@ function render() {
     canDeclareTsumo: gameApi.canDeclareTsumo,
     canDeclareRon: gameApi.canDeclareRon,
     canCompleteRonLatestDiscard: gameApi.canCompleteRonLatestDiscard,
+    canDeclareRiichi: gameApi.canDeclareRiichi,
+    getRiichiDiscardOptions: gameApi.getRiichiDiscardOptions,
     suggestDiscards: gameApi.suggestDiscards,
     suggestYakuTargets: gameApi.suggestYakuTargets,
     analyzeWaits: gameApi.analyzeWaits,
@@ -73,7 +78,8 @@ function render() {
     beginnerHelpDialogOpen,
     yakuGuideDialogOpen,
     waitsDialogOpen,
-    allHandsDialogOpen
+    allHandsDialogOpen,
+    riichiDeclarationMode
   });
   bindControls(appRoot, {
     onStartMatch: startMatch,
@@ -96,6 +102,8 @@ function render() {
     onOpenAllHands: openAllHands,
     onCloseAllHands: closeAllHands,
     onDiscardTile: discardHumanTile,
+    onDeclareRiichi: startRiichiDeclaration,
+    onCancelRiichi: cancelRiichiDeclaration,
     onDeclareTsumo: declareHumanTsumo,
     onDeclareRon: declareHumanRon,
     onSkipRon: skipRon
@@ -111,6 +119,7 @@ function startMatch() {
   yakuGuideDialogOpen = false;
   waitsDialogOpen = false;
   allHandsDialogOpen = false;
+  riichiDeclarationMode = false;
   state = gameApi.dispatchAction(state, { type: "START_MATCH" });
   render();
   scheduleCpuIfNeeded();
@@ -125,6 +134,7 @@ function startNextRound() {
   yakuGuideDialogOpen = false;
   waitsDialogOpen = false;
   allHandsDialogOpen = false;
+  riichiDeclarationMode = false;
   state = gameApi.dispatchAction(state, { type: "START_NEXT_ROUND" });
   render();
   scheduleCpuIfNeeded();
@@ -270,6 +280,29 @@ function closeAllHands() {
   render();
 }
 
+function startRiichiDeclaration() {
+  const currentPlayer = getCurrentPlayer();
+
+  if (!currentPlayer || currentPlayer.type !== "human" || !gameApi.canDeclareRiichi?.(state, currentPlayer.id)) {
+    return;
+  }
+
+  discardAdviceDialogOpen = false;
+  discardZoomPlayerId = null;
+  matchResultDialogOpen = false;
+  beginnerHelpDialogOpen = false;
+  yakuGuideDialogOpen = false;
+  waitsDialogOpen = false;
+  allHandsDialogOpen = false;
+  riichiDeclarationMode = true;
+  render();
+}
+
+function cancelRiichiDeclaration() {
+  riichiDeclarationMode = false;
+  render();
+}
+
 function discardHumanTile(tileId) {
   const currentPlayer = getCurrentPlayer();
 
@@ -278,7 +311,7 @@ function discardHumanTile(tileId) {
   }
 
   state = gameApi.dispatchAction(state, {
-    type: "DISCARD_TILE",
+    type: riichiDeclarationMode ? "DECLARE_RIICHI" : "DISCARD_TILE",
     playerId: currentPlayer.id,
     tileId
   });
@@ -289,6 +322,7 @@ function discardHumanTile(tileId) {
   yakuGuideDialogOpen = false;
   waitsDialogOpen = false;
   allHandsDialogOpen = false;
+  riichiDeclarationMode = false;
   handleAfterDiscard();
 }
 
@@ -516,6 +550,12 @@ function createFallbackGameApi() {
     },
     canDeclareRon() {
       return false;
+    },
+    canDeclareRiichi() {
+      return false;
+    },
+    getRiichiDiscardOptions() {
+      return [];
     },
     canRonLatestDiscard() {
       return false;

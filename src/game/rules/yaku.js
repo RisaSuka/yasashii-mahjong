@@ -1,6 +1,7 @@
 import { isSevenPairs, isThirteenOrphans, validateHandTiles } from "./win-check.js";
 
 const YAKU = {
+  RIICHI: { id: "riichi", name: "\u7acb\u76f4", han: 1 },
   MENZEN_TSUMO: { id: "menzen_tsumo", name: "門前清自摸和", han: 1 },
   TANYAO: { id: "tanyao", name: "断么九", han: 1 },
   YAKUHAI: { id: "yakuhai", name: "役牌", han: 1 },
@@ -18,6 +19,10 @@ export function detectYaku(tiles, context = {}) {
 
   const yaku = [];
   const counts = createTileCounts(tiles);
+
+  if (isRiichi(context)) {
+    yaku.push(YAKU.RIICHI);
+  }
 
   if (isMenzenTsumo(context)) {
     yaku.push(YAKU.MENZEN_TSUMO);
@@ -57,6 +62,11 @@ function validateTilesForYaku(tiles) {
 function isMenzenTsumo(context) {
   const isClosed = context.menzen !== false && context.isClosed !== false;
   return context.winType === "tsumo" && isClosed;
+}
+
+function isRiichi(context) {
+  const isClosed = context.menzen !== false && context.isClosed !== false;
+  return context.riichi === true && isClosed;
 }
 
 function isTanyao(tiles) {

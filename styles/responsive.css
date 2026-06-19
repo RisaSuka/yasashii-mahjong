@@ -826,6 +826,8 @@
 
   .table-action-bar .ron-button,
   .table-action-bar .skip-ron-button,
+  .table-action-bar .riichi-button,
+  .table-action-bar .cancel-riichi-button,
   .table-action-bar .tsumo-button,
   .table-action-bar .next-round-button,
   .table-action-bar .restart-match-button,
@@ -1309,6 +1311,8 @@
 
   .table-action-bar .ron-button,
   .table-action-bar .skip-ron-button,
+  .table-action-bar .riichi-button,
+  .table-action-bar .cancel-riichi-button,
   .table-action-bar .tsumo-button,
   .table-action-bar .next-round-button,
   .table-action-bar .restart-match-button,

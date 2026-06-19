@@ -1,3 +1,11 @@
+# MVP-2.1 human riichi note
+
+MVP-2.1 adds the first human-only riichi flow. When the human hand can discard into tenpai, the action bar shows `リーチ`; pressing it enters a discard-selection mode and highlights only tiles that leave tenpai. After declaring riichi, the player is locked to tsumogiri on future turns. If the riichi player later wins by tsumo or ron, the yaku result includes `立直`.
+
+This does not add riichi sticks, point movement, ippatsu, uradora, furiten checks, kan after riichi, or CPU riichi.
+
+Current local checks target MVP-2.1 normal tests plus the smartphone landscape layout guard and the CPU win reachability diagnostic.
+
 # MVP-2.0 SVG tile set note
 
 MVP-2.0 introduces a handmade SVG tile set under `assets/tiles/` for all 34 tile faces. The UI resolves each tile object to a stable SVG path and renders it through the existing tile markup so clicks, advice badges, large tile mode, discard zoom, all-hands review, yaku examples, and waits remain on the same game data. The previous CSS tile face remains in the DOM as a fallback if an SVG image fails to load.

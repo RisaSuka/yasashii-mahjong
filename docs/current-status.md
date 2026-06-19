@@ -1,13 +1,13 @@
 # Current Status
 
-Last updated for MVP-2.0.1 handmade SVG tile redesign.
+Last updated for MVP-2.1 human riichi v1.
 
 ## Repository State
 
-- Working branch: `codex/mvp-16-hand-yaku-guide`
-- Automated tests: MVP-2.0.1 normal tests pass locally (`288 pass / 0 pending / 0 fail`)
+- Working branch: `codex/mvp-21-human-riichi`
+- Automated tests: MVP-2.1 normal tests pass locally (`299 pass / 0 pending / 0 fail`)
 - Layout check: Chrome-based smartphone landscape guard passes all target viewports/scenarios, including discard zoom, result popup, yaku-guide popup, waits popup, discard-to-wait popup, CPU win, and all-hands popup scenarios
-- Working tree: clean at the time of the latest MVP-2.0.1 verification
+- Working tree: clean at the time of the latest MVP-2.1 verification
 - Push: not yet
 - `main` merge: not yet for MVP-1.9
 
@@ -49,6 +49,7 @@ Last updated for MVP-2.0.1 handmade SVG tile redesign.
 | MVP-1.9.1 | Working branch | Round-end `みんなの手を見る` popup reveals all four hands for learning after tsumo, ron, CPU win, or exhaustive draw only. |
 | MVP-2.0 | Working branch | Handmade SVG tile set replaces the primary tile visuals while keeping CSS tile fallback markup. |
 | MVP-2.0.1 | Working branch | SVG tile artwork is redrawn for readability, especially wider spaced souzu bamboo marks and bolder manzu/honor labels. |
+| MVP-2.1 | Working branch | Human-only riichi v1: tenpai discard selection, riichi state, tsumogiri lock, and riichi yaku on human wins. |
 
 ## Current Capabilities
 
@@ -62,6 +63,7 @@ Last updated for MVP-2.0.1 handmade SVG tile redesign.
 - Tsumo win and ron win.
 - No-yaku win rejection.
 - Minimal yaku detection:
+  - Riichi
   - Menzen tsumo
   - Tanyao
   - Yakuhai
@@ -103,7 +105,13 @@ Last updated for MVP-2.0.1 handmade SVG tile redesign.
   - Human hand is prioritized near the bottom.
   - CPU seats stay around the table.
   - Portrait shows a gentle landscape recommendation.
-  - Tsumo, ron, skip, and advice toggle remain tappable.
+- Tsumo, ron, skip, and advice toggle remain tappable.
+- Human riichi v1:
+  - Riichi button appears only when the human can discard into tenpai.
+  - Riichi declaration mode highlights only riichi-eligible discards.
+  - After riichi, the human can discard only the latest drawn tile.
+  - Human tsumo/ron after riichi includes the `riichi` yaku.
+  - Riichi sticks, point movement, ippatsu, uradora, furiten, kan after riichi, and CPU riichi remain unsupported.
 - Next-round continuation:
   - `次の局へ` appears after exhaustive draw, tsumo, or ron.
   - The next round creates a fresh wall, dead wall, players, hands, and dealer initial draw.

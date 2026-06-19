@@ -21,8 +21,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 288.
-- Confirm pass count is 288.
+- Confirm total count is 299.
+- Confirm pass count is 299.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - For smartphone landscape layout work, also run the layout guard described in `docs/layout-test.md`.
@@ -42,6 +42,16 @@ http://127.0.0.1:8765/tests/test-runner.html
 - Confirm discard rings, discard zoom, all-hands review, yaku guide examples, and waits popup all show SVG tile faces.
 - Temporarily simulate a missing tile image if needed and confirm the CSS tile face remains as fallback.
 - Confirm large tile mode still scales tiles cleanly.
+
+## 1.2 MVP-2.1 Human Riichi Check
+
+- Use `human-riichi-ready` in tests or a debug scenario and confirm the `リーチ` button appears only when a discard leaves tenpai.
+- Press `リーチ` and confirm only riichi-valid discard tiles are highlighted/selectable.
+- Select a highlighted tile and confirm the player becomes riichi and one tile is discarded.
+- On a later human turn after riichi, confirm only the latest drawn tile can be discarded.
+- Confirm riichi tsumo and riichi ron show `立直` in the yaku result.
+- Confirm riichi sticks, point movement, ippatsu, uradora, furiten, kan after riichi, and CPU riichi are not implemented yet.
+- Confirm smartphone landscape keeps the riichi button/status inside the action bar.
 
 ## 2. Normal Desktop Flow
 

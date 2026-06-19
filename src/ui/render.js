@@ -6,7 +6,7 @@ import {
   getYakuDisplayName,
   sortYakuForDisplay
 } from "./yaku-display.js";
-import { getTileSvgPath } from "./tile-assets.js?v=mvp202-svg-tiles-traditional-1";
+import { getTileSvgPath } from "./tile-assets.js?v=mvp21-human-riichi-1";
 import { sortTiles } from "../game/tiles.js";
 
 const WIND_LABELS = {
@@ -79,11 +79,12 @@ function renderTableLegacy(state, options) {
   const discardAdvice = getDiscardAdvice(state, options);
   const yakuGuide = getYakuGuide(state, options);
   const waitInfo = getWaitInfo(state, options);
+  const riichiInfo = getRiichiInfo(state, options);
   const allHandsOpen = Boolean(options.allHandsDialogOpen);
 
   return `
     <main class="table" aria-label="4人麻雀卓">
-      ${seats.map((player) => renderSeat(player, round, discardAdvice, yakuGuide, waitInfo)).join("")}
+      ${seats.map((player) => renderSeat(player, round, discardAdvice, yakuGuide, waitInfo, riichiInfo)).join("")}
       <section class="center-panel">
         <div class="table-discard-ring">
           ${renderTableDiscardZone(round.players[3], "north", round)}
@@ -131,11 +132,12 @@ function renderTable(state, options) {
   const discardAdvice = getDiscardAdvice(state, options);
   const yakuGuide = getYakuGuide(state, options);
   const waitInfo = getWaitInfo(state, options);
+  const riichiInfo = getRiichiInfo(state, options);
   const allHandsOpen = Boolean(options.allHandsDialogOpen);
 
   return `
     <main class="table" aria-label="4人麻雀卓">
-      ${seats.map((player) => renderSeat(player, round, discardAdvice, yakuGuide, waitInfo)).join("")}
+      ${seats.map((player) => renderSeat(player, round, discardAdvice, yakuGuide, waitInfo, riichiInfo)).join("")}
       <section class="center-panel">
         <div class="table-discard-ring">
           ${renderTableDiscardZone(round.players[3], "north", round)}
@@ -179,6 +181,7 @@ function renderTableActionBar(state, options) {
     renderMatchEndAction(state),
     renderAllHandsAction(state),
     renderNextRoundAction(state),
+    renderRiichiAction(state, options),
     renderRonAction(state, options),
     renderTsumoAction(state, options)
   ].filter(Boolean).join("");
@@ -366,6 +369,31 @@ function getWaitInfo(state, options) {
     discardWaitOptions: Array.isArray(discardWaitInfo.options) ? discardWaitInfo.options : [],
     hasTenpaiDiscard: Boolean(discardWaitInfo.hasTenpaiDiscard),
     discardWaitMessage: discardWaitInfo.message || ""
+  };
+}
+
+function getRiichiInfo(state, options) {
+  const round = state.round;
+
+  if (!round) {
+    return {
+      canDeclare: false,
+      declarationMode: false,
+      discardOptions: [],
+      discardTileIds: new Set()
+    };
+  }
+
+  const human = round.players.find((player) => player.type === "human");
+  const discardOptions = human && typeof options.getRiichiDiscardOptions === "function"
+    ? options.getRiichiDiscardOptions(state, human.id)
+    : [];
+
+  return {
+    canDeclare: human && typeof options.canDeclareRiichi === "function" ? options.canDeclareRiichi(state, human.id) : discardOptions.length > 0,
+    declarationMode: Boolean(options.riichiDeclarationMode),
+    discardOptions,
+    discardTileIds: new Set(discardOptions.map((option) => option.discardTileId))
   };
 }
 
@@ -844,7 +872,7 @@ function renderWinTermHelp(winType) {
   return `<div class="term-help">${lines.map((line) => `<span>${escapeHtml(line)}</span>`).join("")}</div>`;
 }
 
-function renderSeat(player, round, discardAdvice, yakuGuide, waitInfo) {
+function renderSeat(player, round, discardAdvice, yakuGuide, waitInfo, riichiInfo) {
   const isCurrent = round.currentPlayerIndex === player.id;
   const positionClass = `seat-${player.wind}`;
   const currentClass = isCurrent ? " current" : "";
@@ -858,10 +886,11 @@ function renderSeat(player, round, discardAdvice, yakuGuide, waitInfo) {
           ${player.type === "human" ? renderSeatAdviceButton(discardAdvice) : ""}
           ${player.type === "human" ? renderYakuGuideButton(yakuGuide) : ""}
           ${player.type === "human" ? renderWaitsButton(waitInfo) : ""}
+          ${player.isRiichi || player.riichi ? `<span class="seat-riichi-badge">\u30ea\u30fc\u30c1</span>` : ""}
           ${currentIndicator}
         </span>
       </div>
-      ${player.type === "human" ? renderHumanHand(player, round, discardAdvice) : renderCpuHand(player)}
+      ${player.type === "human" ? renderHumanHand(player, round, discardAdvice, riichiInfo) : renderCpuHand(player)}
       <div class="discard-area ${player.type === "human" ? "discard-area-human" : "discard-area-cpu"}">
         <div class="seat-meta">捨て牌 ${player.discards.length}枚</div>
         <div class="discards">${getVisibleDiscards(player).map((tile) => renderTile(tile, "discard-tile")).join("")}</div>
@@ -911,9 +940,12 @@ function getVisibleDiscards(player) {
   return player.discards.slice(-limit);
 }
 
-function renderHumanHand(player, round, discardAdvice) {
+function renderHumanHand(player, round, discardAdvice, riichiInfo) {
   const disabled = round.currentPlayerIndex !== player.id || round.phase !== "discard";
   const adviceTileIds = new Set((discardAdvice || []).map((entry) => entry.tileId));
+  const riichiTileIds = riichiInfo?.discardTileIds || new Set();
+
+  return renderHumanHandControls(player, round, adviceTileIds, riichiInfo, riichiTileIds, disabled);
 
   return `
     <div class="hand" aria-label="あなたの手牌">
@@ -924,6 +956,36 @@ function renderHumanHand(player, round, discardAdvice) {
         </button>
       `).join("")}
     </div>
+  `;
+}
+
+function renderHumanHandControls(player, round, adviceTileIds, riichiInfo, riichiTileIds, disabled) {
+  return `
+    <div class="hand" aria-label="縺ゅ↑縺溘・謇狗煙">
+      ${player.hand.map((tile) => renderHumanHandTile(tile, {
+        adviceTileIds,
+        disabled,
+        player,
+        round,
+        riichiInfo,
+        riichiTileIds
+      })).join("")}
+    </div>
+  `;
+}
+
+function renderHumanHandTile(tile, options) {
+  const { adviceTileIds, disabled, player, round, riichiInfo, riichiTileIds } = options;
+  const isRiichiCandidate = riichiInfo?.declarationMode && riichiTileIds.has(tile.id);
+  const isRiichiDrawTile = (player.isRiichi || player.riichi) && round.lastDraw?.playerId === player.id && round.lastDraw?.tile?.id === tile.id;
+  const tileDisabled = disabled || (riichiInfo?.declarationMode && !isRiichiCandidate) || ((player.isRiichi || player.riichi) && !isRiichiDrawTile);
+
+  return `
+    <button class="tile-button${adviceTileIds.has(tile.id) ? " advice-suggested" : ""}${isRiichiCandidate ? " riichi-candidate" : ""}${isRiichiDrawTile ? " riichi-tsumogiri" : ""}" type="button" data-action="discard-tile" data-tile-id="${tile.id}" ${tileDisabled ? "disabled" : ""}>
+      ${renderTile(tile)}
+      ${adviceTileIds.has(tile.id) ? `<span class="advice-badge">縺翫☆縺吶ａ</span>` : ""}
+      ${isRiichiCandidate ? `<span class="riichi-badge">\u30ea\u30fc\u30c1</span>` : ""}
+    </button>
   `;
 }
 
@@ -1033,6 +1095,40 @@ function getPlayerResultLabel(playerId) {
   const labels = ["あなた", "南CPU", "西CPU", "北CPU"];
 
   return labels[playerId] || "CPU";
+}
+
+function renderRiichiAction(state, options) {
+  const round = state.round;
+  const human = round.players.find((player) => player.type === "human");
+
+  if (!human || round.phase !== "discard" || round.currentPlayerIndex !== human.id) {
+    return "";
+  }
+
+  if (human.isRiichi || human.riichi) {
+    return `<span class="riichi-status">\u30ea\u30fc\u30c1\u4e2d\u30fb\u30c4\u30e2\u5207\u308a</span>`;
+  }
+
+  const canDeclare = typeof options.canDeclareRiichi === "function" && options.canDeclareRiichi(state, human.id);
+
+  if (!canDeclare && !options.riichiDeclarationMode) {
+    return "";
+  }
+
+  if (options.riichiDeclarationMode) {
+    return `
+      <div class="riichi-actions">
+        <span class="riichi-message">\u30ea\u30fc\u30c1\u3059\u308b\u724c\u3092\u9078\u3093\u3067\u304f\u3060\u3055\u3044</span>
+        <button type="button" class="cancel-riichi-button" data-action="cancel-riichi">\u3084\u3081\u308b</button>
+      </div>
+    `;
+  }
+
+  return `
+    <button type="button" class="riichi-button" data-action="declare-riichi">
+      \u30ea\u30fc\u30c1
+    </button>
+  `;
 }
 
 function renderRonAction(state, options) {

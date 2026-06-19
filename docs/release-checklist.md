@@ -4,16 +4,16 @@ Use this before merging to `main` or publishing with GitHub Pages.
 
 ## Current Release Candidate
 
-- Branch: `codex/mvp-16-hand-yaku-guide`
-- Scope: MVP-0.1 through MVP-2.0 handmade SVG tile set
-- Expected automated result: `288 pass / 0 pending / 0 fail`
+- Branch: `codex/mvp-21-human-riichi`
+- Scope: MVP-0.1 through MVP-2.1 human riichi v1
+- Expected automated result: `299 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
 - Publish status: MVP-2.0 is not published yet.
 
 ## Git Safety
 
-- Confirm the current branch is `codex/mvp-16-hand-yaku-guide`.
+- Confirm the current branch is `codex/mvp-21-human-riichi`.
 - Confirm the working tree is clean.
 - Confirm the latest commit is the intended release candidate.
 - Confirm no unreviewed local commits are being skipped.
@@ -31,8 +31,8 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 288.
-- Confirm pass count is 288.
+- Confirm total count is 299.
+- Confirm pass count is 299.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
@@ -71,6 +71,11 @@ node scripts/simulate-cpu-win-reachability.mjs
 - Human tsumo win still works.
 - Human ron win still works.
 - No-yaku tsumo/ron is rejected with a beginner-friendly message.
+- Human riichi is available only when a discard leaves tenpai.
+- Riichi declaration mode highlights only riichi-valid discard tiles.
+- After human riichi, only the latest drawn tile can be discarded.
+- Human tsumo/ron after riichi includes the `riichi` yaku.
+- Riichi sticks, point movement, ippatsu, uradora, furiten, kan after riichi, and CPU riichi remain out of scope.
 - Winning result still shows yaku names, han, total han, explanations, and furigana.
 - Yaku display order remains beginner-friendly.
 - CSS tile display keeps manzu, pinzu, souzu, and honor tiles visually distinct.

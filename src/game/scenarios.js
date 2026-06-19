@@ -9,7 +9,10 @@ const SCENARIO_ALIASES = {
   "human-ron-ready-tanyao": "ron-ready-tanyao",
   "human-ron-ready-yakuhai": "ron-ready-yakuhai",
   "human-ron-ready-chiitoitsu": "ron-ready-chiitoitsu",
-  "no-yaku-ron-shape": "ron-ready-basic"
+  "no-yaku-ron-shape": "ron-ready-basic",
+  "human-riichi-tsumo-ready": "human-riichi-tsumo-ready",
+  "human-riichi-ron-ready": "human-riichi-ron-ready",
+  "human-not-riichi-ready": "human-not-riichi-ready"
 };
 
 const SCENARIOS = {
@@ -140,6 +143,54 @@ const SCENARIOS = {
       playerId: 0,
       tile: "m6"
     }
+  },
+  "human-riichi-ready": {
+    name: "human-riichi-ready",
+    description: "Human player can declare riichi by discarding an extra honor tile.",
+    phase: "discard",
+    currentPlayerIndex: 0,
+    hands: {
+      0: "m1 m2 m3 m4 m5 m6 p1 p2 p3 s7 s8 s9 z1 z2"
+    },
+    discards: {}
+  },
+  "human-riichi-tsumo-ready": {
+    name: "human-riichi-tsumo-ready",
+    description: "Human player is already riichi with a complete tsumo shape.",
+    phase: "discard",
+    currentPlayerIndex: 0,
+    riichi: [0],
+    hands: {
+      0: "m1 m2 m3 m4 m5 m6 p1 p2 p3 s7 s8 s9 z1 z1"
+    },
+    discards: {}
+  },
+  "human-riichi-ron-ready": {
+    name: "human-riichi-ron-ready",
+    description: "Human player is already riichi and can ron on the latest discard.",
+    phase: "reaction",
+    currentPlayerIndex: 2,
+    riichi: [0],
+    hands: {
+      0: "m1 m2 m3 m4 m5 m6 p1 p2 p3 s7 s8 s9 z1"
+    },
+    discards: {
+      1: "z1"
+    },
+    lastDiscard: {
+      playerId: 1,
+      tile: "z1"
+    }
+  },
+  "human-not-riichi-ready": {
+    name: "human-not-riichi-ready",
+    description: "Human player has a 14-tile hand that does not leave tenpai after any discard.",
+    phase: "discard",
+    currentPlayerIndex: 0,
+    hands: {
+      0: "m1 m2 m4 m5 m7 m9 p1 p3 p6 s2 s5 s8 z1 z3"
+    },
+    discards: {}
   }
 };
 
@@ -171,6 +222,15 @@ export function createScenarioState(name, options = {}) {
   for (const player of players) {
     if (!scenario.hands[player.id]) {
       player.hand = takeNextTiles(pool, getTargetHandSize(scenario, player.id));
+    }
+
+    if (Array.isArray(scenario.riichi) && scenario.riichi.includes(player.id)) {
+      player.isRiichi = true;
+      player.riichi = true;
+      player.riichiDeclaredAt = {
+        roundId: `scenario-${scenario.name}`,
+        turnCount: 0
+      };
     }
   }
 

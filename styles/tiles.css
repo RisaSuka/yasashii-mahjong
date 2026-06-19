@@ -204,6 +204,24 @@
     0 2px 3px rgba(15, 23, 42, 0.16);
 }
 
+.tile-button.riichi-candidate .tile {
+  border-color: #0f766e;
+  box-shadow:
+    0 0 0 4px rgba(15, 118, 110, 0.26),
+    inset 0 -7px 0 rgba(100, 76, 42, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 2px 3px rgba(15, 23, 42, 0.16);
+}
+
+.tile-button.riichi-tsumogiri .tile {
+  border-color: #0f766e;
+  box-shadow:
+    0 0 0 3px rgba(15, 118, 110, 0.2),
+    inset 0 -7px 0 rgba(100, 76, 42, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 2px 3px rgba(15, 23, 42, 0.16);
+}
+
 .advice-badge {
   position: absolute;
   right: -2px;
@@ -215,6 +233,22 @@
   background: #f59e0b;
   color: #ffffff;
   padding: 1px 4px;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1.2;
+  pointer-events: none;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.18);
+}
+
+.riichi-badge {
+  position: absolute;
+  left: -2px;
+  top: 3px;
+  z-index: 2;
+  border-radius: 999px;
+  background: #0f766e;
+  color: #ffffff;
+  padding: 1px 5px;
   font-size: 9px;
   font-weight: 700;
   line-height: 1.2;

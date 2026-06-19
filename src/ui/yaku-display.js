@@ -1,4 +1,5 @@
 const YAKU_DESCRIPTIONS = {
+  riichi: "\u30c6\u30f3\u30d1\u30a4\u3057\u3066\u300c\u30ea\u30fc\u30c1\u300d\u3068\u5ba3\u8a00\u3059\u308b\u5f79\u3067\u3059\u3002",
   menzen_tsumo: "鳴かずに、自分で引いた牌であがる役です。",
   tanyao: "1・9・字牌を使わず、2〜8の牌だけで作る役です。",
   yakuhai: "白・發・中のどれかを3枚集めると成立する役です。",
@@ -8,6 +9,7 @@ const YAKU_DESCRIPTIONS = {
 };
 
 const YAKU_READINGS = {
+  riichi: "\u30ea\u30fc\u30c1",
   menzen_tsumo: "メンゼンツモ",
   tanyao: "タンヤオ",
   yakuhai: "ヤクハイ",
@@ -17,6 +19,7 @@ const YAKU_READINGS = {
 };
 
 const YAKU_DISPLAY_ORDER = {
+  riichi: 5,
   yakuhai: 10,
   tanyao: 20,
   menzen_tsumo: 30,
