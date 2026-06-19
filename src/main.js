@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp22-cpu-riichi-1";
-import { renderGame } from "./ui/render.js?v=mvp22-cpu-riichi-1";
+import { bindControls } from "./ui/input.js?v=mvp31-human-pon-1";
+import { renderGame } from "./ui/render.js?v=mvp31-human-pon-1";
 
-const APP_ASSET_VERSION = "mvp22-cpu-riichi-1";
+const APP_ASSET_VERSION = "mvp31-human-pon-1";
 
 const appRoot = document.querySelector("#app");
 
@@ -43,6 +43,7 @@ async function loadGameApi() {
       canDeclareTsumo: actions.canDeclareTsumo,
       canDeclareRon: actions.canDeclareRon,
       canDeclareRiichi: actions.canDeclareRiichi,
+      canDeclarePon: actions.canDeclarePon,
       getRiichiDiscardOptions: actions.getRiichiDiscardOptions,
       canRonLatestDiscard: actions.canRonLatestDiscard,
       canCompleteRonLatestDiscard: actions.canCompleteRonLatestDiscard,
@@ -67,6 +68,7 @@ function render() {
     canDeclareRon: gameApi.canDeclareRon,
     canCompleteRonLatestDiscard: gameApi.canCompleteRonLatestDiscard,
     canDeclareRiichi: gameApi.canDeclareRiichi,
+    canDeclarePon: gameApi.canDeclarePon,
     getRiichiDiscardOptions: gameApi.getRiichiDiscardOptions,
     suggestDiscards: gameApi.suggestDiscards,
     suggestYakuTargets: gameApi.suggestYakuTargets,
@@ -106,6 +108,7 @@ function render() {
     onCancelRiichi: cancelRiichiDeclaration,
     onDeclareTsumo: declareHumanTsumo,
     onDeclareRon: declareHumanRon,
+    onDeclarePon: declareHumanPon,
     onSkipRon: skipRon
   });
 }
@@ -354,6 +357,28 @@ function declareHumanRon() {
   render();
 }
 
+function declareHumanPon() {
+  const human = getHumanPlayer();
+
+  if (!human) {
+    return;
+  }
+
+  state = gameApi.dispatchAction(state, {
+    type: "DECLARE_PON",
+    playerId: human.id
+  });
+  discardAdviceDialogOpen = false;
+  discardZoomPlayerId = null;
+  matchResultDialogOpen = false;
+  beginnerHelpDialogOpen = false;
+  yakuGuideDialogOpen = false;
+  waitsDialogOpen = false;
+  allHandsDialogOpen = false;
+  riichiDeclarationMode = false;
+  render();
+}
+
 function skipRon() {
   state = gameApi.dispatchAction(state, { type: "SKIP_RON" });
   continueAfterReaction();
@@ -374,7 +399,14 @@ function handleAfterDiscard() {
 function enterReactionIfNeeded() {
   const human = getHumanPlayer();
 
-  if (!human || !gameApi.canCompleteRonLatestDiscard?.(state, human.id)) {
+  if (!human) {
+    return false;
+  }
+
+  const canReactToRon = gameApi.canCompleteRonLatestDiscard?.(state, human.id);
+  const canReactToPon = gameApi.canDeclarePon?.(state, human.id);
+
+  if (!canReactToRon && !canReactToPon) {
     return false;
   }
 
@@ -552,6 +584,9 @@ function createFallbackGameApi() {
       return false;
     },
     canDeclareRiichi() {
+      return false;
+    },
+    canDeclarePon() {
       return false;
     },
     getRiichiDiscardOptions() {

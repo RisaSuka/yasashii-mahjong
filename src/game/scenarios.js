@@ -16,7 +16,11 @@ const SCENARIO_ALIASES = {
   "cpu-riichi-ready": "cpu-riichi-ready",
   "cpu-riichi-tsumo-ready": "cpu-riichi-tsumo-ready",
   "cpu-riichi-ron-ready": "cpu-riichi-ron-ready",
-  "cpu-not-riichi-ready": "cpu-not-riichi-ready"
+  "cpu-not-riichi-ready": "cpu-not-riichi-ready",
+  "human-pon-ready-yakuhai": "human-pon-ready-yakuhai",
+  "human-pon-after-discard": "human-pon-after-discard",
+  "human-pon-riichi-blocked": "human-pon-riichi-blocked",
+  "human-pon-yakuhai-win-shape": "human-pon-yakuhai-win-shape"
 };
 
 const SCENARIOS = {
@@ -243,6 +247,91 @@ const SCENARIOS = {
       1: "m1 m2 m4 m5 m7 m9 p1 p3 p6 s2 s5 s8 z1 z3"
     },
     discards: {}
+  },
+  "human-pon-ready-yakuhai": {
+    name: "human-pon-ready-yakuhai",
+    description: "Human player can pon a CPU yakuhai discard.",
+    phase: "reaction",
+    currentPlayerIndex: 1,
+    hands: {
+      0: "m1 m2 m3 p2 p3 p4 s7 s8 s9 z5 z5 m9 m9"
+    },
+    discards: {
+      1: "z5"
+    },
+    lastDiscard: {
+      playerId: 1,
+      tile: "z5"
+    }
+  },
+  "human-pon-after-discard": {
+    name: "human-pon-after-discard",
+    description: "Human player has an open pon meld and must discard.",
+    phase: "discard",
+    currentPlayerIndex: 0,
+    hands: {
+      0: "m1 m2 m3 p2 p3 p4 s7 s8 s9 m9 m9"
+    },
+    discards: {
+      1: "z5"
+    },
+    melds: {
+      0: [
+        {
+          type: "pon",
+          tiles: "z5 z5 z5",
+          calledTile: "z5",
+          fromPlayerId: 1
+        }
+      ]
+    },
+    lastDiscard: {
+      playerId: 1,
+      tile: "z5"
+    }
+  },
+  "human-pon-riichi-blocked": {
+    name: "human-pon-riichi-blocked",
+    description: "Human player has matching tiles but cannot pon while riichi.",
+    phase: "reaction",
+    currentPlayerIndex: 1,
+    riichi: [0],
+    hands: {
+      0: "m1 m2 m3 p2 p3 p4 s7 s8 s9 z5 z5 m9 m9"
+    },
+    discards: {
+      1: "z5"
+    },
+    lastDiscard: {
+      playerId: 1,
+      tile: "z5"
+    }
+  },
+  "human-pon-yakuhai-win-shape": {
+    name: "human-pon-yakuhai-win-shape",
+    description: "Human player has an open yakuhai pon plus a complete shape.",
+    phase: "discard",
+    currentPlayerIndex: 0,
+    hands: {
+      0: "m1 m2 m3 p2 p3 p4 s7 s8 s9 m9 m9"
+    },
+    discards: {
+      1: "z5"
+    },
+    melds: {
+      0: [
+        {
+          type: "pon",
+          tiles: "z5 z5 z5",
+          calledTile: "z5",
+          fromPlayerId: 1
+        }
+      ]
+    },
+    lastDiscard: {
+      playerId: 1,
+      tile: "z5"
+    }
   }
 };
 
@@ -283,6 +372,23 @@ export function createScenarioState(name, options = {}) {
         roundId: `scenario-${scenario.name}`,
         turnCount: 0
       };
+    }
+
+    if (scenario.melds?.[player.id]) {
+      player.melds = scenario.melds[player.id].map((meld, index) => {
+        const tiles = takePattern(pool, meld.tiles);
+        const calledTile = tiles.find((tile) => getTileToken(tile) === meld.calledTile) || tiles[tiles.length - 1];
+
+        return {
+          id: `scenario-${scenario.name}-meld-${player.id}-${index}`,
+          type: meld.type,
+          tiles,
+          calledTile,
+          fromPlayerId: meld.fromPlayerId
+        };
+      });
+      player.isClosed = false;
+      player.menzen = false;
     }
   }
 

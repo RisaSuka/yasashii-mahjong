@@ -1,15 +1,15 @@
 # Current Status
 
-Last updated for MVP-2.2 CPU riichi v1.
+Last updated for MVP-3.1 human pon v1.
 
 ## Repository State
 
-- Working branch: `codex/mvp-21-human-riichi`
-- Automated tests: MVP-2.2 normal tests pass locally (`307 pass / 0 pending / 0 fail`)
-- Layout check: Chrome-based smartphone landscape guard passes all target viewports/scenarios, including discard zoom, result popup, yaku-guide popup, waits popup, discard-to-wait popup, human riichi, CPU riichi, CPU win, and all-hands popup scenarios
-- Working tree: clean at the time of the latest MVP-2.2 verification
+- Working branch: `codex/mvp-30-pon-chi-plan`
+- Automated tests: MVP-3.1 normal tests pass locally (`318 pass / 0 pending / 0 fail`)
+- Layout check: Chrome-based smartphone landscape guard includes pon-reaction and open-melds scenarios in addition to the existing popup, riichi, CPU win, and all-hands scenarios
+- Working tree: clean at the time of the latest MVP-3.1 verification
 - Push: not yet
-- `main` merge: not yet for MVP-2.2
+- `main` merge: not yet for MVP-3.1
 
 ## Implemented MVPs
 
@@ -51,6 +51,8 @@ Last updated for MVP-2.2 CPU riichi v1.
 | MVP-2.0.1 | Working branch | SVG tile artwork is redrawn for readability, especially wider spaced souzu bamboo marks and bolder manzu/honor labels. |
 | MVP-2.1 | Working branch | Human-only riichi v1: tenpai discard selection, riichi state, tsumogiri lock, and riichi yaku on human wins. |
 | MVP-2.2 | Working branch | CPU riichi v1: CPU players may declare riichi from tenpai discards, keep light randomness, use tsumogiri after riichi, and gain riichi yaku on CPU wins. |
+| MVP-3.0 | Working branch | Pon/chi design document for staged call implementation. |
+| MVP-3.1 | Working branch | Human-only pon v1: pon reaction, open meld state/UI, post-pon discard, and open-hand riichi blocking. |
 
 ## Current Capabilities
 
@@ -121,6 +123,14 @@ Last updated for MVP-2.2 CPU riichi v1.
   - After CPU riichi, the CPU discards only the latest drawn tile.
   - CPU tsumo/ron after riichi includes the `riichi` yaku.
   - Riichi sticks, point movement, ippatsu, uradora, furiten, kan after riichi, and CPU difficulty settings remain unsupported.
+- Human pon v1:
+  - Human can pon another player's latest discard when holding two matching tiles.
+  - Human cannot pon while in riichi.
+  - Ron priority remains first; if ron is available, the existing ron/skip reaction is shown before pon choices.
+  - Declaring pon removes two matching hand tiles, creates a `pon` meld with `calledTile` and `fromPlayerId`, marks the hand open, and lets the human discard one tile.
+  - Open hands cannot declare riichi.
+  - Open yakuhai pon can count as yaku.
+  - Chi, kan, CPU calls, scoring, furiten, and full call competition remain unsupported.
 - Next-round continuation:
   - `次の局へ` appears after exhaustive draw, tsumo, or ron.
   - The next round creates a fresh wall, dead wall, players, hands, and dealer initial draw.

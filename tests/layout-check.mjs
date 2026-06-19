@@ -32,6 +32,8 @@ const SCENARIOS = [
   { name: "riichi-ready", discards: 9, mode: "riichi-ready" },
   { name: "riichi-declared", discards: 9, mode: "riichi-declared" },
   { name: "cpu-riichi", discards: 9, mode: "cpu-riichi" },
+  { name: "pon-reaction", discards: 9, mode: "pon-reaction" },
+  { name: "open-melds", discards: 9, mode: "open-melds" },
   { name: "cpu-win", discards: 12, mode: "cpu-win" },
   { name: "all-hands-open", discards: 18, mode: "all-hands-open" }
 ];
@@ -262,9 +264,53 @@ function setupScenarioSource() {
       };
     }
 
+    if (mode === "pon-reaction") {
+      state = {
+        ...state,
+        round: {
+          ...state.round,
+          phase: "reaction",
+          lastDiscard: {
+            playerId: 1,
+            tile: { id: "layout-pon-z5", suit: "z", rank: 5, copy: 0, red: false }
+          }
+        }
+      };
+    }
+
+    if (mode === "open-melds") {
+      state = {
+        ...state,
+        round: {
+          ...state.round,
+          players: state.round.players.map((player) => player.id === 0
+            ? {
+              ...player,
+              isClosed: false,
+              menzen: false,
+              melds: [
+                {
+                  id: "layout-meld-pon-z5",
+                  type: "pon",
+                  tiles: [
+                    { id: "layout-meld-z5-a", suit: "z", rank: 5, copy: 0, red: false },
+                    { id: "layout-meld-z5-b", suit: "z", rank: 5, copy: 1, red: false },
+                    { id: "layout-meld-z5-c", suit: "z", rank: 5, copy: 2, red: false }
+                  ],
+                  calledTile: { id: "layout-meld-z5-c", suit: "z", rank: 5, copy: 2, red: false },
+                  fromPlayerId: 1
+                }
+              ]
+            }
+            : player)
+        }
+      };
+    }
+
     renderModule.renderGame(state, root, {
       canDeclareTsumo: () => mode === "actions",
       canDeclareRon: () => mode === "actions",
+      canDeclarePon: () => mode === "pon-reaction",
       canDeclareRiichi: () => mode === "riichi-ready",
       getRiichiDiscardOptions: () => mode === "riichi-ready"
         ? [
@@ -543,6 +589,16 @@ function inspectLayoutSource() {
       if (!isClickableAtCenter(adviceButton, rect)) {
         failures.push("advice button is not clickable at center");
       }
+    }
+
+    const ponButton = document.querySelector("[data-action='declare-pon']");
+    if (ponButton && !isInViewport(ponButton.getBoundingClientRect(), viewport, tolerance)) {
+      failures.push("pon button is outside viewport");
+    }
+
+    const meldArea = document.querySelector(".meld-area");
+    if (meldArea && !isInViewport(meldArea.getBoundingClientRect(), viewport, tolerance)) {
+      failures.push("meld area is outside viewport");
     }
 
     if (modal) {

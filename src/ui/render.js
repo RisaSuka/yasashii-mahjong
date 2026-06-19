@@ -6,7 +6,7 @@ import {
   getYakuDisplayName,
   sortYakuForDisplay
 } from "./yaku-display.js";
-import { getTileSvgPath } from "./tile-assets.js?v=mvp22-cpu-riichi-1";
+import { getTileSvgPath } from "./tile-assets.js?v=mvp31-human-pon-1";
 import { sortTiles } from "../game/tiles.js";
 
 const WIND_LABELS = {
@@ -183,6 +183,7 @@ function renderTableActionBar(state, options) {
     renderNextRoundAction(state),
     renderRiichiAction(state, options),
     renderRonAction(state, options),
+    renderPonAction(state, options),
     renderTsumoAction(state, options)
   ].filter(Boolean).join("");
 
@@ -754,8 +755,24 @@ function renderAllHandsPlayer(player, winnerId, winningTile, yakuResult) {
           </span>
         ` : ""}
       </div>
+      ${renderAllHandsMelds(player)}
       ${yakuText ? `<p class="all-hands-yaku">役: ${escapeHtml(yakuText)}</p>` : ""}
     </section>
+  `;
+}
+
+function renderAllHandsMelds(player) {
+  const melds = player.melds || [];
+
+  if (melds.length === 0) {
+    return "";
+  }
+
+  return `
+    <div class="all-hands-melds">
+      <span class="all-hands-meld-label">\u9cf4\u304d</span>
+      ${melds.map((meld) => renderMeld(meld)).join("")}
+    </div>
   `;
 }
 
@@ -890,12 +907,42 @@ function renderSeat(player, round, discardAdvice, yakuGuide, waitInfo, riichiInf
           ${currentIndicator}
         </span>
       </div>
+      ${renderMelds(player)}
       ${player.type === "human" ? renderHumanHand(player, round, discardAdvice, riichiInfo) : renderCpuHand(player)}
       <div class="discard-area ${player.type === "human" ? "discard-area-human" : "discard-area-cpu"}">
         <div class="seat-meta">捨て牌 ${player.discards.length}枚</div>
         <div class="discards">${getVisibleDiscards(player).map((tile) => renderTile(tile, "discard-tile")).join("")}</div>
       </div>
     </section>
+  `;
+}
+
+function renderMelds(player) {
+  const melds = player.melds || [];
+
+  if (melds.length === 0) {
+    return "";
+  }
+
+  return `
+    <div class="meld-area" aria-label="\u9cf4\u304d">
+      <span class="meld-area-label">\u9cf4\u304d</span>
+      <div class="meld-list">
+        ${melds.map((meld) => renderMeld(meld)).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function renderMeld(meld) {
+  const typeLabel = meld.type === "pon" ? "\u30dd\u30f3" : "\u9cf4\u304d";
+  const tiles = meld.tiles || [];
+
+  return `
+    <div class="meld meld-${escapeHtml(meld.type || "call")}" aria-label="${typeLabel}">
+      <span class="meld-type">${typeLabel}</span>
+      <span class="meld-tiles">${tiles.map((tile) => renderTile(tile, "meld-tile")).join("")}</span>
+    </div>
   `;
 }
 
@@ -1158,6 +1205,34 @@ function renderRonAction(state, options) {
   }
 
   return "";
+}
+
+function renderPonAction(state, options) {
+  const round = state.round;
+  const human = round.players.find((player) => player.type === "human");
+
+  if (!human || round.phase !== "reaction") {
+    return "";
+  }
+
+  if (typeof options.canDeclareRon === "function" && options.canDeclareRon(state, human.id)) {
+    return "";
+  }
+
+  if (typeof options.canCompleteRonLatestDiscard === "function" && options.canCompleteRonLatestDiscard(state, human.id)) {
+    return "";
+  }
+
+  if (typeof options.canDeclarePon !== "function" || !options.canDeclarePon(state, human.id)) {
+    return "";
+  }
+
+  return `
+    <div class="reaction-actions pon-reaction">
+      <button type="button" class="pon-button" data-action="declare-pon">\u30dd\u30f3</button>
+      <button type="button" class="skip-ron-button" data-action="skip-ron">\u898b\u9001\u308b</button>
+    </div>
+  `;
 }
 
 function getNoYakuReactionMessage() {

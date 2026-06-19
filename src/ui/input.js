@@ -149,6 +149,10 @@ export function bindControls(root, handlers) {
     handlers.onDeclareRon();
   });
 
+  root.querySelector("[data-action='declare-pon']")?.addEventListener("click", () => {
+    handlers.onDeclarePon?.();
+  });
+
   root.querySelector("[data-action='skip-ron']")?.addEventListener("click", () => {
     handlers.onSkipRon();
   });

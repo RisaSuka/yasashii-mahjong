@@ -142,6 +142,7 @@
       import { registerNextRoundTests } from "./next-round.test.js";
       import { registerReactionTests } from "./reaction.test.js";
       import { registerRiichiTests } from "./riichi.test.js";
+      import { registerPonTests } from "./pon.test.js";
       import { registerRonTests } from "./ron.test.js";
       import { registerRoundTests } from "./round.test.js";
       import { registerScenarioTests } from "./scenario.test.js";
@@ -159,7 +160,7 @@
       import { registerYakuTests } from "./yaku.test.js";
       import { runTests, tests } from "./test.js";
 
-      globalThis.__TEST_CACHE_BUST__ = "mvp22-cpu-riichi-1";
+      globalThis.__TEST_CACHE_BUST__ = "mvp31-human-pon-1";
 
       const totalCount = document.querySelector("#total-count");
       const passCount = document.querySelector("#pass-count");
@@ -182,6 +183,7 @@
       registerNextRoundTests();
       registerReactionTests();
       registerRiichiTests();
+      registerPonTests();
       registerRonTests();
       registerScenarioTests();
       registerStorageTests();

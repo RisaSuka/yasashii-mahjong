@@ -335,6 +335,7 @@
   }
 
   .ron-button,
+  .pon-button,
   .skip-ron-button,
   .tsumo-button {
     min-width: 84px;
@@ -390,6 +391,44 @@
     overflow-y: visible;
     padding: 1px 0 5px;
     scrollbar-width: thin;
+  }
+
+  .meld-area {
+    margin: 2px 0;
+    padding: 2px 4px;
+    gap: 4px;
+  }
+
+  .seat-east .meld-area {
+    position: absolute;
+    left: 6px;
+    top: 30px;
+    max-width: 32%;
+    overflow: hidden;
+    z-index: 2;
+    margin: 0;
+  }
+
+  .seat-east .discard-area-human {
+    margin-left: 0;
+  }
+
+  .meld-area-label,
+  .meld-type {
+    font-size: 10px;
+  }
+
+  .seat-east .meld-area-label {
+    display: none;
+  }
+
+  .meld-list {
+    gap: 3px;
+  }
+
+  .meld-tile {
+    width: 24px;
+    height: 34px;
   }
 
   .discard-area {
@@ -825,6 +864,7 @@
   }
 
   .table-action-bar .ron-button,
+  .table-action-bar .pon-button,
   .table-action-bar .skip-ron-button,
   .table-action-bar .riichi-button,
   .table-action-bar .cancel-riichi-button,
@@ -1310,6 +1350,7 @@
   }
 
   .table-action-bar .ron-button,
+  .table-action-bar .pon-button,
   .table-action-bar .skip-ron-button,
   .table-action-bar .riichi-button,
   .table-action-bar .cancel-riichi-button,

@@ -21,8 +21,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 307.
-- Confirm pass count is 307.
+- Confirm total count is 318.
+- Confirm pass count is 318.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - For smartphone landscape layout work, also run the layout guard described in `docs/layout-test.md`.
@@ -62,6 +62,18 @@ http://127.0.0.1:8765/tests/test-runner.html
 - Confirm CPU riichi tsumo and CPU riichi ron include `立直` in the yaku result.
 - Confirm human riichi, human ron/tsumo, CPU win, waits, yaku guide, and all-hands popup still work.
 - Confirm riichi sticks, point movement, ippatsu, uradora, furiten, kan after riichi, and CPU difficulty settings are not implemented yet.
+
+## 1.4 MVP-3.1 Human Pon Check
+
+- Use `human-pon-ready-yakuhai` in tests or a debug scenario and confirm `ポン` and `見送る` appear when the human can call pon.
+- Confirm pressing `ポン` adds a visible `鳴き` / `ポン` meld near the human seat.
+- Confirm the human hand loses two matching tiles and the called tile appears in the meld.
+- Confirm the human must discard one tile after pon.
+- Confirm an open hand cannot declare riichi.
+- Confirm a riichi human cannot pon.
+- Confirm open yakuhai pon is treated as a yaku.
+- Confirm chi, kan, CPU calls, scoring, furiten, and full call competition are not implemented yet.
+- Confirm smartphone landscape keeps the pon buttons and meld area inside the viewport.
 
 ## 2. Normal Desktop Flow
 

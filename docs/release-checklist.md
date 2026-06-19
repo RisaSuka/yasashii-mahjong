@@ -4,16 +4,16 @@ Use this before merging to `main` or publishing with GitHub Pages.
 
 ## Current Release Candidate
 
-- Branch: `codex/mvp-21-human-riichi`
-- Scope: MVP-0.1 through MVP-2.2 CPU riichi v1
-- Expected automated result: `307 pass / 0 pending / 0 fail`
+- Branch: `codex/mvp-30-pon-chi-plan`
+- Scope: MVP-0.1 through MVP-3.1 human pon v1
+- Expected automated result: `318 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-2.2 is not published yet.
+- Publish status: MVP-3.1 is not published yet.
 
 ## Git Safety
 
-- Confirm the current branch is `codex/mvp-21-human-riichi`.
+- Confirm the current branch is `codex/mvp-30-pon-chi-plan`.
 - Confirm the working tree is clean.
 - Confirm the latest commit is the intended release candidate.
 - Confirm no unreviewed local commits are being skipped.
@@ -44,7 +44,7 @@ node tests/layout-check.mjs
 
 - If Node is not on PATH in the Codex desktop environment, use the bundled Node command documented in `docs/layout-test.md`.
 - Confirm layout-check screenshots are written under `test-artifacts/layout/`.
-- Current layout-check result: all target viewports and scenarios pass, including `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `yaku-guide`, `waits`, `riichi-ready`, `riichi-declared`, `cpu-riichi`, and `cpu-win`.
+- Current layout-check result: all target viewports and scenarios pass, including `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `yaku-guide`, `waits`, `riichi-ready`, `riichi-declared`, `cpu-riichi`, `pon-reaction`, `open-melds`, and `cpu-win`.
 - Run the CPU win reachability diagnostic:
 
 ```powershell
@@ -82,6 +82,13 @@ node scripts/simulate-cpu-win-reachability.mjs
 - CPU tsumo/ron after riichi includes the `riichi` yaku.
 - CPU riichi shows a compact seat badge.
 - Riichi sticks, point movement, ippatsu, uradora, furiten, kan after riichi, and CPU difficulty settings remain out of scope.
+- Human pon is possible when another player's latest discard matches two human hand tiles.
+- Human pon is blocked while the human is in riichi.
+- Ron remains higher priority than pon in the reaction UI.
+- Declaring pon creates a `pon` meld, marks the hand open, and lets the human discard one tile.
+- Open hands cannot declare riichi.
+- Open yakuhai pon is treated as a yaku.
+- Chi, kan, CPU calls, scoring, furiten, and full call competition remain out of scope.
 - Winning result still shows yaku names, han, total han, explanations, and furigana.
 - Yaku display order remains beginner-friendly.
 - CSS tile display keeps manzu, pinzu, souzu, and honor tiles visually distinct.

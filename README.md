@@ -1,3 +1,9 @@
+# MVP-3.1 human pon note
+
+MVP-3.1 adds the first human-only call flow: pon. When another player discards a tile and the human has two matching tiles, the reaction bar can show `ポン` / `見送る` unless ron priority is taking over. Declaring pon removes two matching hand tiles, creates a `pon` meld with the called discard and source player, marks the hand as open, and returns control to the human to discard one tile. Open hands cannot declare riichi, and an open yakuhai pon is counted as a yaku. Chi, kan, CPU calls, scoring, furiten, and full call competition remain out of scope.
+
+Current local checks target MVP-3.1 normal tests plus the smartphone landscape layout guard including `pon-reaction` and `open-melds`, and the CPU win reachability diagnostic.
+
 # MVP-2.2 CPU riichi note
 
 MVP-2.2 lets CPU players declare riichi when their 14-tile hand can discard into tenpai. CPU riichi is not automatic every time: the CPU favors yaku-valid waits and multi-wait options, then uses RNG so the behavior is not completely fixed. After declaring riichi, CPU players also discard only the latest drawn tile. CPU tsumo/ron after riichi includes `riichi` in the yaku result.

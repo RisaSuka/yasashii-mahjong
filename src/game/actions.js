@@ -1,6 +1,6 @@
 import { chooseCpuDiscard, chooseCpuRiichiDiscardOption } from "./cpu/random-cpu.js";
 import { analyzeDiscardWaits } from "./advice/wait-analysis.js";
-import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp22-cpu-riichi-1";
+import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp31-human-pon-1";
 import { isWinningHand } from "./rules/win-check.js";
 import { detectYaku } from "./rules/yaku.js";
 import { drawFromWall } from "./wall.js";
@@ -23,6 +23,8 @@ export function dispatchAction(state, action) {
       return discardTile(state, action.playerId, action.tileId);
     case "DECLARE_RIICHI":
       return declareRiichi(state, action.playerId, action.tileId);
+    case "DECLARE_PON":
+      return declarePon(state, action.playerId);
     case "DRAW_TILE":
       return drawTile(state, action.playerId, action.storage);
     case "ADVANCE_TURN":
@@ -78,13 +80,14 @@ export function canDeclareTsumo(state, playerId) {
     return false;
   }
 
-  const result = isWinningHand(player.hand);
+  const handTiles = getAllHandTiles(player);
+  const result = isWinningHand(handTiles);
 
   if (!result.winning) {
     return false;
   }
 
-  return detectYaku(player.hand, createTsumoYakuContext(state, player, result)).length > 0;
+  return detectYaku(handTiles, createTsumoYakuContext(state, player, result)).length > 0;
 }
 
 export function canCpuDeclareTsumo(state, playerId) {
@@ -108,7 +111,7 @@ function getRiichiDiscardOptionsForPlayer(state, playerId, options = {}) {
 
   const player = state.round.players.find((candidate) => candidate.id === playerId);
 
-  if (!player || (options.allowedType && player.type !== options.allowedType) || player.isRiichi || player.riichi) {
+  if (!player || (options.allowedType && player.type !== options.allowedType) || player.isRiichi || player.riichi || !isClosedHand(player)) {
     return [];
   }
 
@@ -129,6 +132,37 @@ export function canDeclareRiichi(state, playerId) {
 
 export function canCpuDeclareRiichi(state, playerId) {
   return getCpuRiichiDiscardOptions(state, playerId).length > 0;
+}
+
+export function canDeclarePon(state, playerId) {
+  return getPonOptions(state, playerId).length > 0;
+}
+
+export function getPonOptions(state, playerId) {
+  if (!state.round || state.round.phase === "ended" || !["draw", "reaction"].includes(state.round.phase)) {
+    return [];
+  }
+
+  const player = state.round.players.find((candidate) => candidate.id === playerId);
+  const lastDiscard = state.round.lastDiscard;
+
+  if (!player || player.type !== "human" || isRiichiPlayer(player) || !lastDiscard?.tile || lastDiscard.playerId === playerId) {
+    return [];
+  }
+
+  const matchingTiles = player.hand.filter((tile) => isSameTileKind(tile, lastDiscard.tile));
+
+  if (matchingTiles.length < 2) {
+    return [];
+  }
+
+  return [{
+    type: "pon",
+    calledTile: lastDiscard.tile,
+    fromPlayerId: lastDiscard.playerId,
+    handTileIds: matchingTiles.slice(0, 2).map((tile) => tile.id),
+    tiles: [...matchingTiles.slice(0, 2), lastDiscard.tile]
+  }];
 }
 
 export function startMatch(state, options = {}) {
@@ -332,13 +366,14 @@ export function declareTsumo(state, playerId) {
     return state;
   }
 
-  const result = isWinningHand(player.hand);
+  const handTiles = getAllHandTiles(player);
+  const result = isWinningHand(handTiles);
 
   if (!result.winning) {
     return state;
   }
 
-  const yakuResult = detectYaku(player.hand, createTsumoYakuContext(state, player, result));
+  const yakuResult = detectYaku(handTiles, createTsumoYakuContext(state, player, result));
 
   if (yakuResult.length === 0) {
     return withLastActionResult(state, createNoYakuResult("tsumo"));
@@ -355,7 +390,7 @@ export function declareTsumo(state, playerId) {
         winnerId: playerId,
         winType: "tsumo",
         handType: result.type,
-        handTiles: [...player.hand],
+        handTiles,
         yakuResult
       }
     }
@@ -402,7 +437,7 @@ function getRonShapeResult(state, playerId, options = {}) {
     return null;
   }
 
-  const handTiles = [...player.hand, lastDiscard.tile];
+  const handTiles = getAllHandTiles(player, lastDiscard.tile);
   const result = isWinningHand(handTiles);
 
   if (!result.winning) {
@@ -492,7 +527,7 @@ export function resolveCpuRonAfterDiscard(state) {
 }
 
 export function enterReaction(state, playerId) {
-  if (!canCompleteRonLatestDiscard(state, playerId)) {
+  if (!canCompleteRonLatestDiscard(state, playerId) && !canDeclarePon(state, playerId)) {
     return state;
   }
 
@@ -539,7 +574,7 @@ export function declareRon(state, playerId) {
   }
 
   const winningTile = lastDiscard.tile;
-  const handTiles = [...player.hand, winningTile];
+  const handTiles = getAllHandTiles(player, winningTile);
   const result = isWinningHand(handTiles);
 
   if (!result.winning) {
@@ -621,6 +656,11 @@ function isClosedHand(player) {
   return player.menzen !== false && player.isClosed !== false && (!player.melds || player.melds.length === 0);
 }
 
+function getAllHandTiles(player, extraTile = null) {
+  const meldTiles = (player.melds || []).flatMap((meld) => meld.tiles || []);
+  return [...player.hand, ...(extraTile ? [extraTile] : []), ...meldTiles];
+}
+
 function isRiichiPlayer(player) {
   return player?.isRiichi === true || player?.riichi === true;
 }
@@ -652,6 +692,56 @@ function declareRiichiForPlayer(state, playerId, tileId, options = {}) {
     },
     riichiDiscardTileId: tile.id
   }));
+}
+
+export function declarePon(state, playerId) {
+  const option = getPonOptions(state, playerId)[0];
+
+  if (!option) {
+    return state;
+  }
+
+  const player = state.round.players.find((candidate) => candidate.id === playerId);
+  const nextMeld = {
+    id: `${state.round.id}-pon-${state.round.turnCount}-${player.melds?.length || 0}`,
+    type: "pon",
+    tiles: option.tiles,
+    calledTile: option.calledTile,
+    fromPlayerId: option.fromPlayerId,
+    openedAtTurn: state.round.turnCount
+  };
+  const handTileIds = new Set(option.handTileIds);
+  const nextPlayers = state.round.players.map((candidate) => {
+    if (candidate.id !== playerId) {
+      return candidate;
+    }
+
+    return {
+      ...candidate,
+      hand: candidate.hand.filter((tile) => !handTileIds.has(tile.id)),
+      melds: [...(candidate.melds || []), nextMeld],
+      isClosed: false,
+      menzen: false
+    };
+  });
+
+  return {
+    ...state,
+    round: {
+      ...state.round,
+      players: nextPlayers,
+      phase: "discard",
+      currentPlayerIndex: playerId,
+      lastActionResult: {
+        type: "call",
+        callType: "pon",
+        playerId,
+        fromPlayerId: option.fromPlayerId,
+        calledTile: option.calledTile,
+        message: "\u30dd\u30f3\u3057\u307e\u3057\u305f\u3002\u6368\u3066\u308b\u724c\u3092\u9078\u3093\u3067\u304f\u3060\u3055\u3044\u3002"
+      }
+    }
+  };
 }
 
 export function discardTile(state, playerId, tileId) {
@@ -712,6 +802,10 @@ function discardTileWithPlayerUpdate(state, playerId, tileId, updatePlayer = (pl
       phase: "draw"
     }
   };
+}
+
+function isSameTileKind(a, b) {
+  return a?.suit === b?.suit && a?.rank === b?.rank;
 }
 
 function isLatestDrawTile(state, playerId, tileId) {

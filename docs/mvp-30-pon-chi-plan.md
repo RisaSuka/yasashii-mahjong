@@ -2,6 +2,10 @@
 
 MVP-3.0 is a design-only milestone for calls. Pon and chi affect turn flow, yaku, riichi, hand display, and mobile layout, so the first step is to keep the scope deliberately small.
 
+## MVP-3.1 Implementation Note
+
+MVP-3.1 implements the first slice of this plan: human-only pon. The UI shows pon only when ron priority is not taking over, `DECLARE_PON` creates a `pon` meld, the human hand becomes open, and the caller must discard one tile. Open hands cannot declare riichi, and an open yakuhai pon can count as yaku. Chi, kan, CPU calls, scoring, furiten, and full call competition remain deferred.
+
 ## Goal
 
 - Add a clear implementation plan for human pon and chi.

@@ -55,6 +55,7 @@
 
 .seat {
   display: grid;
+  position: relative;
   gap: 8px;
   min-width: 0;
   border: 1px solid #bfcbc6;
@@ -389,6 +390,10 @@
   gap: 8px;
 }
 
+.pon-reaction {
+  align-items: center;
+}
+
 .table-action-bar {
   display: flex;
   flex-wrap: wrap;
@@ -468,6 +473,50 @@
   align-items: center;
   justify-content: flex-end;
   gap: 6px;
+}
+
+.meld-area {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0;
+  padding: 4px 6px;
+  border: 1px solid rgba(15, 118, 110, 0.22);
+  border-radius: 8px;
+  background: rgba(240, 253, 250, 0.78);
+}
+
+.meld-area-label,
+.meld-type {
+  color: #0f4f47;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.meld-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.meld {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.meld-tiles {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.meld-tile {
+  width: 30px;
+  height: 42px;
 }
 
 .seat-turn-indicator {
@@ -1271,6 +1320,19 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 4px;
+}
+
+.all-hands-melds {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+}
+
+.all-hands-meld-label {
+  color: #0f4f47;
+  font-size: 12px;
+  font-weight: 800;
 }
 
 .all-hands-tile {

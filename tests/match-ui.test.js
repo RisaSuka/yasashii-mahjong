@@ -1261,6 +1261,7 @@ async function renderState(state, renderOptions = {}) {
     canDeclareTsumo: () => false,
     canDeclareRon: () => false,
     canCompleteRonLatestDiscard: () => false,
+    canDeclarePon: () => false,
     suggestDiscards: () => [],
     ...renderOptions
   });
