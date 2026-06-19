@@ -83,6 +83,14 @@ export function registerCpuDiscardTests() {
     assertTrue(!candidate.tileId.startsWith("p3"), "CPU should avoid breaking 1-2-3 sequence at the edge");
   });
 
+  test("CPU DISCARD: evaluator protects yakuhai pairs in pair-heavy hands", async () => {
+    const { chooseCpuDiscardCandidate } = await loadCpuModule(["chooseCpuDiscardCandidate"]);
+    const player = createCpuPlayer("m4 m4 m7 m7 s3 s4 s5 s7 s7 s8 s9 s9 z6 z6");
+    const candidate = chooseCpuDiscardCandidate(player, {}, () => 0);
+
+    assertTrue(!candidate.tileId.startsWith("z6"), "CPU should avoid discarding a yakuhai pair when other candidates exist");
+  });
+
   test("CPU DISCARD: action keeps round moving into draw phase", async () => {
     const { dispatchAction } = await loadModule("../src/game/actions.js", ["dispatchAction"]);
     const state = await startedCpuState();

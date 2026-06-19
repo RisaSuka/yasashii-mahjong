@@ -1,5 +1,5 @@
 import { chooseCpuDiscard } from "./cpu/random-cpu.js";
-import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp181-sequence-protect-1";
+import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp182-yakuhai-pair-protect-1";
 import { isWinningHand } from "./rules/win-check.js";
 import { detectYaku } from "./rules/yaku.js";
 import { drawFromWall } from "./wall.js";

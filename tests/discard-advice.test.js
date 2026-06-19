@@ -200,6 +200,54 @@ export function registerDiscardAdviceTests() {
     assertTrue(scoreFor(candidates, "z5") > scoreFor(candidates, "m1"), "Dragon pair should be valued above an isolated terminal");
   });
 
+  test("DISCARD EVALUATOR: yakuhai pairs are protected in pair-heavy hands", async () => {
+    const { evaluateDiscardCandidates, suggestDiscards } = await loadDiscardAdviceModule([
+      "evaluateDiscardCandidates",
+      "suggestDiscards"
+    ]);
+    const hand = tiles("m4 m4 m7 m7 s3 s4 s5 s7 s7 s8 s9 s9 z6 z6");
+    const candidates = evaluateDiscardCandidates(hand);
+    const advice = suggestDiscards(hand);
+    const hatsu = candidateFor(candidates, "z6");
+
+    assertTrue(hatsu.tags.includes("yakuhai"), "Hatsu should be tagged as yakuhai");
+    assertTrue(hatsu.tags.includes("pair"), "Hatsu pair should keep pair tag");
+    assertTrue(hatsu.tags.includes("yaku-pair"), "Hatsu pair should be tagged as a yaku pair");
+    assertTrue(candidateFor(candidates, "s3").tags.includes("completed-sequence"), "3-4-5 sou should be protected as a completed sequence");
+    assertTrue(hatsu.score > scoreFor(candidates, "m4"), "Yakuhai pair should be valued above ordinary pair candidates");
+    assertNoAdviceForTile(advice, "z6", "Hatsu pair should not be recommended while ordinary pair candidates exist");
+  });
+
+  test("DISCARD EVALUATOR: white, hatsu, and chun pairs are protected", async () => {
+    const { suggestDiscards } = await loadDiscardAdviceModule(["suggestDiscards"]);
+    const base = "m1 m9 p1 p9 s1 s9 z1 z2 z3 m4 p4";
+
+    assertNoAdviceForTile(suggestDiscards(tiles(`${base} z5 z5`)), "z5", "White pair should be protected");
+    assertNoAdviceForTile(suggestDiscards(tiles(`${base} z6 z6`)), "z6", "Hatsu pair should be protected");
+    assertNoAdviceForTile(suggestDiscards(tiles(`${base} z7 z7`)), "z7", "Chun pair should be protected");
+  });
+
+  test("DISCARD EVALUATOR: round wind and self wind pairs are protected", async () => {
+    const { evaluateDiscardCandidates, suggestDiscards } = await loadDiscardAdviceModule([
+      "evaluateDiscardCandidates",
+      "suggestDiscards"
+    ]);
+    const hand = tiles("m1 m9 p1 p9 s1 s9 z1 z1 z2 z2 z5 m4 p4");
+    const candidates = evaluateDiscardCandidates(hand, {
+      currentPlayerId: 1,
+      round: { dealerIndex: 0, roundWind: "east" }
+    });
+    const advice = suggestDiscards(hand, {
+      currentPlayerId: 1,
+      round: { dealerIndex: 0, roundWind: "east" }
+    });
+
+    assertTrue(candidateFor(candidates, "z1").tags.includes("yaku-pair"), "Round wind pair should be a yaku pair");
+    assertTrue(candidateFor(candidates, "z2").tags.includes("yaku-pair"), "Self wind pair should be a yaku pair");
+    assertNoAdviceForTile(advice, "z1", "Round wind pair should be protected from advice");
+    assertNoAdviceForTile(advice, "z2", "Self wind pair should be protected from advice");
+  });
+
   test("DISCARD ADVICE: evaluator fallback still returns advice for connected hands", async () => {
     const { suggestDiscards } = await loadDiscardAdviceModule(["suggestDiscards"]);
     const advice = suggestDiscards(tiles("m2 m3 m4 p3 p4 p5 s4 s5 s6 m6 m7 p7 p8"));

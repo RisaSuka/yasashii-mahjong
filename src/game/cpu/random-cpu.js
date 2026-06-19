@@ -58,16 +58,30 @@ function chooseWeightedCandidateIndex(candidateCount, random) {
 }
 
 function preferUnprotectedCandidates(candidates) {
-  const unprotected = candidates.filter((candidate) => !isStronglyProtectedCandidate(candidate));
+  const unprotected = candidates.filter((candidate) => !isShapeProtectedCandidate(candidate));
 
-  return unprotected.length > 0 ? unprotected : candidates;
+  if (unprotected.length > 0) {
+    return unprotected;
+  }
+
+  const withoutCritical = candidates.filter((candidate) => !isCriticalProtectedCandidate(candidate));
+
+  return withoutCritical.length > 0 ? withoutCritical : candidates;
 }
 
-function isStronglyProtectedCandidate(candidate) {
+function isShapeProtectedCandidate(candidate) {
   return candidate.tags.includes("completed-sequence")
     || candidate.tags.includes("completed-triplet")
     || candidate.tags.includes("pair")
     || candidate.tags.includes("yakuhai-pair")
+    || candidate.tags.includes("yaku-pair")
+    || candidate.tags.includes("dora");
+}
+
+function isCriticalProtectedCandidate(candidate) {
+  return candidate.tags.includes("completed-triplet")
+    || candidate.tags.includes("yakuhai-pair")
+    || candidate.tags.includes("yaku-pair")
     || candidate.tags.includes("dora");
 }
 

@@ -21,8 +21,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 268.
-- Confirm pass count is 268.
+- Confirm total count is 272.
+- Confirm pass count is 272.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - For smartphone landscape layout work, also run the layout guard described in `docs/layout-test.md`.
@@ -54,6 +54,12 @@ http://127.0.0.1:8765/tests/test-runner.html
 - Confirm pairs and triplets are not casually suggested before isolated honors or weak isolated terminals.
 - Confirm `助言を見る` gives a readable reason for the suggested tile.
 - Confirm CPU turns continue normally and do not stall after the evaluator change.
+
+## 2.2 MVP-1.8.2 Yakuhai Pair Sanity
+
+- Confirm dragon pairs such as `白白`, `發發`, and `中中` are not recommended ahead of weaker candidates.
+- In pair-heavy hands, confirm ordinary pairs are not over-penalized and yakuhai pairs are especially protected.
+- Confirm CPU turns still continue when CPU hands include yakuhai pairs.
 
 ## 3. Tsumo Win Check
 

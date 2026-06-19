@@ -5,11 +5,11 @@ Use this before merging to `main` or publishing with GitHub Pages.
 ## Current Release Candidate
 
 - Branch: `codex/mvp-16-hand-yaku-guide`
-- Scope: MVP-0.1 through MVP-1.8.1 discard evaluator meld protection and CPU win diagnostics
-- Expected automated result: `268 pass / 0 pending / 0 fail`
+- Scope: MVP-0.1 through MVP-1.8.2 yakuhai pair protection and CPU win diagnostics
+- Expected automated result: `272 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-1.8.1 is not published yet.
+- Publish status: MVP-1.8.2 is not published yet.
 
 ## Git Safety
 
@@ -31,8 +31,8 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 268.
-- Confirm pass count is 268.
+- Confirm total count is 272.
+- Confirm pass count is 272.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
@@ -62,6 +62,8 @@ node scripts/simulate-cpu-win-reachability.mjs
 - CPU players discard using the shared discard evaluator with light randomness.
 - The discard evaluator protects completed sequences, completed triplets, and pairs before isolated terminal/honor penalties.
 - Completed edge sequences such as `1筒2筒3筒` and `7筒8筒9筒` are not treated as throwaway terminal shapes when weaker tiles exist.
+- Yakuhai pairs such as `白白`, `發發`, and `中中` are protected from advice/CPU discard candidates when alternatives exist.
+- Pair-heavy hands receive a small chiitoitsu/toitoi direction bonus so pairs are not broken too casually.
 - Turn returns to the human during normal play.
 - Live wall reaches 0 in simulation or long manual play.
 - Round ends with `exhaustive-draw`.

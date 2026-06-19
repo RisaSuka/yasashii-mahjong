@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp181-sequence-protect-1";
-import { renderGame } from "./ui/render.js?v=mvp181-sequence-protect-1";
+import { bindControls } from "./ui/input.js?v=mvp182-yakuhai-pair-protect-1";
+import { renderGame } from "./ui/render.js?v=mvp182-yakuhai-pair-protect-1";
 
-const APP_ASSET_VERSION = "mvp181-sequence-protect-1";
+const APP_ASSET_VERSION = "mvp182-yakuhai-pair-protect-1";
 
 const appRoot = document.querySelector("#app");
 

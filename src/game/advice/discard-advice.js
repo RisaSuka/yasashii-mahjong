@@ -36,9 +36,11 @@ export function evaluateDiscardCandidates(hand, context = {}) {
   const ownDiscardKeys = collectOwnDiscardKeys(context);
   const preferTanyao = shouldPreferTanyao(tiles, context);
   const pairCount = countPairs(counts);
+  const tripletCount = countTriplets(counts);
   const doraKeys = collectDoraKeys(context);
   const nearDoraKeys = collectNearDoraKeys(context);
   const shapeKeys = analyzeHandShapes(counts);
+  const yakuhaiRanks = collectYakuhaiRanks(context);
 
   return tiles
     .map((tile, handIndex) => evaluateTile(tile, {
@@ -49,9 +51,11 @@ export function evaluateDiscardCandidates(hand, context = {}) {
       ownDiscardKeys,
       preferTanyao,
       pairCount,
+      tripletCount,
       doraKeys,
       nearDoraKeys,
-      shapeKeys
+      shapeKeys,
+      yakuhaiRanks
     }))
     .sort(compareCandidates);
 }
@@ -137,6 +141,8 @@ function evaluateTile(tile, context) {
   const inCompletedTriplet = context.shapeKeys.completedTripletKeys.has(key);
   const inPair = context.shapeKeys.pairKeys.has(key);
   const inSequenceCandidate = context.shapeKeys.sequenceCandidateKeys.has(key);
+  const isYakuhaiTile = tile.suit === "z" && context.yakuhaiRanks.has(tile.rank);
+  const isYakuhaiPair = isYakuhaiTile && count >= 2;
 
   if (inCompletedSequence) {
     score += 80;
@@ -158,7 +164,7 @@ function evaluateTile(tile, context) {
     score -= 12;
     tags.push("honor");
 
-    if (isDragon(tile)) {
+    if (isYakuhaiTile) {
       score += 8;
       tags.push("yakuhai");
     }
@@ -188,16 +194,27 @@ function evaluateTile(tile, context) {
     tags.push(count >= 3 ? "triplet" : "pair");
     keepReasons.push(REASON_TEXT.pair);
 
-    if (isDragon(tile)) {
-      score += 18;
+    if (isYakuhaiPair) {
+      score += 58;
       tags.push("yakuhai-pair");
+      tags.push("yaku-pair");
       keepReasons.push(REASON_TEXT.yakuhaiPair);
     }
   }
 
   if (context.pairCount >= 4 && count >= 2) {
-    score += 8;
+    score += 22;
     tags.push("pair-heavy");
+  }
+
+  if (context.pairCount >= 5 && count >= 2) {
+    score += 12;
+    tags.push("chiitoitsu-shape");
+  }
+
+  if (context.pairCount + context.tripletCount >= 5 && count >= 2) {
+    score += 8;
+    tags.push("toitoi-shape");
   }
 
   const sequenceValue = getSequenceValue(tile, context.counts);
@@ -568,17 +585,92 @@ function uniqueByTileType() {
   };
 }
 
-function preferUnprotectedCandidates(candidates) {
-  const unprotected = candidates.filter((candidate) => !isStronglyProtectedCandidate(candidate));
+function countTriplets(counts) {
+  let tripletCount = 0;
 
-  return unprotected.length > 0 ? unprotected : candidates;
+  for (const count of counts.values()) {
+    if (count >= 3) {
+      tripletCount += 1;
+    }
+  }
+
+  return tripletCount;
 }
 
-function isStronglyProtectedCandidate(candidate) {
+function collectYakuhaiRanks(context) {
+  const ranks = new Set(DRAGON_RANKS);
+  const roundWindRank = getWindRank(context.roundWind || context.match?.roundWind || context.round?.roundWind);
+  const playerWindRank = getPlayerWindRank(context);
+
+  if (roundWindRank) {
+    ranks.add(roundWindRank);
+  }
+  if (playerWindRank) {
+    ranks.add(playerWindRank);
+  }
+
+  return ranks;
+}
+
+function getPlayerWindRank(context) {
+  const playerId = Number.isInteger(context.currentPlayerId)
+    ? context.currentPlayerId
+    : context.player?.id;
+
+  if (!Number.isInteger(playerId)) {
+    return null;
+  }
+
+  const dealerIndex = Number.isInteger(context.round?.dealerIndex)
+    ? context.round.dealerIndex
+    : Number.isInteger(context.match?.dealerIndex)
+      ? context.match.dealerIndex
+      : 0;
+  const relativeSeat = (playerId - dealerIndex + 4) % 4;
+  return relativeSeat + 1;
+}
+
+function getWindRank(wind) {
+  if (wind === "east") {
+    return 1;
+  }
+  if (wind === "south") {
+    return 2;
+  }
+  if (wind === "west") {
+    return 3;
+  }
+  if (wind === "north") {
+    return 4;
+  }
+  return null;
+}
+
+function preferUnprotectedCandidates(candidates) {
+  const unprotected = candidates.filter((candidate) => !isShapeProtectedCandidate(candidate));
+
+  if (unprotected.length > 0) {
+    return unprotected;
+  }
+
+  const withoutCritical = candidates.filter((candidate) => !isCriticalProtectedCandidate(candidate));
+
+  return withoutCritical.length > 0 ? withoutCritical : candidates;
+}
+
+function isShapeProtectedCandidate(candidate) {
   return candidate.tags.includes("completed-sequence")
     || candidate.tags.includes("completed-triplet")
     || candidate.tags.includes("pair")
     || candidate.tags.includes("yakuhai-pair")
+    || candidate.tags.includes("yaku-pair")
+    || candidate.tags.includes("dora");
+}
+
+function isCriticalProtectedCandidate(candidate) {
+  return candidate.tags.includes("completed-triplet")
+    || candidate.tags.includes("yakuhai-pair")
+    || candidate.tags.includes("yaku-pair")
     || candidate.tags.includes("dora");
 }
 
@@ -605,10 +697,6 @@ function isValidTile(tile) {
 
 function tileKey(tile) {
   return `${tile.suit}${tile.rank}`;
-}
-
-function isDragon(tile) {
-  return tile.suit === "z" && DRAGON_RANKS.has(tile.rank);
 }
 
 function isTerminal(tile) {

@@ -1,3 +1,9 @@
+# MVP-1.8.2 yakuhai pair protection note
+
+MVP-1.8.2 strengthens yakuhai pair protection in the shared discard evaluator. Dragon pairs such as `白白`, `發發`, and `中中`, plus round-wind and self-wind pairs when context is available, are treated as important yaku-pair shapes. Pair-heavy hands also get a small chiitoitsu/toitoi direction bonus so the evaluator is less likely to casually break pairs when isolated alternatives exist. This affects both beginner discard advice and CPU discard selection because both use the same evaluator.
+
+Current local checks target MVP-1.8.2 normal tests plus the smartphone landscape layout guard and CPU win reachability diagnostic.
+
 # MVP-1.8.1 discard evaluator stability note
 
 MVP-1.8.1 strengthens the shared discard evaluator so completed sequences such as `1筒2筒3筒` and `7筒8筒9筒`, completed triplets, pairs, dora, and connected number shapes are protected before isolated terminal/honor penalties are applied. This reduces unnatural advice and CPU discards that break an already completed meld. A lightweight CPU win reachability diagnostic is available at `scripts/simulate-cpu-win-reachability.mjs`; it checks that CPU tsumo, CPU ron, and no-yaku CPU rejection paths are still reachable without adding any win-rate boost.

@@ -1,15 +1,15 @@
 # Current Status
 
-Last updated for MVP-1.8.1 discard evaluator meld protection and CPU win reachability diagnostics.
+Last updated for MVP-1.8.2 yakuhai pair protection and pair-heavy hand direction.
 
 ## Repository State
 
 - Working branch: `codex/mvp-16-hand-yaku-guide`
-- Automated tests: `268 pass / 0 pending / 0 fail`
+- Automated tests: `272 pass / 0 pending / 0 fail`
 - Layout check: Chrome-based smartphone landscape guard passes all target viewports/scenarios, including discard zoom, result popup, yaku-guide popup, waits popup, and CPU win scenarios
-- Working tree: clean at the time of the latest MVP-1.8.1 verification
+- Working tree: clean at the time of the latest MVP-1.8.2 verification
 - Push: not yet
-- `main` merge: not yet for MVP-1.8.1
+- `main` merge: not yet for MVP-1.8.2
 
 ## Implemented MVPs
 
@@ -44,6 +44,7 @@ Last updated for MVP-1.8.1 discard evaluator meld protection and CPU win reachab
 | MVP-1.7 | Working branch | Tenpai/wait helper shows which tile would complete a 13-tile human hand and whether that wait has yaku. |
 | MVP-1.8 | Working branch | CPU players can resolve yaku-valid tsumo or ron wins; no-yaku CPU completed shapes are ignored. |
 | MVP-1.8.1 | Working branch | Discard evaluator protects completed sequences/triplets/pairs more strongly and adds a CPU win reachability diagnostic. |
+| MVP-1.8.2 | Working branch | Yakuhai pairs and pair-heavy chiitoitsu/toitoi direction are protected more strongly in advice and CPU discard selection. |
 
 ## Current Capabilities
 
