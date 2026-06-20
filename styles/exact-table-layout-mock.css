@@ -1,0 +1,504 @@
+:root {
+  color-scheme: light;
+  --felt: #dcebe4;
+  --felt-line: rgba(20, 119, 105, 0.32);
+  --panel: rgba(255, 255, 255, 0.82);
+  --ink: #172332;
+  --teal: #0f766e;
+  --red: #dc2626;
+  --river-w: clamp(15px, 2.05vw, 18px);
+  --river-h: clamp(20px, 5.6dvh, 24px);
+  --hand-w: clamp(49px, 6.35vw, 54px);
+  --hand-h: clamp(68px, 20.8dvh, 80px);
+  --gap: 2px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100dvw;
+  max-width: 100dvw;
+  height: 100dvh;
+  max-height: 100dvh;
+  margin: 0;
+  overflow: hidden;
+  background: #e9f1ee;
+  color: var(--ink);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+button {
+  font: inherit;
+}
+
+.exact-mock {
+  width: 100dvw;
+  max-width: 100dvw;
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+  padding: max(2px, env(safe-area-inset-top)) max(3px, env(safe-area-inset-right)) max(3px, env(safe-area-inset-bottom)) max(3px, env(safe-area-inset-left));
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.34), transparent 22%),
+    var(--felt);
+}
+
+.table-shell {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns:
+    clamp(170px, 23vw, 210px)
+    minmax(0, 1fr)
+    clamp(174px, 24vw, 198px)
+    minmax(0, 1fr)
+    clamp(170px, 23vw, 210px)
+    clamp(28px, 4.1vw, 34px);
+  grid-template-rows:
+    clamp(60px, 18.5dvh, 72px)
+    minmax(104px, 1fr)
+    clamp(64px, 18dvh, 72px)
+    clamp(90px, 26.5dvh, 112px);
+  grid-template-areas:
+    "top-meld top-meld top-river top-seat right-meld gear"
+    "left-seat left-river score right-river right-seat gear"
+    "left-meld self-seat self-river actions self-meld gear"
+    "hand hand hand hand hand gear";
+  gap: var(--gap);
+  border: 2px solid rgba(15, 118, 110, 0.42);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.2), transparent 18%, transparent 82%, rgba(255, 255, 255, 0.18)),
+    rgba(213, 235, 226, 0.88);
+  overflow: hidden;
+}
+
+.mock-gear {
+  grid-area: gear;
+  align-self: start;
+  justify-self: end;
+  width: clamp(26px, 3.8vw, 34px);
+  height: clamp(26px, 3.8vw, 34px);
+  margin: 3px 1px 0 0;
+  border: 2px solid rgba(15, 118, 110, 0.56);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--teal);
+  line-height: 1;
+}
+
+.mock-seat {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+  align-self: center;
+  justify-self: center;
+  border: 2px solid rgba(15, 118, 110, 0.38);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.12);
+  white-space: nowrap;
+}
+
+.mock-seat strong,
+.mock-seat span {
+  display: block;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+.mock-seat strong {
+  font-size: clamp(8px, 1.25vw, 11px);
+  line-height: 1.1;
+}
+
+.mock-seat span {
+  border-radius: 999px;
+  background: rgba(15, 118, 110, 0.12);
+  color: var(--teal);
+  padding: 1px 3px;
+  font-size: clamp(7px, 1vw, 9px);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.mock-seat-top {
+  grid-area: top-seat;
+  width: min(100%, 78px);
+  max-height: 10dvh;
+  padding: 3px 5px;
+}
+
+.mock-seat-right,
+.mock-seat-left {
+  width: min(100%, 8dvw, 62px);
+  min-height: 34px;
+  max-width: 8dvw;
+  padding: 4px 3px;
+  flex-direction: column;
+}
+
+.mock-seat-right {
+  grid-area: right-seat;
+  justify-self: start;
+}
+
+.mock-seat-left {
+  grid-area: left-seat;
+}
+
+.mock-seat-self {
+  grid-area: self-seat;
+  width: min(100%, 86px);
+  max-height: 12dvh;
+  padding: 3px 5px;
+}
+
+.is-dealer {
+  border-color: rgba(220, 38, 38, 0.72);
+}
+
+.is-dealer span {
+  background: rgba(220, 38, 38, 0.12);
+  color: var(--red);
+}
+
+.is-riichi {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.14), 0 1px 4px rgba(15, 23, 42, 0.12);
+}
+
+.is-turn {
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.22), 0 1px 4px rgba(15, 23, 42, 0.12);
+}
+
+.mock-river-wrap {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  overflow: visible;
+}
+
+.mock-river-top {
+  grid-area: top-river;
+}
+
+.mock-river-left {
+  grid-area: left-river;
+}
+
+.mock-river-right {
+  grid-area: right-river;
+}
+
+.mock-river-self {
+  grid-area: self-river;
+}
+
+.mock-river {
+  display: grid;
+  grid-template-columns: repeat(6, var(--river-w));
+  grid-auto-rows: var(--river-h);
+  gap: 1px;
+  width: max-content;
+  height: max-content;
+  padding: 2px;
+  border: 1px solid var(--felt-line);
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.34);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.32);
+  transform-origin: center center;
+}
+
+.mock-river img {
+  width: var(--river-w);
+  height: var(--river-h);
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 1px 1px rgba(15, 23, 42, 0.12));
+}
+
+.mock-rotate-right {
+  transform: rotate(-90deg);
+}
+
+.mock-rotate-top {
+  transform: rotate(180deg);
+}
+
+.mock-rotate-left {
+  transform: rotate(90deg);
+}
+
+.mock-score-board {
+  grid-area: score;
+  align-self: center;
+  justify-self: center;
+  width: min(100%, clamp(174px, 23.5vw, 198px));
+  height: min(100%, clamp(100px, 31dvh, 124px));
+  display: grid;
+  grid-template-columns: 1fr 1.28fr 1fr;
+  grid-template-rows: 1fr 1.5fr 1fr;
+  grid-template-areas:
+    ". score-top ."
+    "score-left core score-right"
+    ". score-bottom .";
+  gap: 2px;
+  padding: 4px;
+  border: 2px solid rgba(15, 23, 42, 0.72);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 1px 6px rgba(15, 23, 42, 0.18);
+}
+
+.score {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border: 1px solid rgba(15, 23, 42, 0.48);
+  border-radius: 3px;
+  background: rgba(240, 253, 250, 0.78);
+  font-size: clamp(8px, 1.25vw, 10px);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.score strong {
+  font-size: clamp(8px, 1.25vw, 10px);
+}
+
+.score-top { grid-area: score-top; }
+.score-left { grid-area: score-left; writing-mode: vertical-rl; }
+.score-right { grid-area: score-right; writing-mode: vertical-rl; }
+.score-bottom { grid-area: score-bottom; }
+
+.score-core {
+  grid-area: core;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 1px;
+  border: 1px solid rgba(15, 118, 110, 0.36);
+  border-radius: 4px;
+  background: #ffffff;
+  font-size: clamp(8px, 1.25vw, 10px);
+  line-height: 1.05;
+  text-align: center;
+}
+
+.score-core strong {
+  color: var(--teal);
+  font-size: clamp(12px, 1.8vw, 15px);
+  line-height: 1;
+}
+
+.mock-meld-zone {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  align-items: center;
+  overflow: hidden;
+}
+
+.mock-meld-top {
+  grid-area: top-meld;
+  justify-items: center;
+}
+
+.mock-meld-right {
+  grid-area: right-meld;
+  justify-items: center;
+}
+
+.mock-meld-left {
+  grid-area: left-meld;
+  justify-items: center;
+}
+
+.mock-meld-self {
+  grid-area: self-meld;
+  align-self: center;
+  justify-self: stretch;
+}
+
+.mock-meld-list {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  width: max-content;
+  max-width: 100%;
+  transform-origin: center center;
+}
+
+.mock-meld-self .mock-meld-list {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+.mock-meld {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  padding: 1px 2px;
+  border: 1px solid rgba(15, 118, 110, 0.34);
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.68);
+  white-space: nowrap;
+}
+
+.mock-meld span {
+  color: var(--teal);
+  font-size: 7px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.mock-meld img {
+  width: clamp(12px, 1.55vw, 14px);
+  height: clamp(17px, 4.2dvh, 20px);
+  object-fit: contain;
+}
+
+.mock-actions {
+  grid-area: actions;
+  min-width: 0;
+  min-height: 0;
+  align-self: stretch;
+  justify-self: stretch;
+  display: grid;
+  grid-template-rows: auto auto;
+  align-content: center;
+  gap: 2px;
+  padding: 2px;
+  overflow: hidden;
+}
+
+.action-buttons,
+.support-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-width: 0;
+}
+
+.support-buttons {
+  flex-wrap: nowrap;
+}
+
+.mock-actions button {
+  min-width: 34px;
+  min-height: 18px;
+  border: 2px solid rgba(15, 118, 110, 0.82);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--teal);
+  font-size: clamp(9px, 1.4vw, 12px);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.support-buttons button {
+  min-width: 24px;
+  min-height: 16px;
+  border-width: 1px;
+  font-size: 8px;
+  padding: 0 2px;
+}
+
+.mock-actions p {
+  display: none;
+}
+
+.mock-hand-area {
+  grid-area: hand;
+  align-self: stretch;
+  justify-self: stretch;
+  min-width: 0;
+  min-height: 0;
+  padding: 2px 2px max(3px, env(safe-area-inset-bottom));
+  overflow: hidden;
+  border-top: 2px solid rgba(15, 118, 110, 0.32);
+  background: rgba(255, 255, 255, 0.54);
+}
+
+.mock-hand-scroll {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: end;
+  gap: 1px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scroll-padding-inline: 0;
+}
+
+.mock-hand-tile {
+  position: relative;
+  flex: 0 0 var(--hand-w);
+  width: var(--hand-w);
+  height: var(--hand-h);
+  min-width: var(--hand-w);
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+}
+
+.mock-hand-tile img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 2px rgba(15, 23, 42, 0.16));
+}
+
+.mock-hand-tile span {
+  position: absolute;
+  right: 1px;
+  bottom: 5px;
+  width: 17px;
+  height: 15px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #f59e0b;
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+@media (max-height: 370px) and (orientation: landscape) {
+  :root {
+    --hand-w: clamp(46px, 6.1vw, 50px);
+    --hand-h: clamp(64px, 20dvh, 72px);
+  }
+
+  .score-core span:last-child {
+    display: none;
+  }
+
+  .mock-meld span,
+  .support-buttons button {
+    font-size: 8px;
+  }
+}

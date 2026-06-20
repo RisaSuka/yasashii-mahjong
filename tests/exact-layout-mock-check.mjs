@@ -1,0 +1,578 @@
+import { createServer } from "node:http";
+import { createReadStream, existsSync, mkdirSync, mkdtempSync, rmSync, statSync } from "node:fs";
+import { readFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
+import { spawn } from "node:child_process";
+import { fileURLToPath } from "node:url";
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const ARTIFACT_DIR = path.join(ROOT, "test-artifacts", "layout");
+const PORT = Number(process.env.EXACT_MOCK_CHECK_PORT || 18766);
+const VIEWPORTS = [
+  { width: 844, height: 390 },
+  { width: 780, height: 360 },
+  { width: 932, height: 430 }
+];
+const TOLERANCE = 1;
+
+let server;
+let chrome;
+let browser;
+
+main().catch(async (error) => {
+  console.error(error.stack || error.message || error);
+  await cleanup();
+  process.exit(1);
+});
+
+async function main() {
+  mkdirSync(ARTIFACT_DIR, { recursive: true });
+  server = await startStaticServer(ROOT, PORT);
+  chrome = await startChrome();
+  browser = await connectToChrome(chrome.port);
+
+  const failures = [];
+  const measurements = [];
+  for (const viewport of VIEWPORTS) {
+    const result = await runMock(viewport);
+    failures.push(...result.failures);
+    measurements.push(result.measurements);
+    console.log(formatResult(result));
+  }
+
+  await cleanup();
+
+  console.log("\nExact mock measurements:");
+  console.log(JSON.stringify(measurements, null, 2));
+
+  if (failures.length > 0) {
+    console.error("\nExact layout mock check failed:");
+    for (const failure of failures) {
+      console.error(`- ${failure}`);
+    }
+    process.exit(1);
+  }
+
+  console.log("\nExact layout mock check passed.");
+}
+
+async function runMock(viewport) {
+  const page = await browser.newPage();
+  const label = `exact-mock-${viewport.width}x${viewport.height}`;
+  const failures = [];
+
+  try {
+    await page.send("Emulation.setDeviceMetricsOverride", {
+      width: viewport.width,
+      height: viewport.height,
+      deviceScaleFactor: 2,
+      mobile: true,
+      screenOrientation: { type: "landscapePrimary", angle: 90 }
+    });
+    await page.send("Page.navigate", { url: `http://127.0.0.1:${PORT}/dev/exact-table-layout-mock.html?v=mvp343-static-mock-${label}` });
+    await page.waitForLoad();
+    const inspection = await page.evaluate(inspectMockSource(), { tolerance: TOLERANCE });
+    failures.push(...inspection.failures.map((message) => `${label}: ${message}`));
+    await page.screenshot(path.join(ARTIFACT_DIR, `${label}.png`));
+
+    return {
+      label,
+      failures,
+      measurements: {
+        label,
+        ...inspection.measurements
+      }
+    };
+  } finally {
+    await page.close();
+  }
+}
+
+function inspectMockSource() {
+  return `({ tolerance }) => {
+    const failures = [];
+    const viewport = { width: window.innerWidth, height: window.innerHeight };
+    const root = document.querySelector("[data-layout-root]");
+    const gear = document.querySelector(".mock-gear");
+    const center = document.querySelector(".mock-score-board");
+    const hand = document.querySelector(".mock-hand-area");
+    const handTiles = [...document.querySelectorAll(".mock-hand-tile")];
+    const topRiver = document.querySelector(".mock-river-top .mock-river");
+    const rightRiver = document.querySelector(".mock-river-right .mock-river");
+    const leftRiver = document.querySelector(".mock-river-left .mock-river");
+    const selfRiver = document.querySelector(".mock-river-self .mock-river");
+    const scoreValues = [...document.querySelectorAll(".mock-score-board .score strong")].map((node) => node.textContent.trim());
+
+    const docScrollWidth = document.documentElement.scrollWidth;
+    const bodyScrollWidth = document.body.scrollWidth;
+    if (docScrollWidth > viewport.width + tolerance) {
+      failures.push("documentElement scrollWidth exceeds viewport: " + docScrollWidth + " > " + viewport.width);
+    }
+    if (bodyScrollWidth > viewport.width + tolerance) {
+      failures.push("body scrollWidth exceeds viewport: " + bodyScrollWidth + " > " + viewport.width);
+    }
+    if (document.documentElement.scrollLeft !== 0 || document.body.scrollLeft !== 0 || window.scrollX !== 0) {
+      failures.push("page has horizontal scroll offset");
+    }
+
+    const rootRect = rect(root);
+    const gearRect = rect(gear);
+    const centerRect = rect(center);
+    const handRect = rect(hand);
+    const topRiverRect = rect(topRiver);
+    const rightRiverRect = rect(rightRiver);
+    const leftRiverRect = rect(leftRiver);
+    const selfRiverRect = rect(selfRiver);
+
+    checkInViewport("table root", rootRect);
+    checkInViewport("gear", gearRect);
+    checkInViewport("center score board", centerRect);
+    checkInViewport("hand area", handRect);
+    checkInViewport("top river", topRiverRect);
+    checkInViewport("right river", rightRiverRect);
+    checkInViewport("left river", leftRiverRect);
+    checkInViewport("self river", selfRiverRect);
+
+    if (gearRect.top > viewport.height * 0.14 || gearRect.right < viewport.width - 8) {
+      failures.push("gear is not pinned near the top-right safe area");
+    }
+    if (gearRect.width < 26 || gearRect.width > 34 || gearRect.height < 26 || gearRect.height > 34) {
+      failures.push("gear size is outside 26-34px");
+    }
+
+    const playRight = gearRect.left || rootRect.right;
+    const tableCenter = {
+      x: (rootRect.left + playRight) / 2,
+      y: (rootRect.top + handRect.top) / 2
+    };
+    const centerPoint = {
+      x: centerRect.left + centerRect.width / 2,
+      y: centerRect.top + centerRect.height / 2
+    };
+    const centerDelta = Math.hypot(centerPoint.x - tableCenter.x, centerPoint.y - tableCenter.y);
+    if (centerDelta > Math.max(22, viewport.width * 0.035)) {
+      failures.push("center score board is too far from table center: " + Math.round(centerDelta) + "px");
+    }
+
+    const handWidthRatio = handRect.width / viewport.width;
+    if (handWidthRatio < 0.9) {
+      failures.push("hand area width is less than 90% viewport: " + handWidthRatio.toFixed(3));
+    }
+
+    const handGap = getHandGap(handTiles);
+    if (handGap > 1.5) {
+      failures.push("hand tile gap is greater than 1.5px: " + handGap.toFixed(2));
+    }
+
+    if (!scoreValues.every((value) => value === "25000") || scoreValues.length !== 4) {
+      failures.push("center score board does not show four full 25000 scores");
+    }
+    const bodyText = document.body.textContent || "";
+    if (bodyText.includes("あなたの番")) {
+      failures.push("center/table text includes long current-turn message");
+    }
+    if (bodyText.includes("形は完成していますが")) {
+      failures.push("long no-yaku guidance is visible on the table");
+    }
+
+    for (const river of [topRiver, rightRiver, leftRiver, selfRiver]) {
+      const text = river.textContent || "";
+      if (/CPU|あなた|捨て牌|枚/.test(text)) {
+        failures.push("river contains seat name or discard count label");
+      }
+      const orderFailure = getLocalRiverOrderFailure(river);
+      if (orderFailure) {
+        failures.push(orderFailure);
+      }
+    }
+
+    if (!isAbove(topRiverRect, centerRect)) failures.push("top river is not above center score board");
+    if (!isLeftOf(leftRiverRect, centerRect)) failures.push("left river is not left of center score board");
+    if (!isRightOf(rightRiverRect, centerRect)) failures.push("right river is not right of center score board");
+    if (!isBelow(selfRiverRect, centerRect)) failures.push("self river is not below center score board");
+
+    checkRotation("top river", topRiver, 180);
+    checkRotation("right river", rightRiver, -90);
+    checkRotation("left river", leftRiver, 90);
+    checkRotation("self river", selfRiver, 0);
+
+    const riverTile = document.querySelector(".mock-river img");
+    const riverTileRect = rect(riverTile);
+    if (riverTileRect.width < 14 || riverTileRect.height < 19) {
+      failures.push("river tile visible size is too small");
+    }
+
+    const rightUnusedWidth = Math.max(0, viewport.width - rootRect.right);
+    if (rightUnusedWidth > viewport.width * 0.15) {
+      failures.push("right unused blank area exceeds 15% viewport");
+    }
+
+    return {
+      failures,
+      measurements: {
+        viewport,
+        documentScrollWidth: docScrollWidth,
+        bodyScrollWidth,
+        innerWidth: viewport.width,
+        tableCenter: roundPoint(tableCenter),
+        centerScoreCenter: roundPoint(centerPoint),
+        centerDelta: Number(centerDelta.toFixed(2)),
+        handGap: Number(handGap.toFixed(2)),
+        handWidthRatio: Number(handWidthRatio.toFixed(3)),
+        handWidth: Math.round(handRect.width),
+        gearRect: compactRect(gearRect),
+        rootRect: compactRect(rootRect)
+      }
+    };
+
+    function checkInViewport(name, target) {
+      if (!target || target.width <= 0 || target.height <= 0) {
+        failures.push(name + " has no visible size");
+        return;
+      }
+      if (target.left < -tolerance || target.top < -tolerance || target.right > viewport.width + tolerance || target.bottom > viewport.height + tolerance) {
+        failures.push(name + " is outside viewport: " + JSON.stringify(compactRect(target)));
+      }
+    }
+
+    function getHandGap(tiles) {
+      if (tiles.length < 2) return 0;
+      const a = rect(tiles[0]);
+      const b = rect(tiles[1]);
+      return Math.max(0, b.left - a.right);
+    }
+
+    function getLocalRiverOrderFailure(river) {
+      const tiles = [...river.querySelectorAll("img")].slice(0, 18).map((tile, index) => ({
+        index,
+        left: tile.offsetLeft,
+        top: tile.offsetTop
+      }));
+      if (tiles.length < 18) {
+        return "river has fewer than 18 tiles";
+      }
+
+      for (let row = 0; row < 3; row += 1) {
+        const rowCells = tiles.slice(row * 6, row * 6 + 6);
+        const topValues = rowCells.map((cell) => cell.top);
+        if (Math.max(...topValues) - Math.min(...topValues) > 2) {
+          return "river row " + (row + 1) + " is not locally aligned";
+        }
+        for (let index = 1; index < rowCells.length; index += 1) {
+          if (rowCells[index].left <= rowCells[index - 1].left) {
+            return "river local order is not left-to-right in row " + (row + 1);
+          }
+        }
+        if (row > 0) {
+          const previousRow = tiles.slice((row - 1) * 6, (row - 1) * 6 + 6);
+          const previousTop = average(previousRow.map((cell) => cell.top));
+          const currentTop = average(rowCells.map((cell) => cell.top));
+          if (currentTop <= previousTop) {
+            return "river rows are not locally top-to-bottom";
+          }
+        }
+      }
+      return "";
+    }
+
+    function checkRotation(name, element, expected) {
+      const actual = getRotationAngle(element);
+      if (!angleMatches(actual, expected)) {
+        failures.push(name + " rotation is " + actual + "deg, expected " + expected + "deg");
+      }
+    }
+
+    function getRotationAngle(element) {
+      const transform = getComputedStyle(element).transform;
+      if (!transform || transform === "none") return 0;
+      const match = transform.match(/matrix\\(([^)]+)\\)/);
+      if (!match) return 0;
+      const values = match[1].split(",").map((value) => Number.parseFloat(value.trim()));
+      return Math.round(Math.atan2(values[1], values[0]) * (180 / Math.PI));
+    }
+
+    function angleMatches(actual, expected) {
+      const normalizedActual = ((actual % 360) + 360) % 360;
+      const normalizedExpected = ((expected % 360) + 360) % 360;
+      return Math.abs(normalizedActual - normalizedExpected) <= 2
+        || Math.abs(normalizedActual - normalizedExpected) >= 358;
+    }
+
+    function isAbove(a, b) {
+      return a.bottom <= b.top + 4;
+    }
+
+    function isBelow(a, b) {
+      return a.top >= b.bottom - 4;
+    }
+
+    function isLeftOf(a, b) {
+      return a.right <= b.left + 4;
+    }
+
+    function isRightOf(a, b) {
+      return a.left >= b.right - 4;
+    }
+
+    function rect(element) {
+      if (!element) return null;
+      const value = element.getBoundingClientRect();
+      return {
+        left: value.left,
+        top: value.top,
+        right: value.right,
+        bottom: value.bottom,
+        width: value.width,
+        height: value.height
+      };
+    }
+
+    function roundPoint(point) {
+      return {
+        x: Math.round(point.x),
+        y: Math.round(point.y)
+      };
+    }
+
+    function compactRect(target) {
+      if (!target) return null;
+      return {
+        left: Math.round(target.left),
+        top: Math.round(target.top),
+        right: Math.round(target.right),
+        bottom: Math.round(target.bottom),
+        width: Math.round(target.width),
+        height: Math.round(target.height)
+      };
+    }
+
+    function average(values) {
+      return values.reduce((sum, value) => sum + value, 0) / values.length;
+    }
+  }`;
+}
+
+function formatResult(result) {
+  const status = result.failures.length === 0 ? "PASS" : "FAIL";
+  const m = result.measurements;
+  return `${status} ${result.label} scroll=${m.documentScrollWidth}/${m.innerWidth} hand=${Math.round(m.handWidthRatio * 100)}% gap=${m.handGap}px centerDelta=${m.centerDelta}px`;
+}
+
+async function startStaticServer(root, port) {
+  const mimeTypes = {
+    ".css": "text/css; charset=utf-8",
+    ".html": "text/html; charset=utf-8",
+    ".js": "text/javascript; charset=utf-8",
+    ".mjs": "text/javascript; charset=utf-8",
+    ".png": "image/png",
+    ".svg": "image/svg+xml"
+  };
+
+  const staticServer = createServer((request, response) => {
+    const rawPath = new URL(request.url, `http://${request.headers.host}`).pathname;
+    const requestedPath = rawPath === "/" ? "/index.html" : rawPath;
+    const filePath = path.normalize(path.join(root, decodeURIComponent(requestedPath)));
+
+    if (!filePath.startsWith(root)) {
+      response.writeHead(403);
+      response.end("Forbidden");
+      return;
+    }
+
+    if (!existsSync(filePath) || !statSync(filePath).isFile()) {
+      response.writeHead(404);
+      response.end("Not found");
+      return;
+    }
+
+    response.writeHead(200, {
+      "content-type": mimeTypes[path.extname(filePath)] || "application/octet-stream",
+      "cache-control": "no-store"
+    });
+    createReadStream(filePath).pipe(response);
+  });
+
+  await new Promise((resolve, reject) => {
+    staticServer.once("error", reject);
+    staticServer.listen(port, "127.0.0.1", resolve);
+  });
+
+  return staticServer;
+}
+
+async function startChrome() {
+  const chromePath = findChrome();
+  const userDataDir = mkdtempSync(path.join(tmpdir(), "mahjong-exact-mock-check-"));
+  const browserProcess = spawn(chromePath, [
+    "--headless=new",
+    "--disable-gpu",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--disable-extensions",
+    "--hide-scrollbars",
+    "--remote-debugging-port=0",
+    `--user-data-dir=${userDataDir}`,
+    "about:blank"
+  ], {
+    stdio: ["ignore", "pipe", "pipe"]
+  });
+
+  browserProcess.userDataDir = userDataDir;
+  browserProcess.stderr.on("data", () => {});
+  browserProcess.stdout.on("data", () => {});
+
+  const portFile = path.join(userDataDir, "DevToolsActivePort");
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    if (existsSync(portFile)) {
+      const [port] = (await readFile(portFile, "utf8")).trim().split(/\r?\n/);
+      return { process: browserProcess, port, userDataDir };
+    }
+    await delay(100);
+  }
+
+  throw new Error("Chrome did not expose a DevTools port. Set CHROME_PATH if Chrome is installed in a non-standard location.");
+}
+
+function findChrome() {
+  const candidates = [
+    process.env.CHROME_PATH,
+    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+    path.join(process.env.LOCALAPPDATA || "", "Google\\Chrome\\Application\\chrome.exe")
+  ].filter(Boolean);
+
+  for (const candidate of candidates) {
+    if (existsSync(candidate)) {
+      return candidate;
+    }
+  }
+
+  throw new Error("Chrome executable was not found. Set CHROME_PATH to run the exact mock check.");
+}
+
+async function connectToChrome(port) {
+  return {
+    async newPage() {
+      const target = await requestJson(`http://127.0.0.1:${port}/json/new`, { method: "PUT" });
+      return new CdpPage(target.webSocketDebuggerUrl);
+    }
+  };
+}
+
+class CdpPage {
+  constructor(webSocketUrl) {
+    this.webSocket = new WebSocket(webSocketUrl);
+    this.nextId = 1;
+    this.pending = new Map();
+    this.loadResolvers = [];
+    this.opened = new Promise((resolve, reject) => {
+      this.webSocket.addEventListener("open", resolve, { once: true });
+      this.webSocket.addEventListener("error", reject, { once: true });
+    });
+    this.webSocket.addEventListener("message", (event) => this.handleMessage(event));
+  }
+
+  async send(method, params = {}) {
+    await this.opened;
+    const id = this.nextId;
+    this.nextId += 1;
+    const promise = new Promise((resolve, reject) => {
+      this.pending.set(id, { resolve, reject });
+    });
+    this.webSocket.send(JSON.stringify({ id, method, params }));
+    return promise;
+  }
+
+  async evaluate(expression, argument) {
+    const result = await this.send("Runtime.evaluate", {
+      expression: `(${expression})(${JSON.stringify(argument)})`,
+      awaitPromise: true,
+      returnByValue: true
+    });
+
+    if (result.exceptionDetails) {
+      const details = result.exceptionDetails.exception?.description
+        || result.exceptionDetails.exception?.value
+        || result.exceptionDetails.text
+        || "Runtime evaluation failed";
+      throw new Error(details);
+    }
+
+    return result.result.value;
+  }
+
+  async waitForLoad() {
+    await this.send("Page.enable");
+    await this.send("Runtime.enable");
+    await new Promise((resolve) => {
+      this.loadResolvers.push(resolve);
+      setTimeout(resolve, 5000);
+    });
+  }
+
+  async screenshot(filePath) {
+    const result = await this.send("Page.captureScreenshot", {
+      format: "png",
+      captureBeyondViewport: false
+    });
+    await import("node:fs/promises").then(({ writeFile }) => writeFile(filePath, Buffer.from(result.data, "base64")));
+  }
+
+  async close() {
+    try {
+      await this.send("Page.close");
+    } catch {
+      this.webSocket.close();
+    }
+  }
+
+  handleMessage(event) {
+    const message = JSON.parse(event.data);
+    if (message.id && this.pending.has(message.id)) {
+      const pending = this.pending.get(message.id);
+      this.pending.delete(message.id);
+      if (message.error) {
+        pending.reject(new Error(message.error.message));
+      } else {
+        pending.resolve(message.result || {});
+      }
+      return;
+    }
+
+    if (message.method === "Page.loadEventFired") {
+      const resolvers = this.loadResolvers.splice(0);
+      for (const resolve of resolvers) {
+        resolve();
+      }
+    }
+  }
+}
+
+async function requestJson(url, options = {}) {
+  const response = await fetch(url, options);
+  if (!response.ok) {
+    throw new Error(`Request failed: ${response.status} ${url}`);
+  }
+  return response.json();
+}
+
+async function cleanup() {
+  if (chrome?.process) {
+    chrome.process.kill();
+    await delay(100);
+  }
+
+  if (chrome?.userDataDir) {
+    rmSync(chrome.userDataDir, { recursive: true, force: true });
+  }
+
+  if (server) {
+    await new Promise((resolve) => server.close(resolve));
+  }
+}
+
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
