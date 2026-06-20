@@ -6,7 +6,7 @@ import {
   getYakuDisplayName,
   sortYakuForDisplay
 } from "./yaku-display.js";
-import { getTileSvgPath } from "./tile-assets.js?v=mvp341-exact-layout-redo-1";
+import { getTileSvgPath } from "./tile-assets.js?v=mvp342-reference-layout-fix-1";
 import { sortTiles } from "../game/tiles.js";
 
 const WIND_LABELS = {
@@ -133,9 +133,9 @@ function renderTableLegacy(state, options) {
             ${renderAllHandsDialog(state, allHandsOpen)}
             ${renderYakuSummary(round)}
             <div class="table-meta-row">
-              <span class="table-meta">山 ${round.wall.length}</span>
-              <span class="table-meta">王牌 ${round.deadWall.length}</span>
-              <span class="table-meta">ドラ ${renderDoraIndicators(round)}</span>
+              <span class="table-meta">山${round.wall.length}</span>
+              <span class="table-meta">王牌${round.deadWall.length}</span>
+              <span class="table-meta">ドラ${renderDoraIndicators(round)}</span>
             </div>
             ${renderTableActionBar(state, options)}
           </div>
@@ -161,9 +161,10 @@ function renderTable(state, options) {
 
   return `
     <main class="table table-exact" aria-label="4人麻雀卓">
-      ${renderSeatMarker(cpu2, round, "top")}
       ${renderMeldZone(cpu2, "top")}
       ${renderTableDiscardZone(cpu2, "top", round)}
+      ${renderSeatMarker(cpu2, round, "top")}
+      ${renderMeldZone(cpu1, "right")}
 
       ${renderSeatMarker(cpu3, round, "left")}
       ${renderTableDiscardZone(cpu3, "left", round)}
@@ -173,35 +174,37 @@ function renderTable(state, options) {
           <div class="center-info-main">
             <div class="center-primary">
               ${renderMatchSummary(state)}
-              <strong class="center-status">${renderCompactStatus(round)}</strong>
             </div>
             <div class="center-secondary">
               <div class="table-meta-row">
-                <span class="table-meta">山 ${round.wall.length}</span>
-                <span class="table-meta">王牌 ${round.deadWall.length}</span>
-                <span class="table-meta">ドラ ${renderDoraIndicators(round)}</span>
+                <span class="table-meta">山${round.wall.length}</span>
+                <span class="table-meta">王牌${round.deadWall.length}</span>
+                <span class="table-meta">ドラ${renderDoraIndicators(round)}</span>
               </div>
               ${renderCenterScoreBoard(state)}
             </div>
           </div>
-          ${renderPreviousRoundResult(state.lastRoundResult, round)}
-          ${renderLastActionResult(round)}
-          ${renderYakuSummary(round)}
         </div>
       </section>
 
       ${renderTableDiscardZone(cpu1, "right", round)}
       ${renderSeatMarker(cpu1, round, "right")}
-      ${renderMeldZone(cpu1, "right")}
 
+      ${renderMeldZone(cpu3, "left")}
+      ${renderSeatMarker(human, round, "self")}
       ${renderTableDiscardZone(human, "bottom", round)}
       <section class="human-support-area" aria-label="補助">
         ${renderHumanSupportActions(discardAdvice, yakuGuide, waitInfo)}
       </section>
       <section class="human-action-area" aria-label="操作">
+        <div class="table-result-strip" aria-label="局の結果と案内">
+          ${renderPreviousRoundResult(state.lastRoundResult, round)}
+          ${renderLastActionResult(round)}
+          ${renderYakuSummary(round)}
+        </div>
         ${renderTableActionBar(state, options)}
       </section>
-      ${renderMeldZone(human, "bottom")}
+      ${renderMeldZone(human, "bottom self")}
       ${renderHumanSeatPanel(human, round, discardAdvice, riichiInfo)}
 
       <section class="table-dialog-layer" aria-label="ダイアログ">
@@ -272,8 +275,14 @@ function renderHumanSupportActions(discardAdvice, yakuGuide, waitInfo) {
 }
 
 function renderMeldZone(player, tablePosition) {
+  const positionClasses = String(tablePosition)
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((position) => `table-meld-${position}`)
+    .join(" ");
+
   return `
-    <section class="table-meld-zone table-meld-${tablePosition}" aria-label="${player?.name || ""}の鳴き">
+    <section class="table-meld-zone ${positionClasses}" aria-label="${player?.name || ""}の鳴き">
       ${renderMelds(player)}
     </section>
   `;
@@ -300,12 +309,18 @@ function renderTableActionBar(state, options) {
 function renderCenterScoreBoard(state) {
   const players = state.round?.players || [];
   const scores = state.match?.scores || [25000, 25000, 25000, 25000];
+  const scoreWindLabels = {
+    east: "東",
+    south: "南",
+    west: "西",
+    north: "北"
+  };
 
   return `
     <section class="center-score-board" aria-label="score board">
       ${players.map((player) => `
         <div class="center-score-item center-score-player-${player.id}${player.id === state.round?.dealerIndex ? " is-dealer" : ""}${player.isRiichi || player.riichi ? " is-riichi" : ""}${player.id === state.round?.currentPlayerIndex ? " is-current-turn" : ""}">
-          <span class="center-score-name">${escapeHtml(player.type === "human" ? "自分" : player.name)}</span>
+          <span class="center-score-name">${escapeHtml(scoreWindLabels[player.wind] || "")}</span>
           <span class="center-score-value">${scores[player.id] ?? 25000}</span>
         </div>
       `).join("")}
@@ -1105,7 +1120,7 @@ function renderTableDiscardZone(player, position, round) {
         <span class="discard-zoom-hint">拡大</span>
       </div>
       <div class="discards table-center-discards">
-        ${visibleDiscards.map((tile) => renderTile(tile, "discard-tile")).join("")}
+        ${visibleDiscards.map((tile, index) => renderTile(tile, "discard-tile", ` data-discard-order="${index + 1}"`)).join("")}
       </div>
     </section>
   `;
@@ -1131,7 +1146,7 @@ function renderHumanHand(player, round, discardAdvice, riichiInfo) {
       ${player.hand.map((tile) => `
         <button class="tile-button${adviceTileIds.has(tile.id) ? " advice-suggested" : ""}" type="button" data-action="discard-tile" data-tile-id="${tile.id}" ${disabled ? "disabled" : ""}>
           ${renderTile(tile)}
-          ${adviceTileIds.has(tile.id) ? `<span class="advice-badge">おすすめ</span>` : ""}
+          ${adviceTileIds.has(tile.id) ? `<span class="advice-badge" aria-label="おすすめ捨て牌">推</span>` : ""}
         </button>
       `).join("")}
     </div>
@@ -1162,7 +1177,7 @@ function renderHumanHandTile(tile, options) {
   return `
     <button class="tile-button${adviceTileIds.has(tile.id) ? " advice-suggested" : ""}${isRiichiCandidate ? " riichi-candidate" : ""}${isRiichiDrawTile ? " riichi-tsumogiri" : ""}" type="button" data-action="discard-tile" data-tile-id="${tile.id}" ${tileDisabled ? "disabled" : ""}>
       ${renderTile(tile)}
-      ${adviceTileIds.has(tile.id) ? `<span class="advice-badge">縺翫☆縺吶ａ</span>` : ""}
+      ${adviceTileIds.has(tile.id) ? `<span class="advice-badge" aria-label="おすすめ捨て牌">推</span>` : ""}
       ${isRiichiCandidate ? `<span class="riichi-badge">\u30ea\u30fc\u30c1</span>` : ""}
     </button>
   `;
@@ -1413,7 +1428,7 @@ function renderDoraIndicators(round) {
   return round.doraIndicators.map((tile) => getTileLabel(tile)).join(" ");
 }
 
-function renderTile(tile, extraClass = "") {
+function renderTile(tile, extraClass = "", extraAttributes = "") {
   const suitClass = tile ? ` tile-${tile.suit}` : "";
   const mainLabel = getTileMainLabel(tile);
   const suitLabel = getTileSuitLabel(tile);
@@ -1425,7 +1440,7 @@ function renderTile(tile, extraClass = "") {
   const className = `tile${suitClass}${svgClass} ${extraClass}`.trim();
 
   return `
-    <span class="${className}" title="${escapeHtml(tileLabel)}" aria-label="${escapeHtml(tileLabel)}"${imageAttribute}>
+    <span class="${className}" title="${escapeHtml(tileLabel)}" aria-label="${escapeHtml(tileLabel)}"${imageAttribute}${extraAttributes}>
       ${svgPath ? `<img class="tile-image" src="${escapeHtml(svgPath)}" alt="" aria-hidden="true" onerror="this.hidden=true;this.closest('.tile').classList.remove('has-svg')">` : ""}
       <span class="tile-face">
         <span class="tile-symbol">${escapeHtml(mainLabel)}</span>

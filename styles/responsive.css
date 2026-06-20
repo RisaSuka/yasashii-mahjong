@@ -3051,3 +3051,591 @@
     height: 50px;
   }
 }
+
+/* MVP-3.4.2 reference-layout correction. Keep after legacy landscape blocks. */
+@media (orientation: landscape) and (max-width: 1180px) {
+  .app.app-in-round .table.table-exact {
+    --river-tile-w: clamp(18px, 2.25vw, 20px);
+    --river-tile-h: clamp(20px, 5.4dvh, 23px);
+    --hand-tile-w: clamp(43px, 6vw, 52px);
+    --hand-tile-h: clamp(60px, 18dvh, 74px);
+    display: grid;
+    grid-template-areas:
+      "top-meld top-river top-river top-seat right-meld gear"
+      "left-seat left-river score right-river right-seat gear"
+      "left-meld self-seat self-river actions self-meld gear"
+      "hand hand hand hand hand gear";
+    grid-template-columns:
+      clamp(40px, 6vw, 52px)
+      minmax(104px, 1fr)
+      clamp(190px, 24vw, 220px)
+      minmax(104px, 1fr)
+      clamp(122px, 18vw, 156px)
+      clamp(24px, 3.2vw, 30px);
+    grid-template-rows:
+      clamp(66px, 18dvh, 78px)
+      minmax(108px, 1fr)
+      clamp(64px, 17dvh, 74px)
+      clamp(100px, 28dvh, 118px);
+    gap: 2px;
+    padding: 2px max(2px, env(safe-area-inset-right)) max(2px, env(safe-area-inset-bottom)) max(2px, env(safe-area-inset-left));
+    width: 100dvw;
+    height: 100dvh;
+    max-width: 100dvw;
+    max-height: 100dvh;
+    overflow: hidden;
+    background: transparent;
+  }
+
+  .app.app-in-round .table.table-exact > .table-meld-top { grid-area: top-meld; }
+  .app.app-in-round .table.table-exact > .table-discard-top { grid-area: top-river; }
+  .app.app-in-round .table.table-exact > .table-seat-top { grid-area: top-seat; }
+  .app.app-in-round .table.table-exact > .table-meld-right { grid-area: right-meld; }
+  .app.app-in-round .table.table-exact > .table-seat-left { grid-area: left-seat; }
+  .app.app-in-round .table.table-exact > .table-discard-left { grid-area: left-river; }
+  .app.app-in-round .table.table-exact > .center-panel { grid-area: score; }
+  .app.app-in-round .table.table-exact > .table-discard-right { grid-area: right-river; }
+  .app.app-in-round .table.table-exact > .table-seat-right { grid-area: right-seat; }
+  .app.app-in-round .table.table-exact > .table-meld-left { grid-area: left-meld; }
+  .app.app-in-round .table.table-exact > .table-seat-self { grid-area: self-seat; }
+  .app.app-in-round .table.table-exact > .table-discard-bottom { grid-area: self-river; }
+  .app.app-in-round .table.table-exact > .human-action-area { grid-area: actions; }
+  .app.app-in-round .table.table-exact > .table-meld-self { grid-area: self-meld; }
+  .app.app-in-round .table.table-exact > .human-support-area { grid-area: self-meld; }
+  .app.app-in-round .table.table-exact > .table-seat-bottom { grid-area: hand; }
+
+  .app.app-in-round .table.table-exact .seat-marker {
+    align-self: center;
+    justify-self: center;
+    width: auto;
+    max-width: min(100%, 64px);
+    min-width: 0;
+    min-height: 20px;
+    padding: 1px 4px;
+    border-radius: 5px;
+    writing-mode: horizontal-tb;
+    text-orientation: mixed;
+    overflow: hidden;
+  }
+
+  .app.app-in-round .table.table-exact .table-seat-left,
+  .app.app-in-round .table.table-exact .table-seat-right {
+    width: min(100%, 8vw, 64px);
+    max-width: min(8vw, 64px);
+    min-height: 0;
+    writing-mode: horizontal-tb;
+  }
+
+  .app.app-in-round .table.table-exact .table-seat-left .seat-name,
+  .app.app-in-round .table.table-exact .table-seat-right .seat-name {
+    font-size: clamp(8.5px, 1.35vw, 10px);
+  }
+
+  .app.app-in-round .table.table-exact .table-seat-top {
+    justify-self: start;
+    max-width: 80px;
+    max-height: 28px;
+  }
+
+  .app.app-in-round .table.table-exact .table-seat-self {
+    justify-self: stretch;
+    align-self: center;
+    max-width: min(100%, 86px);
+  }
+
+  .app.app-in-round .table.table-exact .seat-name {
+    max-width: 100%;
+    font-size: clamp(9px, 1.55vw, 11px);
+    white-space: nowrap;
+    text-overflow: clip;
+  }
+
+  .app.app-in-round .table.table-exact .seat-marker-badges {
+    gap: 1px;
+  }
+
+  .app.app-in-round .table.table-exact .seat-turn-indicator,
+  .app.app-in-round .table.table-exact .seat-dealer-badge,
+  .app.app-in-round .table.table-exact .seat-riichi-badge {
+    min-height: 13px;
+    padding: 0 3px;
+    font-size: 8px;
+  }
+
+  .app.app-in-round .table.table-exact .center-board-panel {
+    align-self: stretch;
+    justify-self: stretch;
+    padding: 0;
+    overflow: visible;
+  }
+
+  .app.app-in-round .table.table-exact .exact-center-info {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    width: 100%;
+    height: 100%;
+    min-width: 150px;
+    min-height: 104px;
+    padding: 4px;
+    border: 2px solid rgba(16, 82, 70, 0.55);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .app.app-in-round .table.table-exact .center-primary,
+  .app.app-in-round .table.table-exact .center-secondary,
+  .app.app-in-round .table.table-exact .center-info-main {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .app.app-in-round .table.table-exact .center-info-main {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: 1px;
+    height: 100%;
+  }
+
+  .app.app-in-round .table.table-exact .center-secondary {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: 1px;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .app.app-in-round .table.table-exact .match-summary {
+    min-height: 16px;
+    gap: 4px;
+    padding: 0 2px;
+    font-size: clamp(8.5px, 1.35vw, 10px);
+  }
+
+  .app.app-in-round .table.table-exact .table-meta-row {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 3px;
+    width: 100%;
+    min-width: 0;
+    font-size: clamp(6.5px, 1.05vw, 8px);
+    white-space: nowrap;
+  }
+
+  .app.app-in-round .table.table-exact .center-score-board {
+    display: grid;
+    grid-template-areas:
+      "cpu2 cpu2"
+      "cpu3 cpu1"
+      "human human";
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(3, minmax(14px, 1fr));
+    align-items: center;
+    justify-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 0 14px 2px;
+    box-sizing: border-box;
+    gap: 0;
+    overflow: visible;
+  }
+
+  .app.app-in-round .table.table-exact .center-score-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    min-width: 42px;
+    max-width: 48px;
+    min-height: 13px;
+    padding: 0 1px;
+    gap: 0;
+    font-size: clamp(5.8px, 0.88vw, 7px);
+    line-height: 1;
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  .app.app-in-round .table.table-exact .center-score-name,
+  .app.app-in-round .table.table-exact .center-score-value {
+    max-width: none;
+    overflow: visible;
+    text-overflow: clip;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .app.app-in-round .table.table-exact .center-score-player-0 {
+    grid-area: human;
+    justify-self: center;
+  }
+
+  .app.app-in-round .table.table-exact .center-score-player-1 {
+    grid-area: cpu1;
+    justify-self: center;
+  }
+
+  .app.app-in-round .table.table-exact .center-score-player-2 {
+    grid-area: cpu2;
+    justify-self: center;
+  }
+
+  .app.app-in-round .table.table-exact .center-score-player-3 {
+    grid-area: cpu3;
+    justify-self: center;
+  }
+
+  .app.app-in-round .table.table-exact .center-status,
+  .app.app-in-round .table.table-exact .previous-round-result,
+  .app.app-in-round .table.table-exact .last-action-result,
+  .app.app-in-round .table.table-exact .yaku-summary {
+    display: none;
+  }
+
+  .app.app-in-round .table.table-exact .table-discard-zone {
+    display: grid;
+    place-items: center;
+    min-width: 0;
+    min-height: 0;
+    padding: 1px;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .app.app-in-round .table.table-exact .table-discard-label {
+    top: 1px;
+    left: 2px;
+    right: 2px;
+    height: 10px;
+    min-height: 10px;
+    font-size: 7px;
+    opacity: 0.72;
+  }
+
+  .app.app-in-round .table.table-exact .table-discard-label span:first-child {
+    max-width: 50%;
+    overflow: hidden;
+    text-overflow: clip;
+  }
+
+  .app.app-in-round .table.table-exact .table-center-discards {
+    display: grid;
+    grid-template-columns: repeat(6, var(--river-tile-w));
+    grid-template-rows: repeat(3, var(--river-tile-h));
+    place-content: center;
+    place-items: center;
+    width: max-content;
+    height: max-content;
+    gap: 1px;
+    overflow: visible;
+    transform-origin: 50% 50%;
+  }
+
+  .app.app-in-round .table.table-exact .table-discard-top .table-center-discards,
+  .app.app-in-round .table.table-exact .table-discard-right .table-center-discards,
+  .app.app-in-round .table.table-exact .table-discard-left .table-center-discards,
+  .app.app-in-round .table.table-exact .table-discard-bottom .table-center-discards {
+    grid-template-columns: repeat(6, var(--river-tile-w));
+    grid-template-rows: repeat(3, var(--river-tile-h));
+    width: max-content;
+    height: max-content;
+    max-width: none;
+    max-height: none;
+  }
+
+  .app.app-in-round .table.table-exact .table-discard-top .table-center-discards {
+    transform: rotate(180deg);
+  }
+
+  .app.app-in-round .table.table-exact .table-discard-right .table-center-discards {
+    transform: rotate(-90deg);
+  }
+
+  .app.app-in-round .table.table-exact .table-discard-left .table-center-discards {
+    transform: rotate(90deg);
+  }
+
+  .app.app-in-round .table.table-exact .table-discard-bottom .table-center-discards {
+    transform: rotate(0deg);
+  }
+
+  .app.app-in-round .table.table-exact .table-center-discards .tile,
+  .app.app-in-round .table.table-exact .table-discard-top .table-center-discards .tile,
+  .app.app-in-round .table.table-exact .table-discard-right .table-center-discards .tile,
+  .app.app-in-round .table.table-exact .table-discard-left .table-center-discards .tile,
+  .app.app-in-round .table.table-exact .table-discard-bottom .table-center-discards .tile {
+    width: var(--river-tile-w);
+    height: var(--river-tile-h);
+    transform: none;
+  }
+
+  .app.app-in-round .table.table-exact .table-center-discards .tile-symbol {
+    font-size: clamp(11px, 1.8vw, 15px);
+  }
+
+  .app.app-in-round .table.table-exact .table-meld-zone {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .app.app-in-round .table.table-exact .table-meld-zone .meld-area {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    margin: 0;
+    padding: 1px;
+    overflow: hidden;
+  }
+
+  .app.app-in-round .table.table-exact .table-meld-zone .meld-area-label {
+    display: none;
+  }
+
+  .app.app-in-round .table.table-exact .meld-list {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 2px;
+    min-width: max-content;
+    transform-origin: 50% 50%;
+  }
+
+  .app.app-in-round .table.table-exact .table-meld-top .meld-list {
+    transform: rotate(180deg);
+  }
+
+  .app.app-in-round .table.table-exact .table-meld-right .meld-list {
+    transform: rotate(-90deg);
+  }
+
+  .app.app-in-round .table.table-exact .table-meld-left .meld-list {
+    transform: rotate(90deg);
+  }
+
+  .app.app-in-round .table.table-exact .table-meld-self .meld-list {
+    transform: rotate(0deg);
+  }
+
+  .app.app-in-round .table.table-exact .meld {
+    min-height: 22px;
+    padding: 1px;
+    gap: 1px;
+  }
+
+  .app.app-in-round .table.table-exact .meld-type {
+    display: none;
+  }
+
+  .app.app-in-round .table.table-exact .meld-tile,
+  .app.app-in-round .table.table-exact .table-meld-top .meld-tile,
+  .app.app-in-round .table.table-exact .table-meld-right .meld-tile,
+  .app.app-in-round .table.table-exact .table-meld-left .meld-tile,
+  .app.app-in-round .table.table-exact .table-meld-bottom .meld-tile {
+    width: 14px;
+    height: 20px;
+    transform: none;
+  }
+
+  .app.app-in-round .table.table-exact .table-meld-self {
+    align-items: start;
+  }
+
+  .app.app-in-round .table.table-exact .table-meld-self .meld-area {
+    height: 29px;
+    max-height: 29px;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .app.app-in-round .table.table-exact .human-support-area {
+    align-self: end;
+    justify-self: stretch;
+    min-width: 0;
+    min-height: 0;
+    height: 19px;
+    overflow: hidden;
+    z-index: 3;
+  }
+
+  .app.app-in-round .table.table-exact .seat-support-actions {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 1px;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .app.app-in-round .table.table-exact .seat-support-actions button,
+  .app.app-in-round .table.table-exact .seat-support-actions span {
+    flex: 0 0 auto;
+    min-width: 28px;
+    min-height: 18px;
+    padding: 0 3px;
+    font-size: 8px;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .app.app-in-round .table.table-exact .human-action-area {
+    align-self: stretch;
+    justify-self: stretch;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    align-items: center;
+    justify-items: stretch;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .app.app-in-round .table.table-exact .table-result-strip {
+    min-width: 0;
+    max-height: 24px;
+    overflow: hidden;
+    font-size: 7px;
+    line-height: 1.12;
+    text-align: center;
+  }
+
+  .app.app-in-round .table.table-exact .table-result-strip:empty {
+    display: none;
+  }
+
+  .app.app-in-round .table.table-exact .table-result-strip .previous-round-result,
+  .app.app-in-round .table.table-exact .table-result-strip .last-action-result,
+  .app.app-in-round .table.table-exact .table-result-strip .yaku-summary {
+    margin: 0;
+    padding: 0;
+    max-height: 24px;
+    overflow: hidden;
+    border: 0;
+    background: rgba(255, 255, 255, 0.78);
+  }
+
+  .app.app-in-round .table.table-exact .human-action-area .table-action-bar {
+    width: 100%;
+    max-width: 100%;
+    min-height: 24px;
+    scrollbar-width: thin;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .app.app-in-round .table.table-exact .table-action-bar .reaction-actions,
+  .app.app-in-round .table.table-exact .table-action-bar .riichi-actions {
+    justify-content: flex-start;
+  }
+
+  .app.app-in-round .table.table-exact .table-action-bar button,
+  .app.app-in-round .table.table-exact .table-action-bar .riichi-status,
+  .app.app-in-round .table.table-exact .table-action-bar .riichi-message,
+  .app.app-in-round .table.table-exact .table-action-bar .reaction-message {
+    min-width: 30px;
+    min-height: 22px;
+    padding: 0 3px;
+    font-size: 8px;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .app.app-in-round .table.table-exact .table-action-bar .reaction-message {
+    max-width: 74px;
+    white-space: normal;
+  }
+
+  .app.app-in-round .table.table-exact .table-action-bar [data-action="declare-chi"] {
+    gap: 1px;
+    min-width: 30px;
+    padding: 0 2px;
+  }
+
+  .app.app-in-round .table.table-exact .table-action-bar .chi-option-tile {
+    width: 11px;
+    height: 16px;
+  }
+
+  .app.app-in-round .table.table-exact .table-action-bar .chi-button-label {
+    display: none;
+  }
+
+  .app.app-in-round .table.table-exact .human-hand-panel {
+    display: block;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    border-radius: 5px 5px 3px 3px;
+    overflow: hidden;
+  }
+
+  .app.app-in-round .table.table-exact .human-seat-header {
+    display: none;
+  }
+
+  .app.app-in-round .table.table-exact .human-hand-panel .hand {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    gap: 1px;
+    width: 100%;
+    height: 100%;
+    padding: 2px 2px max(2px, env(safe-area-inset-bottom));
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .app.app-in-round .table.table-exact .human-hand-panel .tile-button {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    background: transparent;
+  }
+
+  .app.app-in-round .table.table-exact .human-hand-panel .hand .tile {
+    width: var(--hand-tile-w);
+    height: var(--hand-tile-h);
+  }
+
+  .app.app-in-round .table.table-exact .human-hand-panel .hand .tile-symbol {
+    font-size: clamp(21px, 3.8vw, 29px);
+  }
+
+  .app.app-in-round .table.table-exact .human-hand-panel .advice-badge {
+    right: 2px;
+    bottom: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 17px;
+    height: 15px;
+    min-height: 15px;
+    max-width: 17px;
+    padding: 0;
+    overflow: hidden;
+    font-size: 0;
+    line-height: 1;
+    white-space: nowrap;
+    word-break: keep-all;
+    writing-mode: horizontal-tb;
+  }
+
+  .app.app-in-round .table.table-exact .human-hand-panel .advice-badge::after {
+    content: "\63A8";
+    font-size: 9px;
+    line-height: 15px;
+  }
+
+  .app.app-in-round .settings-menu-button {
+    width: clamp(24px, 3.2vw, 29px);
+    height: clamp(24px, 3.2vw, 29px);
+    border-radius: 7px;
+    font-size: clamp(14px, 2vw, 17px);
+  }
+}

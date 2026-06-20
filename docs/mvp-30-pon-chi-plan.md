@@ -14,6 +14,10 @@ MVP-3.2 implements human-only chi. Chi is offered only for the upper player's la
 
 MVP-3.3 verifies the open-hand rules before any `main` merge. Open yakuhai pon and open tanyao chi can win, open complete shapes without yaku are rejected, open tsumo does not get menzen-tsumo, and fresh rounds clear all melds. The reaction priority remains ron first; if ron is available, the call buttons are not shown in the current MVP. If pon and chi are both possible without ron, both call choices may be shown. Full multi-player call competition remains deferred.
 
+## MVP-3.4.2 Layout Correction Note
+
+MVP-3.4.2 keeps the call implementation unchanged but corrects the smartphone landscape table structure around it. The human meld lane is a reserved area to the right of the self river, the action area sits between the self river and meld lane, and the bottom hand keeps nearly the full viewport width. This protects pon/chi candidate buttons and multiple human melds from covering the hand while preserving the hand-drawn four-direction table plan.
+
 ## Goal
 
 - Add a clear implementation plan for human pon and chi.

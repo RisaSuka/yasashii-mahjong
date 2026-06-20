@@ -113,11 +113,15 @@ http://127.0.0.1:8765/tests/test-runner.html
 - Confirm CPU1 appears on the right, CPU2 at the top, CPU3 on the left, and the human hand across the bottom.
 - Confirm CPU1/CPU3 are compact side labels and CPU2 is a compact top label, not large white columns or a full-width white band.
 - Confirm the center score board is the visual center of the table and the four discard rivers surround it.
+- Confirm the center score board shows the current hand, wall, dead wall, dora, dealer context, and all four fixed score values without clipping.
 - Confirm discard zones surround the center table and 18 discards remain visible in late-hand scenarios.
+- Confirm each discard river is ordered locally as a 6x3 grid before rotation: 1-6 on row one, 7-12 on row two, and 13-18 on row three.
 - Confirm discard and meld tile graphics rotate by seat direction while text labels and buttons stay upright.
 - Confirm the center table shows compact round, wall, dead-wall, dora, dealer, and score-board information.
 - Confirm dealer, riichi, and current-turn states are visible as seat-side badges or highlights.
 - Confirm the human open meld strip is separated from the hand and does not overlap hand tiles.
+- Confirm the human hand uses almost the full bottom width and tile gaps are tight, about 0-2px.
+- Confirm recommended discard badges are compact `推` badges and do not wrap or cover the tile face.
 - Confirm the compact advice/yaku/waits helper buttons sit near the human side and do not push the hand down.
 - Confirm pon/chi candidates, ron/tsumo/riichi actions, result buttons, and modal reopen buttons stay inside the viewport.
 

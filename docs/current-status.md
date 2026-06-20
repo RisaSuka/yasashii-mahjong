@@ -1,15 +1,15 @@
 # Current Status
 
-Last updated for MVP-3.4.1 exact four-direction table layout redo.
+Last updated for MVP-3.4.2 hand-drawn reference layout correction.
 
 ## Repository State
 
 - Working branch: `codex/mvp-34-exact-table-layout`
-- Automated tests: MVP-3.4.1 normal tests pass locally (`334 pass / 0 pending / 0 fail`)
-- Layout check: Chrome-based smartphone landscape guard includes the hand-drawn exact table redo, active-round header removal, compact CPU seat geometry, center-board alignment, right-edge settings menu, rotated discard tiles, pon/chi reactions, multiple melds, open-hand wins, result/all-hands popups, and page overflow checks
-- Working tree: clean at the time of the latest MVP-3.4.1 verification
+- Automated tests: MVP-3.4.2 normal tests pass locally (`334 pass / 0 pending / 0 fail`)
+- Layout check: Chrome-based smartphone landscape guard includes the hand-drawn exact table redo, active-round header removal, compact CPU seat geometry, center-board alignment, full four-score visibility, right-edge settings menu, local 6x3 river order before rotation, pon/chi reactions, multiple melds, open-hand wins, result/all-hands popups, and page overflow checks
+- Working tree: clean at the time of the latest MVP-3.4.2 verification
 - Push: not yet
-- `main` merge: not yet for MVP-3.4.1
+- `main` merge: not yet for MVP-3.4.2
 
 ## Implemented MVPs
 
@@ -57,6 +57,7 @@ Last updated for MVP-3.4.1 exact four-direction table layout redo.
 | MVP-3.2 | Working branch | Human-only chi v1: chi reaction from the upper player, selectable chi candidates, open chi meld state/UI, post-chi discard, and multiple-meld landscape guard. |
 | MVP-3.3 | Working branch | Call stability pass: open yakuhai/tanyao wins, open no-yaku rejection, no menzen-tsumo on open hands, next-round meld clearing, and open-hand layout scenarios. |
 | MVP-3.4.1 | Working branch | Active match screen is rebuilt as a hand-drawn four-direction table layout with compact CPU seats, independent rivers around the center score board, right-edge gear menu, rotated seat discards, separated human meld/support/action strips, and strengthened geometry guard. |
+| MVP-3.4.2 | Working branch | Reference-layout correction: small CPU seat markers, center score board as the visual anchor, local 6x3 river order with whole-river rotation, near-full-width human hand, compact `推` advice badges, and stronger geometry checks for the hand-drawn layout. |
 
 ## Current Capabilities
 

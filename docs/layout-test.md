@@ -77,6 +77,7 @@ The check renders these scenarios:
 - `early`: each player has 3 discards
 - `mid`: each player has 9 discards
 - `late`: each player has 18 discards
+- `river-order-fixture`: each player has 18 discards and the guard checks local 6x3 river order before rotation
 - `draw-ended`: each player has 18 discards and the hand is ended by exhaustive draw
 - `actions`: action buttons and the advice popup are visible
 - `discard-zoom`: the human discard zoom popup is open with 18 discards
@@ -131,6 +132,7 @@ As of MVP-1.1.6, the regular browser tests pass and the layout check passes acro
 - MVP-1.7 adds the `waits` scenario. It checks that the waits dialog, close button, and wait tiles fit within the smartphone landscape viewport.
 - MVP-3.4 changes the active match screen to the four-direction table layout. The guard now verifies that the active-round header is not rendered, the gear button/menu are inside the viewport, CPU1/CPU2/CPU3/human seats occupy right/top/left/bottom positions, discard zones surround the center table, discard tiles rotate by seat direction, human hand tiles remain visible, action bars do not cover the hand, and meld strips do not overlap hand tiles.
 - MVP-3.4.1 strengthens the guard for the hand-drawn table redo. It checks that CPU1/CPU3 seats stay below 12% viewport width, CPU2 stays below 12% viewport height, the gear button stays compact, the center score board remains near the table center, the human hand uses at least 70% viewport width, all four rivers sit above/left/right/below the center board, rotated discard tiles remain visibly large enough, and the old giant CPU band/column layout cannot return.
+- MVP-3.4.2 tightens the hand-drawn reference checks further. It lowers side CPU marker limits to 8% viewport width, verifies the human hand uses at least 90% viewport width with a 0-2px tile gap, verifies all four fixed score values are visible inside the center score board, verifies each river is a local 6x3 grid ordered left-to-right/top-to-bottom before whole-river rotation, checks compact `推` recommendation badges, and keeps action/meld/support areas from covering the bottom hand.
 - MVP-1.9 adds the `waits-after-discard` scenario for 14-tile discard-to-wait guidance.
 - MVP-2.1 adds `riichi-ready` and `riichi-declared` scenarios so the riichi action/status stay inside the smartphone landscape action bar.
 - MVP-2.2 adds the `cpu-riichi` scenario so a CPU riichi seat badge stays inside the smartphone landscape table.

@@ -209,6 +209,7 @@ Recommended staged path:
    - Implement the first exact four-direction central table layout.
    - Hide the active-round header and move table controls into the right-edge gear menu.
    - Rotate discard/meld tile graphics by seat direction while keeping labels and buttons upright.
+   - MVP-3.4.2 correction: keep CPU seats as small markers, use a central score board as the visual anchor, order each river locally as a 6x3 grid before whole-river rotation, keep the human hand nearly full-width with tight tile gaps, and reserve separate hand/meld/action/support/gear areas.
 5. MVP-3.5
    - Continue polish of the gear menu and compact table controls if more actions are added.
 6. MVP-4.x

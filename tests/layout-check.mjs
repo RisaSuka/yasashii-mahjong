@@ -22,6 +22,7 @@ const SCENARIOS = [
   { name: "early", discards: 3, mode: "playing" },
   { name: "mid", discards: 9, mode: "playing" },
   { name: "late", discards: 18, mode: "playing" },
+  { name: "river-order-fixture", discards: 18, mode: "river-order-fixture" },
   { name: "draw-ended", discards: 18, mode: "draw-ended" },
   { name: "actions", discards: 9, mode: "actions" },
   { name: "discard-zoom", discards: 18, mode: "discard-zoom" },
@@ -619,11 +620,16 @@ function inspectLayoutSource() {
       topSeat: ".table-seat-top",
       leftSeat: ".table-seat-left",
       rightSeat: ".table-seat-right",
-      bottomSeat: ".table-seat-bottom",
+      selfSeat: ".table-seat-self",
       topDiscard: ".table-discard-top",
       leftDiscard: ".table-discard-left",
       rightDiscard: ".table-discard-right",
       bottomDiscard: ".table-discard-bottom",
+      topMeld: ".table-meld-top",
+      leftMeld: ".table-meld-left",
+      rightMeld: ".table-meld-right",
+      selfMeld: ".table-meld-self",
+      actionArea: ".human-action-area",
       hand: ".table-seat-bottom .hand",
       handTile: ".table-seat-bottom .hand .tile",
       gearButton: "[data-action='open-settings-menu']",
@@ -674,27 +680,49 @@ function inspectLayoutSource() {
     const tableRect = rects.table;
     const centerRect = rects.centerPanel;
     if (tableRect && centerRect) {
-      if (rects.topSeat && rects.topSeat.bottom > centerRect.top + tolerance) {
-        failures.push("CPU2 top seat is not above the table center");
+      if (rects.topSeat && rects.topDiscard && rects.topSeat.left < rects.topDiscard.right - tolerance) {
+        failures.push("CPU2 seat should be right of top river");
       }
-      if (rects.bottomSeat && rects.bottomSeat.top < centerRect.bottom - tolerance) {
-        failures.push("human bottom seat is not below the table center");
+      if (rects.rightSeat && rects.rightDiscard && rects.rightSeat.left < rects.rightDiscard.right - tolerance) {
+        failures.push("CPU1 seat should be right of right river");
       }
-      if (rects.leftSeat && rects.leftSeat.right > centerRect.left + tolerance) {
-        failures.push("CPU3 left seat is not left of the table center");
+      if (rects.leftSeat && rects.leftDiscard && rects.leftSeat.right > rects.leftDiscard.left + tolerance) {
+        failures.push("CPU3 seat should be left of left river");
       }
-      if (rects.rightSeat && rects.rightSeat.left < centerRect.right - tolerance) {
-        failures.push("CPU1 right seat is not right of the table center");
+      if (rects.selfSeat && rects.bottomDiscard && rects.selfSeat.right > rects.bottomDiscard.left + tolerance) {
+        failures.push("human seat marker should be left of self river");
       }
 
-      if (rects.leftSeat && rects.leftSeat.width > viewport.width * 0.12) {
+      if (rects.topMeld && rects.topDiscard && rects.topMeld.right > rects.topDiscard.left + tolerance) {
+        failures.push("CPU2 meld lane should be left of top river");
+      }
+      if (rects.rightMeld && rects.rightDiscard && rects.rightMeld.bottom > rects.rightDiscard.top + tolerance) {
+        failures.push("CPU1 meld lane should be above right river");
+      }
+      if (rects.leftMeld && rects.leftDiscard && rects.leftMeld.top < rects.leftDiscard.bottom - tolerance) {
+        failures.push("CPU3 meld lane should be below left river");
+      }
+      if (rects.selfMeld && rects.bottomDiscard && rects.selfMeld.left < rects.bottomDiscard.right - tolerance) {
+        failures.push("human meld lane should be right of self river");
+      }
+      if (rects.actionArea && rects.bottomDiscard && rects.actionArea.left < rects.bottomDiscard.right - tolerance) {
+        failures.push("action area should be right of self river");
+      }
+      if (rects.actionArea && rects.selfMeld && rects.actionArea.right > rects.selfMeld.left + tolerance) {
+        failures.push("action area should be left of human meld lane");
+      }
+
+      if (rects.leftSeat && rects.leftSeat.width > viewport.width * 0.08) {
         failures.push("CPU3 left seat is too wide: " + rects.leftSeat.width);
       }
-      if (rects.rightSeat && rects.rightSeat.width > viewport.width * 0.12) {
+      if (rects.rightSeat && rects.rightSeat.width > viewport.width * 0.08) {
         failures.push("CPU1 right seat is too wide: " + rects.rightSeat.width);
       }
-      if (rects.topSeat && rects.topSeat.height > viewport.height * 0.12) {
-        failures.push("CPU2 top seat is too tall: " + rects.topSeat.height);
+      if (rects.topSeat && rects.topSeat.width > viewport.width * 0.1) {
+        failures.push("CPU2 top seat is too wide: " + rects.topSeat.width);
+      }
+      if (rects.selfSeat && rects.selfSeat.width > viewport.width * 0.12) {
+        failures.push("human seat marker is too wide: " + rects.selfSeat.width);
       }
 
       const tableCenterX = tableRect.left + tableRect.width / 2;
@@ -718,8 +746,32 @@ function inspectLayoutSource() {
       }
     }
 
-    if (rects.hand && rects.hand.width < viewport.width * 0.7) {
-      failures.push("human hand uses too little width: " + rects.hand.width + " < " + viewport.width * 0.7);
+    if (rects.hand && rects.hand.width < viewport.width * 0.9) {
+      failures.push("human hand uses too little width: " + rects.hand.width + " < " + viewport.width * 0.9);
+    }
+
+    if (rects.centerInfo) {
+      const centerText = document.querySelector(selectors.centerInfo)?.innerText || "";
+      if (centerText.includes("あなたの番")) {
+        failures.push("center score board should not show human turn sentence");
+      }
+      if (centerText.includes("...") || centerText.includes("…")) {
+        failures.push("center score board text appears ellipsized");
+      }
+      const scoreValues = [...document.querySelectorAll(".center-score-value")].map((node) => node.textContent.trim());
+      if (scoreValues.length < 4 || scoreValues.some((value) => value !== "25000")) {
+        failures.push("center score board should show all four 25000 scores");
+      }
+      if (centerRect) {
+        const scoreItems = [...document.querySelectorAll(".center-score-item")];
+        for (const [index, item] of scoreItems.entries()) {
+          const itemRect = item.getBoundingClientRect();
+          if (!isInsideRect(itemRect, centerRect, tolerance)) {
+            failures.push("center score item " + index + " is clipped by center board");
+            break;
+          }
+        }
+      }
     }
 
     if (centerRect) {
@@ -744,6 +796,23 @@ function inspectLayoutSource() {
       const zoneRect = zone.getBoundingClientRect();
       const tiles = [...zone.querySelectorAll(".discard-tile")];
       if (tiles.length === 0) continue;
+      const riverGrid = zone.querySelector(".table-center-discards");
+      if (riverGrid && tiles.length >= 13) {
+        const style = getComputedStyle(riverGrid);
+        const columnCount = getGridTrackCount(style.gridTemplateColumns);
+        const rowCount = getGridTrackCount(style.gridTemplateRows);
+        if (columnCount !== 6 || rowCount !== 3) {
+          failures.push(name + " river should be a local 6x3 grid but was " + columnCount + "x" + rowCount);
+        }
+        const orderValues = tiles.map((tile) => Number(tile.dataset.discardOrder));
+        if (orderValues.some((value, index) => value !== index + 1)) {
+          failures.push(name + " river discard order data is not 1..n");
+        }
+        const orderFailure = getLocalRiverOrderFailure(name, tiles);
+        if (orderFailure) {
+          failures.push(orderFailure);
+        }
+      }
 
       for (const [index, tile] of tiles.entries()) {
         const rect = tile.getBoundingClientRect();
@@ -768,17 +837,33 @@ function inspectLayoutSource() {
       bottomDiscard: 0
     };
     for (const [name, expectedAngle] of Object.entries(expectedRotations)) {
-      const tile = document.querySelector(selectors[name] + " .tile");
-      if (!tile) continue;
-      const angle = getRotationAngle(tile);
+      const river = document.querySelector(selectors[name] + " .table-center-discards");
+      if (!river) continue;
+      const angle = getRotationAngle(river);
       if (!angleMatches(angle, expectedAngle)) {
-        failures.push(name + " tile rotation expected " + expectedAngle + "deg but got " + angle + "deg");
+        failures.push(name + " river rotation expected " + expectedAngle + "deg but got " + angle + "deg");
       }
     }
 
     const hand = document.querySelector(selectors.hand);
     const handRect = hand?.getBoundingClientRect();
     if (hand && handRect) {
+      const handStyle = getComputedStyle(hand);
+      const handGap = Number.parseFloat(handStyle.columnGap || handStyle.gap || "0");
+      if (Number.isFinite(handGap) && handGap > 2.1) {
+        failures.push("human hand tile gap is too large: " + handGap);
+      }
+
+      const handBadges = [...document.querySelectorAll(".human-hand-panel .seat-dealer-badge, .human-hand-panel .seat-turn-indicator")];
+      for (const badge of handBadges) {
+        const style = getComputedStyle(badge);
+        const rect = badge.getBoundingClientRect();
+        if (style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0) {
+          failures.push("dealer/turn badge is visible inside human hand area");
+          break;
+        }
+      }
+
       const handTiles = [...hand.querySelectorAll(".tile")];
       for (const [index, tile] of handTiles.entries()) {
         const rect = tile.getBoundingClientRect();
@@ -797,6 +882,10 @@ function inspectLayoutSource() {
         const rect = badge.getBoundingClientRect();
         if (rect.bottom > handRect.bottom + tolerance || rect.top < handRect.top - tolerance) {
           failures.push("recommended badge " + index + " is clipped");
+          break;
+        }
+        if (rect.width > 22 || rect.height > 18) {
+          failures.push("recommended badge " + index + " is too large or wrapped: " + rectToString(rect));
           break;
         }
       }
@@ -865,10 +954,13 @@ function inspectLayoutSource() {
       failures.push("meld area is outside viewport");
     }
     if (meldArea) {
+      const meldStyle = getComputedStyle(meldArea);
+      const allowsHorizontalScroll = ["auto", "scroll"].includes(meldStyle.overflowX)
+        && meldArea.scrollWidth > meldArea.clientWidth + 1;
       const melds = [...meldArea.querySelectorAll(".meld")];
       for (const [index, meld] of melds.entries()) {
         const rect = meld.getBoundingClientRect();
-        if (!isInsideRect(rect, meldArea.getBoundingClientRect(), tolerance)) {
+        if (!isInsideRect(rect, meldArea.getBoundingClientRect(), tolerance) && !allowsHorizontalScroll) {
           failures.push("meld " + index + " is clipped inside meld area");
           break;
         }
@@ -1108,6 +1200,55 @@ function inspectLayoutSource() {
       if (smaller > 0 && area / smaller > maxRatio) {
         failures.push(nameA + " overlaps " + nameB + " too much");
       }
+    }
+
+    function getGridTrackCount(value) {
+      const trimmed = String(value || "").trim();
+      if (!trimmed || trimmed === "none") {
+        return 0;
+      }
+      const repeatMatch = trimmed.match(/repeat\\(\\s*(\\d+)/);
+      if (repeatMatch) {
+        return Number(repeatMatch[1]);
+      }
+      return trimmed.split(/\\s+/).filter(Boolean).length;
+    }
+
+    function getLocalRiverOrderFailure(name, tiles) {
+      const first18 = tiles.slice(0, 18);
+      if (first18.length < 18) {
+        return "";
+      }
+
+      const cells = first18.map((tile, index) => ({
+        index,
+        order: Number(tile.dataset.discardOrder),
+        left: tile.offsetLeft,
+        top: tile.offsetTop
+      }));
+
+      for (let row = 0; row < 3; row += 1) {
+        const rowCells = cells.slice(row * 6, row * 6 + 6);
+        const topValues = rowCells.map((cell) => cell.top);
+        if (Math.max(...topValues) - Math.min(...topValues) > 2) {
+          return name + " river local row " + (row + 1) + " is not aligned";
+        }
+        for (let column = 1; column < rowCells.length; column += 1) {
+          if (rowCells[column].left <= rowCells[column - 1].left) {
+            return name + " river local order is not left-to-right within row " + (row + 1);
+          }
+        }
+        if (row > 0) {
+          const previousRow = cells.slice((row - 1) * 6, (row - 1) * 6 + 6);
+          const previousTop = previousRow.reduce((sum, cell) => sum + cell.top, 0) / previousRow.length;
+          const currentTop = rowCells.reduce((sum, cell) => sum + cell.top, 0) / rowCells.length;
+          if (currentTop <= previousTop) {
+            return name + " river local rows are not top-to-bottom";
+          }
+        }
+      }
+
+      return "";
     }
 
     function isClickableAtCenter(element, rect) {

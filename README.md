@@ -1,3 +1,11 @@
+# MVP-3.4.2 reference layout correction note
+
+MVP-3.4.2 tightens the active match screen against the hand-drawn layout reference. The CPU seat markers are kept small instead of full-height columns or full-width bands, the center score board is the visual anchor, and the four discard rivers are independent 6x3 local grids around that center board. Each river grid is laid out left-to-right and top-to-bottom before the whole river is rotated by seat direction, so discard order remains predictable while matching the table orientation.
+
+The human hand now spans almost the full bottom width with a 1px tile gap, compact `推` recommendation badges, and no dealer/current-turn badges inside the hand strip. Human melds, action buttons, helper buttons, and the gear menu each have their own reserved areas so pon/chi/ron/riichi controls do not cover the hand. The layout guard now includes a `river-order-fixture` scenario and geometry checks for compact CPU markers, hand width, river positions, center score completeness, gear size, meld/hand separation, and action/hand separation.
+
+Current local checks target MVP-3.4.2 normal tests, the smartphone landscape layout guard including normal/late/multiple-melds/pon-reaction/chi-reaction/river-order-fixture screenshots, and the CPU win reachability diagnostic.
+
 # MVP-3.4.1 exact four-direction table layout redo note
 
 MVP-3.4.1 rebuilds the active match screen around the hand-drawn table plan instead of layering CSS on the old card layout. During a round, the old top header is hidden and the right-edge gear menu contains `New round`, `Large tiles`, `Advice ON/OFF`, and `Help`. CPU1 is a compact right seat, CPU2 is a compact top seat, CPU3 is a compact left seat, and the human hand stays across the bottom. Discard rivers independently surround the center score board, and tile graphics rotate by seat direction while labels and buttons remain upright.
