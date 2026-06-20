@@ -24,7 +24,7 @@
       </div>
 
       <div class="mock-seat mock-seat-top is-dealer" aria-label="CPU2席">
-        <strong>西 CPU2</strong>
+        <strong>東 CPU2</strong>
         <span>親</span>
       </div>
 
@@ -50,17 +50,23 @@
       </div>
 
       <section class="mock-score-board" aria-label="中央点数板">
-        <div class="score score-top"><span>西</span><strong>25000</strong></div>
-        <div class="score score-left"><span>北</span><strong>25000</strong></div>
+        <div class="player-score-display score-top" data-player-id="2" data-seat-position="top" data-current-wind="east">25000</div>
+        <div class="player-score-display score-left" data-player-id="3" data-seat-position="left" data-current-wind="north">25000</div>
         <div class="score-core">
           <strong>東1局</strong>
           <span>残り45</span>
           <span>王牌14</span>
           <span>ドラ 白</span>
-          <span>親 西CPU2</span>
         </div>
-        <div class="score score-right"><span>南</span><strong>25000</strong></div>
-        <div class="score score-bottom"><span>東</span><strong>25000</strong></div>
+        <div class="player-score-display score-right is-riichi-score" data-player-id="1" data-seat-position="right" data-current-wind="south">
+          <strong>25000</strong>
+          <span>リーチ</span>
+        </div>
+        <div class="player-score-display score-bottom" data-player-id="0" data-seat-position="bottom" data-current-wind="west">25000</div>
+        <div class="seat-wind-indicator wind-top is-dealer-wind" data-player-id="2" data-seat-position="top" data-current-wind="east" aria-label="CPU2の風 東">東</div>
+        <div class="seat-wind-indicator wind-left" data-player-id="3" data-seat-position="left" data-current-wind="north" aria-label="CPU3の風 北">北</div>
+        <div class="seat-wind-indicator wind-right" data-player-id="1" data-seat-position="right" data-current-wind="south" aria-label="CPU1の風 南">南</div>
+        <div class="seat-wind-indicator wind-bottom" data-player-id="0" data-seat-position="bottom" data-current-wind="west" aria-label="自分の風 西">西</div>
       </section>
 
       <div class="mock-river-wrap mock-river-right" aria-label="CPU1の河">
@@ -83,7 +89,7 @@
       </div>
 
       <div class="mock-seat mock-seat-self" aria-label="自分席">
-        <strong>東 自分</strong>
+        <strong>西 自分</strong>
         <span>手番</span>
       </div>
 
@@ -96,11 +102,21 @@
       </div>
 
       <section class="mock-actions" aria-label="操作ボタン">
-        <div class="action-buttons">
-          <button>ポン</button>
-          <button>チー</button>
-          <button>ロン</button>
-          <button>見送る</button>
+        <div class="call-action-list">
+          <div class="call-action-row pon-row">
+            <button class="call-main-button">ポン</button>
+            <button class="call-tile-button" aria-label="發をポン"><img src="../assets/tiles/honor-green.svg" alt="發"><img src="../assets/tiles/honor-green.svg" alt="發"><img src="../assets/tiles/honor-green.svg" alt="發"></button>
+          </div>
+          <div class="call-action-row chi-row">
+            <span class="call-main-label">チー</span>
+            <div class="chi-option-list">
+              <button class="call-tile-button" aria-label="3索4索5索でチー"><img src="../assets/tiles/sou-3.svg" alt="3索"><img src="../assets/tiles/sou-4.svg" alt="4索"><img src="../assets/tiles/sou-5.svg" alt="5索"></button>
+              <button class="call-tile-button" aria-label="4索5索6索でチー"><img src="../assets/tiles/sou-4.svg" alt="4索"><img src="../assets/tiles/sou-5.svg" alt="5索"><img src="../assets/tiles/sou-6.svg" alt="6索"></button>
+              <button class="call-tile-button" aria-label="5索6索7索でチー"><img src="../assets/tiles/sou-5.svg" alt="5索"><img src="../assets/tiles/sou-6.svg" alt="6索"><img src="../assets/tiles/sou-7.svg" alt="7索"></button>
+            </div>
+          </div>
+          <button class="response-button ron-row">ロン</button>
+          <button class="response-button skip-row">見送る</button>
         </div>
         <div class="support-buttons">
           <button>助言</button>

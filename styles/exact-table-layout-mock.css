@@ -63,8 +63,8 @@ button {
   grid-template-rows:
     clamp(60px, 18.5dvh, 72px)
     minmax(104px, 1fr)
-    clamp(64px, 18dvh, 72px)
-    clamp(90px, 26.5dvh, 112px);
+    clamp(108px, 31dvh, 120px)
+    clamp(58px, 18dvh, 78px);
   grid-template-areas:
     "top-meld top-meld top-river top-seat right-meld gear"
     "left-seat left-river score right-river right-seat gear"
@@ -245,12 +245,14 @@ button {
   width: min(100%, clamp(174px, 23.5vw, 198px));
   height: min(100%, clamp(100px, 31dvh, 124px));
   display: grid;
-  grid-template-columns: 1fr 1.28fr 1fr;
-  grid-template-rows: 1fr 1.5fr 1fr;
+  grid-template-columns: 0.86fr 0.62fr 1.05fr 0.62fr 0.86fr;
+  grid-template-rows: 0.58fr 0.52fr 1.18fr 0.52fr 0.58fr;
   grid-template-areas:
-    ". score-top ."
-    "score-left core score-right"
-    ". score-bottom .";
+    ". score-top score-top score-top ."
+    ". . wind-top . ."
+    "score-left wind-left core wind-right score-right"
+    ". . wind-bottom . ."
+    ". score-bottom score-bottom score-bottom .";
   gap: 2px;
   padding: 4px;
   border: 2px solid rgba(15, 23, 42, 0.72);
@@ -259,7 +261,7 @@ button {
   box-shadow: 0 1px 6px rgba(15, 23, 42, 0.18);
 }
 
-.score {
+.player-score-display {
   min-width: 0;
   display: flex;
   align-items: center;
@@ -273,14 +275,56 @@ button {
   white-space: nowrap;
 }
 
-.score strong {
+.player-score-display strong {
   font-size: clamp(8px, 1.25vw, 10px);
+  line-height: 1;
 }
 
 .score-top { grid-area: score-top; }
 .score-left { grid-area: score-left; writing-mode: vertical-rl; }
 .score-right { grid-area: score-right; writing-mode: vertical-rl; }
 .score-bottom { grid-area: score-bottom; }
+
+.player-score-display span {
+  border-radius: 999px;
+  background: rgba(220, 38, 38, 0.12);
+  color: var(--red);
+  padding: 0 2px;
+  font-size: 7px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.is-riichi-score {
+  border-color: rgba(220, 38, 38, 0.82);
+  background: rgba(255, 241, 242, 0.92);
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.18);
+}
+
+.seat-wind-indicator {
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(15, 23, 42, 0.38);
+  border-radius: 4px;
+  background: #ffffff;
+  color: #172332;
+  font-size: clamp(12px, 1.8vw, 15px);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.wind-top { grid-area: wind-top; }
+.wind-left { grid-area: wind-left; }
+.wind-right { grid-area: wind-right; }
+.wind-bottom { grid-area: wind-bottom; }
+
+.is-dealer-wind {
+  border-color: rgba(220, 38, 38, 0.86);
+  background: rgba(255, 247, 237, 0.96);
+  color: var(--red);
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.18);
+}
 
 .score-core {
   grid-area: core;
@@ -293,7 +337,7 @@ button {
   border-radius: 4px;
   background: #ffffff;
   font-size: clamp(8px, 1.25vw, 10px);
-  line-height: 1.05;
+  line-height: 1.02;
   text-align: center;
 }
 
@@ -379,44 +423,106 @@ button {
   align-self: stretch;
   justify-self: stretch;
   display: grid;
-  grid-template-rows: auto auto;
+  grid-template-rows: 1fr auto;
   align-content: center;
   gap: 2px;
   padding: 2px;
   overflow: hidden;
 }
 
-.action-buttons,
+.call-action-list,
 .support-buttons {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 3px;
   min-width: 0;
 }
 
+.call-action-list {
+  align-self: stretch;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: 16px 42px 14px 14px;
+  gap: 1px;
+  overflow: hidden;
+}
+
+.call-action-row {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: center;
+  gap: 2px;
+}
+
+.call-main-button,
+.call-main-label,
+.response-button {
+  min-width: 0;
+  min-height: 14px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid rgba(15, 118, 110, 0.82);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--teal);
+  font-size: clamp(9px, 1.3vw, 11px);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.call-main-label {
+  align-self: start;
+  padding-top: 1px;
+}
+
+.chi-option-list {
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+  overflow: hidden;
+}
+
+.call-tile-button {
+  min-width: 0;
+  min-height: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  padding: 0 2px;
+  border: 1px solid rgba(15, 118, 110, 0.36);
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.call-tile-button img {
+  width: clamp(9px, 1.25vw, 11px);
+  height: clamp(11px, 3.1dvh, 14px);
+  object-fit: contain;
+}
+
+.response-button {
+  width: min(100%, 64px);
+  justify-self: center;
+}
+
 .support-buttons {
   flex-wrap: nowrap;
 }
 
-.mock-actions button {
-  min-width: 34px;
-  min-height: 18px;
-  border: 2px solid rgba(15, 118, 110, 0.82);
+.support-buttons button {
+  min-width: 24px;
+  min-height: 14px;
+  border: 1px solid rgba(15, 118, 110, 0.82);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.92);
   color: var(--teal);
-  font-size: clamp(9px, 1.4vw, 12px);
-  font-weight: 800;
-  line-height: 1;
-}
-
-.support-buttons button {
-  min-width: 24px;
-  min-height: 16px;
   border-width: 1px;
   font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
   padding: 0 2px;
 }
 
@@ -489,12 +595,8 @@ button {
 
 @media (max-height: 370px) and (orientation: landscape) {
   :root {
-    --hand-w: clamp(46px, 6.1vw, 50px);
-    --hand-h: clamp(64px, 20dvh, 72px);
-  }
-
-  .score-core span:last-child {
-    display: none;
+    --hand-w: clamp(43px, 5.95vw, 48px);
+    --hand-h: clamp(56px, 17.8dvh, 66px);
   }
 
   .mock-meld span,

@@ -10,8 +10,8 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const ARTIFACT_DIR = path.join(ROOT, "test-artifacts", "layout");
 const PORT = Number(process.env.EXACT_MOCK_CHECK_PORT || 18766);
 const VIEWPORTS = [
-  { width: 844, height: 390 },
   { width: 780, height: 360 },
+  { width: 844, height: 390 },
   { width: 932, height: 430 }
 ];
 const TOLERANCE = 1;
@@ -59,7 +59,7 @@ async function main() {
 
 async function runMock(viewport) {
   const page = await browser.newPage();
-  const label = `exact-mock-${viewport.width}x${viewport.height}`;
+  const label = `exact-mock-${viewport.width}x${viewport.height}-v2`;
   const failures = [];
 
   try {
@@ -102,15 +102,33 @@ function inspectMockSource() {
     const rightRiver = document.querySelector(".mock-river-right .mock-river");
     const leftRiver = document.querySelector(".mock-river-left .mock-river");
     const selfRiver = document.querySelector(".mock-river-self .mock-river");
-    const scoreValues = [...document.querySelectorAll(".mock-score-board .score strong")].map((node) => node.textContent.trim());
+    const windIndicators = [...document.querySelectorAll(".seat-wind-indicator")];
+    const scoreDisplays = [...document.querySelectorAll(".player-score-display")];
+    const scoreValues = scoreDisplays.map((node) => (node.querySelector("strong") || node).textContent.replace(/\\s+/g, "").replace("リーチ", ""));
+    const scoreCore = document.querySelector(".score-core");
+    const actionArea = document.querySelector(".mock-actions");
+    const ponRow = document.querySelector(".pon-row");
+    const chiRow = document.querySelector(".chi-row");
+    const chiOptions = [...document.querySelectorAll(".chi-option-list .call-tile-button")];
+    const ronRow = document.querySelector(".ron-row");
+    const skipRow = document.querySelector(".skip-row");
+    const supportButtons = [...document.querySelectorAll(".support-buttons button")];
 
     const docScrollWidth = document.documentElement.scrollWidth;
     const bodyScrollWidth = document.body.scrollWidth;
-    if (docScrollWidth > viewport.width + tolerance) {
-      failures.push("documentElement scrollWidth exceeds viewport: " + docScrollWidth + " > " + viewport.width);
+    const docScrollHeight = document.documentElement.scrollHeight;
+    const bodyScrollHeight = document.body.scrollHeight;
+    if (docScrollWidth !== viewport.width) {
+      failures.push("documentElement scrollWidth must equal viewport: " + docScrollWidth + " !== " + viewport.width);
     }
-    if (bodyScrollWidth > viewport.width + tolerance) {
-      failures.push("body scrollWidth exceeds viewport: " + bodyScrollWidth + " > " + viewport.width);
+    if (bodyScrollWidth !== viewport.width) {
+      failures.push("body scrollWidth must equal viewport: " + bodyScrollWidth + " !== " + viewport.width);
+    }
+    if (docScrollHeight > viewport.height + tolerance) {
+      failures.push("documentElement scrollHeight exceeds viewport: " + docScrollHeight + " > " + viewport.height);
+    }
+    if (bodyScrollHeight > viewport.height + tolerance) {
+      failures.push("body scrollHeight exceeds viewport: " + bodyScrollHeight + " > " + viewport.height);
     }
     if (document.documentElement.scrollLeft !== 0 || document.body.scrollLeft !== 0 || window.scrollX !== 0) {
       failures.push("page has horizontal scroll offset");
@@ -124,6 +142,7 @@ function inspectMockSource() {
     const rightRiverRect = rect(rightRiver);
     const leftRiverRect = rect(leftRiver);
     const selfRiverRect = rect(selfRiver);
+    const actionRect = rect(actionArea);
 
     checkInViewport("table root", rootRect);
     checkInViewport("gear", gearRect);
@@ -165,10 +184,34 @@ function inspectMockSource() {
       failures.push("hand tile gap is greater than 1.5px: " + handGap.toFixed(2));
     }
 
+    if (windIndicators.length !== 4) {
+      failures.push("center score board must have exactly four separate wind indicators");
+    }
+    if (scoreDisplays.length !== 4) {
+      failures.push("center score board must have exactly four separate score displays");
+    }
+    if (windIndicators.some((node) => node.classList.contains("player-score-display"))
+      || scoreDisplays.some((node) => node.classList.contains("seat-wind-indicator"))) {
+      failures.push("wind indicators and score displays are not separate DOM roles");
+    }
+    if (scoreDisplays.some((node) => /[東南西北]/.test(node.textContent || ""))) {
+      failures.push("score display includes wind text");
+    }
+    if (!document.querySelector(".seat-wind-indicator.is-dealer-wind[data-current-wind='east']")) {
+      failures.push("east wind indicator is not highlighted as dealer");
+    }
+    if (!document.querySelector(".player-score-display.is-riichi-score[data-player-id='1']")) {
+      failures.push("CPU1 riichi score display is not highlighted");
+    }
     if (!scoreValues.every((value) => value === "25000") || scoreValues.length !== 4) {
       failures.push("center score board does not show four full 25000 scores");
     }
+
+    const coreText = scoreCore?.textContent || "";
     const bodyText = document.body.textContent || "";
+    if (coreText.includes("親")) {
+      failures.push("center core includes dealer player text");
+    }
     if (bodyText.includes("あなたの番")) {
       failures.push("center/table text includes long current-turn message");
     }
@@ -192,6 +235,39 @@ function inspectMockSource() {
     if (!isRightOf(rightRiverRect, centerRect)) failures.push("right river is not right of center score board");
     if (!isBelow(selfRiverRect, centerRect)) failures.push("self river is not below center score board");
 
+    const ponRect = rect(ponRow);
+    const chiRect = rect(chiRow);
+    const ronRect = rect(ronRow);
+    const skipRect = rect(skipRow);
+    if (!ponRect || !chiRect || !ronRect || !skipRect) {
+      failures.push("call action rows are missing");
+    } else {
+      if (!(ponRect.top < chiRect.top)) failures.push("pon row is not above chi row");
+      if (!(chiRect.top < ronRect.top)) failures.push("ron row is not below chi row");
+      if (!(ronRect.top < skipRect.top)) failures.push("skip row is not below ron row");
+    }
+    if (chiOptions.length < 3) {
+      failures.push("chi options must show three candidates");
+    } else {
+      for (let index = 1; index < chiOptions.length; index += 1) {
+        const previous = rect(chiOptions[index - 1]);
+        const current = rect(chiOptions[index]);
+        if (!(previous.bottom <= current.top + tolerance)) {
+          failures.push("chi options are not stacked vertically");
+          break;
+        }
+      }
+    }
+    for (const [index, button] of supportButtons.entries()) {
+      const buttonRect = rect(button);
+      if (!isInViewport(buttonRect)) {
+        failures.push("support button " + (index + 1) + " is outside viewport");
+      }
+    }
+    if (actionRect && handRect && overlaps(actionRect, handRect)) {
+      failures.push("action area overlaps hand area");
+    }
+
     checkRotation("top river", topRiver, 180);
     checkRotation("right river", rightRiver, -90);
     checkRotation("left river", leftRiver, 90);
@@ -214,7 +290,10 @@ function inspectMockSource() {
         viewport,
         documentScrollWidth: docScrollWidth,
         bodyScrollWidth,
+        documentScrollHeight: docScrollHeight,
+        bodyScrollHeight,
         innerWidth: viewport.width,
+        innerHeight: viewport.height,
         tableCenter: roundPoint(tableCenter),
         centerScoreCenter: roundPoint(centerPoint),
         centerDelta: Number(centerDelta.toFixed(2)),
@@ -231,9 +310,17 @@ function inspectMockSource() {
         failures.push(name + " has no visible size");
         return;
       }
-      if (target.left < -tolerance || target.top < -tolerance || target.right > viewport.width + tolerance || target.bottom > viewport.height + tolerance) {
+      if (!isInViewport(target)) {
         failures.push(name + " is outside viewport: " + JSON.stringify(compactRect(target)));
       }
+    }
+
+    function isInViewport(target) {
+      return !!target
+        && target.left >= -tolerance
+        && target.top >= -tolerance
+        && target.right <= viewport.width + tolerance
+        && target.bottom <= viewport.height + tolerance;
     }
 
     function getHandGap(tiles) {
@@ -315,6 +402,12 @@ function inspectMockSource() {
       return a.left >= b.right - 4;
     }
 
+    function overlaps(a, b) {
+      const width = Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left));
+      const height = Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top));
+      return width * height > 1;
+    }
+
     function rect(element) {
       if (!element) return null;
       const value = element.getBoundingClientRect();
@@ -356,7 +449,7 @@ function inspectMockSource() {
 function formatResult(result) {
   const status = result.failures.length === 0 ? "PASS" : "FAIL";
   const m = result.measurements;
-  return `${status} ${result.label} scroll=${m.documentScrollWidth}/${m.innerWidth} hand=${Math.round(m.handWidthRatio * 100)}% gap=${m.handGap}px centerDelta=${m.centerDelta}px`;
+  return `${status} ${result.label} scroll=${m.documentScrollWidth}x${m.documentScrollHeight}/${m.innerWidth}x${m.innerHeight} hand=${Math.round(m.handWidthRatio * 100)}% gap=${m.handGap}px centerDelta=${m.centerDelta}px`;
 }
 
 async function startStaticServer(root, port) {
