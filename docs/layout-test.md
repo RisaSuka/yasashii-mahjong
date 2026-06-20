@@ -96,6 +96,7 @@ The check renders these scenarios:
 - `open-yakuhai-win`: an open yakuhai win result remains inside the landscape layout
 - `cpu-win`: a CPU win result is visible with the next-round action
 - `all-hands-open`: the round-end all-hands learning popup is open
+- `settings-menu-open`: the right-edge gear menu is open and its modal fits inside the viewport
 
 ## Screenshots
 
@@ -128,6 +129,7 @@ As of MVP-1.1.6, the regular browser tests pass and the layout check passes acro
 - MVP-1.5.1 keeps ron/reaction controls covered by the existing `actions` scenario, which renders the table action bar with ron/skip style controls in smartphone landscape.
 - MVP-1.6 adds the `yaku-guide` scenario. It checks that the guide dialog, close button, and CSS-tile completion examples fit within the smartphone landscape viewport.
 - MVP-1.7 adds the `waits` scenario. It checks that the waits dialog, close button, and wait tiles fit within the smartphone landscape viewport.
+- MVP-3.4 changes the active match screen to the four-direction table layout. The guard now verifies that the active-round header is not rendered, the gear button/menu are inside the viewport, CPU1/CPU2/CPU3/human seats occupy right/top/left/bottom positions, discard zones surround the center table, discard tiles rotate by seat direction, human hand tiles remain visible, action bars do not cover the hand, and meld strips do not overlap hand tiles.
 - MVP-1.9 adds the `waits-after-discard` scenario for 14-tile discard-to-wait guidance.
 - MVP-2.1 adds `riichi-ready` and `riichi-declared` scenarios so the riichi action/status stay inside the smartphone landscape action bar.
 - MVP-2.2 adds the `cpu-riichi` scenario so a CPU riichi seat badge stays inside the smartphone landscape table.

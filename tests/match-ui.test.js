@@ -400,7 +400,7 @@ export function registerMatchUiTests() {
   test("MVP-1.1.3 UI: current turn is shown on the player seat and discard zone", async () => {
     const html = await renderState(await startMatchState());
 
-    assertTrue(html.includes("seat-east current"), "Current human seat should keep the current turn highlight");
+    assertTrue(html.includes("table-seat-bottom current"), "Current human seat should keep the current turn highlight");
     assertTrue(html.includes("seat-turn-indicator"), "Current player should get a compact turn indicator");
     assertTrue(html.includes("table-discard-east is-current-turn"), "Current player discard zone should also be highlighted");
   });
@@ -469,14 +469,77 @@ export function registerMatchUiTests() {
 
   test("MVP-1.4 UI: beginner help button and dialog render", async () => {
     const closedHtml = await renderState(await startMatchState());
+    const menuHtml = await renderState(await startMatchState(), { settingsMenuOpen: true });
     const openHtml = await renderState(await startMatchState(), { beginnerHelpDialogOpen: true });
 
-    assertTrue(closedHtml.includes('data-action="open-beginner-help"'), "Beginner help button should be available from the table header");
+    assertTrue(closedHtml.includes('data-action="open-settings-menu"'), "In-round screen should expose the gear menu");
+    assertTrue(!closedHtml.includes('data-action="open-beginner-help"'), "Beginner help button should move out of the always-visible table header");
+    assertTrue(menuHtml.includes('data-action="open-beginner-help"'), "Beginner help button should be available from the gear menu");
     assertTrue(!closedHtml.includes("beginner-help-modal"), "Beginner help should stay closed by default");
     assertTrue(openHtml.includes("beginner-help-modal"), "Beginner help modal should render when opened");
     assertTrue(openHtml.includes('data-action="close-beginner-help"'), "Beginner help modal should include a close action");
     assertTrue(openHtml.includes("孤立牌"), "Beginner help should explain isolated tiles");
     assertTrue(openHtml.includes("ドラ"), "Beginner help should explain dora");
+  });
+
+  test("MVP-3.4 UI: gear menu renders and dispatches open/close handlers", async () => {
+    const html = await renderState(await startMatchState(), { settingsMenuOpen: true });
+
+    assertTrue(html.includes('data-action="open-settings-menu"'), "In-round screen should show a gear menu button");
+    assertTrue(html.includes("settings-menu-modal"), "Gear menu modal should render when opened");
+    assertTrue(html.includes('data-action="toggle-large"'), "Gear menu should contain the large tile action");
+    assertTrue(html.includes('data-action="toggle-discard-advice"'), "Gear menu should contain the advice toggle");
+
+    const { bindControls } = await loadModule("../src/ui/input.js", ["bindControls"]);
+    let opened = 0;
+    let closed = 0;
+    let keydownListener = null;
+    const openButton = createFakeButton();
+    const closeButton = createFakeButton();
+    const root = {
+      addEventListener(type, listener) {
+        if (type === "keydown") {
+          keydownListener = listener;
+        }
+      },
+      querySelector(selector) {
+        if (selector === "[data-action='open-settings-menu']") {
+          return openButton;
+        }
+
+        return null;
+      },
+      querySelectorAll(selector) {
+        if (selector === "[data-action='close-settings-menu']") {
+          return [closeButton];
+        }
+
+        return [];
+      }
+    };
+
+    bindControls(root, {
+      onOpenSettingsMenu() {
+        opened += 1;
+      },
+      onCloseDiscardAdvice() {},
+      onCloseDiscardZoom() {},
+      onCloseMatchResult() {},
+      onCloseBeginnerHelp() {},
+      onCloseYakuGuide() {},
+      onCloseWaits() {},
+      onCloseAllHands() {},
+      onCloseSettingsMenu() {
+        closed += 1;
+      }
+    });
+
+    openButton.listeners.click();
+    closeButton.listeners.click({ target: closeButton });
+    keydownListener({ key: "Escape" });
+
+    assertEqual(opened, 1, "Gear button should call its open handler");
+    assertEqual(closed, 2, "Close button and Escape should close the gear menu");
   });
 
   test("MVP-1.4 UI: beginner help suppresses advice, zoom, and result popups", async () => {

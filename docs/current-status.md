@@ -1,15 +1,15 @@
 # Current Status
 
-Last updated for MVP-3.3 call stability.
+Last updated for MVP-3.4 exact four-direction table layout.
 
 ## Repository State
 
-- Working branch: `codex/mvp-30-pon-chi-plan`
-- Automated tests: MVP-3.3 normal tests pass locally (`333 pass / 0 pending / 0 fail`)
-- Layout check: Chrome-based smartphone landscape guard includes pon-reaction, chi-reaction, open-melds, multiple-melds, open-tanyao-win, and open-yakuhai-win scenarios; open/multiple melds guard against human meld/hand-tile overlap
-- Working tree: clean at the time of the latest MVP-3.3 verification
+- Working branch: `codex/mvp-34-exact-table-layout`
+- Automated tests: MVP-3.4 normal tests pass locally (`334 pass / 0 pending / 0 fail`)
+- Layout check: Chrome-based smartphone landscape guard includes the exact four-direction table layout, active-round header removal, right-edge settings menu, rotated discard tiles, pon/chi reactions, multiple melds, open-hand wins, result/all-hands popups, and page overflow checks
+- Working tree: clean at the time of the latest MVP-3.4 verification
 - Push: not yet
-- `main` merge: not yet for MVP-3.1
+- `main` merge: not yet for MVP-3.4
 
 ## Implemented MVPs
 
@@ -56,6 +56,7 @@ Last updated for MVP-3.3 call stability.
 | MVP-3.1.1 | Working branch | Clears post-pon guidance after discard, moves the human pon meld away from hand tiles, adds meld/hand overlap guard, and documents the future four-direction table layout direction. |
 | MVP-3.2 | Working branch | Human-only chi v1: chi reaction from the upper player, selectable chi candidates, open chi meld state/UI, post-chi discard, and multiple-meld landscape guard. |
 | MVP-3.3 | Working branch | Call stability pass: open yakuhai/tanyao wins, open no-yaku rejection, no menzen-tsumo on open hands, next-round meld clearing, and open-hand layout scenarios. |
+| MVP-3.4 | Working branch | Active match screen moves to the hand-drawn four-direction table layout with a right-edge gear menu, center score board, rotated seat discards, separated human meld strip, and strengthened layout guard. |
 
 ## Current Capabilities
 

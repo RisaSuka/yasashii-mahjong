@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp33-call-stability-1";
-import { renderGame } from "./ui/render.js?v=mvp33-call-stability-1";
+import { bindControls } from "./ui/input.js?v=mvp34-exact-table-layout-1";
+import { renderGame } from "./ui/render.js?v=mvp34-exact-table-layout-1";
 
-const APP_ASSET_VERSION = "mvp33-call-stability-1";
+const APP_ASSET_VERSION = "mvp34-exact-table-layout-1";
 
 const appRoot = document.querySelector("#app");
 
@@ -16,6 +16,7 @@ let yakuGuideDialogOpen = false;
 let waitsDialogOpen = false;
 let allHandsDialogOpen = false;
 let riichiDeclarationMode = false;
+let settingsMenuOpen = false;
 
 init();
 
@@ -85,7 +86,8 @@ function render() {
     yakuGuideDialogOpen,
     waitsDialogOpen,
     allHandsDialogOpen,
-    riichiDeclarationMode
+    riichiDeclarationMode,
+    settingsMenuOpen
   });
   bindControls(appRoot, {
     onStartMatch: startMatch,
@@ -107,6 +109,8 @@ function render() {
     onCloseWaits: closeWaits,
     onOpenAllHands: openAllHands,
     onCloseAllHands: closeAllHands,
+    onOpenSettingsMenu: openSettingsMenu,
+    onCloseSettingsMenu: closeSettingsMenu,
     onDiscardTile: discardHumanTile,
     onDeclareRiichi: startRiichiDeclaration,
     onCancelRiichi: cancelRiichiDeclaration,
@@ -127,6 +131,7 @@ function startMatch() {
   yakuGuideDialogOpen = false;
   waitsDialogOpen = false;
   allHandsDialogOpen = false;
+  settingsMenuOpen = false;
   riichiDeclarationMode = false;
   state = gameApi.dispatchAction(state, { type: "START_MATCH" });
   render();
@@ -142,6 +147,7 @@ function startNextRound() {
   yakuGuideDialogOpen = false;
   waitsDialogOpen = false;
   allHandsDialogOpen = false;
+  settingsMenuOpen = false;
   riichiDeclarationMode = false;
   state = gameApi.dispatchAction(state, { type: "START_NEXT_ROUND" });
   render();
@@ -150,6 +156,7 @@ function startNextRound() {
 
 function toggleLargeTileMode() {
   state = gameApi.dispatchAction(state, { type: "TOGGLE_LARGE_TILE_MODE" });
+  settingsMenuOpen = false;
   render();
 }
 
@@ -162,6 +169,7 @@ function toggleDiscardAdvice() {
 
   gameApi.saveDiscardAdviceSettings(nextSettings);
   applyDiscardAdviceSettings(nextSettings);
+  settingsMenuOpen = false;
   discardAdviceDialogOpen = false;
   discardZoomPlayerId = null;
   matchResultDialogOpen = false;
@@ -169,6 +177,7 @@ function toggleDiscardAdvice() {
   yakuGuideDialogOpen = false;
   waitsDialogOpen = false;
   allHandsDialogOpen = false;
+  settingsMenuOpen = false;
   render();
 }
 
@@ -180,6 +189,7 @@ function openDiscardAdvice() {
   yakuGuideDialogOpen = false;
   waitsDialogOpen = false;
   allHandsDialogOpen = false;
+  settingsMenuOpen = false;
   render();
 }
 
@@ -196,6 +206,7 @@ function openDiscardZoom(playerId) {
   yakuGuideDialogOpen = false;
   waitsDialogOpen = false;
   allHandsDialogOpen = false;
+  settingsMenuOpen = false;
   render();
 }
 
@@ -212,6 +223,7 @@ function openMatchResult() {
   yakuGuideDialogOpen = false;
   waitsDialogOpen = false;
   allHandsDialogOpen = false;
+  settingsMenuOpen = false;
   render();
 }
 
@@ -228,6 +240,7 @@ function openBeginnerHelp() {
   yakuGuideDialogOpen = false;
   waitsDialogOpen = false;
   allHandsDialogOpen = false;
+  settingsMenuOpen = false;
   render();
 }
 
@@ -244,6 +257,7 @@ function openYakuGuide() {
   yakuGuideDialogOpen = true;
   waitsDialogOpen = false;
   allHandsDialogOpen = false;
+  settingsMenuOpen = false;
   render();
 }
 
@@ -260,6 +274,7 @@ function openWaits() {
   yakuGuideDialogOpen = false;
   waitsDialogOpen = true;
   allHandsDialogOpen = false;
+  settingsMenuOpen = false;
   render();
 }
 
@@ -285,6 +300,24 @@ function openAllHands() {
 
 function closeAllHands() {
   allHandsDialogOpen = false;
+  settingsMenuOpen = false;
+  render();
+}
+
+function openSettingsMenu() {
+  discardAdviceDialogOpen = false;
+  discardZoomPlayerId = null;
+  matchResultDialogOpen = false;
+  beginnerHelpDialogOpen = false;
+  yakuGuideDialogOpen = false;
+  waitsDialogOpen = false;
+  allHandsDialogOpen = false;
+  settingsMenuOpen = true;
+  render();
+}
+
+function closeSettingsMenu() {
+  settingsMenuOpen = false;
   render();
 }
 
@@ -302,6 +335,7 @@ function startRiichiDeclaration() {
   yakuGuideDialogOpen = false;
   waitsDialogOpen = false;
   allHandsDialogOpen = false;
+  settingsMenuOpen = false;
   riichiDeclarationMode = true;
   render();
 }

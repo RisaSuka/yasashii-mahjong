@@ -206,9 +206,11 @@ Recommended staged path:
 3. MVP-3.3
    - Stabilize open-meld display and post-call UI after pon/chi.
 4. MVP-3.4
-   - Begin migration to a four-direction central table layout.
+   - Implement the first exact four-direction central table layout.
+   - Hide the active-round header and move table controls into the right-edge gear menu.
+   - Rotate discard/meld tile graphics by seat direction while keeping labels and buttons upright.
 5. MVP-3.5
-   - Add gear menu and compress the always-visible header.
+   - Continue polish of the gear menu and compact table controls if more actions are added.
 6. MVP-4.x
    - CPU calls, kan, scoring display, and scoring calculation.
 

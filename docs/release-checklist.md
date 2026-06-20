@@ -4,16 +4,16 @@ Use this before merging to `main` or publishing with GitHub Pages.
 
 ## Current Release Candidate
 
-- Branch: `codex/mvp-30-pon-chi-plan`
-- Scope: MVP-0.1 through MVP-3.3 call stability
-- Expected automated result: `333 pass / 0 pending / 0 fail`
+- Branch: `codex/mvp-34-exact-table-layout`
+- Scope: MVP-0.1 through MVP-3.4 exact four-direction table layout
+- Expected automated result: `334 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-3.1.1 is not published yet.
+- Publish status: MVP-3.4 is not published yet.
 
 ## Git Safety
 
-- Confirm the current branch is `codex/mvp-30-pon-chi-plan`.
+- Confirm the current branch is `codex/mvp-34-exact-table-layout`.
 - Confirm the working tree is clean.
 - Confirm the latest commit is the intended release candidate.
 - Confirm no unreviewed local commits are being skipped.
@@ -31,8 +31,8 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 333.
-- Confirm pass count is 333.
+- Confirm total count is 334.
+- Confirm pass count is 334.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
@@ -44,7 +44,7 @@ node tests/layout-check.mjs
 
 - If Node is not on PATH in the Codex desktop environment, use the bundled Node command documented in `docs/layout-test.md`.
 - Confirm layout-check screenshots are written under `test-artifacts/layout/`.
-- Current layout-check result: all target viewports and scenarios pass, including `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `yaku-guide`, `waits`, `riichi-ready`, `riichi-declared`, `cpu-riichi`, `pon-reaction`, `chi-reaction`, `open-melds`, `multiple-melds`, `open-tanyao-win`, `open-yakuhai-win`, and `cpu-win`; `open-melds` and `multiple-melds` also check that the human meld area does not overlap human hand tiles.
+- Current layout-check result: all target viewports and scenarios pass, including `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `all-hands-open`, `settings-menu-open`, `yaku-guide`, `waits`, `riichi-ready`, `riichi-declared`, `cpu-riichi`, `pon-reaction`, `chi-reaction`, `open-melds`, `multiple-melds`, `open-tanyao-win`, `open-yakuhai-win`, and `cpu-win`; MVP-3.4 also checks active-round header removal, right-edge gear menu fit, four-direction seat/discard placement, discard tile rotation, and meld/hand separation.
 - Run the CPU win reachability diagnostic:
 
 ```powershell

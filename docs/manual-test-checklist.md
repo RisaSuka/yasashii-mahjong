@@ -21,8 +21,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 333.
-- Confirm pass count is 333.
+- Confirm total count is 334.
+- Confirm pass count is 334.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - For smartphone landscape layout work, also run the layout guard described in `docs/layout-test.md`.
@@ -105,6 +105,18 @@ http://127.0.0.1:8765/tests/test-runner.html
 - Confirm multiple melds still allow a discard and turn advance.
 - Confirm starting the next round clears all `melds`.
 - Confirm result display and all-hands review still render after open-hand wins.
+
+## 1.7 MVP-3.4 Exact Four-Direction Table Layout Check
+
+- Start a match and confirm the old top header is hidden during the round.
+- Confirm the right-edge gear button is visible and opens a menu containing new round, large tile mode, advice ON/OFF, and help.
+- Confirm CPU1 appears on the right, CPU2 at the top, CPU3 on the left, and the human hand across the bottom.
+- Confirm discard zones surround the center table and 18 discards remain visible in late-hand scenarios.
+- Confirm discard and meld tile graphics rotate by seat direction while text labels and buttons stay upright.
+- Confirm the center table shows compact round, wall, dead-wall, dora, dealer, and score-board information.
+- Confirm dealer, riichi, and current-turn states are visible as seat-side badges or highlights.
+- Confirm the human open meld strip is separated from the hand and does not overlap hand tiles.
+- Confirm pon/chi candidates, ron/tsumo/riichi actions, result buttons, and modal reopen buttons stay inside the viewport.
 
 ## 2. Normal Desktop Flow
 

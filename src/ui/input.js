@@ -8,6 +8,7 @@ export function bindControls(root, handlers) {
       handlers.onCloseYakuGuide?.();
       handlers.onCloseWaits?.();
       handlers.onCloseAllHands?.();
+      handlers.onCloseSettingsMenu?.();
     }
   });
 
@@ -32,6 +33,19 @@ export function bindControls(root, handlers) {
   root.querySelector("[data-action='toggle-discard-advice']")?.addEventListener("click", () => {
     handlers.onToggleDiscardAdvice();
   });
+
+  root.querySelector("[data-action='open-settings-menu']")?.addEventListener("click", () => {
+    handlers.onOpenSettingsMenu?.();
+  });
+
+  for (const trigger of root.querySelectorAll("[data-action='close-settings-menu']")) {
+    trigger.addEventListener("click", (event) => {
+      if (trigger.classList?.contains("settings-menu-backdrop") && event.target !== trigger) {
+        return;
+      }
+      handlers.onCloseSettingsMenu?.();
+    });
+  }
 
   root.querySelector("[data-action='open-discard-advice']")?.addEventListener("click", () => {
     handlers.onOpenDiscardAdvice?.();

@@ -1,3 +1,9 @@
+# MVP-3.4 exact four-direction table layout note
+
+MVP-3.4 moves the active match screen to a four-direction table layout based on the hand-drawn layout plan. During a round, the old top header is hidden and the new right-edge gear menu contains `New round`, `Large tiles`, `Advice ON/OFF`, and `Help`. CPU1 is on the right, CPU2 is at the top, CPU3 is on the left, and the human hand stays across the bottom. Discards surround the center table, and tile graphics rotate by seat direction while labels and buttons remain upright.
+
+Current local checks target MVP-3.4 normal tests, the smartphone landscape layout guard including the `settings-menu-open` scenario, four-direction seat/discard placement, tile rotation checks, no active-round header, and the CPU win reachability diagnostic.
+
 # MVP-3.3 call stability note
 
 MVP-3.3 is a stabilization pass for the new pon/chi work. It verifies that open yakuhai pon and open chi tanyao can win, open complete shapes without yaku are rejected, open tsumo does not receive menzen-tsumo, fresh rounds clear melds, and ron still has priority over call buttons. Layout guard scenarios now cover chi reactions, multiple melds, and open-hand win results.

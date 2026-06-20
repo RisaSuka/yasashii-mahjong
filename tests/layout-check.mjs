@@ -39,7 +39,8 @@ const SCENARIOS = [
   { name: "open-tanyao-win", discards: 9, mode: "open-tanyao-win" },
   { name: "open-yakuhai-win", discards: 9, mode: "open-yakuhai-win" },
   { name: "cpu-win", discards: 12, mode: "cpu-win" },
-  { name: "all-hands-open", discards: 18, mode: "all-hands-open" }
+  { name: "all-hands-open", discards: 18, mode: "all-hands-open" },
+  { name: "settings-menu-open", discards: 9, mode: "settings-menu-open" }
 ];
 const TOLERANCE = 2;
 
@@ -479,6 +480,7 @@ function setupScenarioSource() {
       yakuGuideDialogOpen: mode === "yaku-guide",
       waitsDialogOpen: mode === "waits" || mode === "waits-after-discard",
       allHandsDialogOpen: mode === "all-hands-open",
+      settingsMenuOpen: mode === "settings-menu-open",
       analyzeWaits: () => mode === "waits-after-discard"
         ? ({
           isTenpai: false,
@@ -613,13 +615,18 @@ function inspectLayoutSource() {
       centerPanel: ".center-panel",
       centerRing: ".table-discard-ring",
       centerInfo: ".center-info",
-      northDiscard: ".table-discard-north",
-      westDiscard: ".table-discard-west",
-      southDiscard: ".table-discard-south",
-      eastDiscard: ".table-discard-east",
-      hand: ".seat-east .hand",
-      handTile: ".seat-east .hand .tile",
-      adviceButton: ".seat-east [data-action='open-discard-advice']"
+      topSeat: ".table-seat-top",
+      leftSeat: ".table-seat-left",
+      rightSeat: ".table-seat-right",
+      bottomSeat: ".table-seat-bottom",
+      topDiscard: ".table-discard-top",
+      leftDiscard: ".table-discard-left",
+      rightDiscard: ".table-discard-right",
+      bottomDiscard: ".table-discard-bottom",
+      hand: ".table-seat-bottom .hand",
+      handTile: ".table-seat-bottom .hand .tile",
+      gearButton: "[data-action='open-settings-menu']",
+      adviceButton: ".table-seat-bottom [data-action='open-discard-advice']"
     };
 
     if (document.documentElement.scrollWidth > viewport.width + tolerance) {
@@ -635,6 +642,9 @@ function inspectLayoutSource() {
       const element = document.querySelector(selector);
       if (!element) {
         if (name === "adviceButton") {
+          continue;
+        }
+        if (name === "header") {
           continue;
         }
         failures.push(name + " is missing: " + selector);
@@ -655,7 +665,29 @@ function inspectLayoutSource() {
       }
     }
 
-    for (const name of ["northDiscard", "westDiscard", "southDiscard", "eastDiscard"]) {
+    const visibleHeader = document.querySelector(".app-in-round .topbar");
+    if (visibleHeader && getComputedStyle(visibleHeader).display !== "none") {
+      failures.push("in-round header should not be visible");
+    }
+
+    const tableRect = rects.table;
+    const centerRect = rects.centerPanel;
+    if (tableRect && centerRect) {
+      if (rects.topSeat && rects.topSeat.bottom > centerRect.top + tolerance) {
+        failures.push("CPU2 top seat is not above the table center");
+      }
+      if (rects.bottomSeat && rects.bottomSeat.top < centerRect.bottom - tolerance) {
+        failures.push("human bottom seat is not below the table center");
+      }
+      if (rects.leftSeat && rects.leftSeat.right > centerRect.left + tolerance) {
+        failures.push("CPU3 left seat is not left of the table center");
+      }
+      if (rects.rightSeat && rects.rightSeat.left < centerRect.right - tolerance) {
+        failures.push("CPU1 right seat is not right of the table center");
+      }
+    }
+
+    for (const name of ["topDiscard", "leftDiscard", "rightDiscard", "bottomDiscard"]) {
       const selector = selectors[name];
       const zone = document.querySelector(selector);
       if (!zone) continue;
@@ -675,6 +707,21 @@ function inspectLayoutSource() {
       }
     }
 
+    const expectedRotations = {
+      topDiscard: 180,
+      leftDiscard: 90,
+      rightDiscard: -90,
+      bottomDiscard: 0
+    };
+    for (const [name, expectedAngle] of Object.entries(expectedRotations)) {
+      const tile = document.querySelector(selectors[name] + " .tile");
+      if (!tile) continue;
+      const angle = getRotationAngle(tile);
+      if (!angleMatches(angle, expectedAngle)) {
+        failures.push(name + " tile rotation expected " + expectedAngle + "deg but got " + angle + "deg");
+      }
+    }
+
     const hand = document.querySelector(selectors.hand);
     const handRect = hand?.getBoundingClientRect();
     if (hand && handRect) {
@@ -689,6 +736,10 @@ function inspectLayoutSource() {
 
       const badges = [...hand.querySelectorAll(".advice-badge")];
       for (const [index, badge] of badges.entries()) {
+        const style = getComputedStyle(badge);
+        if (style.display === "none" || style.visibility === "hidden") {
+          continue;
+        }
         const rect = badge.getBoundingClientRect();
         if (rect.bottom > handRect.bottom + tolerance || rect.top < handRect.top - tolerance) {
           failures.push("recommended badge " + index + " is clipped");
@@ -703,7 +754,8 @@ function inspectLayoutSource() {
     const yakuGuideModal = document.querySelector(".yaku-guide-modal");
     const waitsModal = document.querySelector(".waits-modal");
     const allHandsModal = document.querySelector(".all-hands-modal");
-    const activeModal = modal || zoomModal || resultModal || yakuGuideModal || waitsModal || allHandsModal;
+    const settingsMenuModal = document.querySelector(".settings-menu-modal");
+    const activeModal = modal || zoomModal || resultModal || yakuGuideModal || waitsModal || allHandsModal || settingsMenuModal;
 
     const actionButtons = [...document.querySelectorAll(".table-action-bar button, .restart-match-button, .next-round-button")];
     if (!activeModal) {
@@ -749,7 +801,7 @@ function inspectLayoutSource() {
       }
     }
 
-    const meldArea = document.querySelector(".seat-east .meld-area");
+    const meldArea = document.querySelector(".table-seat-bottom .meld-area");
     const meldRect = meldArea ? toRect(meldArea.getBoundingClientRect()) : null;
     if (meldArea && !isInViewport(meldArea.getBoundingClientRect(), viewport, tolerance)) {
       failures.push("meld area is outside viewport");
@@ -947,11 +999,31 @@ function inspectLayoutSource() {
       }
     }
 
-    checkOverlap("east discard", rects.eastDiscard, "hand", rects.hand, 0.08);
-    checkOverlap("center info", rects.centerInfo, "north discard", rects.northDiscard, 0.05);
-    checkOverlap("center info", rects.centerInfo, "west discard", rects.westDiscard, 0.05);
-    checkOverlap("center info", rects.centerInfo, "south discard", rects.southDiscard, 0.05);
-    checkOverlap("center info", rects.centerInfo, "east discard", rects.eastDiscard, 0.05);
+    if (settingsMenuModal) {
+      const rect = settingsMenuModal.getBoundingClientRect();
+      if (!isInViewport(rect, viewport, tolerance)) {
+        failures.push("settings menu popup is outside viewport");
+      }
+
+      const closeButton = settingsMenuModal.querySelector("[data-action='close-settings-menu']");
+      if (!closeButton) {
+        failures.push("settings menu close button is missing");
+      } else {
+        const closeRect = closeButton.getBoundingClientRect();
+        if (!isInViewport(closeRect, viewport, tolerance)) {
+          failures.push("settings menu close button is outside viewport");
+        }
+        if (!isClickableAtCenter(closeButton, closeRect)) {
+          failures.push("settings menu close button is not clickable at center");
+        }
+      }
+    }
+
+    checkOverlap("bottom discard", rects.bottomDiscard, "hand", rects.hand, 0.02);
+    checkOverlap("center info", rects.centerInfo, "top discard", rects.topDiscard, 0.04);
+    checkOverlap("center info", rects.centerInfo, "left discard", rects.leftDiscard, 0.04);
+    checkOverlap("center info", rects.centerInfo, "right discard", rects.rightDiscard, 0.04);
+    checkOverlap("center info", rects.centerInfo, "bottom discard", rects.bottomDiscard, 0.04);
 
     return {
       failures,
@@ -961,10 +1033,10 @@ function inspectLayoutSource() {
         scrollHeight: document.documentElement.scrollHeight,
         actionButtons: actionButtons.length,
         discardCounts: {
-          north: document.querySelectorAll(".table-discard-north .discard-tile").length,
-          west: document.querySelectorAll(".table-discard-west .discard-tile").length,
-          south: document.querySelectorAll(".table-discard-south .discard-tile").length,
-          east: document.querySelectorAll(".table-discard-east .discard-tile").length
+          north: document.querySelectorAll(".table-discard-top .discard-tile").length,
+          west: document.querySelectorAll(".table-discard-left .discard-tile").length,
+          south: document.querySelectorAll(".table-discard-right .discard-tile").length,
+          east: document.querySelectorAll(".table-discard-bottom .discard-tile").length
         }
       }
     };
@@ -1007,6 +1079,27 @@ function inspectLayoutSource() {
         && rect.left >= containerRect.left - tolerance
         && rect.right <= containerRect.right + tolerance
         && rect.bottom <= containerRect.bottom + tolerance;
+    }
+
+    function getRotationAngle(element) {
+      const transform = getComputedStyle(element).transform;
+      if (!transform || transform === "none") {
+        return 0;
+      }
+      const match = transform.match(/matrix\\(([^)]+)\\)/);
+      if (!match) {
+        return 0;
+      }
+      const values = match[1].split(",").map((value) => Number.parseFloat(value.trim()));
+      const [a, b] = values;
+      return Math.round(Math.atan2(b, a) * (180 / Math.PI));
+    }
+
+    function angleMatches(actual, expected) {
+      const normalizedActual = ((actual % 360) + 360) % 360;
+      const normalizedExpected = ((expected % 360) + 360) % 360;
+      return Math.abs(normalizedActual - normalizedExpected) <= 2
+        || Math.abs(normalizedActual - normalizedExpected) >= 358;
     }
 
     function toRect(rect) {

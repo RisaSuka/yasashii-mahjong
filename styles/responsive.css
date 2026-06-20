@@ -606,6 +606,695 @@
   }
 }
 
+@media (orientation: landscape) and (max-width: 1180px) {
+  .app.app-in-round .table {
+    grid-template-areas:
+      "left top right menu"
+      "left board right menu"
+      "bottom bottom bottom menu";
+    grid-template-columns: clamp(42px, 7.6vw, 66px) minmax(0, 1fr) clamp(42px, 7.6vw, 66px) clamp(34px, 4.8vw, 44px);
+    grid-template-rows: clamp(32px, 9.6vh, 46px) minmax(0, 1fr) clamp(112px, 28vh, 142px);
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+  }
+
+  .app.app-in-round .table-seat-top {
+    grid-area: top;
+  }
+
+  .app.app-in-round .table-seat-left {
+    grid-area: left;
+  }
+
+  .app.app-in-round .table-seat-right {
+    grid-area: right;
+  }
+
+  .app.app-in-round .table-seat-bottom {
+    grid-area: bottom;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    gap: 2px;
+    overflow: hidden;
+  }
+
+  .app.app-in-round .center-panel {
+    grid-area: board;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .app.app-in-round .table-discard-ring {
+    grid-template-areas:
+      "top top top"
+      "left info right"
+      "bottom bottom bottom";
+    grid-template-columns: minmax(96px, 1fr) minmax(210px, 0.82fr) minmax(96px, 1fr);
+    grid-template-rows: clamp(42px, 14vh, 62px) minmax(58px, 1fr) clamp(42px, 14vh, 62px);
+    height: 100%;
+    overflow: visible;
+  }
+
+  .app.app-in-round .table-discard-top {
+    grid-area: top;
+  }
+
+  .app.app-in-round .table-discard-left {
+    grid-area: left;
+  }
+
+  .app.app-in-round .table-discard-right {
+    grid-area: right;
+  }
+
+  .app.app-in-round .table-discard-bottom {
+    grid-area: bottom;
+  }
+
+  .app.app-in-round .center-info {
+    grid-area: info;
+    min-height: 0;
+    position: relative;
+    z-index: 5;
+    overflow: visible;
+  }
+
+  .app.app-in-round .table-seat-bottom .hand {
+    min-height: 0;
+    padding: 2px 3px max(4px, env(safe-area-inset-bottom));
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .app.app-in-round .table-seat-bottom .hand .tile {
+    width: clamp(36px, 6.3vw, 49px);
+    height: clamp(50px, 17dvh, 68px);
+  }
+
+  .app.app-in-round .table-seat-bottom .hand .tile-symbol {
+    font-size: clamp(20px, 3.8vw, 28px);
+  }
+
+  .app.app-in-round .advice-badge {
+    right: 2px;
+    bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 14px;
+    max-width: 18px;
+    overflow: hidden;
+    border-radius: 999px;
+    padding: 0;
+    font-size: 0;
+    line-height: 1;
+    transform: none;
+  }
+
+  .app.app-in-round .advice-badge::after {
+    content: "推";
+    font-size: 9px;
+    line-height: 14px;
+  }
+
+  .app.app-in-round .seat.riichi .advice-badge,
+  .app.app-in-round .riichi .advice-badge {
+    display: none !important;
+  }
+
+  .app.app-in-round .table-seat-bottom .meld-area {
+    flex-wrap: nowrap;
+    min-height: 26px;
+    max-height: 30px;
+    overflow: hidden;
+  }
+
+  .app.app-in-round .table-action-bar {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .app.app-in-round .table-action-bar .reaction-actions {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 3px;
+    max-width: 100%;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    padding: 1px;
+  }
+
+  .app.app-in-round .table-action-bar .chi-option-tile {
+    width: 11px;
+    height: 16px;
+  }
+
+  .app.app-in-round .table-action-bar .chi-button {
+    gap: 1px;
+  }
+
+  .app.app-in-round .table-action-bar .chi-button-label {
+    display: none;
+  }
+
+  .app.app-in-round .table-action-bar .ron-button,
+  .app.app-in-round .table-action-bar .pon-button,
+  .app.app-in-round .table-action-bar .chi-button,
+  .app.app-in-round .table-action-bar .skip-ron-button,
+  .app.app-in-round .table-action-bar .riichi-button,
+  .app.app-in-round .table-action-bar .cancel-riichi-button,
+  .app.app-in-round .table-action-bar .tsumo-button,
+  .app.app-in-round .table-action-bar .next-round-button,
+  .app.app-in-round .table-action-bar .restart-match-button,
+  .app.app-in-round .table-action-bar .all-hands-button {
+    min-width: 38px;
+    min-height: 23px;
+    padding: 0 4px;
+    font-size: 9px;
+  }
+
+  .app.app-in-round .table-seat-bottom:has(.meld) .hand .tile {
+    width: clamp(32px, 5.8vw, 43px);
+    height: clamp(45px, 15dvh, 60px);
+  }
+
+  .app.app-in-round .table-seat-bottom:has(.meld) .advice-badge {
+    bottom: 16px;
+    right: 2px;
+    font-size: 0;
+  }
+
+  .app.app-in-round .center-info .table-action-bar {
+    position: fixed;
+    right: max(48px, calc(env(safe-area-inset-right) + 44px));
+    bottom: clamp(112px, 29dvh, 142px);
+    left: auto;
+    width: auto;
+    max-width: min(370px, calc(100dvw - 96px));
+    transform: none;
+    z-index: 36;
+    border: 1px solid rgba(15, 118, 110, 0.24);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.86);
+    padding: 2px;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+  }
+
+  .app.app-in-round .center-info .table-action-bar:empty {
+    display: none;
+  }
+
+  .app.app-in-round .table-discard-top .table-center-discards .tile,
+  .app.app-in-round .table-seat-top .meld-tile,
+  .app.app-in-round .table-seat-top .tile-back {
+    transform: rotate(180deg);
+  }
+
+  .app.app-in-round .table-discard-right .table-center-discards .tile,
+  .app.app-in-round .table-seat-right .meld-tile,
+  .app.app-in-round .table-seat-right .tile-back {
+    transform: rotate(-90deg);
+  }
+
+  .app.app-in-round .table-discard-left .table-center-discards .tile,
+  .app.app-in-round .table-seat-left .meld-tile,
+  .app.app-in-round .table-seat-left .tile-back {
+    transform: rotate(90deg);
+  }
+
+  .app.app-in-round .table-discard-bottom .table-center-discards .tile,
+  .app.app-in-round .table-seat-bottom .meld-tile,
+  .app.app-in-round .table-seat-bottom .tile-back {
+    transform: rotate(0deg);
+  }
+}
+
+@media (orientation: landscape) and (max-width: 820px) {
+  .app.app-in-round .table {
+    grid-template-columns: 40px minmax(0, 1fr) 40px 34px;
+    grid-template-rows: 30px minmax(0, 1fr) 106px;
+  }
+
+  .app.app-in-round .table-discard-ring {
+    grid-template-columns: minmax(88px, 1fr) minmax(198px, 0.82fr) minmax(88px, 1fr);
+    grid-template-rows: 39px minmax(52px, 1fr) 39px;
+  }
+
+  .app.app-in-round .table-seat-bottom .hand .tile {
+    width: 36px;
+    height: 50px;
+  }
+
+  .app.app-in-round .table-seat-bottom:has(.meld) .hand .tile {
+    width: 31px;
+    height: 44px;
+  }
+}
+
+@media (orientation: landscape) and (max-width: 1180px) {
+  html,
+  body {
+    overflow: hidden;
+  }
+
+  .app.app-in-round {
+    box-sizing: border-box;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr);
+    width: 100dvw;
+    height: 100dvh;
+    max-width: none;
+    overflow: hidden;
+    padding: 0;
+  }
+
+  .app.app-in-round .topbar,
+  .app.app-in-round .orientation-hint,
+  .app.app-in-round .footer-status {
+    display: none;
+  }
+
+  .app.app-in-round .table {
+    box-sizing: border-box;
+    display: grid;
+    grid-template-areas:
+      "left top right menu"
+      "left board right menu"
+      "bottom bottom bottom menu";
+    grid-template-columns: clamp(42px, 7.6vw, 66px) minmax(0, 1fr) clamp(42px, 7.6vw, 66px) clamp(34px, 4.8vw, 44px);
+    grid-template-rows: clamp(32px, 9.6vh, 46px) minmax(0, 1fr) clamp(112px, 28vh, 142px);
+    gap: 3px;
+    width: 100dvw;
+    height: 100dvh;
+    max-width: none;
+    margin: 0;
+    padding: max(3px, env(safe-area-inset-top)) max(2px, env(safe-area-inset-right)) max(3px, env(safe-area-inset-bottom)) max(3px, env(safe-area-inset-left));
+    overflow: hidden;
+  }
+
+  .app.app-in-round .table-seat-top,
+  .app.app-in-round .table-seat-left,
+  .app.app-in-round .table-seat-right,
+  .app.app-in-round .table-seat-bottom {
+    min-width: 0;
+    min-height: 0;
+    border-width: 1px;
+    border-radius: 7px;
+    overflow: hidden;
+    padding: 3px;
+  }
+
+  .app.app-in-round .table-seat-top {
+    grid-area: top;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+    align-content: center;
+  }
+
+  .app.app-in-round .table-seat-left {
+    grid-area: left;
+  }
+
+  .app.app-in-round .table-seat-right {
+    grid-area: right;
+  }
+
+  .app.app-in-round .table-seat-bottom {
+    grid-area: bottom;
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    gap: 2px;
+    padding: 5px 6px;
+  }
+
+  .app.app-in-round .table-seat-left,
+  .app.app-in-round .table-seat-right {
+    display: grid;
+    align-content: center;
+    justify-items: center;
+  }
+
+  .app.app-in-round .table-seat-top .seat-header,
+  .app.app-in-round .table-seat-left .seat-header,
+  .app.app-in-round .table-seat-right .seat-header {
+    justify-content: center;
+    min-width: 0;
+  }
+
+  .app.app-in-round .table-seat-left .seat-header,
+  .app.app-in-round .table-seat-right .seat-header {
+    writing-mode: vertical-rl;
+  }
+
+  .app.app-in-round .table-seat-top .seat-header-actions,
+  .app.app-in-round .table-seat-left .seat-header-actions,
+  .app.app-in-round .table-seat-right .seat-header-actions,
+  .app.app-in-round .table-seat-top .hand-count,
+  .app.app-in-round .table-seat-left .hand-count,
+  .app.app-in-round .table-seat-right .hand-count,
+  .app.app-in-round .table-seat-top .discard-area,
+  .app.app-in-round .table-seat-left .discard-area,
+  .app.app-in-round .table-seat-right .discard-area {
+    display: none;
+  }
+
+  .app.app-in-round .seat-name {
+    font-size: 12px;
+    line-height: 1.15;
+  }
+
+  .app.app-in-round .table-seat-bottom .seat-name {
+    font-size: 14px;
+  }
+
+  .app.app-in-round .seat.current,
+  .app.app-in-round .seat.riichi,
+  .app.app-in-round .seat.dealer {
+    box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.2), 0 0 18px rgba(20, 184, 166, 0.12);
+  }
+
+  .app.app-in-round .seat.riichi {
+    border-color: rgba(220, 38, 38, 0.58);
+  }
+
+  .app.app-in-round .riichi-badge,
+  .app.app-in-round .seat-turn-indicator,
+  .app.app-in-round .seat-dealer-badge {
+    min-height: 18px;
+    padding: 0 6px;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  .app.app-in-round .center-panel {
+    grid-area: board;
+    min-width: 0;
+    min-height: 0;
+    border-width: 2px;
+    border-radius: 10px;
+    overflow: hidden;
+    padding: 4px;
+  }
+
+  .app.app-in-round .table-discard-ring {
+    display: grid;
+    grid-template-areas:
+      "top top top"
+      "left info right"
+      "bottom bottom bottom";
+    grid-template-columns: minmax(122px, 1fr) minmax(132px, 0.7fr) minmax(122px, 1fr);
+    grid-template-rows: clamp(42px, 14vh, 62px) minmax(58px, 1fr) clamp(42px, 14vh, 62px);
+    gap: 3px;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    padding: 0;
+  }
+
+  .app.app-in-round .table-discard-zone {
+    box-sizing: border-box;
+    min-width: 0;
+    min-height: 0;
+    border-radius: 8px;
+    padding: 4px;
+    overflow: hidden;
+  }
+
+  .app.app-in-round .table-discard-top {
+    grid-area: top;
+  }
+
+  .app.app-in-round .table-discard-left {
+    grid-area: left;
+  }
+
+  .app.app-in-round .table-discard-right {
+    grid-area: right;
+  }
+
+  .app.app-in-round .table-discard-bottom {
+    grid-area: bottom;
+  }
+
+  .app.app-in-round .table-discard-zone .table-discard-label,
+  .app.app-in-round .table-discard-zone .table-discard-count {
+    font-size: 9.5px;
+    line-height: 1.1;
+  }
+
+  .app.app-in-round .table-center-discards {
+    align-content: center;
+    justify-content: center;
+    gap: 2px;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .app.app-in-round .table-discard-top .table-center-discards,
+  .app.app-in-round .table-discard-bottom .table-center-discards {
+    grid-template-columns: repeat(18, minmax(9px, 13px));
+    grid-auto-rows: 18px;
+  }
+
+  .app.app-in-round .table-discard-left .table-center-discards,
+  .app.app-in-round .table-discard-right .table-center-discards {
+    grid-template-columns: repeat(6, 18px);
+    grid-auto-rows: 16px;
+  }
+
+  .app.app-in-round .table-center-discards .discard-tile,
+  .app.app-in-round .table-center-discards .tile {
+    width: 13px;
+    height: 18px;
+    transform-origin: center center;
+  }
+
+  .app.app-in-round .table-discard-top .table-center-discards .tile,
+  .app.app-in-round .table-seat-top .meld-tile,
+  .app.app-in-round .table-seat-top .tile-back {
+    transform: rotate(180deg);
+  }
+
+  .app.app-in-round .table-discard-right .table-center-discards .tile,
+  .app.app-in-round .table-seat-right .meld-tile,
+  .app.app-in-round .table-seat-right .tile-back {
+    transform: rotate(-90deg);
+  }
+
+  .app.app-in-round .table-discard-left .table-center-discards .tile,
+  .app.app-in-round .table-seat-left .meld-tile,
+  .app.app-in-round .table-seat-left .tile-back {
+    transform: rotate(90deg);
+  }
+
+  .app.app-in-round .table-discard-bottom .table-center-discards .tile,
+  .app.app-in-round .table-seat-bottom .meld-tile,
+  .app.app-in-round .table-seat-bottom .tile-back {
+    transform: rotate(0deg);
+  }
+
+  .app.app-in-round .center-info {
+    grid-area: info;
+    align-self: stretch;
+    justify-self: stretch;
+    min-width: 0;
+    min-height: 0;
+    padding: 3px;
+    overflow: hidden;
+  }
+
+  .app.app-in-round .center-info-main {
+    min-height: 0;
+  }
+
+  .app.app-in-round .center-primary {
+    gap: 2px;
+    padding: 0;
+  }
+
+  .app.app-in-round .round-badge {
+    padding: 1px 8px;
+    font-size: 13px;
+  }
+
+  .app.app-in-round .dealer-label,
+  .app.app-in-round .table-meta {
+    font-size: 10px;
+    line-height: 1.2;
+  }
+
+  .app.app-in-round .center-score-board {
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    width: 100%;
+  }
+
+  .app.app-in-round .center-score-item {
+    padding: 1px 3px;
+    font-size: 8.5px;
+  }
+
+  .app.app-in-round .table-action-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 3px;
+    width: 100%;
+    max-height: 62px;
+    overflow: hidden;
+  }
+
+  .app.app-in-round .table-action-bar button,
+  .app.app-in-round .seat-support-actions button {
+    min-width: 48px;
+    min-height: 24px;
+    padding: 0 6px;
+    font-size: 9.5px;
+  }
+
+  .app.app-in-round .table-seat-bottom .seat-support-actions {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 4px;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .app.app-in-round .table-seat-bottom .meld-area {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 4px;
+    min-height: 28px;
+    max-height: 33px;
+    overflow: hidden;
+    padding: 2px 4px;
+  }
+
+  .app.app-in-round .table-seat-bottom .meld {
+    flex: 0 0 auto;
+    gap: 1px;
+    padding: 2px 4px;
+  }
+
+  .app.app-in-round .table-seat-bottom .meld-label {
+    font-size: 9px;
+  }
+
+  .app.app-in-round .table-seat-bottom .meld-tile {
+    width: 15px;
+    height: 21px;
+  }
+
+  .app.app-in-round .table-seat-bottom .hand {
+    min-height: 74px;
+    padding: 2px 3px max(6px, env(safe-area-inset-bottom));
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .app.app-in-round .table-seat-bottom .hand .tile {
+    width: clamp(41px, 7.1vw, 55px);
+    height: clamp(58px, 10vw, 76px);
+  }
+
+  .app.app-in-round .table-seat-bottom .hand .tile-symbol {
+    font-size: clamp(22px, 4.3vw, 31px);
+  }
+
+  .app.app-in-round .advice-badge {
+    bottom: 1px;
+    right: -3px;
+    font-size: 8.5px;
+  }
+
+  .app.app-in-round .match-summary-card {
+    width: min(220px, 100%);
+    padding: 6px;
+  }
+
+  .app.app-in-round .match-summary-card h2 {
+    font-size: 15px;
+  }
+
+  .app.app-in-round .match-summary-card p {
+    font-size: 10px;
+    line-height: 1.25;
+  }
+
+  .app.app-in-round .settings-menu-button {
+    width: clamp(32px, 4.8vw, 42px);
+    height: clamp(32px, 4.8vw, 42px);
+  }
+
+  .app.app-in-round .table-menu-dock {
+    right: max(3px, env(safe-area-inset-right));
+  }
+}
+
+@media (orientation: landscape) and (max-width: 820px) {
+  .app.app-in-round .table {
+    grid-template-columns: 40px minmax(0, 1fr) 40px 34px;
+    grid-template-rows: 30px minmax(0, 1fr) 106px;
+    gap: 2px;
+  }
+
+  .app.app-in-round .table-discard-ring {
+    grid-template-columns: minmax(104px, 1fr) minmax(122px, 0.72fr) minmax(104px, 1fr);
+    grid-template-rows: 39px minmax(52px, 1fr) 39px;
+    gap: 2px;
+  }
+
+  .app.app-in-round .table-center-discards .discard-tile,
+  .app.app-in-round .table-center-discards .tile {
+    width: 11px;
+    height: 16px;
+  }
+
+  .app.app-in-round .table-discard-top .table-center-discards,
+  .app.app-in-round .table-discard-bottom .table-center-discards {
+    grid-template-columns: repeat(18, 11px);
+    grid-auto-rows: 16px;
+  }
+
+  .app.app-in-round .table-discard-left .table-center-discards,
+  .app.app-in-round .table-discard-right .table-center-discards {
+    grid-template-columns: repeat(6, 16px);
+    grid-auto-rows: 14px;
+  }
+
+  .app.app-in-round .table-seat-bottom .seat-name {
+    font-size: 12px;
+  }
+
+  .app.app-in-round .table-seat-bottom .hand {
+    min-height: 68px;
+  }
+
+  .app.app-in-round .table-seat-bottom .hand .tile {
+    width: 39px;
+    height: 55px;
+  }
+
+  .app.app-in-round .table-action-bar {
+    max-height: 54px;
+  }
+
+  .app.app-in-round .table-action-bar button,
+  .app.app-in-round .seat-support-actions button {
+    min-width: 42px;
+    min-height: 22px;
+    padding: 0 5px;
+    font-size: 9px;
+  }
+
+  .app.app-in-round .center-score-item {
+    font-size: 7.8px;
+  }
+}
+
 @media (max-width: 1180px) and (orientation: landscape) {
   .large-tiles .seat-east .hand .tile {
     width: 56px;
@@ -1395,5 +2084,160 @@
     min-height: 26px;
     padding: 0 6px;
     font-size: 10px;
+  }
+}
+
+/* MVP-3.4 final landscape table overrides. Keep this block last. */
+@media (orientation: landscape) and (max-width: 1180px) {
+  .app.app-in-round .table {
+    grid-template-areas:
+      "left top right menu"
+      "left board right menu"
+      "bottom bottom bottom menu";
+    grid-template-columns: clamp(42px, 7.6vw, 66px) minmax(0, 1fr) clamp(42px, 7.6vw, 66px) clamp(34px, 4.8vw, 44px);
+    grid-template-rows: clamp(32px, 9.6vh, 46px) minmax(0, 1fr) clamp(112px, 28vh, 142px);
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+  }
+
+  .app.app-in-round .table-seat-top { grid-area: top; }
+  .app.app-in-round .table-seat-left { grid-area: left; }
+  .app.app-in-round .table-seat-right { grid-area: right; }
+
+  .app.app-in-round .table-seat-bottom {
+    grid-area: bottom;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    gap: 2px;
+    overflow: hidden;
+  }
+
+  .app.app-in-round .center-panel {
+    grid-area: board;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .app.app-in-round .table-discard-ring {
+    grid-template-areas:
+      "top top top"
+      "left info right"
+      "bottom bottom bottom";
+    grid-template-columns: minmax(122px, 1fr) minmax(132px, 0.7fr) minmax(122px, 1fr);
+    grid-template-rows: clamp(42px, 14vh, 62px) minmax(58px, 1fr) clamp(42px, 14vh, 62px);
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .app.app-in-round .table-discard-top { grid-area: top; }
+  .app.app-in-round .table-discard-left { grid-area: left; }
+  .app.app-in-round .table-discard-right { grid-area: right; }
+  .app.app-in-round .table-discard-bottom { grid-area: bottom; }
+
+  .app.app-in-round .center-info {
+    grid-area: info;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .app.app-in-round .table-seat-bottom .hand {
+    min-height: 0;
+    padding: 2px 3px max(4px, env(safe-area-inset-bottom));
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .app.app-in-round .table-seat-bottom .hand .tile {
+    width: clamp(36px, 6.3vw, 49px);
+    height: clamp(50px, 17dvh, 68px);
+  }
+
+  .app.app-in-round .table-seat-bottom .hand .tile-symbol {
+    font-size: clamp(20px, 3.8vw, 28px);
+  }
+
+  .app.app-in-round .table-seat-bottom .meld-area {
+    flex-wrap: nowrap;
+    min-height: 26px;
+    max-height: 30px;
+    overflow: hidden;
+  }
+
+  .app.app-in-round .table-action-bar {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .app.app-in-round .table-action-bar .reaction-actions {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 3px;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 1px;
+  }
+
+  .app.app-in-round .table-action-bar .chi-option-tile {
+    width: 13px;
+    height: 18px;
+  }
+
+  .app.app-in-round .table-action-bar .ron-button,
+  .app.app-in-round .table-action-bar .pon-button,
+  .app.app-in-round .table-action-bar .chi-button,
+  .app.app-in-round .table-action-bar .skip-ron-button,
+  .app.app-in-round .table-action-bar .riichi-button,
+  .app.app-in-round .table-action-bar .cancel-riichi-button,
+  .app.app-in-round .table-action-bar .tsumo-button,
+  .app.app-in-round .table-action-bar .next-round-button,
+  .app.app-in-round .table-action-bar .restart-match-button,
+  .app.app-in-round .table-action-bar .all-hands-button {
+    min-width: 42px;
+    min-height: 23px;
+    padding: 0 5px;
+    font-size: 9px;
+  }
+
+  .app.app-in-round .table-discard-top .table-center-discards .tile,
+  .app.app-in-round .table-seat-top .meld-tile,
+  .app.app-in-round .table-seat-top .tile-back {
+    transform: rotate(180deg);
+  }
+
+  .app.app-in-round .table-discard-right .table-center-discards .tile,
+  .app.app-in-round .table-seat-right .meld-tile,
+  .app.app-in-round .table-seat-right .tile-back {
+    transform: rotate(-90deg);
+  }
+
+  .app.app-in-round .table-discard-left .table-center-discards .tile,
+  .app.app-in-round .table-seat-left .meld-tile,
+  .app.app-in-round .table-seat-left .tile-back {
+    transform: rotate(90deg);
+  }
+
+  .app.app-in-round .table-discard-bottom .table-center-discards .tile,
+  .app.app-in-round .table-seat-bottom .meld-tile,
+  .app.app-in-round .table-seat-bottom .tile-back {
+    transform: rotate(0deg);
+  }
+}
+
+@media (orientation: landscape) and (max-width: 820px) {
+  .app.app-in-round .table {
+    grid-template-columns: 40px minmax(0, 1fr) 40px 34px;
+    grid-template-rows: 30px minmax(0, 1fr) 106px;
+  }
+
+  .app.app-in-round .table-discard-ring {
+    grid-template-columns: minmax(104px, 1fr) minmax(122px, 0.72fr) minmax(104px, 1fr);
+    grid-template-rows: 39px minmax(52px, 1fr) 39px;
+  }
+
+  .app.app-in-round .table-seat-bottom .hand .tile {
+    width: 36px;
+    height: 50px;
   }
 }

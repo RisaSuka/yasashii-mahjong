@@ -352,9 +352,10 @@ Layout tests:
 1. MVP-3.1: Pon core + human pon UI.
 2. MVP-3.2: Chi core + human chi UI.
 3. MVP-3.3: Meld display and open-hand yaku stabilization.
-4. MVP-3.4: Advice / yaku-guide / waits adjustments for open hands.
-5. MVP-4.x: CPU pon / chi decision logic.
-6. Later: Kan.
+4. MVP-3.4: Exact four-direction table layout, right-edge gear menu, rotated discard/meld tiles, and stronger landscape layout guard.
+5. MVP-3.5: Advice / yaku-guide / waits adjustments for open hands if the new table layout needs more polish.
+6. MVP-4.x: CPU pon / chi decision logic.
+7. Later: Kan.
 
 ## Go / No-Go Conditions
 
