@@ -1561,3 +1561,14 @@
   font-size: 12px;
   font-weight: 800;
 }
+
+.table-exact .table-dialog-layer {
+  display: contents;
+}
+
+.table-exact .seat-marker,
+.table-exact .human-support-area,
+.table-exact .human-action-area,
+.table-exact .table-meld-zone {
+  min-width: 0;
+}

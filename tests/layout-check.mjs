@@ -18,6 +18,7 @@ const VIEWPORTS = [
   { width: 780, height: 360 }
 ];
 const SCENARIOS = [
+  { name: "normal", discards: 9, mode: "playing" },
   { name: "early", discards: 3, mode: "playing" },
   { name: "mid", discards: 9, mode: "playing" },
   { name: "late", discards: 18, mode: "playing" },
@@ -613,7 +614,7 @@ function inspectLayoutSource() {
       header: ".topbar",
       table: ".table",
       centerPanel: ".center-panel",
-      centerRing: ".table-discard-ring",
+      centerRing: ".table-exact",
       centerInfo: ".center-info",
       topSeat: ".table-seat-top",
       leftSeat: ".table-seat-left",
@@ -626,7 +627,7 @@ function inspectLayoutSource() {
       hand: ".table-seat-bottom .hand",
       handTile: ".table-seat-bottom .hand .tile",
       gearButton: "[data-action='open-settings-menu']",
-      adviceButton: ".table-seat-bottom [data-action='open-discard-advice']"
+      adviceButton: ".human-support-area [data-action='open-discard-advice']"
     };
 
     if (document.documentElement.scrollWidth > viewport.width + tolerance) {
@@ -685,6 +686,55 @@ function inspectLayoutSource() {
       if (rects.rightSeat && rects.rightSeat.left < centerRect.right - tolerance) {
         failures.push("CPU1 right seat is not right of the table center");
       }
+
+      if (rects.leftSeat && rects.leftSeat.width > viewport.width * 0.12) {
+        failures.push("CPU3 left seat is too wide: " + rects.leftSeat.width);
+      }
+      if (rects.rightSeat && rects.rightSeat.width > viewport.width * 0.12) {
+        failures.push("CPU1 right seat is too wide: " + rects.rightSeat.width);
+      }
+      if (rects.topSeat && rects.topSeat.height > viewport.height * 0.12) {
+        failures.push("CPU2 top seat is too tall: " + rects.topSeat.height);
+      }
+
+      const tableCenterX = tableRect.left + tableRect.width / 2;
+      const tableCenterY = tableRect.top + tableRect.height / 2;
+      const centerX = centerRect.left + centerRect.width / 2;
+      const centerY = centerRect.top + centerRect.height / 2;
+      if (Math.abs(centerX - tableCenterX) > viewport.width * 0.12) {
+        failures.push("center score board is too far from table horizontal center");
+      }
+      if (Math.abs(centerY - tableCenterY) > viewport.height * 0.16) {
+        failures.push("center score board is too far from table vertical center");
+      }
+      if (centerRect.width < 110 || centerRect.height < 70) {
+        failures.push("center score board is too small: " + rectToString(centerRect));
+      }
+    }
+
+    if (rects.gearButton) {
+      if (rects.gearButton.width > viewport.width * 0.08 || rects.gearButton.height > viewport.height * 0.12) {
+        failures.push("gear button is too large: " + rectToString(rects.gearButton));
+      }
+    }
+
+    if (rects.hand && rects.hand.width < viewport.width * 0.7) {
+      failures.push("human hand uses too little width: " + rects.hand.width + " < " + viewport.width * 0.7);
+    }
+
+    if (centerRect) {
+      if (rects.topDiscard && rects.topDiscard.bottom > centerRect.top + tolerance) {
+        failures.push("top discard river is not above the center score board");
+      }
+      if (rects.bottomDiscard && rects.bottomDiscard.top < centerRect.bottom - tolerance) {
+        failures.push("bottom discard river is not below the center score board");
+      }
+      if (rects.leftDiscard && rects.leftDiscard.right > centerRect.left + tolerance) {
+        failures.push("left discard river is not left of the center score board");
+      }
+      if (rects.rightDiscard && rects.rightDiscard.left < centerRect.right - tolerance) {
+        failures.push("right discard river is not right of the center score board");
+      }
     }
 
     for (const name of ["topDiscard", "leftDiscard", "rightDiscard", "bottomDiscard"]) {
@@ -699,6 +749,10 @@ function inspectLayoutSource() {
         const rect = tile.getBoundingClientRect();
         if (rect.width <= 0 || rect.height <= 0) {
           failures.push(name + " discard " + index + " has no size");
+        }
+        if (Math.min(rect.width, rect.height) < 18) {
+          failures.push(name + " discard " + index + " visible size is too small: " + rectToString(rect));
+          break;
         }
         if (!containsRect(zoneRect, rect, 1)) {
           failures.push(name + " discard " + index + " is clipped by zone");
@@ -758,6 +812,7 @@ function inspectLayoutSource() {
     const activeModal = modal || zoomModal || resultModal || yakuGuideModal || waitsModal || allHandsModal || settingsMenuModal;
 
     const actionButtons = [...document.querySelectorAll(".table-action-bar button, .restart-match-button, .next-round-button")];
+    const actionBar = document.querySelector(".human-action-area .table-action-bar");
     if (!activeModal) {
       for (const [index, button] of actionButtons.entries()) {
         const rect = button.getBoundingClientRect();
@@ -768,6 +823,9 @@ function inspectLayoutSource() {
           failures.push("action button " + index + " is not clickable at center");
         }
       }
+    }
+    if (actionBar && handRect) {
+      checkOverlap("action bar", toRect(actionBar.getBoundingClientRect()), "human hand", toRect(handRect), 0);
     }
 
     const adviceButton = document.querySelector(selectors.adviceButton);
@@ -801,7 +859,7 @@ function inspectLayoutSource() {
       }
     }
 
-    const meldArea = document.querySelector(".table-seat-bottom .meld-area");
+    const meldArea = document.querySelector(".table-meld-bottom .meld-area");
     const meldRect = meldArea ? toRect(meldArea.getBoundingClientRect()) : null;
     if (meldArea && !isInViewport(meldArea.getBoundingClientRect(), viewport, tolerance)) {
       failures.push("meld area is outside viewport");

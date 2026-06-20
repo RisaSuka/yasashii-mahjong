@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp34-exact-table-layout-1";
-import { renderGame } from "./ui/render.js?v=mvp34-exact-table-layout-1";
+import { bindControls } from "./ui/input.js?v=mvp341-exact-layout-redo-1";
+import { renderGame } from "./ui/render.js?v=mvp341-exact-layout-redo-1";
 
-const APP_ASSET_VERSION = "mvp34-exact-table-layout-1";
+const APP_ASSET_VERSION = "mvp341-exact-layout-redo-1";
 
 const appRoot = document.querySelector("#app");
 

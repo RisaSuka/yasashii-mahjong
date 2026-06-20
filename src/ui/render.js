@@ -6,7 +6,7 @@ import {
   getYakuDisplayName,
   sortYakuForDisplay
 } from "./yaku-display.js";
-import { getTileSvgPath } from "./tile-assets.js?v=mvp34-exact-table-layout-1";
+import { getTileSvgPath } from "./tile-assets.js?v=mvp341-exact-layout-redo-1";
 import { sortTiles } from "../game/tiles.js";
 
 const WIND_LABELS = {
@@ -149,12 +149,10 @@ function renderTableLegacy(state, options) {
 
 function renderTable(state, options) {
   const { round } = state;
-  const seats = [
-    { player: round.players[2], position: "top" },
-    { player: round.players[3], position: "left" },
-    { player: round.players[1], position: "right" },
-    { player: round.players[0], position: "bottom" }
-  ];
+  const human = round.players[0];
+  const cpu1 = round.players[1];
+  const cpu2 = round.players[2];
+  const cpu3 = round.players[3];
   const discardAdvice = getDiscardAdvice(state, options);
   const yakuGuide = getYakuGuide(state, options);
   const waitInfo = getWaitInfo(state, options);
@@ -162,44 +160,122 @@ function renderTable(state, options) {
   const allHandsOpen = Boolean(options.allHandsDialogOpen);
 
   return `
-    <main class="table" aria-label="4人麻雀卓">
-      ${seats.map(({ player, position }) => renderSeat(player, round, discardAdvice, yakuGuide, waitInfo, riichiInfo, position)).join("")}
-      <section class="center-panel">
-        <div class="table-discard-ring">
-          ${renderTableDiscardZone(round.players[2], "top", round)}
-          ${renderTableDiscardZone(round.players[3], "left", round)}
-          <div class="center-info">
-            <div class="center-info-main">
-              <div class="center-primary">
-                ${renderMatchSummary(state)}
-                <strong class="center-status">${renderCompactStatus(round)}</strong>
-              </div>
-              <div class="center-secondary">
-                <div class="table-meta-row">
-                  <span class="table-meta">山 ${round.wall.length}</span>
-                  <span class="table-meta">王牌 ${round.deadWall.length}</span>
-                  <span class="table-meta">ドラ ${renderDoraIndicators(round)}</span>
-                </div>
-                ${renderCenterScoreBoard(state)}
-                ${renderTableActionBar(state, options)}
-              </div>
+    <main class="table table-exact" aria-label="4人麻雀卓">
+      ${renderSeatMarker(cpu2, round, "top")}
+      ${renderMeldZone(cpu2, "top")}
+      ${renderTableDiscardZone(cpu2, "top", round)}
+
+      ${renderSeatMarker(cpu3, round, "left")}
+      ${renderTableDiscardZone(cpu3, "left", round)}
+
+      <section class="center-panel center-board-panel">
+        <div class="center-info exact-center-info">
+          <div class="center-info-main">
+            <div class="center-primary">
+              ${renderMatchSummary(state)}
+              <strong class="center-status">${renderCompactStatus(round)}</strong>
             </div>
-            ${renderPreviousRoundResult(state.lastRoundResult, round)}
-            ${renderLastActionResult(round)}
-            ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen && options.discardZoomPlayerId == null && !options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
-            ${renderDiscardZoomDialog(round, options.matchResultDialogOpen || options.beginnerHelpDialogOpen || options.yakuGuideDialogOpen || options.waitsDialogOpen || allHandsOpen ? null : options.discardZoomPlayerId)}
-            ${renderMatchResultDialog(state, options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
-            ${renderBeginnerHelpDialog(options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
-            ${renderYakuGuideDialog(yakuGuide, options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
-            ${renderWaitsDialog(waitInfo, options.waitsDialogOpen && !allHandsOpen)}
-            ${renderAllHandsDialog(state, allHandsOpen)}
-            ${renderYakuSummary(round)}
+            <div class="center-secondary">
+              <div class="table-meta-row">
+                <span class="table-meta">山 ${round.wall.length}</span>
+                <span class="table-meta">王牌 ${round.deadWall.length}</span>
+                <span class="table-meta">ドラ ${renderDoraIndicators(round)}</span>
+              </div>
+              ${renderCenterScoreBoard(state)}
+            </div>
           </div>
-          ${renderTableDiscardZone(round.players[1], "right", round)}
-          ${renderTableDiscardZone(round.players[0], "bottom", round)}
+          ${renderPreviousRoundResult(state.lastRoundResult, round)}
+          ${renderLastActionResult(round)}
+          ${renderYakuSummary(round)}
         </div>
       </section>
+
+      ${renderTableDiscardZone(cpu1, "right", round)}
+      ${renderSeatMarker(cpu1, round, "right")}
+      ${renderMeldZone(cpu1, "right")}
+
+      ${renderTableDiscardZone(human, "bottom", round)}
+      <section class="human-support-area" aria-label="補助">
+        ${renderHumanSupportActions(discardAdvice, yakuGuide, waitInfo)}
+      </section>
+      <section class="human-action-area" aria-label="操作">
+        ${renderTableActionBar(state, options)}
+      </section>
+      ${renderMeldZone(human, "bottom")}
+      ${renderHumanSeatPanel(human, round, discardAdvice, riichiInfo)}
+
+      <section class="table-dialog-layer" aria-label="ダイアログ">
+        ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen && options.discardZoomPlayerId == null && !options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
+        ${renderDiscardZoomDialog(round, options.matchResultDialogOpen || options.beginnerHelpDialogOpen || options.yakuGuideDialogOpen || options.waitsDialogOpen || allHandsOpen ? null : options.discardZoomPlayerId)}
+        ${renderMatchResultDialog(state, options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
+        ${renderBeginnerHelpDialog(options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
+        ${renderYakuGuideDialog(yakuGuide, options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
+        ${renderWaitsDialog(waitInfo, options.waitsDialogOpen && !allHandsOpen)}
+        ${renderAllHandsDialog(state, allHandsOpen)}
+      </section>
     </main>
+  `;
+}
+
+function renderSeatMarker(player, round, tablePosition) {
+  if (!player) {
+    return "";
+  }
+
+  const isCurrent = round.currentPlayerIndex === player.id;
+  const positionClass = `seat-${player.wind}`;
+  const currentClass = isCurrent ? " current" : "";
+  const dealerClass = player.id === round.dealerIndex ? " dealer" : "";
+  const riichiClass = player.isRiichi || player.riichi ? " riichi" : "";
+
+  return `
+    <section class="seat seat-marker ${positionClass} table-seat-${tablePosition}${currentClass}${dealerClass}${riichiClass}" data-seat-position="${escapeHtml(tablePosition)}">
+      <span class="seat-name">${WIND_LABELS[player.wind]} ${escapeHtml(player.type === "human" ? "あなた" : player.name)}</span>
+      <span class="seat-marker-badges">
+        ${player.id === round.dealerIndex ? `<span class="seat-dealer-badge">親</span>` : ""}
+        ${player.isRiichi || player.riichi ? `<span class="seat-riichi-badge">リーチ</span>` : ""}
+        ${isCurrent ? `<span class="seat-turn-indicator" aria-label="現在の手番">▶</span>` : ""}
+      </span>
+    </section>
+  `;
+}
+
+function renderHumanSeatPanel(player, round, discardAdvice, riichiInfo) {
+  const isCurrent = round.currentPlayerIndex === player.id;
+  const currentClass = isCurrent ? " current" : "";
+  const dealerClass = player.id === round.dealerIndex ? " dealer" : "";
+  const riichiClass = player.isRiichi || player.riichi ? " riichi" : "";
+
+  return `
+    <section class="seat human-hand-panel seat-${player.wind} table-seat-bottom${currentClass}${dealerClass}${riichiClass}" data-seat-position="bottom">
+      <div class="seat-header human-seat-header">
+        <span class="seat-name">${WIND_LABELS[player.wind]} あなた</span>
+        <span class="seat-marker-badges">
+          ${player.id === round.dealerIndex ? `<span class="seat-dealer-badge">親</span>` : ""}
+          ${player.isRiichi || player.riichi ? `<span class="seat-riichi-badge">リーチ</span>` : ""}
+          ${isCurrent ? `<span class="seat-turn-indicator" aria-label="現在の手番">▶ 手番</span>` : ""}
+        </span>
+      </div>
+      ${renderHumanHand(player, round, discardAdvice, riichiInfo)}
+    </section>
+  `;
+}
+
+function renderHumanSupportActions(discardAdvice, yakuGuide, waitInfo) {
+  return `
+    <div class="seat-support-actions">
+      ${renderSeatAdviceButton(discardAdvice)}
+      ${renderYakuGuideButton(yakuGuide)}
+      ${renderWaitsButton(waitInfo)}
+    </div>
+  `;
+}
+
+function renderMeldZone(player, tablePosition) {
+  return `
+    <section class="table-meld-zone table-meld-${tablePosition}" aria-label="${player?.name || ""}の鳴き">
+      ${renderMelds(player)}
+    </section>
   `;
 }
 
@@ -446,8 +522,8 @@ function renderWaitsButton(waitInfo) {
   const hasDiscardWaits = waitInfo?.hasTenpaiDiscard && Array.isArray(waitInfo.discardWaitOptions) && waitInfo.discardWaitOptions.length > 0;
 
   return `
-    <button type="button" class="waits-trigger${hasWaits || hasDiscardWaits ? " has-waits" : ""}" data-action="open-waits">
-      ${hasDiscardWaits ? "\u5207\u308b\u3068\u5f85\u3061" : hasWaits ? "\u5f85\u3061\u3042\u308a" : "\u5f85\u3061"}
+    <button type="button" class="waits-trigger${hasWaits || hasDiscardWaits ? " has-waits" : ""}" data-action="open-waits" title="${hasDiscardWaits ? "\u5207\u308b\u3068\u5f85\u3061" : hasWaits ? "\u5f85\u3061\u3042\u308a" : "\u5f85\u3061"}">
+      \u5f85\u3061
     </button>
   `;
 }
@@ -612,12 +688,12 @@ function renderDiscardAdviceDialog(advice, isOpen) {
 
 function renderYakuGuideButton(targets) {
   if (!Array.isArray(targets) || targets.length === 0) {
-    return `<span class="seat-yaku-guide-placeholder" aria-hidden="true">\u5f79\u30ac\u30a4\u30c9</span>`;
+    return `<span class="seat-yaku-guide-placeholder" aria-hidden="true" title="\u5f79\u30ac\u30a4\u30c9">\u5f79</span>`;
   }
 
   return `
-    <button type="button" class="yaku-guide-trigger" data-action="open-yaku-guide">
-      \u5f79\u30ac\u30a4\u30c9
+    <button type="button" class="yaku-guide-trigger" data-action="open-yaku-guide" title="\u5f79\u30ac\u30a4\u30c9">
+      \u5f79
     </button>
   `;
 }
@@ -996,12 +1072,12 @@ function renderMeld(meld) {
 
 function renderSeatAdviceButton(advice) {
   if (!Array.isArray(advice) || advice.length === 0) {
-    return `<span class="seat-advice-placeholder" aria-hidden="true">助言を見る</span>`;
+    return `<span class="seat-advice-placeholder" aria-hidden="true" title="助言を見る">助言</span>`;
   }
 
   return `
-    <button type="button" class="discard-advice-trigger seat-advice-trigger" data-action="open-discard-advice">
-      助言を見る
+    <button type="button" class="discard-advice-trigger seat-advice-trigger" data-action="open-discard-advice" title="助言を見る">
+      助言
     </button>
   `;
 }

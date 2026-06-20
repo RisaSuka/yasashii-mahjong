@@ -1,8 +1,8 @@
-# MVP-3.4 exact four-direction table layout note
+# MVP-3.4.1 exact four-direction table layout redo note
 
-MVP-3.4 moves the active match screen to a four-direction table layout based on the hand-drawn layout plan. During a round, the old top header is hidden and the new right-edge gear menu contains `New round`, `Large tiles`, `Advice ON/OFF`, and `Help`. CPU1 is on the right, CPU2 is at the top, CPU3 is on the left, and the human hand stays across the bottom. Discards surround the center table, and tile graphics rotate by seat direction while labels and buttons remain upright.
+MVP-3.4.1 rebuilds the active match screen around the hand-drawn table plan instead of layering CSS on the old card layout. During a round, the old top header is hidden and the right-edge gear menu contains `New round`, `Large tiles`, `Advice ON/OFF`, and `Help`. CPU1 is a compact right seat, CPU2 is a compact top seat, CPU3 is a compact left seat, and the human hand stays across the bottom. Discard rivers independently surround the center score board, and tile graphics rotate by seat direction while labels and buttons remain upright.
 
-Current local checks target MVP-3.4 normal tests, the smartphone landscape layout guard including the `settings-menu-open` scenario, four-direction seat/discard placement, tile rotation checks, no active-round header, and the CPU win reachability diagnostic.
+Current local checks target MVP-3.4.1 normal tests, the smartphone landscape layout guard including the `settings-menu-open`, `pon-reaction`, `chi-reaction`, and `multiple-melds` scenarios, four-direction seat/discard placement, tile rotation checks, compact CPU seat geometry, center-board alignment, no active-round header, and the CPU win reachability diagnostic.
 
 # MVP-3.3 call stability note
 

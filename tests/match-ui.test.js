@@ -197,24 +197,21 @@ export function registerMatchUiTests() {
   test("MVP-1.1 UI: human and CPU discard areas render separately", async () => {
     const state = addDiscards(await startMatchState(), 4);
     const html = await renderState(state);
-    const eastSeatStart = html.indexOf("seat-east");
-    const humanDiscardIndex = html.indexOf("discard-area-human", eastSeatStart);
-    const humanHandIndex = html.indexOf('class="hand"', eastSeatStart);
+    const humanDiscardIndex = html.indexOf("table-discard-east");
+    const humanHandIndex = html.indexOf('class="hand"', html.indexOf("table-seat-bottom"));
 
     assertTrue(humanDiscardIndex > -1, "Human discard area should be explicit");
     assertTrue(humanHandIndex > -1, "Human hand should still render");
-    assertTrue(humanDiscardIndex > humanHandIndex, "DOM keeps hand controls stable while CSS moves human discards above the hand");
-    assertTrue(html.includes("discard-area-cpu"), "CPU discard area should be explicit");
+    assertTrue(humanDiscardIndex < humanHandIndex, "DOM keeps center river separate from the bottom human hand");
+    assertTrue(html.includes("table-discard-south"), "CPU discard area should be explicit");
     assertTrue(html.includes("advice-suggested") || html.includes("seat-east"), "Advice highlighting/rendering should remain available");
   });
 
   test("MVP-1.1.2 UI: human discard display keeps late-round recent tiles", async () => {
     const state = addDiscards(await startMatchState(), 18);
     const html = await renderState(state);
-    const eastSeatStart = html.indexOf("seat-east");
-    const eastSeatEnd = html.indexOf("</section>", eastSeatStart);
-    const eastSeatHtml = html.slice(eastSeatStart, eastSeatEnd);
-    const visibleHumanDiscards = (eastSeatHtml.match(/class="tile[^"]*discard-tile/g) || []).length;
+    const eastDiscardHtml = extractSectionHtml(html, "table-discard-east");
+    const visibleHumanDiscards = (eastDiscardHtml.match(/class="tile[^"]*discard-tile/g) || []).length;
 
     assertEqual(visibleHumanDiscards, 18, "Human discard area should keep the latest 18 tiles for late-round review");
   });
@@ -222,7 +219,7 @@ export function registerMatchUiTests() {
   test("MVP-1.1.1 UI: table-center discard ring renders all four directions", async () => {
     const html = await renderState(addDiscards(await startMatchState(), 8));
 
-    assertTrue(html.includes("table-discard-ring"), "Center discard ring should render");
+    assertTrue(html.includes("table-exact"), "Exact center table layout should render");
     assertTrue(html.includes("table-discard-north"), "North CPU discards should render near the center");
     assertTrue(html.includes("table-discard-west"), "West CPU discards should render near the center");
     assertTrue(html.includes("table-discard-south"), "South CPU discards should render near the center");
@@ -390,10 +387,10 @@ export function registerMatchUiTests() {
       }
     };
     const html = await renderState(state, { suggestDiscards: sampleAdvice });
-    const centerHtml = extractBetween(html, 'class="center-info"', 'class="table-discard-south"');
-    const eastSeatHtml = extractSectionHtml(html, "seat-east");
+    const centerHtml = extractSectionHtml(html, "center-info");
+    const supportHtml = extractSectionHtml(html, "human-support-area");
 
-    assertTrue(eastSeatHtml.includes('data-action="open-discard-advice"'), "Advice button should render in the human seat header");
+    assertTrue(supportHtml.includes('data-action="open-discard-advice"'), "Advice button should render near the human seat controls");
     assertTrue(!centerHtml.includes('data-action="open-discard-advice"'), "Center info should not gain or lose height from the advice button");
   });
 
@@ -1463,7 +1460,13 @@ function tilesForUi(pattern) {
 }
 
 function getTaggedSection(html, marker) {
-  const markerIndex = html.indexOf(marker);
+  let markerIndex = html.indexOf(`class="all-hands-item`);
+  if (markerIndex >= 0) {
+    markerIndex = html.indexOf(marker, markerIndex);
+  }
+  if (markerIndex < 0) {
+    markerIndex = html.indexOf(marker);
+  }
   if (markerIndex < 0) {
     return "";
   }

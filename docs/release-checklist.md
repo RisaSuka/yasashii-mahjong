@@ -5,11 +5,11 @@ Use this before merging to `main` or publishing with GitHub Pages.
 ## Current Release Candidate
 
 - Branch: `codex/mvp-34-exact-table-layout`
-- Scope: MVP-0.1 through MVP-3.4 exact four-direction table layout
+- Scope: MVP-0.1 through MVP-3.4.1 exact hand-drawn four-direction table layout redo
 - Expected automated result: `334 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-3.4 is not published yet.
+- Publish status: MVP-3.4.1 is not published yet.
 
 ## Git Safety
 
@@ -44,7 +44,7 @@ node tests/layout-check.mjs
 
 - If Node is not on PATH in the Codex desktop environment, use the bundled Node command documented in `docs/layout-test.md`.
 - Confirm layout-check screenshots are written under `test-artifacts/layout/`.
-- Current layout-check result: all target viewports and scenarios pass, including `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `all-hands-open`, `settings-menu-open`, `yaku-guide`, `waits`, `riichi-ready`, `riichi-declared`, `cpu-riichi`, `pon-reaction`, `chi-reaction`, `open-melds`, `multiple-melds`, `open-tanyao-win`, `open-yakuhai-win`, and `cpu-win`; MVP-3.4 also checks active-round header removal, right-edge gear menu fit, four-direction seat/discard placement, discard tile rotation, and meld/hand separation.
+- Current layout-check result: all target viewports and scenarios pass, including `normal`, `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `all-hands-open`, `settings-menu-open`, `yaku-guide`, `waits`, `riichi-ready`, `riichi-declared`, `cpu-riichi`, `pon-reaction`, `chi-reaction`, `open-melds`, `multiple-melds`, `open-tanyao-win`, `open-yakuhai-win`, and `cpu-win`; MVP-3.4.1 also checks active-round header removal, compact CPU seat geometry, right-edge gear menu fit, center-score-board alignment, four-direction river placement, discard tile rotation, human hand width, and meld/action/hand separation.
 - Run the CPU win reachability diagnostic:
 
 ```powershell
