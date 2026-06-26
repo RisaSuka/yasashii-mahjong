@@ -59,7 +59,7 @@ async function main() {
 
 async function runMock(viewport) {
   const page = await browser.newPage();
-  const label = `exact-mock-${viewport.width}x${viewport.height}-v3`;
+  const label = `exact-mock-${viewport.width}x${viewport.height}-v4`;
   const failures = [];
 
   try {
@@ -184,8 +184,12 @@ function inspectMockSource() {
       failures.push("hand tile gap is greater than 1.5px: " + handGap.toFixed(2));
     }
     const firstHandTileRect = rect(handTiles[0]);
-    if (!firstHandTileRect || firstHandTileRect.height < 60) {
+    if (!firstHandTileRect || firstHandTileRect.height < 72) {
       failures.push("hand tile height is too small: " + (firstHandTileRect ? firstHandTileRect.height.toFixed(1) : "missing"));
+    }
+    const handTileAspectRatio = firstHandTileRect ? firstHandTileRect.height / firstHandTileRect.width : 0;
+    if (handTileAspectRatio < 1.35 || handTileAspectRatio > 1.85) {
+      failures.push("hand tile aspect ratio is outside natural tile range: " + handTileAspectRatio.toFixed(2));
     }
     if (handRect && firstHandTileRect && handRect.height < firstHandTileRect.height + 4) {
       failures.push("hand area height is smaller than tile height plus padding: " + handRect.height.toFixed(1) + " < " + (firstHandTileRect.height + 4).toFixed(1));
@@ -232,6 +236,10 @@ function inspectMockSource() {
     if (!document.querySelector(".player-score-display.is-riichi-score[data-player-id='1']")) {
       failures.push("CPU1 riichi score display is not highlighted");
     }
+    checkRotation("top wind indicator", document.querySelector(".score-top-pair .wind-indicator"), 180);
+    checkRotation("right wind indicator", document.querySelector(".score-right-pair .wind-indicator"), -90);
+    checkRotation("left wind indicator", document.querySelector(".score-left-pair .wind-indicator"), 90);
+    checkRotation("bottom wind indicator", document.querySelector(".score-bottom-pair .wind-indicator"), 0);
     if (!scoreValues.every((value) => value === "25000") || scoreValues.length !== 4) {
       failures.push("center score board does not show four full 25000 scores");
     }
@@ -331,6 +339,7 @@ function inspectMockSource() {
         handWidth: Math.round(handRect.width),
         handAreaHeight: Number(handRect.height.toFixed(1)),
         handTileHeight: firstHandTileRect ? Number(firstHandTileRect.height.toFixed(1)) : 0,
+        handTileAspectRatio: Number(handTileAspectRatio.toFixed(3)),
         scorePairDistances,
         gearRect: compactRect(gearRect),
         rootRect: compactRect(rootRect)

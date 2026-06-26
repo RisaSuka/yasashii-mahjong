@@ -9,7 +9,7 @@
   --river-w: clamp(15px, 2.05vw, 18px);
   --river-h: clamp(20px, 5.6dvh, 24px);
   --hand-w: clamp(49px, 6.35vw, 54px);
-  --hand-h: clamp(66px, 19.6dvh, 76px);
+  --hand-h: clamp(78px, 21.6dvh, 88px);
   --gap: 2px;
 }
 
@@ -61,10 +61,10 @@ button {
     clamp(170px, 23vw, 210px)
     clamp(28px, 4.1vw, 34px);
   grid-template-rows:
-    clamp(76px, 20dvh, 84px)
-    minmax(86px, 1fr)
-    clamp(92px, 27dvh, 108px)
-    clamp(76px, 22dvh, 88px);
+    clamp(70px, 18.5dvh, 80px)
+    minmax(82px, 1fr)
+    clamp(74px, 22dvh, 92px)
+    clamp(92px, 26dvh, 104px);
   grid-template-areas:
     "top-meld top-meld top-river top-seat right-meld gear"
     "left-seat left-river score right-river right-seat gear"
@@ -322,6 +322,23 @@ button {
   font-size: clamp(11px, 1.5vw, 13px);
   font-weight: 900;
   line-height: 1;
+  transform-origin: center center;
+}
+
+.score-top-pair .wind-indicator {
+  transform: rotate(180deg);
+}
+
+.score-right-pair .wind-indicator {
+  transform: rotate(-90deg);
+}
+
+.score-left-pair .wind-indicator {
+  transform: rotate(90deg);
+}
+
+.score-bottom-pair .wind-indicator {
+  transform: rotate(0deg);
 }
 
 .is-dealer-wind {
@@ -606,6 +623,6 @@ button {
 
   :root {
     --hand-w: clamp(43px, 5.95vw, 48px);
-    --hand-h: clamp(62px, 18.5dvh, 68px);
+    --hand-h: clamp(72px, 20dvh, 78px);
   }
 }
