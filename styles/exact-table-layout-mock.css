@@ -334,8 +334,8 @@ button {
   background: rgba(255, 241, 242, 0.96);
   color: var(--red);
   box-shadow:
-    0 0 0 1px rgba(220, 38, 38, 0.5) inset,
-    0 0 7px rgba(220, 38, 38, 0.56);
+    0 0 0 1px rgba(220, 38, 38, 0.52) inset,
+    0 0 4px rgba(220, 38, 38, 0.5);
 }
 
 .seat-wind-indicator {
@@ -467,17 +467,17 @@ button {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 48px;
-  height: 18px;
-  min-height: 18px;
+  width: 42px;
+  height: 16px;
+  min-height: 16px;
 }
 
 .score-unit-left .score-value {
-  transform: translate(-50%, -50%) rotate(90deg);
+  transform: translate(calc(-50% + 1px), -50%) rotate(90deg);
 }
 
 .score-unit-right .score-value {
-  transform: translate(-50%, -50%) rotate(-90deg);
+  transform: translate(calc(-50% - 1px), -50%) rotate(-90deg);
 }
 
 .score-unit-bottom .score-value {

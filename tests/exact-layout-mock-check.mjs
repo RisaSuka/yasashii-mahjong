@@ -292,7 +292,23 @@ function inspectMockSource() {
 
       const wind = unit.querySelector(".wind-indicator");
       const score = unit.querySelector(".score-value");
-      checkNoOverlap(position + " wind indicator", rect(wind), position + " score value", rect(score));
+      const windRect = rect(wind);
+      const scoreRect = rect(score);
+      if (!containsRect(centerRect, windRect, 0)) {
+        failures.push(position + " wind indicator is outside center board: " + JSON.stringify(compactRect(windRect)));
+      }
+      if (!containsRect(centerRect, scoreRect, 0)) {
+        failures.push(position + " score value is outside center board: " + JSON.stringify(compactRect(scoreRect)));
+      }
+      if (scoreRect && (
+        scoreRect.left < centerRect.left + 1
+        || scoreRect.right > centerRect.right - 1
+        || scoreRect.top < centerRect.top + 1
+        || scoreRect.bottom > centerRect.bottom - 1
+      )) {
+        failures.push(position + " score value is visually too close to center board edge: " + JSON.stringify(compactRect(scoreRect)));
+      }
+      checkNoOverlap(position + " wind indicator", windRect, position + " score value", scoreRect);
       if ((score?.textContent || "").includes("リーチ")) {
         failures.push(position + " score display should use glow only, not riichi text");
       }
