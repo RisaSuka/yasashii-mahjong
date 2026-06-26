@@ -112,11 +112,19 @@ export function registerPonTests() {
 
   test("PON UI: pon reaction renders pon and skip buttons", async () => {
     const state = await scenarioState("human-pon-ready-yakuhai");
+    const { getPonOptions } = await loadPonActions();
     const html = await renderState(state, {
       canDeclarePon: () => true
     });
+    const openHtml = await renderState(state, {
+      canDeclarePon: () => true,
+      getPonOptions: () => getPonOptions(state, 0),
+      callOptionsDialogType: "pon"
+    });
 
-    assertTrue(html.includes('data-action="declare-pon"'), "Pon reaction should show a pon button");
+    assertTrue(html.includes('data-action="open-call-options"'), "Pon reaction should show a pon options button");
+    assertTrue(html.includes('data-call-type="pon"'), "Pon reaction should open pon choices");
+    assertTrue(openHtml.includes('data-action="declare-pon"'), "Pon options should include a declare button");
     assertTrue(html.includes('data-action="skip-ron"'), "Pon reaction should keep a skip button");
   });
 

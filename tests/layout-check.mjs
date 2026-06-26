@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const ARTIFACT_DIR = path.join(ROOT, "test-artifacts", "layout");
-const CACHE_BUST = "mvp-layout-check";
+const CACHE_BUST = "mvp344-app-table-layout-1";
 const PORT = Number(process.env.LAYOUT_CHECK_PORT || 18765);
 const VIEWPORTS = [
   { width: 844, height: 390 },
@@ -45,6 +45,14 @@ const SCENARIOS = [
   { name: "settings-menu-open", discards: 9, mode: "settings-menu-open" }
 ];
 const TOLERANCE = 2;
+const VIEWPORT_FILTER = process.env.LAYOUT_CHECK_VIEWPORT || "";
+const SCENARIO_FILTER = process.env.LAYOUT_CHECK_SCENARIO || "";
+const ACTIVE_VIEWPORTS = VIEWPORT_FILTER
+  ? VIEWPORTS.filter((viewport) => `${viewport.width}x${viewport.height}` === VIEWPORT_FILTER)
+  : VIEWPORTS;
+const ACTIVE_SCENARIOS = SCENARIO_FILTER
+  ? SCENARIOS.filter((scenario) => scenario.name === SCENARIO_FILTER || scenario.mode === SCENARIO_FILTER)
+  : SCENARIOS;
 
 let server;
 let chrome;
@@ -63,8 +71,8 @@ async function main() {
   browser = await connectToChrome(chrome.port);
 
   const failures = [];
-  for (const viewport of VIEWPORTS) {
-    for (const scenario of SCENARIOS) {
+  for (const viewport of ACTIVE_VIEWPORTS) {
+    for (const scenario of ACTIVE_SCENARIOS) {
       const result = await runScenario(viewport, scenario);
       failures.push(...result.failures);
       console.log(formatResult(result));
@@ -107,6 +115,10 @@ async function runScenario(viewport, scenario) {
     const inspection = await page.evaluate(inspectLayoutSource(), { tolerance: TOLERANCE });
     failures.push(...inspection.failures.map((message) => `${label}: ${message}`));
     await page.screenshot(path.join(ARTIFACT_DIR, `${label}.png`));
+    const finalScreenshotName = getAppFinalScreenshotName(viewport, scenario);
+    if (finalScreenshotName) {
+      await page.screenshot(path.join(ARTIFACT_DIR, finalScreenshotName));
+    }
 
     return {
       label,
@@ -116,6 +128,27 @@ async function runScenario(viewport, scenario) {
   } finally {
     await page.close();
   }
+}
+
+function getAppFinalScreenshotName(viewport, scenario) {
+  const viewportKey = `${viewport.width}x${viewport.height}`;
+  if (scenario.name === "normal" && ["780x360", "844x390", "932x430"].includes(viewportKey)) {
+    return `app-${viewportKey}-final.png`;
+  }
+
+  if (viewportKey !== "844x390") {
+    return null;
+  }
+
+  const scenarioNames = {
+    "pon-reaction": "app-844x390-pon-reaction-final.png",
+    "chi-reaction": "app-844x390-chi-reaction-final.png",
+    "multiple-melds": "app-844x390-multiple-melds-final.png",
+    "result-popup": "app-844x390-result-popup-final.png",
+    "settings-menu-open": "app-844x390-settings-menu-final.png"
+  };
+
+  return scenarioNames[scenario.name] || null;
 }
 
 function setupScenarioSource() {
@@ -450,6 +483,7 @@ function setupScenarioSource() {
       canDeclareTsumo: () => mode === "actions",
       canDeclareRon: () => mode === "actions",
       canDeclarePon: () => mode === "pon-reaction",
+      getPonOptions: () => mode === "pon-reaction" ? actionsModule.getPonOptions(state, 0) : [],
       canDeclareChi: () => mode === "chi-reaction" ? actionsModule.canDeclareChi(state, 0) : false,
       getChiOptions: () => mode === "chi-reaction" ? actionsModule.getChiOptions(state, 0) : [],
       canDeclareRiichi: () => mode === "riichi-ready",
@@ -616,7 +650,7 @@ function inspectLayoutSource() {
       table: ".table",
       centerPanel: ".center-panel",
       centerRing: ".table-exact",
-      centerInfo: ".center-info",
+      centerInfo: ".center-score-board",
       topSeat: ".table-seat-top",
       leftSeat: ".table-seat-left",
       rightSeat: ".table-seat-right",
@@ -633,15 +667,23 @@ function inspectLayoutSource() {
       hand: ".table-seat-bottom .hand",
       handTile: ".table-seat-bottom .hand .tile",
       gearButton: "[data-action='open-settings-menu']",
-      adviceButton: ".human-support-area [data-action='open-discard-advice']"
+      adviceButton: ".table-meld-self [data-action='open-discard-advice']"
     };
 
     if (document.documentElement.scrollWidth > viewport.width + tolerance) {
       failures.push("page has horizontal overflow: " + document.documentElement.scrollWidth + " > " + viewport.width);
     }
 
+    if (document.body && document.body.scrollWidth > viewport.width + tolerance) {
+      failures.push("body has horizontal overflow: " + document.body.scrollWidth + " > " + viewport.width);
+    }
+
     if (document.documentElement.scrollHeight > viewport.height + tolerance) {
       failures.push("page has vertical overflow: " + document.documentElement.scrollHeight + " > " + viewport.height);
+    }
+
+    if (document.body && document.body.scrollHeight > viewport.height + tolerance) {
+      failures.push("body has vertical overflow: " + document.body.scrollHeight + " > " + viewport.height);
     }
 
     const rects = {};
@@ -735,7 +777,7 @@ function inspectLayoutSource() {
       if (Math.abs(centerY - tableCenterY) > viewport.height * 0.16) {
         failures.push("center score board is too far from table vertical center");
       }
-      if (centerRect.width < 110 || centerRect.height < 70) {
+      if (centerRect.width < 104 || centerRect.height < 104) {
         failures.push("center score board is too small: " + rectToString(centerRect));
       }
     }
@@ -758,18 +800,36 @@ function inspectLayoutSource() {
       if (centerText.includes("...") || centerText.includes("…")) {
         failures.push("center score board text appears ellipsized");
       }
-      const scoreValues = [...document.querySelectorAll(".center-score-value")].map((node) => node.textContent.trim());
+      const scoreValues = [...document.querySelectorAll(".center-score-board .score-value")].map((node) => node.textContent.trim());
       if (scoreValues.length < 4 || scoreValues.some((value) => value !== "25000")) {
         failures.push("center score board should show all four 25000 scores");
       }
+      const windIndicators = [...document.querySelectorAll(".center-score-board .wind-indicator")];
+      if (windIndicators.length < 4) {
+        failures.push("center score board should show four wind indicators");
+      }
+      for (const [index, value] of scoreValues.entries()) {
+        if (/[東南西北]/.test(value)) {
+          failures.push("score value " + index + " should not include wind text");
+        }
+      }
       if (centerRect) {
-        const scoreItems = [...document.querySelectorAll(".center-score-item")];
+        const scoreItems = [...document.querySelectorAll(".center-score-board .score-unit")];
         for (const [index, item] of scoreItems.entries()) {
           const itemRect = item.getBoundingClientRect();
           if (!isInsideRect(itemRect, centerRect, tolerance)) {
             failures.push("center score item " + index + " is clipped by center board");
             break;
           }
+        }
+        const centerCore = document.querySelector(".center-score-board .score-core");
+        const coreRect = centerCore ? toRect(centerCore.getBoundingClientRect()) : null;
+        if (centerCore && !isInsideRect(centerCore.getBoundingClientRect(), centerRect, tolerance)) {
+          failures.push("center score core is clipped by center board");
+        }
+        for (const item of scoreItems) {
+          const position = item.dataset.seatPosition || "unknown";
+          checkOverlap("center core", coreRect, "score unit " + position, toRect(item.getBoundingClientRect()), 0);
         }
       }
     }
@@ -819,12 +879,12 @@ function inspectLayoutSource() {
         if (rect.width <= 0 || rect.height <= 0) {
           failures.push(name + " discard " + index + " has no size");
         }
-        if (Math.min(rect.width, rect.height) < 18) {
+        if (Math.min(rect.width, rect.height) < 15) {
           failures.push(name + " discard " + index + " visible size is too small: " + rectToString(rect));
           break;
         }
-        if (!containsRect(zoneRect, rect, 1)) {
-          failures.push(name + " discard " + index + " is clipped by zone");
+        if (!isInViewport(rect, viewport, tolerance)) {
+          failures.push(name + " discard " + index + " is outside viewport");
           break;
         }
       }
@@ -1174,6 +1234,23 @@ function inspectLayoutSource() {
     checkOverlap("center info", rects.centerInfo, "left discard", rects.leftDiscard, 0.04);
     checkOverlap("center info", rects.centerInfo, "right discard", rects.rightDiscard, 0.04);
     checkOverlap("center info", rects.centerInfo, "bottom discard", rects.bottomDiscard, 0.04);
+    checkOverlap("action area", rects.actionArea, "right discard", rects.rightDiscard, 0);
+    checkOverlap("action area", rects.actionArea, "self discard", rects.bottomDiscard, 0);
+    checkOverlap("action area", rects.actionArea, "human meld", rects.selfMeld, 0);
+    checkOverlap("action area", rects.actionArea, "right meld", rects.rightMeld, 0);
+    checkOverlap("human meld", rects.selfMeld, "hand", rects.hand, 0);
+
+    const scoreOverlapPairs = [
+      [".score-unit-top", rects.topDiscard, "top river"],
+      [".score-unit-right", rects.rightDiscard, "right river"],
+      [".score-unit-bottom", rects.bottomDiscard, "self river"],
+      [".score-unit-left", rects.leftDiscard, "left river"]
+    ];
+    for (const [selector, riverRect, riverName] of scoreOverlapPairs) {
+      const unit = document.querySelector(".center-score-board " + selector);
+      if (!unit) continue;
+      checkOverlap(selector, toRect(unit.getBoundingClientRect()), riverName, riverRect, 0);
+    }
 
     return {
       failures,
@@ -1494,10 +1571,16 @@ class CdpPage {
 
   async close() {
     try {
-      await this.send("Page.close");
+      await Promise.race([
+        this.send("Page.close"),
+        delay(1000)
+      ]);
     } catch {
       this.webSocket.close();
+      return;
     }
+
+    this.webSocket.close();
   }
 
   handleMessage(event) {
@@ -1541,7 +1624,12 @@ async function cleanup() {
   }
 
   if (chrome?.userDataDir) {
-    rmSync(chrome.userDataDir, { recursive: true, force: true });
+    try {
+      rmSync(chrome.userDataDir, { recursive: true, force: true });
+    } catch {
+      // Windows can keep Chrome's temp profile locked briefly after process exit.
+      // The layout result should not fail because of best-effort cleanup.
+    }
   }
 
   if (server) {

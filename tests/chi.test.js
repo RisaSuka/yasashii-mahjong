@@ -94,9 +94,16 @@ export function registerChiTests() {
       canDeclareChi: () => true,
       getChiOptions: () => getChiOptions(state, 0)
     });
+    const openHtml = await renderState(state, {
+      canDeclareChi: () => true,
+      getChiOptions: () => getChiOptions(state, 0),
+      callOptionsDialogType: "chi"
+    });
 
-    assertEqual(countOccurrences(html, 'data-action="declare-chi"'), 3, "Each chi candidate should render as its own button");
-    assertTrue(html.includes("chi-option-tile"), "Chi buttons should show the tile combination");
+    assertTrue(html.includes('data-action="open-call-options"'), "Chi reaction should show a chi options button");
+    assertTrue(html.includes('data-call-type="chi"'), "Chi reaction should open chi choices");
+    assertEqual(countOccurrences(openHtml, 'data-action="declare-chi"'), 3, "Each chi candidate should render as its own button");
+    assertTrue(openHtml.includes("chi-option-tile"), "Chi buttons should show the tile combination");
     assertTrue(html.includes('data-action="skip-ron"'), "Chi reaction should keep a skip button");
   });
 

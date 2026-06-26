@@ -1,15 +1,15 @@
 # Current Status
 
-Last updated for MVP-3.4.2 hand-drawn reference layout correction.
+Last updated for MVP-3.4.4 approved table layout app connection.
 
 ## Repository State
 
 - Working branch: `codex/mvp-34-exact-table-layout`
-- Automated tests: MVP-3.4.2 normal tests pass locally (`334 pass / 0 pending / 0 fail`)
-- Layout check: Chrome-based smartphone landscape guard includes the hand-drawn exact table redo, active-round header removal, compact CPU seat geometry, center-board alignment, full four-score visibility, right-edge settings menu, local 6x3 river order before rotation, pon/chi reactions, multiple melds, open-hand wins, result/all-hands popups, and page overflow checks
-- Working tree: clean at the time of the latest MVP-3.4.2 verification
+- Automated tests: MVP-3.4.4 normal tests pass locally (`334 pass / 0 pending / 0 fail`)
+- Layout check: Chrome-based smartphone landscape guard covers the connected app table layout, active-round header removal, compact CPU seat geometry, center-board alignment, full four-score visibility, right-edge settings menu, local 6x3 river order before rotation, pon/chi reactions, multiple melds, open-hand wins, result/all-hands popups, action/meld/hand separation, and page overflow checks
+- Working tree: clean at the time of the latest MVP-3.4.4 verification
 - Push: not yet
-- `main` merge: not yet for MVP-3.4.2
+- `main` merge: not yet for MVP-3.4.4
 
 ## Implemented MVPs
 
@@ -58,6 +58,7 @@ Last updated for MVP-3.4.2 hand-drawn reference layout correction.
 | MVP-3.3 | Working branch | Call stability pass: open yakuhai/tanyao wins, open no-yaku rejection, no menzen-tsumo on open hands, next-round meld clearing, and open-hand layout scenarios. |
 | MVP-3.4.1 | Working branch | Active match screen is rebuilt as a hand-drawn four-direction table layout with compact CPU seats, independent rivers around the center score board, right-edge gear menu, rotated seat discards, separated human meld/support/action strips, and strengthened geometry guard. |
 | MVP-3.4.2 | Working branch | Reference-layout correction: small CPU seat markers, center score board as the visual anchor, local 6x3 river order with whole-river rotation, near-full-width human hand, compact `推` advice badges, and stronger geometry checks for the hand-drawn layout. |
+| MVP-3.4.4 | Working branch | Approved static exact-table mock connected to the live app renderer with the hidden round header, top-right gear menu, four-direction seats/rivers, readable center score board, full-width human hand, reserved action/support/meld zones, and expanded app layout screenshots. |
 
 ## Current Capabilities
 

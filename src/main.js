@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp342-reference-layout-fix-1";
-import { renderGame } from "./ui/render.js?v=mvp342-reference-layout-fix-1";
+import { bindControls } from "./ui/input.js?v=mvp344-app-table-layout-1";
+import { renderGame } from "./ui/render.js?v=mvp344-app-table-layout-1";
 
-const APP_ASSET_VERSION = "mvp342-reference-layout-fix-1";
+const APP_ASSET_VERSION = "mvp344-app-table-layout-1";
 
 const appRoot = document.querySelector("#app");
 
@@ -17,6 +17,7 @@ let waitsDialogOpen = false;
 let allHandsDialogOpen = false;
 let riichiDeclarationMode = false;
 let settingsMenuOpen = false;
+let callOptionsDialogType = null;
 
 init();
 
@@ -46,6 +47,7 @@ async function loadGameApi() {
       canDeclareRiichi: actions.canDeclareRiichi,
       canDeclarePon: actions.canDeclarePon,
       canDeclareChi: actions.canDeclareChi,
+      getPonOptions: actions.getPonOptions,
       getChiOptions: actions.getChiOptions,
       getRiichiDiscardOptions: actions.getRiichiDiscardOptions,
       canRonLatestDiscard: actions.canRonLatestDiscard,
@@ -73,6 +75,7 @@ function render() {
     canDeclareRiichi: gameApi.canDeclareRiichi,
     canDeclarePon: gameApi.canDeclarePon,
     canDeclareChi: gameApi.canDeclareChi,
+    getPonOptions: gameApi.getPonOptions,
     getChiOptions: gameApi.getChiOptions,
     getRiichiDiscardOptions: gameApi.getRiichiDiscardOptions,
     suggestDiscards: gameApi.suggestDiscards,
@@ -87,7 +90,8 @@ function render() {
     waitsDialogOpen,
     allHandsDialogOpen,
     riichiDeclarationMode,
-    settingsMenuOpen
+    settingsMenuOpen,
+    callOptionsDialogType
   });
   bindControls(appRoot, {
     onStartMatch: startMatch,
@@ -116,6 +120,8 @@ function render() {
     onCancelRiichi: cancelRiichiDeclaration,
     onDeclareTsumo: declareHumanTsumo,
     onDeclareRon: declareHumanRon,
+    onOpenCallOptions: openCallOptions,
+    onCloseCallOptions: closeCallOptions,
     onDeclarePon: declareHumanPon,
     onDeclareChi: declareHumanChi,
     onSkipRon: skipRon
@@ -132,6 +138,7 @@ function startMatch() {
   waitsDialogOpen = false;
   allHandsDialogOpen = false;
   settingsMenuOpen = false;
+  callOptionsDialogType = null;
   riichiDeclarationMode = false;
   state = gameApi.dispatchAction(state, { type: "START_MATCH" });
   render();
@@ -148,6 +155,7 @@ function startNextRound() {
   waitsDialogOpen = false;
   allHandsDialogOpen = false;
   settingsMenuOpen = false;
+  callOptionsDialogType = null;
   riichiDeclarationMode = false;
   state = gameApi.dispatchAction(state, { type: "START_NEXT_ROUND" });
   render();
@@ -157,6 +165,7 @@ function startNextRound() {
 function toggleLargeTileMode() {
   state = gameApi.dispatchAction(state, { type: "TOGGLE_LARGE_TILE_MODE" });
   settingsMenuOpen = false;
+  callOptionsDialogType = null;
   render();
 }
 
@@ -178,6 +187,7 @@ function toggleDiscardAdvice() {
   waitsDialogOpen = false;
   allHandsDialogOpen = false;
   settingsMenuOpen = false;
+  callOptionsDialogType = null;
   render();
 }
 
@@ -190,6 +200,7 @@ function openDiscardAdvice() {
   waitsDialogOpen = false;
   allHandsDialogOpen = false;
   settingsMenuOpen = false;
+  callOptionsDialogType = null;
   render();
 }
 
@@ -207,6 +218,7 @@ function openDiscardZoom(playerId) {
   waitsDialogOpen = false;
   allHandsDialogOpen = false;
   settingsMenuOpen = false;
+  callOptionsDialogType = null;
   render();
 }
 
@@ -224,6 +236,7 @@ function openMatchResult() {
   waitsDialogOpen = false;
   allHandsDialogOpen = false;
   settingsMenuOpen = false;
+  callOptionsDialogType = null;
   render();
 }
 
@@ -241,6 +254,7 @@ function openBeginnerHelp() {
   waitsDialogOpen = false;
   allHandsDialogOpen = false;
   settingsMenuOpen = false;
+  callOptionsDialogType = null;
   render();
 }
 
@@ -258,6 +272,7 @@ function openYakuGuide() {
   waitsDialogOpen = false;
   allHandsDialogOpen = false;
   settingsMenuOpen = false;
+  callOptionsDialogType = null;
   render();
 }
 
@@ -275,6 +290,7 @@ function openWaits() {
   waitsDialogOpen = true;
   allHandsDialogOpen = false;
   settingsMenuOpen = false;
+  callOptionsDialogType = null;
   render();
 }
 
@@ -295,6 +311,7 @@ function openAllHands() {
   yakuGuideDialogOpen = false;
   waitsDialogOpen = false;
   allHandsDialogOpen = true;
+  callOptionsDialogType = null;
   render();
 }
 
@@ -313,6 +330,7 @@ function openSettingsMenu() {
   waitsDialogOpen = false;
   allHandsDialogOpen = false;
   settingsMenuOpen = true;
+  callOptionsDialogType = null;
   render();
 }
 
@@ -336,6 +354,7 @@ function startRiichiDeclaration() {
   waitsDialogOpen = false;
   allHandsDialogOpen = false;
   settingsMenuOpen = false;
+  callOptionsDialogType = null;
   riichiDeclarationMode = true;
   render();
 }
@@ -364,6 +383,7 @@ function discardHumanTile(tileId) {
   yakuGuideDialogOpen = false;
   waitsDialogOpen = false;
   allHandsDialogOpen = false;
+  callOptionsDialogType = null;
   riichiDeclarationMode = false;
   handleAfterDiscard();
 }
@@ -379,6 +399,7 @@ function declareHumanTsumo() {
     type: "DECLARE_TSUMO",
     playerId: currentPlayer.id
   });
+  callOptionsDialogType = null;
   render();
 }
 
@@ -393,6 +414,38 @@ function declareHumanRon() {
     type: "DECLARE_RON",
     playerId: human.id
   });
+  callOptionsDialogType = null;
+  render();
+}
+
+function openCallOptions(callType) {
+  if (!["pon", "chi"].includes(callType)) {
+    return;
+  }
+
+  const human = getHumanPlayer();
+  const canOpen = callType === "pon"
+    ? gameApi.canDeclarePon?.(state, human?.id)
+    : gameApi.canDeclareChi?.(state, human?.id);
+
+  if (!human || !canOpen) {
+    return;
+  }
+
+  discardAdviceDialogOpen = false;
+  discardZoomPlayerId = null;
+  matchResultDialogOpen = false;
+  beginnerHelpDialogOpen = false;
+  yakuGuideDialogOpen = false;
+  waitsDialogOpen = false;
+  allHandsDialogOpen = false;
+  settingsMenuOpen = false;
+  callOptionsDialogType = callType;
+  render();
+}
+
+function closeCallOptions() {
+  callOptionsDialogType = null;
   render();
 }
 
@@ -414,6 +467,7 @@ function declareHumanPon() {
   yakuGuideDialogOpen = false;
   waitsDialogOpen = false;
   allHandsDialogOpen = false;
+  callOptionsDialogType = null;
   riichiDeclarationMode = false;
   render();
 }
@@ -437,11 +491,13 @@ function declareHumanChi(handTileIds) {
   yakuGuideDialogOpen = false;
   waitsDialogOpen = false;
   allHandsDialogOpen = false;
+  callOptionsDialogType = null;
   riichiDeclarationMode = false;
   render();
 }
 
 function skipRon() {
+  callOptionsDialogType = null;
   state = gameApi.dispatchAction(state, { type: "SKIP_RON" });
   continueAfterReaction();
 }
@@ -654,6 +710,9 @@ function createFallbackGameApi() {
     },
     canDeclareChi() {
       return false;
+    },
+    getPonOptions() {
+      return [];
     },
     getChiOptions() {
       return [];

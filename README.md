@@ -1,3 +1,9 @@
+# MVP-3.4.4 app table layout connection note
+
+MVP-3.4.4 connects the approved static exact-table mock to the live match renderer. The active round keeps the old header hidden, uses the right-top gear menu, places CPU1/CPU2/CPU3/human on right/top/left/bottom, and keeps the center score board surrounded by four rotated discard rivers. The human hand remains the full-width bottom priority area with tight tile gaps, while human melds, action buttons, and advice/yaku/waits helpers stay in reserved zones.
+
+The layout guard now checks the connected app instead of only the mock: page overflow, header removal, gear placement, score-board readability, rotated rivers, 6x3 river order, hand tile height/aspect/gap, action/river separation, meld/hand separation, settings menu, result popup, all-hands popup, pon/chi reactions, riichi states, and open-hand win states. Current local checks target MVP-3.4.4 normal tests, the smartphone landscape layout guard across all scenarios, and the CPU win reachability diagnostic.
+
 # MVP-3.4.2 reference layout correction note
 
 MVP-3.4.2 tightens the active match screen against the hand-drawn layout reference. The CPU seat markers are kept small instead of full-height columns or full-width bands, the center score board is the visual anchor, and the four discard rivers are independent 6x3 local grids around that center board. Each river grid is laid out left-to-right and top-to-bottom before the whole river is rotated by seat direction, so discard order remains predictable while matching the table orientation.

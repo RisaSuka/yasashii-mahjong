@@ -5,11 +5,11 @@ Use this before merging to `main` or publishing with GitHub Pages.
 ## Current Release Candidate
 
 - Branch: `codex/mvp-34-exact-table-layout`
-- Scope: MVP-0.1 through MVP-3.4.2 hand-drawn reference layout correction
+- Scope: MVP-0.1 through MVP-3.4.4 approved table layout app connection
 - Expected automated result: `334 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-3.4.2 is not published yet.
+- Publish status: MVP-3.4.4 is not published yet.
 
 ## Git Safety
 
@@ -44,7 +44,7 @@ node tests/layout-check.mjs
 
 - If Node is not on PATH in the Codex desktop environment, use the bundled Node command documented in `docs/layout-test.md`.
 - Confirm layout-check screenshots are written under `test-artifacts/layout/`.
-- Current layout-check result: all target viewports and scenarios pass, including `normal`, `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `all-hands-open`, `settings-menu-open`, `yaku-guide`, `waits`, `riichi-ready`, `riichi-declared`, `cpu-riichi`, `pon-reaction`, `chi-reaction`, `open-melds`, `multiple-melds`, `open-tanyao-win`, `open-yakuhai-win`, `river-order-fixture`, and `cpu-win`; MVP-3.4.2 also checks active-round header removal, compact CPU seat geometry, right-edge gear menu fit, center-score-board alignment and full score visibility, four-direction river placement, local 6x3 river order before rotation, whole-river rotation, human hand width above 90%, compact `推` advice badges, and meld/action/hand separation.
+- Current layout-check result: all target viewports and scenarios pass, including `normal`, `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `all-hands-open`, `settings-menu-open`, `yaku-guide`, `waits`, `riichi-ready`, `riichi-declared`, `cpu-riichi`, `pon-reaction`, `chi-reaction`, `open-melds`, `multiple-melds`, `open-tanyao-win`, `open-yakuhai-win`, `river-order-fixture`, and `cpu-win`; MVP-3.4.4 checks the connected app layout for active-round header removal, compact CPU seat geometry, right-edge gear menu fit, center-score-board alignment and full score visibility, four-direction river placement, local 6x3 river order before rotation, whole-river rotation, human hand width above 90%, compact recommendation badges, and meld/action/hand separation.
 - Run the CPU win reachability diagnostic:
 
 ```powershell

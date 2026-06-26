@@ -9,6 +9,7 @@ export function bindControls(root, handlers) {
       handlers.onCloseWaits?.();
       handlers.onCloseAllHands?.();
       handlers.onCloseSettingsMenu?.();
+      handlers.onCloseCallOptions?.();
     }
   });
 
@@ -162,6 +163,21 @@ export function bindControls(root, handlers) {
   root.querySelector("[data-action='declare-ron']")?.addEventListener("click", () => {
     handlers.onDeclareRon();
   });
+
+  for (const button of root.querySelectorAll("[data-action='open-call-options']")) {
+    button.addEventListener("click", () => {
+      handlers.onOpenCallOptions?.(button.dataset.callType);
+    });
+  }
+
+  for (const trigger of root.querySelectorAll("[data-action='close-call-options']")) {
+    trigger.addEventListener("click", (event) => {
+      if (trigger.classList?.contains("call-options-backdrop") && event.target !== trigger) {
+        return;
+      }
+      handlers.onCloseCallOptions?.();
+    });
+  }
 
   root.querySelector("[data-action='declare-pon']")?.addEventListener("click", () => {
     handlers.onDeclarePon?.();

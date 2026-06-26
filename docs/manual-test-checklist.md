@@ -124,6 +124,7 @@ http://127.0.0.1:8765/tests/test-runner.html
 - Confirm recommended discard badges are compact `推` badges and do not wrap or cover the tile face.
 - Confirm the compact advice/yaku/waits helper buttons sit near the human side and do not push the hand down.
 - Confirm pon/chi candidates, ron/tsumo/riichi actions, result buttons, and modal reopen buttons stay inside the viewport.
+- Confirm the live app layout still matches the approved exact-table mock: no active-round header, top-right gear menu, readable center score board, four rotated rivers around the center, full-width human hand, and no page-level overflow.
 
 ## 2. Normal Desktop Flow
 

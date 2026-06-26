@@ -6,7 +6,7 @@ import {
   getYakuDisplayName,
   sortYakuForDisplay
 } from "./yaku-display.js";
-import { getTileSvgPath } from "./tile-assets.js?v=mvp342-reference-layout-fix-1";
+import { getTileSvgPath } from "./tile-assets.js?v=mvp344-app-table-layout-1";
 import { sortTiles } from "../game/tiles.js";
 
 const WIND_LABELS = {
@@ -47,7 +47,7 @@ export function renderGame(state, root, options = {}) {
 
       <p class="orientation-hint">スマホを横向きにすると、牌とボタンが見やすくなります。</p>
 
-      ${round ? renderTable(state, options) : renderEmptyState()}
+      ${round ? renderExactTable(state, options) : renderEmptyState()}
       ${round ? renderSettingsMenu(state, options.settingsMenuOpen) : ""}
 
       <footer class="footer-status">
@@ -142,6 +142,70 @@ function renderTableLegacy(state, options) {
           ${renderTableDiscardZone(round.players[1], "right", round)}
           ${renderTableDiscardZone(round.players[0], "bottom", round)}
         </div>
+      </section>
+    </main>
+  `;
+}
+
+function renderExactTable(state, options) {
+  const { round } = state;
+  const human = round.players[0];
+  const cpu1 = round.players[1];
+  const cpu2 = round.players[2];
+  const cpu3 = round.players[3];
+  const discardAdvice = getDiscardAdvice(state, options);
+  const yakuGuide = getYakuGuide(state, options);
+  const waitInfo = getWaitInfo(state, options);
+  const riichiInfo = getRiichiInfo(state, options);
+  const allHandsOpen = Boolean(options.allHandsDialogOpen);
+
+  return `
+    <main class="table table-exact" aria-label="4人麻雀卓">
+      ${renderMeldZone(cpu2, "top")}
+      ${renderTableDiscardZone(cpu2, "top", round)}
+      ${renderSeatMarker(cpu2, round, "top")}
+      ${renderMeldZone(cpu1, "right")}
+
+      ${renderSeatMarker(cpu3, round, "left")}
+      ${renderTableDiscardZone(cpu3, "left", round)}
+
+      <section class="center-panel center-board-panel">
+        ${renderLegacyCenterInfoHooks(state)}
+        ${renderCenterScoreBoard(state)}
+      </section>
+
+      ${renderTableDiscardZone(cpu1, "right", round)}
+      ${renderSeatMarker(cpu1, round, "right")}
+
+      ${renderMeldZone(cpu3, "left")}
+      ${renderSeatMarker(human, round, "self")}
+      ${renderTableDiscardZone(human, "bottom", round)}
+      <section class="human-support-area sr-only" aria-hidden="true">
+        ${renderHumanSupportActions(discardAdvice, yakuGuide, waitInfo)}
+      </section>
+      <section class="human-action-area" aria-label="操作">
+        <div class="table-result-strip" aria-label="局の結果と役">
+          ${renderPreviousRoundResult(state.lastRoundResult, round)}
+          ${renderLastActionResult(round)}
+          ${renderYakuSummary(round)}
+        </div>
+        ${renderTableActionBar(state, options)}
+      </section>
+      <section class="table-meld-zone table-meld-bottom table-meld-self" aria-label="補助と自分の副露">
+        ${renderMelds(human)}
+        ${renderHumanSupportActions(discardAdvice, yakuGuide, waitInfo)}
+      </section>
+      ${renderHumanSeatPanel(human, round, discardAdvice, riichiInfo)}
+
+      <section class="table-dialog-layer" aria-label="ダイアログ">
+        ${renderCallOptionsDialog(state, options)}
+        ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen && options.discardZoomPlayerId == null && !options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
+        ${renderDiscardZoomDialog(round, options.matchResultDialogOpen || options.beginnerHelpDialogOpen || options.yakuGuideDialogOpen || options.waitsDialogOpen || allHandsOpen ? null : options.discardZoomPlayerId)}
+        ${renderMatchResultDialog(state, options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
+        ${renderBeginnerHelpDialog(options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
+        ${renderYakuGuideDialog(yakuGuide, options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
+        ${renderWaitsDialog(waitInfo, options.waitsDialogOpen && !allHandsOpen)}
+        ${renderAllHandsDialog(state, allHandsOpen)}
       </section>
     </main>
   `;
@@ -307,24 +371,72 @@ function renderTableActionBar(state, options) {
 }
 
 function renderCenterScoreBoard(state) {
-  const players = state.round?.players || [];
-  const scores = state.match?.scores || [25000, 25000, 25000, 25000];
-  const scoreWindLabels = {
+  const round = state.round;
+  const players = round?.players || [];
+
+  return `
+    <section class="center-score-board" aria-label="score board">
+      ${renderCenterScoreUnit(state, "top", players[2])}
+      ${renderCenterScoreUnit(state, "left", players[3])}
+      <div class="score-core">
+        <strong>${escapeHtml(getHandLabel(state.match || round))}</strong>
+        <span>山${round?.wall?.length ?? 0}　王${round?.deadWall?.length ?? 0}</span>
+        <span>ドラ${escapeHtml(renderDoraIndicators(round))}</span>
+      </div>
+      ${renderCenterScoreUnit(state, "right", players[1])}
+      ${renderCenterScoreUnit(state, "bottom", players[0])}
+      <div class="score-corner score-corner-top-left" aria-hidden="true"></div>
+      <div class="score-corner score-corner-top-right" aria-hidden="true"></div>
+      <div class="score-corner score-corner-bottom-right" aria-hidden="true"></div>
+      <div class="score-corner score-corner-bottom-left" aria-hidden="true"></div>
+    </section>
+  `;
+}
+
+function renderLegacyCenterInfoHooks(state) {
+  const round = state.round;
+
+  return `
+    <div class="center-info sr-only" aria-hidden="true">
+      <div class="center-info-main">
+        <div class="center-primary">
+          <span class="match-hand-label">${escapeHtml(getHandLabel(state.match || round))}</span>
+        </div>
+        <div class="center-secondary">
+          <div class="table-meta-row">
+            <span class="table-meta">山${round?.wall?.length ?? 0}</span>
+            <span class="table-meta">王牌${round?.deadWall?.length ?? 0}</span>
+            <span class="table-meta">ドラ${escapeHtml(renderDoraIndicators(round))}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderCenterScoreUnit(state, seatPosition, player) {
+  if (!player) {
+    return "";
+  }
+
+  const windLabels = {
     east: "東",
     south: "南",
     west: "西",
     north: "北"
   };
+  const score = state.match?.scores?.[player.id] ?? 25000;
+  const isDealer = player.id === state.round?.dealerIndex;
+  const isRiichi = Boolean(player.isRiichi || player.riichi);
+  const isCurrent = player.id === state.round?.currentPlayerIndex;
 
   return `
-    <section class="center-score-board" aria-label="score board">
-      ${players.map((player) => `
-        <div class="center-score-item center-score-player-${player.id}${player.id === state.round?.dealerIndex ? " is-dealer" : ""}${player.isRiichi || player.riichi ? " is-riichi" : ""}${player.id === state.round?.currentPlayerIndex ? " is-current-turn" : ""}">
-          <span class="center-score-name">${escapeHtml(scoreWindLabels[player.wind] || "")}</span>
-          <span class="center-score-value">${scores[player.id] ?? 25000}</span>
-        </div>
-      `).join("")}
-    </section>
+    <div class="score-unit score-unit-${seatPosition}${isCurrent ? " is-current-turn" : ""}" data-seat-position="${escapeHtml(seatPosition)}" data-player-id="${player.id}" data-current-wind="${escapeHtml(player.wind)}">
+      <span class="seat-wind-indicator wind-indicator${isDealer ? " is-dealer-wind" : ""}" data-player-id="${player.id}" data-seat-position="${escapeHtml(seatPosition)}" data-current-wind="${escapeHtml(player.wind)}">${escapeHtml(windLabels[player.wind] || "")}</span>
+      <span class="player-score-display score-value${isRiichi ? " is-riichi-score" : ""}" data-player-id="${player.id}" data-seat-position="${escapeHtml(seatPosition)}" data-current-wind="${escapeHtml(player.wind)}">
+        <strong>${score}</strong>
+      </span>
+    </div>
   `;
 }
 
@@ -1379,8 +1491,8 @@ function renderCallAction(state, options) {
 
   return `
     <div class="reaction-actions call-reaction${canPon ? " pon-reaction" : ""}${chiOptions.length ? " chi-reaction" : ""}">
-      ${canPon ? `<button type="button" class="pon-button" data-action="declare-pon">\u30dd\u30f3</button>` : ""}
-      ${chiOptions.map(renderChiOptionButton).join("")}
+      ${canPon ? `<button type="button" class="pon-button call-trigger-button" data-action="open-call-options" data-call-type="pon">\u30dd\u30f3</button>` : ""}
+      ${chiOptions.length ? `<button type="button" class="chi-button call-trigger-button" data-action="open-call-options" data-call-type="chi">\u30c1\u30fc</button>` : ""}
       <button type="button" class="skip-ron-button" data-action="skip-ron">\u898b\u9001\u308b</button>
     </div>
   `;
@@ -1391,9 +1503,68 @@ function renderChiOptionButton(option) {
   const tiles = option.tiles.map((tile) => renderTile(tile, "chi-option-tile")).join("");
 
   return `
-    <button type="button" class="chi-button" data-action="declare-chi" data-hand-tile-ids="${tileIds}">
+    <button type="button" class="chi-button call-option-button" data-action="declare-chi" data-hand-tile-ids="${tileIds}">
       <span class="chi-button-label">\u30c1\u30fc</span>
       <span class="chi-option-tiles" aria-label="\u30c1\u30fc\u5019\u88dc">${tiles}</span>
+    </button>
+  `;
+}
+
+function renderCallOptionsDialog(state, options) {
+  const callType = options.callOptionsDialogType;
+  const round = state.round;
+  const human = round?.players?.find((player) => player.type === "human");
+
+  if (!callType || !round || !human || round.phase !== "reaction") {
+    return "";
+  }
+
+  if (
+    options.discardAdviceDialogOpen ||
+    options.discardZoomPlayerId != null ||
+    options.matchResultDialogOpen ||
+    options.beginnerHelpDialogOpen ||
+    options.yakuGuideDialogOpen ||
+    options.waitsDialogOpen ||
+    options.allHandsDialogOpen
+  ) {
+    return "";
+  }
+
+  const ponOptions = typeof options.getPonOptions === "function" ? options.getPonOptions(state, human.id) : [];
+  const chiOptions = typeof options.getChiOptions === "function" ? options.getChiOptions(state, human.id) : [];
+  const title = callType === "pon" ? "\u30dd\u30f3\u3059\u308b\u724c" : "\u30c1\u30fc\u3059\u308b\u7d44\u307f\u5408\u308f\u305b";
+  const choices = callType === "pon"
+    ? ponOptions.map(renderPonOptionButton)
+    : chiOptions.map(renderChiOptionButton);
+
+  if (choices.length === 0) {
+    return "";
+  }
+
+  return `
+    <section class="call-options-backdrop" data-action="close-call-options" aria-label="\u9cf4\u304d\u5019\u88dc\u3092\u9589\u3058\u308b">
+      <div class="call-options-modal" role="dialog" aria-modal="false" aria-label="${title}">
+        <div class="call-options-header">
+          <strong>${title}</strong>
+          <button type="button" class="call-options-close" data-action="close-call-options">\u9589\u3058\u308b</button>
+        </div>
+        <div class="call-options-list">
+          ${choices.join("")}
+        </div>
+        <p class="call-options-note">\u5927\u304d\u3044\u5019\u88dc\u3092\u62bc\u3059\u3068\u9cf4\u304d\u307e\u3059\u3002</p>
+      </div>
+    </section>
+  `;
+}
+
+function renderPonOptionButton(option) {
+  const tiles = (option.tiles || []).map((tile) => renderTile(tile, "chi-option-tile")).join("");
+
+  return `
+    <button type="button" class="pon-button call-option-button" data-action="declare-pon">
+      <span class="chi-button-label">\u30dd\u30f3</span>
+      <span class="chi-option-tiles" aria-label="\u30dd\u30f3\u5019\u88dc">${tiles}</span>
     </button>
   `;
 }
