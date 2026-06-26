@@ -59,7 +59,7 @@ async function main() {
 
 async function runMock(viewport) {
   const page = await browser.newPage();
-  const label = `exact-mock-${viewport.width}x${viewport.height}-v5`;
+  const label = `exact-mock-${viewport.width}x${viewport.height}-v6`;
   const failures = [];
 
   try {
@@ -246,6 +246,7 @@ function inspectMockSource() {
     if (!document.querySelector(".player-score-display.is-riichi-score[data-player-id='1']")) {
       failures.push("CPU1 riichi score display is not highlighted");
     }
+    const scoreCoreRect = rect(scoreCore);
     const scoreUnitMap = {
       top: document.querySelector(".score-unit-top"),
       right: document.querySelector(".score-unit-right"),
@@ -257,17 +258,40 @@ function inspectMockSource() {
     checkRotation("left score unit", scoreUnitMap.left, 90);
     checkRotation("bottom score unit", scoreUnitMap.bottom, 0);
     const riverByPosition = { top: topRiverRect, right: rightRiverRect, left: leftRiverRect, bottom: selfRiverRect };
+    const scoreUnitRects = {};
     for (const [position, unit] of Object.entries(scoreUnitMap)) {
       const unitRect = rect(unit);
       if (!unitRect) {
         failures.push("score unit is missing: " + position);
         continue;
       }
+      scoreUnitRects[position] = unitRect;
       if (!containsRect(centerRect, unitRect, tolerance)) {
         failures.push(position + " score unit is outside center board: " + JSON.stringify(compactRect(unitRect)));
       }
-      if (overlaps(unitRect, riverByPosition[position])) {
-        failures.push(position + " score unit overlaps its river");
+      checkNoOverlap(position + " score unit", unitRect, position + " river", riverByPosition[position]);
+      checkNoOverlap("center core", scoreCoreRect, position + " score unit", unitRect);
+      const coreGap = elementGap(scoreCoreRect, unitRect);
+      if (coreGap < 8) {
+        failures.push("center core is too close to " + position + " score unit: " + coreGap.toFixed(1) + "px");
+      }
+
+      const wind = unit.querySelector(".wind-indicator");
+      const score = unit.querySelector(".score-value");
+      checkNoOverlap(position + " wind indicator", rect(wind), position + " score value", rect(score));
+      if (hasTextClipping(wind)) {
+        failures.push(position + " wind indicator text is clipped");
+      }
+      if (hasTextClipping(score)) {
+        failures.push(position + " score value text is clipped");
+      }
+    }
+    const scoreUnitEntries = Object.entries(scoreUnitRects);
+    for (let index = 0; index < scoreUnitEntries.length; index += 1) {
+      for (let next = index + 1; next < scoreUnitEntries.length; next += 1) {
+        const [aName, aRect] = scoreUnitEntries[index];
+        const [bName, bRect] = scoreUnitEntries[next];
+        checkNoOverlap(aName + " score unit", aRect, bName + " score unit", bRect);
       }
     }
     if (!scoreValues.every((value) => value === "25000") || scoreValues.length !== 4) {
@@ -493,6 +517,28 @@ function inspectMockSource() {
       const width = Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left));
       const height = Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top));
       return width * height > 1;
+    }
+
+    function checkNoOverlap(aName, a, bName, b) {
+      const overlap = overlapDetails(a, b);
+      if (overlap.area > 4 && overlap.width > 1 && overlap.height > 1) {
+        failures.push(aName + " overlaps " + bName + " by " + overlap.width.toFixed(1) + "x" + overlap.height.toFixed(1) + "px");
+      }
+    }
+
+    function overlapDetails(a, b) {
+      if (!a || !b) return { width: 0, height: 0, area: 0 };
+      const width = Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left));
+      const height = Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top));
+      return { width, height, area: width * height };
+    }
+
+    function hasTextClipping(element) {
+      if (!element) return true;
+      const style = getComputedStyle(element);
+      return style.textOverflow === "ellipsis"
+        || element.scrollWidth > element.clientWidth + 1
+        || element.scrollHeight > element.clientHeight + 1;
     }
 
     function rect(element) {

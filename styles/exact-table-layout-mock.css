@@ -262,31 +262,31 @@ button {
   justify-content: center;
   gap: 2px;
   width: max-content;
-  max-width: 74px;
+  max-width: 72px;
   transform-origin: center center;
 }
 
 .score-unit-top {
-  top: 5px;
+  top: 0;
   left: 50%;
   transform: translateX(-50%) rotate(180deg);
 }
 
 .score-unit-left {
   top: 50%;
-  left: 5px;
+  left: 3px;
   transform: translateY(-50%) rotate(90deg);
 }
 
 .score-unit-right {
   top: 50%;
-  right: 5px;
+  right: 3px;
   transform: translateY(-50%) rotate(-90deg);
 }
 
 .score-unit-bottom {
   left: 50%;
-  bottom: 5px;
+  bottom: 0;
   transform: translateX(-50%) rotate(0deg);
 }
 
@@ -356,25 +356,26 @@ button {
   z-index: 1;
   top: 50%;
   left: 50%;
-  width: min(78px, calc(100% - 82px));
+  width: min(64px, calc(100% - 94px));
+  height: 44px;
   transform: translate(-50%, -50%);
   min-width: 0;
   display: grid;
   place-items: center;
   align-content: center;
-  gap: 1px;
+  gap: 0;
   border: 1px solid rgba(15, 118, 110, 0.36);
   border-radius: 4px;
   background: #ffffff;
-  font-size: clamp(8px, 1.25vw, 10px);
-  line-height: 1.02;
+  font-size: clamp(7px, 1.02vw, 8px);
+  line-height: 0.95;
   text-align: center;
 }
 
 .score-core strong {
   color: var(--teal);
-  font-size: clamp(12px, 1.8vw, 15px);
-  line-height: 1;
+  font-size: clamp(11px, 1.5vw, 13px);
+  line-height: 0.98;
 }
 
 .mock-meld-zone {
