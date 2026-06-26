@@ -59,7 +59,7 @@ async function main() {
 
 async function runMock(viewport) {
   const page = await browser.newPage();
-  const label = `exact-mock-${viewport.width}x${viewport.height}-v6`;
+  const label = `exact-mock-${viewport.width}x${viewport.height}-v7`;
   const failures = [];
 
   try {
@@ -114,6 +114,7 @@ function inspectMockSource() {
     const ronRow = document.querySelector(".ron-row");
     const skipRow = document.querySelector(".skip-row");
     const supportButtons = [...document.querySelectorAll(".support-buttons button")];
+    const meldZones = [...document.querySelectorAll(".mock-meld-zone")];
 
     const docScrollWidth = document.documentElement.scrollWidth;
     const bodyScrollWidth = document.body.scrollWidth;
@@ -286,6 +287,16 @@ function inspectMockSource() {
         failures.push(position + " score value text is clipped");
       }
     }
+    const riverRectMap = { top: topRiverRect, right: rightRiverRect, left: leftRiverRect, bottom: selfRiverRect };
+    const centerRiverGaps = {};
+    for (const [position, riverRect] of Object.entries(riverRectMap)) {
+      checkNoOverlap("center score board", centerRect, position + " river", riverRect);
+      const gap = elementGap(centerRect, riverRect);
+      centerRiverGaps[position] = Number(gap.toFixed(2));
+      if (gap < 2.5) {
+        failures.push("center score board is too close to " + position + " river: " + gap.toFixed(1) + "px");
+      }
+    }
     const scoreUnitEntries = Object.entries(scoreUnitRects);
     for (let index = 0; index < scoreUnitEntries.length; index += 1) {
       for (let next = index + 1; next < scoreUnitEntries.length; next += 1) {
@@ -336,6 +347,19 @@ function inspectMockSource() {
       if (!(ponRect.top < chiRect.top)) failures.push("pon row is not above chi row");
       if (!(chiRect.top < ronRect.top)) failures.push("ron row is not below chi row");
       if (!(ronRect.top < skipRect.top)) failures.push("skip row is not below ron row");
+      for (const [name, target] of [
+        ["pon row", ponRect],
+        ["chi row", chiRect],
+        ["ron row", ronRect],
+        ["skip row", skipRect]
+      ]) {
+        if (!containsRect(actionRect, target, 1)) {
+          failures.push(name + " is clipped by action area");
+        }
+        if (target.height < 8) {
+          failures.push(name + " is too short to read: " + target.height.toFixed(1) + "px");
+        }
+      }
     }
     if (chiOptions.length < 3) {
       failures.push("chi options must show three candidates");
@@ -357,6 +381,12 @@ function inspectMockSource() {
     }
     if (actionRect && handRect && overlaps(actionRect, handRect)) {
       failures.push("action area overlaps hand area");
+    }
+    for (const [position, riverRect] of Object.entries(riverRectMap)) {
+      checkNoOverlap("action area", actionRect, position + " river", riverRect);
+    }
+    for (const zone of meldZones) {
+      checkNoOverlap((zone.getAttribute("aria-label") || zone.className || "meld lane"), rect(zone), "hand area", handRect);
     }
 
     checkRotation("top river", topRiver, 180);
@@ -394,6 +424,9 @@ function inspectMockSource() {
         handAreaHeight: Number(handRect.height.toFixed(1)),
         handTileHeight: firstHandTileRect ? Number(firstHandTileRect.height.toFixed(1)) : 0,
         handTileAspectRatio: Number(handTileAspectRatio.toFixed(3)),
+        centerBoardWidth: Number(centerRect.width.toFixed(1)),
+        centerBoardHeight: Number(centerRect.height.toFixed(1)),
+        centerRiverGaps,
         scoreUnitDistances,
         gearRect: compactRect(gearRect),
         rootRect: compactRect(rootRect)
