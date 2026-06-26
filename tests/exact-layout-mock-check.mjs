@@ -59,7 +59,7 @@ async function main() {
 
 async function runMock(viewport) {
   const page = await browser.newPage();
-  const label = `exact-mock-${viewport.width}x${viewport.height}-final`;
+  const label = `exact-mock-${viewport.width}x${viewport.height}-final2`;
   const failures = [];
 
   try {
@@ -257,6 +257,32 @@ function inspectMockSource() {
       failures.push("CPU1 riichi score display is not highlighted");
     }
     const scoreCoreRect = rect(scoreCore);
+    const scoreCoreChildren = [...(scoreCore?.children || [])];
+    if (scoreCoreChildren.length < 4) {
+      failures.push("center core should show four compact info lines");
+    }
+    for (const [index, child] of scoreCoreChildren.entries()) {
+      const childRect = rect(child);
+      if (!containsRect(scoreCoreRect, childRect, 0.5)) {
+        failures.push("center core line " + (index + 1) + " is outside center core: " + JSON.stringify(compactRect(childRect)));
+      }
+      if (hasTextClipping(child)) {
+        failures.push("center core line " + (index + 1) + " text is clipped");
+      }
+      if (childRect && childRect.height < 5) {
+        failures.push("center core line " + (index + 1) + " is too short to read: " + childRect.height.toFixed(1) + "px");
+      }
+    }
+    for (let index = 0; index < scoreCoreChildren.length; index += 1) {
+      for (let next = index + 1; next < scoreCoreChildren.length; next += 1) {
+        checkNoOverlap(
+          "center core line " + (index + 1),
+          rect(scoreCoreChildren[index]),
+          "center core line " + (next + 1),
+          rect(scoreCoreChildren[next])
+        );
+      }
+    }
     const scoreUnitMap = {
       top: document.querySelector(".score-unit-top"),
       right: document.querySelector(".score-unit-right"),
@@ -308,6 +334,8 @@ function inspectMockSource() {
       )) {
         failures.push(position + " score value is visually too close to center board edge: " + JSON.stringify(compactRect(scoreRect)));
       }
+      checkNoOverlap("center core", scoreCoreRect, position + " wind indicator", windRect);
+      checkNoOverlap("center core", scoreCoreRect, position + " score value", scoreRect);
       checkNoOverlap(position + " wind indicator", windRect, position + " score value", scoreRect);
       if ((score?.textContent || "").includes("リーチ")) {
         failures.push(position + " score display should use glow only, not riichi text");
@@ -373,6 +401,7 @@ function inspectMockSource() {
     const chiRect = rect(chiRow);
     const ronRect = rect(ronRow);
     const skipRect = rect(skipRow);
+    const skipStyle = skipRow ? getComputedStyle(skipRow) : null;
     if (!ponRect || !chiRect || !ronRect || !skipRect) {
       failures.push("call action rows are missing");
     } else {
@@ -393,6 +422,12 @@ function inspectMockSource() {
         if (target.height < 24) {
           failures.push(name + " is too short to read: " + target.height.toFixed(1) + "px");
         }
+      }
+      if (skipStyle?.whiteSpace !== "nowrap" || skipStyle?.wordBreak !== "keep-all") {
+        failures.push("skip button must keep 見送る on one line");
+      }
+      if (skipRow.scrollHeight > skipRow.clientHeight + 1 || skipRow.scrollWidth > skipRow.clientWidth + 1) {
+        failures.push("skip button text is clipped or wrapped");
       }
     }
     for (const [index, button] of supportButtons.entries()) {
