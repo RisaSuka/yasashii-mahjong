@@ -59,7 +59,7 @@ async function main() {
 
 async function runMock(viewport) {
   const page = await browser.newPage();
-  const label = `exact-mock-${viewport.width}x${viewport.height}-final3`;
+  const label = `exact-mock-${viewport.width}x${viewport.height}-final4`;
   const failures = [];
 
   try {

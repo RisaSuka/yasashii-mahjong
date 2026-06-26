@@ -189,10 +189,13 @@ button {
 
 .mock-river-top {
   grid-area: top-river;
+  place-items: end center;
+  padding-bottom: 1px;
 }
 
 .mock-river-left {
   grid-area: left-river;
+  place-items: center end;
 }
 
 .mock-river-right {
@@ -235,7 +238,7 @@ button {
 }
 
 .mock-rotate-left {
-  transform: rotate(90deg);
+  transform: translateX(10px) rotate(90deg);
 }
 
 .mock-score-board {
