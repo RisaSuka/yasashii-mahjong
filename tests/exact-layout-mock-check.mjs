@@ -59,7 +59,7 @@ async function main() {
 
 async function runMock(viewport) {
   const page = await browser.newPage();
-  const label = `exact-mock-${viewport.width}x${viewport.height}-v4`;
+  const label = `exact-mock-${viewport.width}x${viewport.height}-v5`;
   const failures = [];
 
   try {
@@ -104,6 +104,7 @@ function inspectMockSource() {
     const selfRiver = document.querySelector(".mock-river-self .mock-river");
     const windIndicators = [...document.querySelectorAll(".seat-wind-indicator")];
     const scoreDisplays = [...document.querySelectorAll(".player-score-display")];
+    const scoreUnits = [...document.querySelectorAll(".score-unit")];
     const scoreValues = scoreDisplays.map((node) => (node.querySelector("strong") || node).textContent.replace(/\\s+/g, "").replace("リーチ", ""));
     const scoreCore = document.querySelector(".score-core");
     const actionArea = document.querySelector(".mock-actions");
@@ -209,14 +210,23 @@ function inspectMockSource() {
     if (scoreDisplays.length !== 4) {
       failures.push("center score board must have exactly four separate score displays");
     }
+    if (scoreUnits.length !== 4) {
+      failures.push("center score board must have exactly four score units");
+    }
     if (windIndicators.some((node) => node.classList.contains("player-score-display"))
       || scoreDisplays.some((node) => node.classList.contains("seat-wind-indicator"))) {
       failures.push("wind indicators and score displays are not separate DOM roles");
     }
+    for (const unit of scoreUnits) {
+      const seatPosition = unit.dataset.seatPosition;
+      if (!unit.querySelector(".wind-indicator") || !unit.querySelector(".score-value")) {
+        failures.push("score unit is missing separate wind or score DOM for " + seatPosition);
+      }
+    }
     if (scoreDisplays.some((node) => /[東南西北]/.test(node.textContent || ""))) {
       failures.push("score display includes wind text");
     }
-    const scorePairDistances = [];
+    const scoreUnitDistances = [];
     for (const wind of windIndicators) {
       const seatPosition = wind.dataset.seatPosition;
       const score = scoreDisplays.find((node) => node.dataset.seatPosition === seatPosition);
@@ -225,7 +235,7 @@ function inspectMockSource() {
         continue;
       }
       const distance = elementGap(rect(wind), rect(score));
-      scorePairDistances.push({ seatPosition, distance: Number(distance.toFixed(2)) });
+      scoreUnitDistances.push({ seatPosition, distance: Number(distance.toFixed(2)) });
       if (distance > 5) {
         failures.push("wind indicator is not adjacent to score display for " + seatPosition + ": " + distance.toFixed(1) + "px");
       }
@@ -236,10 +246,30 @@ function inspectMockSource() {
     if (!document.querySelector(".player-score-display.is-riichi-score[data-player-id='1']")) {
       failures.push("CPU1 riichi score display is not highlighted");
     }
-    checkRotation("top wind indicator", document.querySelector(".score-top-pair .wind-indicator"), 180);
-    checkRotation("right wind indicator", document.querySelector(".score-right-pair .wind-indicator"), -90);
-    checkRotation("left wind indicator", document.querySelector(".score-left-pair .wind-indicator"), 90);
-    checkRotation("bottom wind indicator", document.querySelector(".score-bottom-pair .wind-indicator"), 0);
+    const scoreUnitMap = {
+      top: document.querySelector(".score-unit-top"),
+      right: document.querySelector(".score-unit-right"),
+      left: document.querySelector(".score-unit-left"),
+      bottom: document.querySelector(".score-unit-bottom")
+    };
+    checkRotation("top score unit", scoreUnitMap.top, 180);
+    checkRotation("right score unit", scoreUnitMap.right, -90);
+    checkRotation("left score unit", scoreUnitMap.left, 90);
+    checkRotation("bottom score unit", scoreUnitMap.bottom, 0);
+    const riverByPosition = { top: topRiverRect, right: rightRiverRect, left: leftRiverRect, bottom: selfRiverRect };
+    for (const [position, unit] of Object.entries(scoreUnitMap)) {
+      const unitRect = rect(unit);
+      if (!unitRect) {
+        failures.push("score unit is missing: " + position);
+        continue;
+      }
+      if (!containsRect(centerRect, unitRect, tolerance)) {
+        failures.push(position + " score unit is outside center board: " + JSON.stringify(compactRect(unitRect)));
+      }
+      if (overlaps(unitRect, riverByPosition[position])) {
+        failures.push(position + " score unit overlaps its river");
+      }
+    }
     if (!scoreValues.every((value) => value === "25000") || scoreValues.length !== 4) {
       failures.push("center score board does not show four full 25000 scores");
     }
@@ -340,7 +370,7 @@ function inspectMockSource() {
         handAreaHeight: Number(handRect.height.toFixed(1)),
         handTileHeight: firstHandTileRect ? Number(firstHandTileRect.height.toFixed(1)) : 0,
         handTileAspectRatio: Number(handTileAspectRatio.toFixed(3)),
-        scorePairDistances,
+        scoreUnitDistances,
         gearRect: compactRect(gearRect),
         rootRect: compactRect(rootRect)
       }
@@ -362,6 +392,15 @@ function inspectMockSource() {
         && target.top >= -tolerance
         && target.right <= viewport.width + tolerance
         && target.bottom <= viewport.height + tolerance;
+    }
+
+    function containsRect(container, target, extraTolerance = 0) {
+      return !!container
+        && !!target
+        && target.left >= container.left - extraTolerance
+        && target.top >= container.top - extraTolerance
+        && target.right <= container.right + extraTolerance
+        && target.bottom <= container.bottom + extraTolerance;
     }
 
     function getHandGap(tiles) {

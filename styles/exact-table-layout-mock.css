@@ -56,7 +56,7 @@ button {
   grid-template-columns:
     clamp(170px, 23vw, 210px)
     minmax(0, 1fr)
-    clamp(174px, 24vw, 198px)
+    clamp(202px, 25vw, 226px)
     minmax(0, 1fr)
     clamp(170px, 23vw, 210px)
     clamp(28px, 4.1vw, 34px);
@@ -242,35 +242,53 @@ button {
   grid-area: score;
   align-self: center;
   justify-self: center;
-  width: min(100%, clamp(174px, 23.5vw, 198px));
+  position: relative;
+  width: min(100%, clamp(198px, 24.4vw, 220px));
   height: min(100%, clamp(100px, 31dvh, 124px));
-  display: grid;
-  grid-template-columns: minmax(54px, 0.88fr) minmax(68px, 1fr) minmax(54px, 0.88fr);
-  grid-template-rows: minmax(21px, 0.44fr) minmax(48px, 1fr) minmax(21px, 0.44fr);
-  grid-template-areas:
-    ". top-pair ."
-    "left-pair core right-pair"
-    ". bottom-pair .";
-  gap: 2px;
-  padding: 4px;
+  display: block;
+  padding: 3px;
   border: 2px solid rgba(15, 23, 42, 0.72);
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.9);
   box-shadow: 0 1px 6px rgba(15, 23, 42, 0.18);
+  overflow: hidden;
 }
 
-.score-pair {
-  min-width: 0;
+.score-unit {
+  position: absolute;
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 2px;
+  width: max-content;
+  max-width: 74px;
+  transform-origin: center center;
 }
 
-.score-top-pair { grid-area: top-pair; align-self: start; }
-.score-left-pair { grid-area: left-pair; justify-self: end; }
-.score-right-pair { grid-area: right-pair; justify-self: start; }
-.score-bottom-pair { grid-area: bottom-pair; align-self: end; }
+.score-unit-top {
+  top: 5px;
+  left: 50%;
+  transform: translateX(-50%) rotate(180deg);
+}
+
+.score-unit-left {
+  top: 50%;
+  left: 5px;
+  transform: translateY(-50%) rotate(90deg);
+}
+
+.score-unit-right {
+  top: 50%;
+  right: 5px;
+  transform: translateY(-50%) rotate(-90deg);
+}
+
+.score-unit-bottom {
+  left: 50%;
+  bottom: 5px;
+  transform: translateX(-50%) rotate(0deg);
+}
 
 .player-score-display {
   min-width: 0;
@@ -283,13 +301,14 @@ button {
   background: rgba(240, 253, 250, 0.78);
   min-height: 18px;
   padding: 0 3px;
-  font-size: clamp(8px, 1.18vw, 10px);
+  font-size: clamp(8px, 1.05vw, 9px);
   line-height: 1;
   white-space: nowrap;
+  overflow: visible;
 }
 
 .player-score-display strong {
-  font-size: clamp(8px, 1.18vw, 10px);
+  font-size: clamp(8px, 1.05vw, 9px);
   line-height: 1;
 }
 
@@ -325,22 +344,6 @@ button {
   transform-origin: center center;
 }
 
-.score-top-pair .wind-indicator {
-  transform: rotate(180deg);
-}
-
-.score-right-pair .wind-indicator {
-  transform: rotate(-90deg);
-}
-
-.score-left-pair .wind-indicator {
-  transform: rotate(90deg);
-}
-
-.score-bottom-pair .wind-indicator {
-  transform: rotate(0deg);
-}
-
 .is-dealer-wind {
   border-color: rgba(220, 38, 38, 0.86);
   background: rgba(255, 247, 237, 0.96);
@@ -349,7 +352,12 @@ button {
 }
 
 .score-core {
-  grid-area: core;
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  width: min(78px, calc(100% - 82px));
+  transform: translate(-50%, -50%);
   min-width: 0;
   display: grid;
   place-items: center;
