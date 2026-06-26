@@ -59,7 +59,7 @@ async function main() {
 
 async function runMock(viewport) {
   const page = await browser.newPage();
-  const label = `exact-mock-${viewport.width}x${viewport.height}-final2`;
+  const label = `exact-mock-${viewport.width}x${viewport.height}-final3`;
   const failures = [];
 
   try {
@@ -258,8 +258,8 @@ function inspectMockSource() {
     }
     const scoreCoreRect = rect(scoreCore);
     const scoreCoreChildren = [...(scoreCore?.children || [])];
-    if (scoreCoreChildren.length < 4) {
-      failures.push("center core should show four compact info lines");
+    if (scoreCoreChildren.length < 3) {
+      failures.push("center core should show compact round/wall/dora info lines");
     }
     for (const [index, child] of scoreCoreChildren.entries()) {
       const childRect = rect(child);
