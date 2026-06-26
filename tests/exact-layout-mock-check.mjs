@@ -59,7 +59,7 @@ async function main() {
 
 async function runMock(viewport) {
   const page = await browser.newPage();
-  const label = `exact-mock-${viewport.width}x${viewport.height}-v2`;
+  const label = `exact-mock-${viewport.width}x${viewport.height}-v3`;
   const failures = [];
 
   try {
@@ -183,6 +183,21 @@ function inspectMockSource() {
     if (handGap > 1.5) {
       failures.push("hand tile gap is greater than 1.5px: " + handGap.toFixed(2));
     }
+    const firstHandTileRect = rect(handTiles[0]);
+    if (!firstHandTileRect || firstHandTileRect.height < 60) {
+      failures.push("hand tile height is too small: " + (firstHandTileRect ? firstHandTileRect.height.toFixed(1) : "missing"));
+    }
+    if (handRect && firstHandTileRect && handRect.height < firstHandTileRect.height + 4) {
+      failures.push("hand area height is smaller than tile height plus padding: " + handRect.height.toFixed(1) + " < " + (firstHandTileRect.height + 4).toFixed(1));
+    }
+    for (const [index, tile] of handTiles.entries()) {
+      const tileRect = rect(tile);
+      if (!tileRect) continue;
+      if (tileRect.top < handRect.top - tolerance || tileRect.bottom > handRect.bottom + tolerance) {
+        failures.push("hand tile " + (index + 1) + " is clipped vertically by hand area");
+        break;
+      }
+    }
 
     if (windIndicators.length !== 4) {
       failures.push("center score board must have exactly four separate wind indicators");
@@ -196,6 +211,20 @@ function inspectMockSource() {
     }
     if (scoreDisplays.some((node) => /[東南西北]/.test(node.textContent || ""))) {
       failures.push("score display includes wind text");
+    }
+    const scorePairDistances = [];
+    for (const wind of windIndicators) {
+      const seatPosition = wind.dataset.seatPosition;
+      const score = scoreDisplays.find((node) => node.dataset.seatPosition === seatPosition);
+      if (!score) {
+        failures.push("score display is missing for wind position: " + seatPosition);
+        continue;
+      }
+      const distance = elementGap(rect(wind), rect(score));
+      scorePairDistances.push({ seatPosition, distance: Number(distance.toFixed(2)) });
+      if (distance > 5) {
+        failures.push("wind indicator is not adjacent to score display for " + seatPosition + ": " + distance.toFixed(1) + "px");
+      }
     }
     if (!document.querySelector(".seat-wind-indicator.is-dealer-wind[data-current-wind='east']")) {
       failures.push("east wind indicator is not highlighted as dealer");
@@ -300,6 +329,9 @@ function inspectMockSource() {
         handGap: Number(handGap.toFixed(2)),
         handWidthRatio: Number(handWidthRatio.toFixed(3)),
         handWidth: Math.round(handRect.width),
+        handAreaHeight: Number(handRect.height.toFixed(1)),
+        handTileHeight: firstHandTileRect ? Number(firstHandTileRect.height.toFixed(1)) : 0,
+        scorePairDistances,
         gearRect: compactRect(gearRect),
         rootRect: compactRect(rootRect)
       }
@@ -328,6 +360,13 @@ function inspectMockSource() {
       const a = rect(tiles[0]);
       const b = rect(tiles[1]);
       return Math.max(0, b.left - a.right);
+    }
+
+    function elementGap(a, b) {
+      if (!a || !b) return Infinity;
+      const horizontal = Math.max(0, Math.max(a.left, b.left) - Math.min(a.right, b.right));
+      const vertical = Math.max(0, Math.max(a.top, b.top) - Math.min(a.bottom, b.bottom));
+      return Math.hypot(horizontal, vertical);
     }
 
     function getLocalRiverOrderFailure(river) {

@@ -50,23 +50,31 @@
       </div>
 
       <section class="mock-score-board" aria-label="中央点数板">
-        <div class="player-score-display score-top" data-player-id="2" data-seat-position="top" data-current-wind="east">25000</div>
-        <div class="player-score-display score-left" data-player-id="3" data-seat-position="left" data-current-wind="north">25000</div>
+        <div class="score-pair score-top-pair" data-seat-position="top">
+          <div class="seat-wind-indicator wind-indicator is-dealer-wind" data-player-id="2" data-seat-position="top" data-current-wind="east" aria-label="CPU2の風 東">東</div>
+          <div class="player-score-display score-value" data-player-id="2" data-seat-position="top" data-current-wind="east">25000</div>
+        </div>
+        <div class="score-pair score-left-pair" data-seat-position="left">
+          <div class="seat-wind-indicator wind-indicator" data-player-id="3" data-seat-position="left" data-current-wind="north" aria-label="CPU3の風 北">北</div>
+          <div class="player-score-display score-value" data-player-id="3" data-seat-position="left" data-current-wind="north">25000</div>
+        </div>
         <div class="score-core">
           <strong>東1局</strong>
           <span>残り45</span>
           <span>王牌14</span>
           <span>ドラ 白</span>
         </div>
-        <div class="player-score-display score-right is-riichi-score" data-player-id="1" data-seat-position="right" data-current-wind="south">
-          <strong>25000</strong>
-          <span>リーチ</span>
+        <div class="score-pair score-right-pair" data-seat-position="right">
+          <div class="seat-wind-indicator wind-indicator" data-player-id="1" data-seat-position="right" data-current-wind="south" aria-label="CPU1の風 南">南</div>
+          <div class="player-score-display score-value is-riichi-score" data-player-id="1" data-seat-position="right" data-current-wind="south">
+            <strong>25000</strong>
+            <span>リーチ</span>
+          </div>
         </div>
-        <div class="player-score-display score-bottom" data-player-id="0" data-seat-position="bottom" data-current-wind="west">25000</div>
-        <div class="seat-wind-indicator wind-top is-dealer-wind" data-player-id="2" data-seat-position="top" data-current-wind="east" aria-label="CPU2の風 東">東</div>
-        <div class="seat-wind-indicator wind-left" data-player-id="3" data-seat-position="left" data-current-wind="north" aria-label="CPU3の風 北">北</div>
-        <div class="seat-wind-indicator wind-right" data-player-id="1" data-seat-position="right" data-current-wind="south" aria-label="CPU1の風 南">南</div>
-        <div class="seat-wind-indicator wind-bottom" data-player-id="0" data-seat-position="bottom" data-current-wind="west" aria-label="自分の風 西">西</div>
+        <div class="score-pair score-bottom-pair" data-seat-position="bottom">
+          <div class="seat-wind-indicator wind-indicator" data-player-id="0" data-seat-position="bottom" data-current-wind="west" aria-label="自分の風 西">西</div>
+          <div class="player-score-display score-value" data-player-id="0" data-seat-position="bottom" data-current-wind="west">25000</div>
+        </div>
       </section>
 
       <div class="mock-river-wrap mock-river-right" aria-label="CPU1の河">
