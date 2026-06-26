@@ -68,13 +68,16 @@
           <div class="seat-wind-indicator wind-indicator" data-player-id="1" data-seat-position="right" data-current-wind="south" aria-label="CPU1の風 南">南</div>
           <div class="player-score-display score-value is-riichi-score" data-player-id="1" data-seat-position="right" data-current-wind="south">
             <strong>25000</strong>
-            <span>リーチ</span>
           </div>
         </div>
         <div class="score-unit score-unit-bottom" data-seat-position="bottom">
           <div class="seat-wind-indicator wind-indicator" data-player-id="0" data-seat-position="bottom" data-current-wind="west" aria-label="自分の風 西">西</div>
           <div class="player-score-display score-value" data-player-id="0" data-seat-position="bottom" data-current-wind="west">25000</div>
         </div>
+        <div class="score-corner score-corner-top-left" aria-hidden="true"></div>
+        <div class="score-corner score-corner-top-right" aria-hidden="true"></div>
+        <div class="score-corner score-corner-bottom-right" aria-hidden="true"></div>
+        <div class="score-corner score-corner-bottom-left" aria-hidden="true"></div>
       </section>
 
       <div class="mock-river-wrap mock-river-right" aria-label="CPU1の河">
@@ -111,25 +114,10 @@
 
       <section class="mock-actions" aria-label="操作ボタン">
         <div class="call-action-list">
-          <div class="call-action-row pon-row">
-            <button class="call-main-button">ポン</button>
-            <button class="call-tile-button" aria-label="發をポン"><img src="../assets/tiles/honor-green.svg" alt="發"><img src="../assets/tiles/honor-green.svg" alt="發"><img src="../assets/tiles/honor-green.svg" alt="發"></button>
-          </div>
-          <div class="call-action-row chi-row">
-            <span class="call-main-label">チー</span>
-            <div class="chi-option-list">
-              <button class="call-tile-button" aria-label="3索4索5索でチー"><img src="../assets/tiles/sou-3.svg" alt="3索"><img src="../assets/tiles/sou-4.svg" alt="4索"><img src="../assets/tiles/sou-5.svg" alt="5索"></button>
-              <button class="call-tile-button" aria-label="4索5索6索でチー"><img src="../assets/tiles/sou-4.svg" alt="4索"><img src="../assets/tiles/sou-5.svg" alt="5索"><img src="../assets/tiles/sou-6.svg" alt="6索"></button>
-              <button class="call-tile-button" aria-label="5索6索7索でチー"><img src="../assets/tiles/sou-5.svg" alt="5索"><img src="../assets/tiles/sou-6.svg" alt="6索"><img src="../assets/tiles/sou-7.svg" alt="7索"></button>
-            </div>
-          </div>
+          <button class="call-main-button pon-row">ポン</button>
+          <button class="call-main-button chi-row">チー</button>
           <button class="response-button ron-row">ロン</button>
           <button class="response-button skip-row">見送る</button>
-        </div>
-        <div class="support-buttons">
-          <button>助言</button>
-          <button>役</button>
-          <button>待ち</button>
         </div>
         <p>役なし</p>
       </section>
@@ -139,6 +127,11 @@
           <div class="mock-meld"><span>ポン</span><img src="../assets/tiles/honor-green.svg" alt="發"><img src="../assets/tiles/honor-green.svg" alt="發"><img src="../assets/tiles/honor-green.svg" alt="發"></div>
           <div class="mock-meld"><span>チー</span><img src="../assets/tiles/sou-3.svg" alt="3索"><img src="../assets/tiles/sou-4.svg" alt="4索"><img src="../assets/tiles/sou-5.svg" alt="5索"></div>
           <div class="mock-meld"><span>ポン</span><img src="../assets/tiles/man-7.svg" alt="7萬"><img src="../assets/tiles/man-7.svg" alt="7萬"><img src="../assets/tiles/man-7.svg" alt="7萬"></div>
+        </div>
+        <div class="support-buttons">
+          <button>助言</button>
+          <button>役</button>
+          <button>待ち</button>
         </div>
       </div>
 

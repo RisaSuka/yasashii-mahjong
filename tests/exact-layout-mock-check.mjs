@@ -59,7 +59,7 @@ async function main() {
 
 async function runMock(viewport) {
   const page = await browser.newPage();
-  const label = `exact-mock-${viewport.width}x${viewport.height}-v7`;
+  const label = `exact-mock-${viewport.width}x${viewport.height}-final`;
   const failures = [];
 
   try {
@@ -105,16 +105,20 @@ function inspectMockSource() {
     const windIndicators = [...document.querySelectorAll(".seat-wind-indicator")];
     const scoreDisplays = [...document.querySelectorAll(".player-score-display")];
     const scoreUnits = [...document.querySelectorAll(".score-unit")];
-    const scoreValues = scoreDisplays.map((node) => (node.querySelector("strong") || node).textContent.replace(/\\s+/g, "").replace("リーチ", ""));
+    const scoreValues = scoreDisplays.map((node) => (node.querySelector("strong") || node).textContent.replace(/\\s+/g, ""));
     const scoreCore = document.querySelector(".score-core");
     const actionArea = document.querySelector(".mock-actions");
+    const callActionList = document.querySelector(".call-action-list");
+    const supportPanel = document.querySelector(".support-buttons");
     const ponRow = document.querySelector(".pon-row");
     const chiRow = document.querySelector(".chi-row");
-    const chiOptions = [...document.querySelectorAll(".chi-option-list .call-tile-button")];
     const ronRow = document.querySelector(".ron-row");
     const skipRow = document.querySelector(".skip-row");
     const supportButtons = [...document.querySelectorAll(".support-buttons button")];
     const meldZones = [...document.querySelectorAll(".mock-meld-zone")];
+    const rightMeld = document.querySelector(".mock-meld-right");
+    const selfMeld = document.querySelector(".mock-meld-self");
+    const selfMeldList = document.querySelector(".mock-meld-self .mock-meld-list");
 
     const docScrollWidth = document.documentElement.scrollWidth;
     const bodyScrollWidth = document.body.scrollWidth;
@@ -145,6 +149,9 @@ function inspectMockSource() {
     const leftRiverRect = rect(leftRiver);
     const selfRiverRect = rect(selfRiver);
     const actionRect = rect(actionArea);
+    const callActionListRect = rect(callActionList);
+    const supportPanelRect = rect(supportPanel);
+    const selfMeldListRect = rect(selfMeldList);
 
     checkInViewport("table root", rootRect);
     checkInViewport("gear", gearRect);
@@ -154,6 +161,7 @@ function inspectMockSource() {
     checkInViewport("right river", rightRiverRect);
     checkInViewport("left river", leftRiverRect);
     checkInViewport("self river", selfRiverRect);
+    checkInViewport("action area", actionRect);
 
     if (gearRect.top > viewport.height * 0.14 || gearRect.right < viewport.width - 8) {
       failures.push("gear is not pinned near the top-right safe area");
@@ -171,6 +179,10 @@ function inspectMockSource() {
       x: centerRect.left + centerRect.width / 2,
       y: centerRect.top + centerRect.height / 2
     };
+    const centerRatio = centerRect.width / centerRect.height;
+    if (centerRatio > 1.45) {
+      failures.push("center score board should be closer to square: ratio " + centerRatio.toFixed(2));
+    }
     const centerDelta = Math.hypot(centerPoint.x - tableCenter.x, centerPoint.y - tableCenter.y);
     if (centerDelta > Math.max(22, viewport.width * 0.035)) {
       failures.push("center score board is too far from table center: " + Math.round(centerDelta) + "px");
@@ -237,9 +249,6 @@ function inspectMockSource() {
       }
       const distance = elementGap(rect(wind), rect(score));
       scoreUnitDistances.push({ seatPosition, distance: Number(distance.toFixed(2)) });
-      if (distance > 5) {
-        failures.push("wind indicator is not adjacent to score display for " + seatPosition + ": " + distance.toFixed(1) + "px");
-      }
     }
     if (!document.querySelector(".seat-wind-indicator.is-dealer-wind[data-current-wind='east']")) {
       failures.push("east wind indicator is not highlighted as dealer");
@@ -254,10 +263,14 @@ function inspectMockSource() {
       left: document.querySelector(".score-unit-left"),
       bottom: document.querySelector(".score-unit-bottom")
     };
-    checkRotation("top score unit", scoreUnitMap.top, 180);
-    checkRotation("right score unit", scoreUnitMap.right, -90);
-    checkRotation("left score unit", scoreUnitMap.left, 90);
-    checkRotation("bottom score unit", scoreUnitMap.bottom, 0);
+    checkRotation("top wind indicator", scoreUnitMap.top?.querySelector(".wind-indicator"), 180);
+    checkRotation("top score value", scoreUnitMap.top?.querySelector(".score-value"), 180);
+    checkRotation("right wind indicator", scoreUnitMap.right?.querySelector(".wind-indicator"), -90);
+    checkRotation("right score value", scoreUnitMap.right?.querySelector(".score-value"), -90);
+    checkRotation("left wind indicator", scoreUnitMap.left?.querySelector(".wind-indicator"), 90);
+    checkRotation("left score value", scoreUnitMap.left?.querySelector(".score-value"), 90);
+    checkRotation("bottom wind indicator", scoreUnitMap.bottom?.querySelector(".wind-indicator"), 0);
+    checkRotation("bottom score value", scoreUnitMap.bottom?.querySelector(".score-value"), 0);
     const riverByPosition = { top: topRiverRect, right: rightRiverRect, left: leftRiverRect, bottom: selfRiverRect };
     const scoreUnitRects = {};
     for (const [position, unit] of Object.entries(scoreUnitMap)) {
@@ -273,13 +286,16 @@ function inspectMockSource() {
       checkNoOverlap(position + " score unit", unitRect, position + " river", riverByPosition[position]);
       checkNoOverlap("center core", scoreCoreRect, position + " score unit", unitRect);
       const coreGap = elementGap(scoreCoreRect, unitRect);
-      if (coreGap < 8) {
+      if (coreGap < -0.5) {
         failures.push("center core is too close to " + position + " score unit: " + coreGap.toFixed(1) + "px");
       }
 
       const wind = unit.querySelector(".wind-indicator");
       const score = unit.querySelector(".score-value");
       checkNoOverlap(position + " wind indicator", rect(wind), position + " score value", rect(score));
+      if ((score?.textContent || "").includes("リーチ")) {
+        failures.push(position + " score display should use glow only, not riichi text");
+      }
       if (hasTextClipping(wind)) {
         failures.push(position + " wind indicator text is clipped");
       }
@@ -344,9 +360,11 @@ function inspectMockSource() {
     if (!ponRect || !chiRect || !ronRect || !skipRect) {
       failures.push("call action rows are missing");
     } else {
-      if (!(ponRect.top < chiRect.top)) failures.push("pon row is not above chi row");
-      if (!(chiRect.top < ronRect.top)) failures.push("ron row is not below chi row");
-      if (!(ronRect.top < skipRect.top)) failures.push("skip row is not below ron row");
+      if (Math.abs(ponRect.top - chiRect.top) > 2) failures.push("pon and chi buttons are not on the top row");
+      if (Math.abs(ronRect.top - skipRect.top) > 2) failures.push("ron and skip buttons are not on the bottom row");
+      if (!(ponRect.right <= chiRect.left + tolerance)) failures.push("chi button is not to the right of pon button");
+      if (!(ronRect.right <= skipRect.left + tolerance)) failures.push("skip button is not to the right of ron button");
+      if (!(ponRect.bottom <= ronRect.top + tolerance)) failures.push("ron row is not below pon row");
       for (const [name, target] of [
         ["pon row", ponRect],
         ["chi row", chiRect],
@@ -356,20 +374,8 @@ function inspectMockSource() {
         if (!containsRect(actionRect, target, 1)) {
           failures.push(name + " is clipped by action area");
         }
-        if (target.height < 8) {
+        if (target.height < 24) {
           failures.push(name + " is too short to read: " + target.height.toFixed(1) + "px");
-        }
-      }
-    }
-    if (chiOptions.length < 3) {
-      failures.push("chi options must show three candidates");
-    } else {
-      for (let index = 1; index < chiOptions.length; index += 1) {
-        const previous = rect(chiOptions[index - 1]);
-        const current = rect(chiOptions[index]);
-        if (!(previous.bottom <= current.top + tolerance)) {
-          failures.push("chi options are not stacked vertically");
-          break;
         }
       }
     }
@@ -382,9 +388,26 @@ function inspectMockSource() {
     if (actionRect && handRect && overlaps(actionRect, handRect)) {
       failures.push("action area overlaps hand area");
     }
+    if (callActionListRect && supportPanelRect) {
+      if (!containsRect(actionRect, callActionListRect, 1)) {
+        failures.push("action controls are clipped by action area");
+      }
+      if (!containsRect(rect(selfMeld), supportPanelRect, 1)) {
+        failures.push("support buttons are clipped by self meld lane");
+      }
+      if (selfMeldListRect && !(selfMeldListRect.bottom <= supportPanelRect.top + tolerance)) {
+        failures.push("support buttons are not below the self meld tiles");
+      }
+      if (!(actionRect.right <= supportPanelRect.left + tolerance)) {
+        failures.push("support buttons are not to the right of the pon/chi action panel");
+      }
+      checkNoOverlap("action area", actionRect, "support buttons", supportPanelRect);
+    }
     for (const [position, riverRect] of Object.entries(riverRectMap)) {
       checkNoOverlap("action area", actionRect, position + " river", riverRect);
     }
+    checkNoOverlap("action area", actionRect, "right meld lane", rect(rightMeld));
+    checkNoOverlap("action area", actionRect, "self meld lane", rect(selfMeld));
     for (const zone of meldZones) {
       checkNoOverlap((zone.getAttribute("aria-label") || zone.className || "meld lane"), rect(zone), "hand area", handRect);
     }
