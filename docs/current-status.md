@@ -1,15 +1,15 @@
 # Current Status
 
-Last updated for MVP-3.4.4 approved table layout app connection.
+Last updated for MVP-3.5 table UI / gear menu / operation polish.
 
 ## Repository State
 
-- Working branch: `codex/mvp-34-exact-table-layout`
-- Automated tests: MVP-3.4.4 normal tests pass locally (`334 pass / 0 pending / 0 fail`)
-- Layout check: Chrome-based smartphone landscape guard covers the connected app table layout, active-round header removal, compact CPU seat geometry, center-board alignment, full four-score visibility, right-edge settings menu, local 6x3 river order before rotation, pon/chi reactions, multiple melds, open-hand wins, result/all-hands popups, action/meld/hand separation, and page overflow checks
-- Working tree: clean at the time of the latest MVP-3.4.4 verification
+- Working branch: `codex/mvp-35-table-ui-polish`
+- Automated tests: MVP-3.5 normal tests pass locally (`338 pass / 0 pending / 0 fail`)
+- Layout check: Chrome-based smartphone landscape guard covers the connected app table layout, active-round header removal, compact CPU seat geometry, center-board alignment, full four-score visibility, right-edge settings menu, gear/menu item hit-tests, assist button hit-tests, call trigger hit-tests, local 6x3 river order before rotation, pon/chi reactions, multiple melds, open-hand wins, result/all-hands popups, action/meld/hand separation, modal exclusivity, and page overflow checks
+- Working tree: clean at the time of the latest MVP-3.5 verification
 - Push: not yet
-- `main` merge: not yet for MVP-3.4.4
+- `main` merge: not yet for MVP-3.5
 
 ## Implemented MVPs
 
@@ -59,6 +59,7 @@ Last updated for MVP-3.4.4 approved table layout app connection.
 | MVP-3.4.1 | Working branch | Active match screen is rebuilt as a hand-drawn four-direction table layout with compact CPU seats, independent rivers around the center score board, right-edge gear menu, rotated seat discards, separated human meld/support/action strips, and strengthened geometry guard. |
 | MVP-3.4.2 | Working branch | Reference-layout correction: small CPU seat markers, center score board as the visual anchor, local 6x3 river order with whole-river rotation, near-full-width human hand, compact `推` advice badges, and stronger geometry checks for the hand-drawn layout. |
 | MVP-3.4.4 | Working branch | Approved static exact-table mock connected to the live app renderer with the hidden round header, top-right gear menu, four-direction seats/rivers, readable center score board, full-width human hand, reserved action/support/meld zones, and expanded app layout screenshots. |
+| MVP-3.5 | Working branch | Table UI polish for existing gear menu, advice/yaku/waits helpers, action buttons, modal exclusivity, and layout/hit-test coverage. |
 
 ## Current Capabilities
 
@@ -154,6 +155,11 @@ Last updated for MVP-3.4.4 approved table layout app connection.
   - Open tsumo never receives menzen-tsumo.
   - Next rounds create fresh empty meld arrays.
   - Round-end/result UI and all-hands review keep rendering open melds.
+- MVP-3.5 table operation polish:
+  - The existing top-right gear menu remains the home for new match, large tile mode, advice ON/OFF, and help.
+  - The gear menu suppresses other modal surfaces while it is open.
+  - Advice, yaku guide, and waits helper buttons have explicit touch/accessibility labels.
+  - Layout hit-tests verify gear/menu items, helper buttons, and call option triggers are not covered by table layers.
 - Next-round continuation:
   - `次の局へ` appears after exhaustive draw, tsumo, or ron.
   - The next round creates a fresh wall, dead wall, players, hands, and dealer initial draw.

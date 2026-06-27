@@ -484,8 +484,11 @@ export function registerMatchUiTests() {
 
     assertTrue(html.includes('data-action="open-settings-menu"'), "In-round screen should show a gear menu button");
     assertTrue(html.includes("settings-menu-modal"), "Gear menu modal should render when opened");
+    assertTrue(html.includes('aria-label="メニューを開く"'), "Gear button should have a clear aria label");
+    assertTrue(html.includes('data-action="start-match"'), "Gear menu should contain the new match action");
     assertTrue(html.includes('data-action="toggle-large"'), "Gear menu should contain the large tile action");
     assertTrue(html.includes('data-action="toggle-discard-advice"'), "Gear menu should contain the advice toggle");
+    assertTrue(html.includes('data-action="open-beginner-help"'), "Gear menu should contain the help action");
 
     const { bindControls } = await loadModule("../src/ui/input.js", ["bindControls"]);
     let opened = 0;
@@ -537,6 +540,85 @@ export function registerMatchUiTests() {
 
     assertEqual(opened, 1, "Gear button should call its open handler");
     assertEqual(closed, 2, "Close button and Escape should close the gear menu");
+  });
+
+  test("MVP-3.5 UI: gear menu item controls dispatch their handlers", async () => {
+    const { bindControls } = await loadModule("../src/ui/input.js", ["bindControls"]);
+    const buttons = {
+      start: createFakeButton(),
+      large: createFakeButton(),
+      advice: createFakeButton(),
+      help: createFakeButton()
+    };
+    const calls = {
+      start: 0,
+      large: 0,
+      advice: 0,
+      help: 0
+    };
+    const root = {
+      addEventListener() {},
+      querySelector(selector) {
+        if (selector === "[data-action='toggle-large']") return buttons.large;
+        if (selector === "[data-action='toggle-discard-advice']") return buttons.advice;
+        if (selector === "[data-action='open-beginner-help']") return buttons.help;
+        return null;
+      },
+      querySelectorAll(selector) {
+        if (selector === "[data-action='start-match']") return [buttons.start];
+        return [];
+      }
+    };
+
+    bindControls(root, {
+      onStartMatch() {
+        calls.start += 1;
+      },
+      onToggleLargeTileMode() {
+        calls.large += 1;
+      },
+      onToggleDiscardAdvice() {
+        calls.advice += 1;
+      },
+      onOpenBeginnerHelp() {
+        calls.help += 1;
+      }
+    });
+
+    buttons.start.listeners.click();
+    buttons.large.listeners.click();
+    buttons.advice.listeners.click();
+    buttons.help.listeners.click();
+
+    assertEqual(calls.start, 1, "New match menu item should dispatch");
+    assertEqual(calls.large, 1, "Large tile menu item should dispatch");
+    assertEqual(calls.advice, 1, "Advice toggle menu item should dispatch");
+    assertEqual(calls.help, 1, "Help menu item should dispatch");
+  });
+
+  test("MVP-3.5 UI: gear menu suppresses other modal surfaces", async () => {
+    const html = await renderState(await startMatchState(), {
+      settingsMenuOpen: true,
+      suggestDiscards: sampleAdvice,
+      suggestYakuTargets: sampleYakuGuide,
+      analyzeWaits: sampleWaitInfo,
+      discardAdviceDialogOpen: true,
+      discardZoomPlayerId: 0,
+      matchResultDialogOpen: true,
+      beginnerHelpDialogOpen: true,
+      yakuGuideDialogOpen: true,
+      waitsDialogOpen: true,
+      allHandsDialogOpen: true
+    });
+
+    assertTrue(html.includes("settings-menu-modal"), "Settings menu should render");
+    assertTrue(!html.includes("discard-advice-modal"), "Advice modal should be suppressed by settings menu");
+    assertTrue(!html.includes("discard-zoom-modal"), "Discard zoom modal should be suppressed by settings menu");
+    assertTrue(!html.includes("match-result-modal"), "Result modal should be suppressed by settings menu");
+    assertTrue(!html.includes("beginner-help-modal"), "Help modal should be suppressed by settings menu");
+    assertTrue(!html.includes("yaku-guide-modal"), "Yaku guide modal should be suppressed by settings menu");
+    assertTrue(!html.includes("waits-modal"), "Waits modal should be suppressed by settings menu");
+    assertTrue(!html.includes("all-hands-modal"), "All-hands modal should be suppressed by settings menu");
   });
 
   test("MVP-1.4 UI: beginner help suppresses advice, zoom, and result popups", async () => {
@@ -870,6 +952,26 @@ export function registerMatchUiTests() {
     assertEqual(counts.advice, 1, "Visible advice button should call its handler");
     assertEqual(counts.yaku, 1, "Visible yaku guide button should call its handler");
     assertEqual(counts.waits, 1, "Visible waits button should call its handler");
+  });
+
+  test("MVP-3.5 UI: assist buttons expose clear labels for touch users", async () => {
+    const started = await startMatchState();
+    const state = {
+      ...started,
+      settings: {
+        ...started.settings,
+        discardAdviceEnabled: true
+      }
+    };
+    const html = await renderState(state, {
+      suggestDiscards: sampleAdvice,
+      suggestYakuTargets: sampleYakuGuide,
+      analyzeWaits: sampleWaitInfo
+    });
+
+    assertTrue(html.includes('aria-label="助言を見る"'), "Advice button should expose an assistive label");
+    assertTrue(html.includes('aria-label="役ガイドを開く"'), "Yaku guide button should expose an assistive label");
+    assertTrue(html.includes('aria-label="待ちを見る"'), "Waits button should expose an assistive label");
   });
 
   test("MVP-1.2 UI: discard zoom controls render for all four center discard zones", async () => {

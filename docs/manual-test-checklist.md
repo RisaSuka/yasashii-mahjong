@@ -21,8 +21,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 334.
-- Confirm pass count is 334.
+- Confirm total count is 338.
+- Confirm pass count is 338.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - For smartphone landscape layout work, also run the layout guard described in `docs/layout-test.md`.
@@ -125,6 +125,19 @@ http://127.0.0.1:8765/tests/test-runner.html
 - Confirm the compact advice/yaku/waits helper buttons sit near the human side and do not push the hand down.
 - Confirm pon/chi candidates, ron/tsumo/riichi actions, result buttons, and modal reopen buttons stay inside the viewport.
 - Confirm the live app layout still matches the approved exact-table mock: no active-round header, top-right gear menu, readable center score board, four rotated rivers around the center, full-width human hand, and no page-level overflow.
+
+## 1.8 MVP-3.5 Table UI Operation Polish Check
+
+- Confirm the top-right gear button opens the existing gear menu.
+- Confirm the gear menu can be closed by the close button, backdrop click, and Escape.
+- Confirm the gear menu contains and can activate new match, large tile mode, advice ON/OFF, and help.
+- Confirm opening the gear menu does not leave advice, yaku guide, waits, discard zoom, result, help, or all-hands popups open at the same time.
+- Confirm the advice, yaku, and waits helper buttons are visible, tappable, and open the expected popup.
+- Confirm each helper popup can be closed and does not remain open with another modal.
+- Confirm pon, chi, ron, tsumo, skip, and riichi action buttons remain tappable when they are visible.
+- Confirm `見送る` stays on one line.
+- Confirm next-round and replay buttons remain tappable after a hand or match ends.
+- Confirm the strengthened layout guard hit-tests gear/menu items, helper buttons, and call triggers across smartphone landscape viewports.
 
 ## 2. Normal Desktop Flow
 

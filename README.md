@@ -1,3 +1,9 @@
+# MVP-3.5 table UI polish note
+
+MVP-3.5 keeps the MVP-3.4 four-direction table layout and focuses on operation polish rather than new rules. The existing top-right gear menu is retained, with clearer labels for the menu button and menu actions. The advice/yaku/waits helper buttons now expose explicit touch/accessibility labels, and the settings menu is treated as the active modal surface so it suppresses advice, yaku guide, waits, discard zoom, result, help, and all-hands popups.
+
+The layout guard now includes additional menu/control scenarios and hit-tests for the gear button, gear menu items, advice/yaku/waits helpers, and call option triggers. Cache bust is `mvp35-table-ui-polish-1`. Current local checks target `338 pass / 0 pending / 0 fail`, the smartphone landscape layout guard across all scenarios, and the CPU win reachability diagnostic.
+
 # MVP-3.4.4 app table layout connection note
 
 MVP-3.4.4 connects the approved static exact-table mock to the live match renderer. The active round keeps the old header hidden, uses the right-top gear menu, places CPU1/CPU2/CPU3/human on right/top/left/bottom, and keeps the center score board surrounded by four rotated discard rivers. The human hand remains the full-width bottom priority area with tight tile gaps, while human melds, action buttons, and advice/yaku/waits helpers stay in reserved zones.

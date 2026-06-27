@@ -98,6 +98,10 @@ The check renders these scenarios:
 - `cpu-win`: a CPU win result is visible with the next-round action
 - `all-hands-open`: the round-end all-hands learning popup is open
 - `settings-menu-open`: the right-edge gear menu is open and its modal fits inside the viewport
+- `gear-menu-open`: the gear menu is open and menu controls are hit-tested
+- `assist-buttons-open`: advice, yaku, and waits helper buttons remain visible and hit-tested
+- `call-reaction-buttons`: call trigger buttons can open their candidate modal
+- `riichi-action-buttons`: riichi action controls remain visible and hit-tested
 
 ## Screenshots
 
@@ -134,6 +138,7 @@ As of MVP-1.1.6, the regular browser tests pass and the layout check passes acro
 - MVP-3.4.1 strengthens the guard for the hand-drawn table redo. It checks that CPU1/CPU3 seats stay below 12% viewport width, CPU2 stays below 12% viewport height, the gear button stays compact, the center score board remains near the table center, the human hand uses at least 70% viewport width, all four rivers sit above/left/right/below the center board, rotated discard tiles remain visibly large enough, and the old giant CPU band/column layout cannot return.
 - MVP-3.4.2 tightens the hand-drawn reference checks further. It lowers side CPU marker limits to 8% viewport width, verifies the human hand uses at least 90% viewport width with a 0-2px tile gap, verifies all four fixed score values are visible inside the center score board, verifies each river is a local 6x3 grid ordered left-to-right/top-to-bottom before whole-river rotation, checks compact `推` recommendation badges, and keeps action/meld/support areas from covering the bottom hand.
 - MVP-3.4.4 connects the approved exact-table mock to the live app renderer. The guard now also verifies the generated app screenshots, page scrollWidth/scrollHeight, top-right gear placement, center score-board element separation, score/river non-overlap, rotated river visibility, hand tile height/aspect/gap, and action/support/meld separation across all active scenarios.
+- MVP-3.5 adds operation-polish hit-tests. The guard checks gear button clickability, gear menu item clickability, advice/yaku/waits helper clickability, call trigger click-to-open behavior, modal exclusivity, and the new `gear-menu-open`, `assist-buttons-open`, `call-reaction-buttons`, and `riichi-action-buttons` scenarios.
 - MVP-1.9 adds the `waits-after-discard` scenario for 14-tile discard-to-wait guidance.
 - MVP-2.1 adds `riichi-ready` and `riichi-declared` scenarios so the riichi action/status stay inside the smartphone landscape action bar.
 - MVP-2.2 adds the `cpu-riichi` scenario so a CPU riichi seat badge stays inside the smartphone landscape table.
@@ -150,7 +155,7 @@ The earlier MVP-1.1.4 guard intentionally detected late-hand discard clipping at
 
 ## Release Gate Recommendation
 
-Before merging a future MVP-1.1 layout fix:
+Before merging a future table UI or layout fix:
 
 1. Run `tests/test-runner.html` and confirm the normal browser tests pass.
 2. Run `tests/layout-check.mjs`.

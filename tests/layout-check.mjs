@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const ARTIFACT_DIR = path.join(ROOT, "test-artifacts", "layout");
-const CACHE_BUST = "mvp345-assist-buttons-hitfix-1";
+const CACHE_BUST = "mvp35-table-ui-polish-1";
 const PORT = Number(process.env.LAYOUT_CHECK_PORT || 18765);
 const VIEWPORTS = [
   { width: 844, height: 390 },
@@ -42,7 +42,11 @@ const SCENARIOS = [
   { name: "open-yakuhai-win", discards: 9, mode: "open-yakuhai-win" },
   { name: "cpu-win", discards: 12, mode: "cpu-win" },
   { name: "all-hands-open", discards: 18, mode: "all-hands-open" },
-  { name: "settings-menu-open", discards: 9, mode: "settings-menu-open" }
+  { name: "settings-menu-open", discards: 9, mode: "settings-menu-open" },
+  { name: "gear-menu-open", discards: 9, mode: "gear-menu-open" },
+  { name: "assist-buttons-open", discards: 9, mode: "assist-buttons-open" },
+  { name: "call-reaction-buttons", discards: 9, mode: "pon-reaction" },
+  { name: "riichi-action-buttons", discards: 9, mode: "riichi-ready" }
 ];
 const TOLERANCE = 2;
 const VIEWPORT_FILTER = process.env.LAYOUT_CHECK_VIEWPORT || "";
@@ -315,7 +319,17 @@ function setupScenarioSource() {
           lastDiscard: {
             playerId: 1,
             tile: { id: "layout-pon-z5", suit: "z", rank: 5, copy: 0, red: false }
-          }
+          },
+          players: state.round.players.map((player) => player.id === 0
+            ? {
+              ...player,
+              hand: [
+                tile("layout-pon-z5-hand-1", "z", 5, 1),
+                tile("layout-pon-z5-hand-2", "z", 5, 2),
+                ...player.hand.slice(2)
+              ]
+            }
+            : player)
         }
       };
     }
@@ -517,7 +531,7 @@ function setupScenarioSource() {
       yakuGuideDialogOpen: mode === "yaku-guide",
       waitsDialogOpen: mode === "waits" || mode === "waits-after-discard",
       allHandsDialogOpen: mode === "all-hands-open",
-      settingsMenuOpen: mode === "settings-menu-open",
+      settingsMenuOpen: mode === "settings-menu-open" || mode === "gear-menu-open",
       analyzeWaits: () => mode === "waits-after-discard"
         ? ({
           isTenpai: false,
@@ -676,8 +690,17 @@ function setupScenarioSource() {
           renderWithOptions({ waitsDialogOpen: false });
         },
         onOpenDiscardZoom() {},
-        onOpenSettingsMenu() {},
-        onCloseSettingsMenu() {},
+        onOpenSettingsMenu() {
+          renderWithOptions({
+            discardAdviceDialogOpen: false,
+            yakuGuideDialogOpen: false,
+            waitsDialogOpen: false,
+            settingsMenuOpen: true
+          });
+        },
+        onCloseSettingsMenu() {
+          renderWithOptions({ settingsMenuOpen: false });
+        },
         onStartMatch() {},
         onStartRound() {},
         onStartNextRound() {},
@@ -687,8 +710,18 @@ function setupScenarioSource() {
         onDeclareRon() {},
         onDeclareRiichi() {},
         onCancelRiichi() {},
-        onOpenCallOptions() {},
-        onCloseCallOptions() {},
+        onOpenCallOptions(callType) {
+          renderWithOptions({
+            discardAdviceDialogOpen: false,
+            yakuGuideDialogOpen: false,
+            waitsDialogOpen: false,
+            settingsMenuOpen: false,
+            callOptionsDialogType: callType
+          });
+        },
+        onCloseCallOptions() {
+          renderWithOptions({ callOptionsDialogType: null });
+        },
         onDeclarePon() {},
         onDeclareChi() {},
         onSkipRon() {},
@@ -711,6 +744,30 @@ function setupScenarioSource() {
       button.click();
       await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
       const opened = Boolean(document.querySelector(modalSelectors[action]));
+      renderWithOptions();
+      return { found: true, opened };
+    };
+
+    window.__layoutClickGearMenu = async () => {
+      const button = document.querySelector("[data-action='open-settings-menu']");
+      if (!button) {
+        return { found: false, opened: false };
+      }
+      button.click();
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      const opened = Boolean(document.querySelector(".settings-menu-modal"));
+      renderWithOptions();
+      return { found: true, opened };
+    };
+
+    window.__layoutClickCallTrigger = async (callType) => {
+      const button = document.querySelector("[data-action='open-call-options'][data-call-type='" + callType + "']");
+      if (!button) {
+        return { found: false, opened: false };
+      }
+      button.click();
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      const opened = Boolean(document.querySelector(".call-options-modal"));
       renderWithOptions();
       return { found: true, opened };
     };
@@ -1030,6 +1087,7 @@ function inspectLayoutSource() {
       }
     }
 
+    const callOptionsModal = document.querySelector(".call-options-modal");
     const modal = document.querySelector(".discard-advice-modal");
     const zoomModal = document.querySelector(".discard-zoom-modal");
     const resultModal = document.querySelector(".match-result-modal");
@@ -1037,7 +1095,24 @@ function inspectLayoutSource() {
     const waitsModal = document.querySelector(".waits-modal");
     const allHandsModal = document.querySelector(".all-hands-modal");
     const settingsMenuModal = document.querySelector(".settings-menu-modal");
-    const activeModal = modal || zoomModal || resultModal || yakuGuideModal || waitsModal || allHandsModal || settingsMenuModal;
+    const modalList = [
+      callOptionsModal,
+      modal,
+      zoomModal,
+      resultModal,
+      yakuGuideModal,
+      waitsModal,
+      allHandsModal,
+      settingsMenuModal
+    ].filter(Boolean);
+    if (modalList.length > 1) {
+      failures.push("multiple modal surfaces are visible at once: " + modalList.map((node) => node.className).join(", "));
+    }
+    const activeModal = modalList[0] || null;
+
+    if (!activeModal && rects.gearButton && !isClickableAtCenter(document.querySelector(selectors.gearButton), rects.gearButton)) {
+      failures.push("gear menu button is not clickable at center");
+    }
 
     const actionButtons = [...document.querySelectorAll(".table-action-bar button, .restart-match-button, .next-round-button")];
     const actionBar = document.querySelector(".human-action-area .table-action-bar");
@@ -1316,6 +1391,27 @@ function inspectLayoutSource() {
           failures.push("settings menu close button is not clickable at center");
         }
       }
+
+      const menuActions = [
+        ["new match", "[data-action='start-match']"],
+        ["large tile", "[data-action='toggle-large']"],
+        ["advice toggle", "[data-action='toggle-discard-advice']"],
+        ["help", "[data-action='open-beginner-help']"]
+      ];
+      for (const [name, selector] of menuActions) {
+        const button = settingsMenuModal.querySelector(selector);
+        if (!button) {
+          failures.push("settings menu " + name + " button is missing");
+          continue;
+        }
+        const buttonRect = button.getBoundingClientRect();
+        if (!isInViewport(buttonRect, viewport, tolerance)) {
+          failures.push("settings menu " + name + " button is outside viewport");
+        }
+        if (!isClickableAtCenter(button, buttonRect)) {
+          failures.push("settings menu " + name + " button is not clickable at center");
+        }
+      }
     }
 
     checkOverlap("bottom discard", rects.bottomDiscard, "hand", rects.hand, 0.02);
@@ -1351,6 +1447,28 @@ function inspectLayoutSource() {
           failures.push(name + " assist button could not be clicked because it was not found");
         } else if (!result.opened) {
           failures.push(name + " assist button click did not open its popup");
+        }
+      }
+    }
+
+    if (!activeModal && typeof window.__layoutClickGearMenu === "function") {
+      const result = await window.__layoutClickGearMenu();
+      if (!result.found) {
+        failures.push("gear menu button could not be clicked because it was not found");
+      } else if (!result.opened) {
+        failures.push("gear menu button click did not open the menu");
+      }
+    }
+
+    if (!activeModal && typeof window.__layoutClickCallTrigger === "function") {
+      const callTriggers = [...document.querySelectorAll("[data-action='open-call-options']")];
+      const callTypes = [...new Set(callTriggers.map((button) => button.dataset.callType).filter(Boolean))];
+      for (const callType of callTypes) {
+        const result = await window.__layoutClickCallTrigger(callType);
+        if (!result.found) {
+          failures.push(callType + " call trigger could not be clicked because it was not found");
+        } else if (!result.opened) {
+          failures.push(callType + " call trigger click did not open its candidate modal");
         }
       }
     }

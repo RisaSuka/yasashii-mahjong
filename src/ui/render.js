@@ -6,7 +6,7 @@ import {
   getYakuDisplayName,
   sortYakuForDisplay
 } from "./yaku-display.js";
-import { getTileSvgPath } from "./tile-assets.js?v=mvp345-assist-buttons-hitfix-1";
+import { getTileSvgPath } from "./tile-assets.js?v=mvp35-table-ui-polish-1";
 import { sortTiles } from "../game/tiles.js";
 
 const WIND_LABELS = {
@@ -73,20 +73,20 @@ function renderEmptyState() {
 function renderSettingsMenu(state, isOpen) {
   return `
     <div class="table-menu-dock" aria-label="settings menu">
-      <button type="button" class="settings-menu-button" data-action="open-settings-menu" aria-label="menu">⚙</button>
+      <button type="button" class="settings-menu-button" data-action="open-settings-menu" aria-label="メニューを開く">⚙</button>
     </div>
     ${isOpen ? `
-      <section class="settings-menu-backdrop" data-action="close-settings-menu" aria-label="menu close">
-        <div class="settings-menu-modal" role="dialog" aria-modal="false" aria-label="menu">
+      <section class="settings-menu-backdrop" data-action="close-settings-menu" aria-label="メニューを閉じる">
+        <div class="settings-menu-modal" role="dialog" aria-modal="false" aria-label="メニュー">
           <div class="settings-menu-header">
             <strong>メニュー</strong>
             <button type="button" class="settings-menu-close" data-action="close-settings-menu">閉じる</button>
           </div>
           <div class="settings-menu-actions">
-            <button type="button" data-action="start-match">新規局</button>
-            <button type="button" class="secondary" data-action="toggle-large">${state.settings.largeTileMode ? "通常牌" : "大牌"}</button>
-            <button type="button" class="secondary" data-action="toggle-discard-advice">助言${state.settings.discardAdviceEnabled ? "ON" : "OFF"}</button>
-            <button type="button" class="secondary beginner-help-button" data-action="open-beginner-help">ヘルプ</button>
+            <button type="button" data-action="start-match" aria-label="新規局を始める">新規局</button>
+            <button type="button" class="secondary" data-action="toggle-large" aria-label="大牌モードを切り替える">${state.settings.largeTileMode ? "通常牌" : "大牌"}</button>
+            <button type="button" class="secondary" data-action="toggle-discard-advice" aria-label="助言表示を切り替える">助言${state.settings.discardAdviceEnabled ? "ON" : "OFF"}</button>
+            <button type="button" class="secondary beginner-help-button" data-action="open-beginner-help" aria-label="ヘルプを開く">ヘルプ</button>
           </div>
         </div>
       </section>
@@ -158,6 +158,7 @@ function renderExactTable(state, options) {
   const waitInfo = getWaitInfo(state, options);
   const riichiInfo = getRiichiInfo(state, options);
   const allHandsOpen = Boolean(options.allHandsDialogOpen);
+  const settingsMenuOpen = Boolean(options.settingsMenuOpen);
 
   return `
     <main class="table table-exact" aria-label="4人麻雀卓">
@@ -198,14 +199,14 @@ function renderExactTable(state, options) {
       ${renderHumanSeatPanel(human, round, discardAdvice, riichiInfo)}
 
       <section class="table-dialog-layer" aria-label="ダイアログ">
-        ${renderCallOptionsDialog(state, options)}
-        ${renderDiscardAdviceDialog(discardAdvice, options.discardAdviceDialogOpen && options.discardZoomPlayerId == null && !options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
-        ${renderDiscardZoomDialog(round, options.matchResultDialogOpen || options.beginnerHelpDialogOpen || options.yakuGuideDialogOpen || options.waitsDialogOpen || allHandsOpen ? null : options.discardZoomPlayerId)}
-        ${renderMatchResultDialog(state, options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
-        ${renderBeginnerHelpDialog(options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
-        ${renderYakuGuideDialog(yakuGuide, options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
-        ${renderWaitsDialog(waitInfo, options.waitsDialogOpen && !allHandsOpen)}
-        ${renderAllHandsDialog(state, allHandsOpen)}
+        ${settingsMenuOpen ? "" : renderCallOptionsDialog(state, options)}
+        ${renderDiscardAdviceDialog(discardAdvice, !settingsMenuOpen && options.discardAdviceDialogOpen && options.discardZoomPlayerId == null && !options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
+        ${renderDiscardZoomDialog(round, settingsMenuOpen || options.matchResultDialogOpen || options.beginnerHelpDialogOpen || options.yakuGuideDialogOpen || options.waitsDialogOpen || allHandsOpen ? null : options.discardZoomPlayerId)}
+        ${renderMatchResultDialog(state, !settingsMenuOpen && options.matchResultDialogOpen && !options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
+        ${renderBeginnerHelpDialog(!settingsMenuOpen && options.beginnerHelpDialogOpen && !options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
+        ${renderYakuGuideDialog(yakuGuide, !settingsMenuOpen && options.yakuGuideDialogOpen && !options.waitsDialogOpen && !allHandsOpen)}
+        ${renderWaitsDialog(waitInfo, !settingsMenuOpen && options.waitsDialogOpen && !allHandsOpen)}
+        ${renderAllHandsDialog(state, !settingsMenuOpen && allHandsOpen)}
       </section>
     </main>
   `;
@@ -649,7 +650,7 @@ function renderWaitsButton(waitInfo) {
   const hasDiscardWaits = waitInfo?.hasTenpaiDiscard && Array.isArray(waitInfo.discardWaitOptions) && waitInfo.discardWaitOptions.length > 0;
 
   return `
-    <button type="button" class="waits-trigger${hasWaits || hasDiscardWaits ? " has-waits" : ""}" data-action="open-waits" title="${hasDiscardWaits ? "\u5207\u308b\u3068\u5f85\u3061" : hasWaits ? "\u5f85\u3061\u3042\u308a" : "\u5f85\u3061"}">
+    <button type="button" class="waits-trigger${hasWaits || hasDiscardWaits ? " has-waits" : ""}" data-action="open-waits" aria-label="待ちを見る" title="${hasDiscardWaits ? "\u5207\u308b\u3068\u5f85\u3061" : hasWaits ? "\u5f85\u3061\u3042\u308a" : "\u5f85\u3061"}">
       \u5f85\u3061
     </button>
   `;
@@ -778,7 +779,7 @@ function renderDiscardAdviceButton(advice) {
   }
 
   return `
-    <button type="button" class="discard-advice-trigger" data-action="open-discard-advice">
+    <button type="button" class="discard-advice-trigger" data-action="open-discard-advice" aria-label="助言を見る">
       助言を見る
     </button>
   `;
@@ -819,7 +820,7 @@ function renderYakuGuideButton(targets) {
   }
 
   return `
-    <button type="button" class="yaku-guide-trigger" data-action="open-yaku-guide" title="\u5f79\u30ac\u30a4\u30c9">
+    <button type="button" class="yaku-guide-trigger" data-action="open-yaku-guide" aria-label="役ガイドを開く" title="\u5f79\u30ac\u30a4\u30c9">
       \u5f79
     </button>
   `;
@@ -1203,7 +1204,7 @@ function renderSeatAdviceButton(advice) {
   }
 
   return `
-    <button type="button" class="discard-advice-trigger seat-advice-trigger" data-action="open-discard-advice" title="助言を見る">
+    <button type="button" class="discard-advice-trigger seat-advice-trigger" data-action="open-discard-advice" aria-label="助言を見る" title="助言を見る">
       助言
     </button>
   `;

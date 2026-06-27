@@ -4,16 +4,16 @@ Use this before merging to `main` or publishing with GitHub Pages.
 
 ## Current Release Candidate
 
-- Branch: `codex/mvp-34-exact-table-layout`
-- Scope: MVP-0.1 through MVP-3.4.4 approved table layout app connection
-- Expected automated result: `334 pass / 0 pending / 0 fail`
+- Branch: `codex/mvp-35-table-ui-polish`
+- Scope: MVP-0.1 through MVP-3.5 table UI / gear menu / operation polish
+- Expected automated result: `338 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-3.4.4 is not published yet.
+- Publish status: MVP-3.5 is not published yet.
 
 ## Git Safety
 
-- Confirm the current branch is `codex/mvp-34-exact-table-layout`.
+- Confirm the current branch is `codex/mvp-35-table-ui-polish`.
 - Confirm the working tree is clean.
 - Confirm the latest commit is the intended release candidate.
 - Confirm no unreviewed local commits are being skipped.
@@ -31,8 +31,8 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 334.
-- Confirm pass count is 334.
+- Confirm total count is 338.
+- Confirm pass count is 338.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
@@ -44,7 +44,7 @@ node tests/layout-check.mjs
 
 - If Node is not on PATH in the Codex desktop environment, use the bundled Node command documented in `docs/layout-test.md`.
 - Confirm layout-check screenshots are written under `test-artifacts/layout/`.
-- Current layout-check result: all target viewports and scenarios pass, including `normal`, `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `all-hands-open`, `settings-menu-open`, `yaku-guide`, `waits`, `riichi-ready`, `riichi-declared`, `cpu-riichi`, `pon-reaction`, `chi-reaction`, `open-melds`, `multiple-melds`, `open-tanyao-win`, `open-yakuhai-win`, `river-order-fixture`, and `cpu-win`; MVP-3.4.4 checks the connected app layout for active-round header removal, compact CPU seat geometry, right-edge gear menu fit, center-score-board alignment and full score visibility, four-direction river placement, local 6x3 river order before rotation, whole-river rotation, human hand width above 90%, compact recommendation badges, and meld/action/hand separation.
+- Current layout-check result: all target viewports and scenarios pass, including `normal`, `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `all-hands-open`, `settings-menu-open`, `gear-menu-open`, `assist-buttons-open`, `call-reaction-buttons`, `riichi-action-buttons`, `yaku-guide`, `waits`, `riichi-ready`, `riichi-declared`, `cpu-riichi`, `pon-reaction`, `chi-reaction`, `open-melds`, `multiple-melds`, `open-tanyao-win`, `open-yakuhai-win`, `river-order-fixture`, and `cpu-win`; MVP-3.5 keeps the connected four-direction app layout and adds hit-tests for the gear button, gear menu items, advice/yaku/waits helpers, and call option triggers.
 - Run the CPU win reachability diagnostic:
 
 ```powershell
@@ -56,6 +56,11 @@ node scripts/simulate-cpu-win-reachability.mjs
 ## Core Functional Checks
 
 - New round starts.
+- During an active round, the old top header stays hidden and the top-right gear button is visible.
+- The gear menu opens, closes, and contains new match, large tile mode, advice ON/OFF, and help.
+- Advice, yaku, and waits helper buttons are visible, tappable, and open only their matching popup.
+- Gear menu, advice, yaku guide, waits, discard zoom, result, help, and all-hands popups do not stay open together.
+- Pon, chi, ron, tsumo, skip, riichi, next-round, and replay buttons remain tappable when visible.
 - Human player receives 14 tiles after dealer draw.
 - CPU players show hand counts.
 - Human can discard one tile.

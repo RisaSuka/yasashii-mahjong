@@ -211,9 +211,20 @@ Recommended staged path:
    - Rotate discard/meld tile graphics by seat direction while keeping labels and buttons upright.
    - MVP-3.4.2 correction: keep CPU seats as small markers, use a central score board as the visual anchor, order each river locally as a 6x3 grid before whole-river rotation, keep the human hand nearly full-width with tight tile gaps, and reserve separate hand/meld/action/support/gear areas.
 5. MVP-3.5
-   - Continue polish of the gear menu and compact table controls if more actions are added.
+   - Polish the existing gear menu and compact table controls without a large layout redesign.
+   - Strengthen hit-tests for gear/menu items, helper buttons, call triggers, and modal exclusivity.
 6. MVP-4.x
    - CPU calls, kan, scoring display, and scoring calculation.
+
+## MVP-3.5 Polish Notes
+
+MVP-3.5 should keep the approved MVP-3.4 table structure. The work is limited to operation stability: the gear menu, helper buttons, action buttons, modal exclusivity, and layout/hit-test coverage. It should not redesign the center score board, rivers, tile artwork, or game rules.
+
+Future polish candidates after MVP-3.5:
+
+- Consider grouping helper controls if more buttons are added.
+- Consider a larger dedicated call-selection modal if pon/chi choices become too dense.
+- Consider score-board refinements only after scoring display requirements are known.
 
 ## Go / No-Go Conditions For The Redesign
 
