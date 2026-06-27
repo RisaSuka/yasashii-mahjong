@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const ARTIFACT_DIR = path.join(ROOT, "test-artifacts", "layout");
-const CACHE_BUST = "mvp41-cpu-pon-1";
+const CACHE_BUST = "mvp42-cpu-chi-1";
 const PORT = Number(process.env.LAYOUT_CHECK_PORT || 18765);
 const VIEWPORTS = [
   { width: 844, height: 390 },
@@ -42,8 +42,10 @@ const SCENARIOS = [
   { name: "open-yakuhai-win", discards: 9, mode: "open-yakuhai-win" },
   { name: "cpu-win", discards: 12, mode: "cpu-win" },
   { name: "cpu-pon", discards: 9, mode: "cpu-pon" },
+  { name: "cpu-chi", discards: 9, mode: "cpu-chi" },
   { name: "cpu-open-melds", discards: 9, mode: "cpu-open-melds" },
   { name: "cpu-pon-yakuhai-win", discards: 9, mode: "cpu-pon-yakuhai-win" },
+  { name: "cpu-chi-tanyao-win", discards: 9, mode: "cpu-chi-tanyao-win" },
   { name: "multiple-cpu-melds", discards: 9, mode: "multiple-cpu-melds" },
   { name: "all-hands-open", discards: 18, mode: "all-hands-open" },
   { name: "settings-menu-open", discards: 9, mode: "settings-menu-open" },
@@ -498,12 +500,26 @@ function setupScenarioSource() {
       };
     }
 
-    if (mode === "cpu-pon" || mode === "cpu-open-melds" || mode === "cpu-pon-yakuhai-win" || mode === "multiple-cpu-melds") {
+    if (
+      mode === "cpu-pon"
+      || mode === "cpu-chi"
+      || mode === "cpu-open-melds"
+      || mode === "cpu-pon-yakuhai-win"
+      || mode === "cpu-chi-tanyao-win"
+      || mode === "multiple-cpu-melds"
+    ) {
       const cpu1Meld = {
         id: "layout-cpu-pon-z5",
         type: "pon",
         tiles: [tile("layout-cpu-z5-a", "z", 5), tile("layout-cpu-z5-b", "z", 5, 1), tile("layout-cpu-z5-c", "z", 5, 2)],
         calledTile: tile("layout-cpu-z5-c", "z", 5, 2),
+        fromPlayerId: 0
+      };
+      const cpu1ChiMeld = {
+        id: "layout-cpu-chi-p345",
+        type: "chi",
+        tiles: [tile("layout-cpu-p3", "p", 3), tile("layout-cpu-p4", "p", 4), tile("layout-cpu-p5", "p", 5)],
+        calledTile: tile("layout-cpu-p5", "p", 5),
         fromPlayerId: 0
       };
       const cpu2Meld = {
@@ -525,26 +541,33 @@ function setupScenarioSource() {
         ...state,
         round: {
           ...state.round,
-          phase: mode === "cpu-pon-yakuhai-win" ? "ended" : "discard",
+          phase: (mode === "cpu-pon-yakuhai-win" || mode === "cpu-chi-tanyao-win") ? "ended" : "discard",
           currentPlayerIndex: 1,
-          endReason: mode === "cpu-pon-yakuhai-win" ? "win" : state.round.endReason,
-          winningResult: mode === "cpu-pon-yakuhai-win"
+          endReason: (mode === "cpu-pon-yakuhai-win" || mode === "cpu-chi-tanyao-win") ? "win" : state.round.endReason,
+          winningResult: (mode === "cpu-pon-yakuhai-win" || mode === "cpu-chi-tanyao-win")
             ? {
               winnerId: 1,
               winType: "tsumo",
               winningTile: tile("layout-cpu-win-m9", "m", 9),
               handType: "standard",
               handTiles: state.round.players[1].hand,
-              yakuResult: [{ id: "yakuhai", name: "Yakuhai", han: 1 }]
+              yakuResult: mode === "cpu-chi-tanyao-win"
+                ? [{ id: "tanyao", name: "Tanyao", han: 1 }]
+                : [{ id: "yakuhai", name: "Yakuhai", han: 1 }]
             }
             : state.round.winningResult,
           players: state.round.players.map((player) => {
             if (player.id === 1) {
+              const melds = mode === "cpu-chi" || mode === "cpu-chi-tanyao-win"
+                ? [cpu1ChiMeld]
+                : mode === "cpu-open-melds" || mode === "multiple-cpu-melds"
+                  ? [cpu1Meld, cpu1ChiMeld]
+                  : [cpu1Meld];
               return {
                 ...player,
                 isClosed: false,
                 menzen: false,
-                melds: [cpu1Meld]
+                melds
               };
             }
 

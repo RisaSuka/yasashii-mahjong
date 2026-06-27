@@ -1,6 +1,6 @@
 import { chooseCpuDiscard, chooseCpuRiichiDiscardOption } from "./cpu/random-cpu.js";
-import { analyzeDiscardWaits } from "./advice/wait-analysis.js";
-import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp41-cpu-pon-1";
+import { analyzeDiscardWaits, analyzeWaits } from "./advice/wait-analysis.js";
+import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp42-cpu-chi-1";
 import { isWinningHand } from "./rules/win-check.js";
 import { detectYaku } from "./rules/yaku.js";
 import { drawFromWall } from "./wall.js";
@@ -156,6 +156,14 @@ export function getCpuPonOptions(state, playerId) {
   return getPonOptionsForPlayer(state, playerId, { allowedType: "cpu" });
 }
 
+export function canCpuCallChi(state, playerId) {
+  return getCpuChiOptions(state, playerId).length > 0;
+}
+
+export function getCpuChiOptions(state, playerId) {
+  return getChiOptionsForPlayer(state, playerId, { allowedType: "cpu" });
+}
+
 function getPonOptionsForPlayer(state, playerId, options = {}) {
   if (!state.round || state.round.phase === "ended" || !["draw", "reaction"].includes(state.round.phase)) {
     return [];
@@ -295,6 +303,10 @@ export function resolveCpuPonAfterDiscard(state, random = Math.random) {
 }
 
 export function getChiOptions(state, playerId) {
+  return getChiOptionsForPlayer(state, playerId, { allowedType: "human" });
+}
+
+function getChiOptionsForPlayer(state, playerId, options = {}) {
   if (!state.round || state.round.phase === "ended" || !["draw", "reaction"].includes(state.round.phase)) {
     return [];
   }
@@ -302,7 +314,7 @@ export function getChiOptions(state, playerId) {
   const player = state.round.players.find((candidate) => candidate.id === playerId);
   const lastDiscard = state.round.lastDiscard;
 
-  if (!player || player.type !== "human" || isRiichiPlayer(player) || !lastDiscard?.tile || lastDiscard.playerId === playerId) {
+  if (!player || (options.allowedType && player.type !== options.allowedType) || isRiichiPlayer(player) || !lastDiscard?.tile || lastDiscard.playerId === playerId) {
     return [];
   }
 
@@ -315,6 +327,138 @@ export function getChiOptions(state, playerId) {
     id: `chi-${lastDiscard.tile.id}-${index}`,
     fromPlayerId: lastDiscard.playerId
   }));
+}
+
+export function evaluateCpuChiDecision(state, playerId, option) {
+  const player = state.round?.players.find((candidate) => candidate.id === playerId);
+
+  if (!player || player.type !== "cpu" || !option || isRiichiPlayer(player)) {
+    return {
+      shouldConsider: false,
+      chance: 0,
+      reasons: ["invalid"],
+      waitCount: 0,
+      yakuWaitCount: 0
+    };
+  }
+
+  const analysis = analyzeCpuChiShape(state, player, option);
+  const alreadyOpen = (player.melds || []).length > 0;
+  const reasons = [];
+  let chance = 0.05;
+
+  if (analysis.hasYakuWait) {
+    chance = Math.max(chance, 0.6);
+    reasons.push("yaku-tenpai");
+  }
+
+  if (alreadyOpen && (analysis.allSimpleAfterCall || analysis.hasOpenYakuRoute)) {
+    chance = Math.max(chance, analysis.hasYakuWait ? 0.6 : 0.5);
+    reasons.push("open-yaku-route");
+  }
+
+  if (analysis.allSimpleAfterCall || analysis.tanyaoDirection) {
+    chance = Math.max(chance, 0.4);
+    reasons.push("tanyao-direction");
+  }
+
+  if (analysis.badShapeImprovement) {
+    chance = Math.max(chance, 0.35);
+    reasons.push("shape-improvement");
+  }
+
+  if (!analysis.hasYakuWait && !analysis.allSimpleAfterCall && !analysis.tanyaoDirection) {
+    chance = Math.min(chance, 0.05);
+    if (reasons.length === 0) {
+      reasons.push("no-yaku-avoid");
+    }
+  }
+
+  return {
+    shouldConsider: chance > 0,
+    chance,
+    reasons,
+    waitCount: analysis.waitCount,
+    yakuWaitCount: analysis.yakuWaitCount,
+    simpleRatio: analysis.simpleRatio
+  };
+}
+
+export function shouldCpuCallChi(state, playerId, option, random = Math.random) {
+  const decision = evaluateCpuChiDecision(state, playerId, option);
+
+  return decision.shouldConsider && random() < decision.chance;
+}
+
+export function chooseCpuChiCandidate(state, playerId, options = [], random = Math.random) {
+  const evaluated = options
+    .map((option) => ({
+      option,
+      decision: evaluateCpuChiDecision(state, playerId, option)
+    }))
+    .filter((candidate) => candidate.decision.shouldConsider)
+    .sort(compareCpuChiCandidates);
+
+  const best = evaluated[0];
+
+  if (!best || random() >= best.decision.chance) {
+    return null;
+  }
+
+  return best;
+}
+
+export function findCpuChiCandidate(state, random = Math.random) {
+  if (
+    !state.round
+    || state.round.phase === "ended"
+    || hasHumanReactionOpportunity(state)
+    || findCpuRonWinner(state)
+    || hasCpuPonOpportunity(state)
+  ) {
+    return null;
+  }
+
+  const lastDiscard = state.round.lastDiscard;
+
+  if (!lastDiscard?.tile || lastDiscard.playerId === null || lastDiscard.playerId === undefined) {
+    return null;
+  }
+
+  for (const player of getPlayersInTurnOrderAfter(state.round, lastDiscard.playerId)) {
+    if (player.type !== "cpu") {
+      continue;
+    }
+
+    const options = getCpuChiOptions(state, player.id);
+    const candidate = chooseCpuChiCandidate(state, player.id, options, random);
+
+    if (candidate) {
+      return {
+        player,
+        option: candidate.option,
+        decision: candidate.decision
+      };
+    }
+  }
+
+  return null;
+}
+
+export function resolveCpuChiAfterDiscard(state, random = Math.random) {
+  const candidate = findCpuChiCandidate(state, random);
+
+  if (!candidate) {
+    return state;
+  }
+
+  const calledState = declareChiForPlayer(state, candidate.player.id, candidate.option);
+
+  if (calledState === state || calledState.round?.phase !== "discard") {
+    return state;
+  }
+
+  return cpuDiscard(calledState, random);
 }
 
 export function getChiOptionsForDiscard(discardTile, hand) {
@@ -353,6 +497,134 @@ export function getChiOptionsForDiscard(discardTile, hand) {
       };
     })
     .filter(Boolean);
+}
+
+function compareCpuChiCandidates(a, b) {
+  if (a.decision.chance !== b.decision.chance) {
+    return b.decision.chance - a.decision.chance;
+  }
+
+  if (a.decision.yakuWaitCount !== b.decision.yakuWaitCount) {
+    return b.decision.yakuWaitCount - a.decision.yakuWaitCount;
+  }
+
+  if (a.decision.waitCount !== b.decision.waitCount) {
+    return b.decision.waitCount - a.decision.waitCount;
+  }
+
+  if (a.decision.simpleRatio !== b.decision.simpleRatio) {
+    return b.decision.simpleRatio - a.decision.simpleRatio;
+  }
+
+  return String(a.option.id || "").localeCompare(String(b.option.id || ""));
+}
+
+function analyzeCpuChiShape(state, player, option) {
+  const postCallHand = removeHandTilesByIds(player.hand, option.handTileIds);
+  const nextMelds = [
+    ...(player.melds || []),
+    createChiMeldPreview(option)
+  ];
+  const openTiles = nextMelds.flatMap((meld) => meld.tiles || []);
+  const allTilesAfterCall = [...postCallHand, ...openTiles];
+  const simpleTiles = allTilesAfterCall.filter(isSimpleNumberTile);
+  const simpleRatio = allTilesAfterCall.length > 0 ? simpleTiles.length / allTilesAfterCall.length : 0;
+  const allSimpleAfterCall = allTilesAfterCall.length > 0 && simpleTiles.length === allTilesAfterCall.length;
+  const tanyaoDirection = option.tiles.every(isSimpleNumberTile) && simpleRatio >= 0.75;
+  const waitSummary = analyzePostChiTenpai(state, player, postCallHand, nextMelds);
+
+  return {
+    allSimpleAfterCall,
+    tanyaoDirection,
+    simpleRatio,
+    badShapeImprovement: isChiShapeUseful(option),
+    hasOpenYakuRoute: hasOpenYakuRoute(state, { ...player, melds: nextMelds }, option.calledTile),
+    hasYakuWait: waitSummary.yakuWaitCount > 0,
+    waitCount: waitSummary.waitCount,
+    yakuWaitCount: waitSummary.yakuWaitCount
+  };
+}
+
+function analyzePostChiTenpai(state, player, postCallHand, nextMelds) {
+  const openTiles = nextMelds.flatMap((meld) => meld.tiles || []);
+  const virtualPlayer = {
+    ...player,
+    hand: postCallHand,
+    melds: nextMelds,
+    isClosed: false,
+    menzen: false
+  };
+  const seenDiscards = new Set();
+  let waitCount = 0;
+  let yakuWaitCount = 0;
+
+  for (let index = 0; index < postCallHand.length; index += 1) {
+    const discardTile = postCallHand[index];
+    const discardKey = `${discardTile.suit}${discardTile.rank}`;
+
+    if (seenDiscards.has(discardKey)) {
+      continue;
+    }
+    seenDiscards.add(discardKey);
+
+    const candidateTiles = [
+      ...postCallHand.filter((_, candidateIndex) => candidateIndex !== index),
+      ...openTiles
+    ];
+
+    if (candidateTiles.length !== 13) {
+      continue;
+    }
+
+    const waitInfo = analyzeWaits(candidateTiles, {
+      round: state.round,
+      match: state.match,
+      player: virtualPlayer
+    });
+
+    if (!waitInfo.isTenpai) {
+      continue;
+    }
+
+    waitCount = Math.max(waitCount, waitInfo.waits.length);
+    yakuWaitCount = Math.max(yakuWaitCount, waitInfo.waits.filter((wait) => wait.hasYaku).length);
+  }
+
+  return {
+    waitCount,
+    yakuWaitCount
+  };
+}
+
+function removeHandTilesByIds(hand, tileIds) {
+  const selectedIds = new Set(tileIds || []);
+  return hand.filter((tile) => !selectedIds.has(tile.id));
+}
+
+function createChiMeldPreview(option) {
+  return {
+    type: "chi",
+    tiles: option.tiles || [],
+    calledTile: option.calledTile,
+    fromPlayerId: option.fromPlayerId
+  };
+}
+
+function isChiShapeUseful(option) {
+  const ranks = (option.tiles || [])
+    .filter((tile) => tile.suit !== "z")
+    .map((tile) => tile.rank)
+    .sort((a, b) => a - b);
+
+  return ranks.length === 3
+    && ranks[0] >= 2
+    && ranks[2] <= 8
+    && option.calledTile?.rank >= 3
+    && option.calledTile?.rank <= 7;
+}
+
+function isSimpleNumberTile(tile) {
+  return tile?.suit !== "z" && tile?.rank >= 2 && tile?.rank <= 8;
 }
 
 export function startMatch(state, options = {}) {
@@ -1017,6 +1289,14 @@ export function declareChi(state, playerId, handTileIds = []) {
     return state;
   }
 
+  return declareChiForPlayer(state, playerId, option);
+}
+
+function declareChiForPlayer(state, playerId, option) {
+  if (!option) {
+    return state;
+  }
+
   const player = state.round.players.find((candidate) => candidate.id === playerId);
   const nextMeld = {
     id: `${state.round.id}-chi-${state.round.turnCount}-${player.melds?.length || 0}`,
@@ -1074,6 +1354,17 @@ function hasHumanReactionOpportunity(state) {
   return canCompleteRonLatestDiscard(state, human.id)
     || canDeclarePon(state, human.id)
     || canDeclareChi(state, human.id);
+}
+
+function hasCpuPonOpportunity(state) {
+  const lastDiscard = state.round?.lastDiscard;
+
+  if (!state.round || !lastDiscard?.tile || lastDiscard.playerId === null || lastDiscard.playerId === undefined) {
+    return false;
+  }
+
+  return getPlayersInTurnOrderAfter(state.round, lastDiscard.playerId)
+    .some((player) => player.type === "cpu" && getCpuPonOptions(state, player.id).length > 0);
 }
 
 function getPlayersInTurnOrderAfter(round, playerId) {
@@ -1177,7 +1468,14 @@ function isKamichaDiscard(round, playerId, discardPlayerId) {
     return false;
   }
 
-  return discardPlayerId === (playerId + round.players.length - 1) % round.players.length;
+  const playerIndex = round.players.findIndex((player) => player.id === playerId);
+  const discardPlayerIndex = round.players.findIndex((player) => player.id === discardPlayerId);
+
+  if (playerIndex < 0 || discardPlayerIndex < 0) {
+    return false;
+  }
+
+  return discardPlayerIndex === (playerIndex + round.players.length - 1) % round.players.length;
 }
 
 function compareTileForMeld(a, b) {

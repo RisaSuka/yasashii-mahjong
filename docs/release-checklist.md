@@ -5,11 +5,11 @@ Use this before merging to `main` or publishing with GitHub Pages.
 ## Current Release Candidate
 
 - Branch: `codex/mvp-40-cpu-call-plan`
-- Scope: MVP-4.1 CPU pon core + UI
-- Expected automated result: `348 pass / 0 pending / 0 fail`
+- Scope: MVP-4.2 CPU chi core + UI
+- Expected automated result: `358 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-4.1 CPU pon is not published yet.
+- Publish status: MVP-4.2 CPU chi is not published yet.
 
 ## Git Safety
 
@@ -31,12 +31,12 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 348.
-- Confirm pass count is 348.
+- Confirm total count is 358.
+- Confirm pass count is 358.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
-- Confirm MVP-4.1 CPU pon production code, tests, scenarios, layout guard, and docs are reviewed.
-- Confirm `docs/mvp-40-cpu-call-plan.md` remains present and now notes that MVP-4.1 completed the CPU pon slice.
+- Confirm MVP-4.2 CPU chi production code, tests, scenarios, layout guard, and docs are reviewed.
+- Confirm `docs/mvp-40-cpu-call-plan.md` remains present and now notes that MVP-4.1 completed CPU pon and MVP-4.2 completed CPU chi.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
 - Run the smartphone landscape layout guard:
 
@@ -46,7 +46,7 @@ node tests/layout-check.mjs
 
 - If Node is not on PATH in the Codex desktop environment, use the bundled Node command documented in `docs/layout-test.md`.
 - Confirm layout-check screenshots are written under `test-artifacts/layout/`.
-- Current layout-check result: all target viewports and scenarios pass, including `normal`, `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `all-hands-open`, `settings-menu-open`, `gear-menu-open`, `assist-buttons-open`, `call-reaction-buttons`, `riichi-action-buttons`, `yaku-guide`, `waits`, `riichi-ready`, `riichi-declared`, `cpu-riichi`, `pon-reaction`, `chi-reaction`, `open-melds`, `multiple-melds`, `open-tanyao-win`, `open-yakuhai-win`, `river-order-fixture`, and `cpu-win`; MVP-3.5 keeps the connected four-direction app layout and adds hit-tests for the gear button, gear menu items, advice/yaku/waits helpers, and call option triggers.
+- Current layout-check result: all target viewports and scenarios pass, including `normal`, `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `all-hands-open`, `settings-menu-open`, `gear-menu-open`, `assist-buttons-open`, `call-reaction-buttons`, `riichi-action-buttons`, `yaku-guide`, `waits`, `riichi-ready`, `riichi-declared`, `cpu-riichi`, `pon-reaction`, `chi-reaction`, `open-melds`, `multiple-melds`, `open-tanyao-win`, `open-yakuhai-win`, `river-order-fixture`, `cpu-win`, `cpu-pon`, `cpu-chi`, `cpu-open-melds`, `cpu-pon-yakuhai-win`, `cpu-chi-tanyao-win`, and `multiple-cpu-melds`.
 - Run the CPU win reachability diagnostic:
 
 ```powershell
@@ -114,7 +114,13 @@ node scripts/simulate-cpu-win-reachability.mjs
 - CPU pon melds render in the CPU meld lane with seat-direction rotation.
 - CPU open yakuhai pon can win, and CPU open tsumo does not receive menzen-tsumo.
 - Next-round setup clears CPU melds.
-- CPU chi, kan, scoring, furiten, and full call competition remain out of scope.
+- CPU chi is possible only from the upper player's latest suited-number discard.
+- CPU chi is blocked while that CPU is in riichi, for honor/non-upper/own discards, while human reaction is waiting, and when CPU pon is available on the same discard.
+- CPU chi decision uses injected RNG and favors tanyao or yaku-valid-tenpai direction over terminal-heavy no-yaku calls.
+- CPU chi creates a `chi` meld with `calledTile` and `fromPlayerId`, opens the CPU hand, removes two concealed sequence tiles, and immediately discards one tile.
+- CPU chi melds render in the CPU meld lane with seat-direction rotation and can coexist with pon melds.
+- CPU open tanyao chi can win, open no-yaku CPU hands cannot win, and CPU open tsumo does not receive menzen-tsumo.
+- Kan, scoring, furiten, and full call competition remain out of scope.
 - Winning result still shows yaku names, han, total han, explanations, and furigana.
 - Yaku display order remains beginner-friendly.
 - CSS tile display keeps manzu, pinzu, souzu, and honor tiles visually distinct.

@@ -103,8 +103,10 @@ The check renders these scenarios:
 - `call-reaction-buttons`: call trigger buttons can open their candidate modal
 - `riichi-action-buttons`: riichi action controls remain visible and hit-tested
 - `cpu-pon`: CPU pon meld lane is visible after a CPU pon setup
+- `cpu-chi`: CPU chi meld lane is visible after a CPU chi setup
 - `cpu-open-melds`: CPU open melds stay in the CPU meld lane
 - `cpu-pon-yakuhai-win`: CPU open yakuhai win result fits the table
+- `cpu-chi-tanyao-win`: CPU open tanyao chi win result fits the table
 - `multiple-cpu-melds`: CPU1/CPU2/CPU3 meld lanes stay separated from rivers, seats, actions, and the human hand
 
 ## Screenshots
@@ -144,6 +146,7 @@ As of MVP-1.1.6, the regular browser tests pass and the layout check passes acro
 - MVP-3.4.4 connects the approved exact-table mock to the live app renderer. The guard now also verifies the generated app screenshots, page scrollWidth/scrollHeight, top-right gear placement, center score-board element separation, score/river non-overlap, rotated river visibility, hand tile height/aspect/gap, and action/support/meld separation across all active scenarios.
 - MVP-3.5 adds operation-polish hit-tests. The guard checks gear button clickability, gear menu item clickability, advice/yaku/waits helper clickability, call trigger click-to-open behavior, modal exclusivity, and the new `gear-menu-open`, `assist-buttons-open`, `call-reaction-buttons`, and `riichi-action-buttons` scenarios.
 - MVP-4.1 adds CPU pon/open-meld scenarios. The guard checks CPU meld lanes for right/top/left seats, seat-direction meld rotation, no overlap with CPU rivers, no overlap with the human hand or action area, and no page-level overflow after CPU pon or CPU open yakuhai win states.
+- MVP-4.2 adds CPU chi/open-tanyao scenarios. The guard keeps the same CPU meld-lane geometry checks while verifying `chi` melds and mixed pon/chi CPU melds render in the four-direction table without covering rivers, seats, actions, or the human hand.
 - MVP-1.9 adds the `waits-after-discard` scenario for 14-tile discard-to-wait guidance.
 - MVP-2.1 adds `riichi-ready` and `riichi-declared` scenarios so the riichi action/status stay inside the smartphone landscape action bar.
 - MVP-2.2 adds the `cpu-riichi` scenario so a CPU riichi seat badge stays inside the smartphone landscape table.

@@ -34,7 +34,16 @@ const SCENARIO_ALIASES = {
   "cpu-pon-ready-toitoi": "cpu-pon-ready-toitoi",
   "cpu-pon-no-yaku-avoid": "cpu-pon-no-yaku-avoid",
   "cpu-pon-riichi-blocked": "cpu-pon-riichi-blocked",
-  "cpu-pon-open-yakuhai-win-shape": "cpu-pon-open-yakuhai-win-shape"
+  "cpu-pon-open-yakuhai-win-shape": "cpu-pon-open-yakuhai-win-shape",
+  "cpu-chi-ready-tanyao": "cpu-chi-ready-tanyao",
+  "cpu-chi-after-human-discard": "cpu-chi-ready-tanyao",
+  "cpu-chi-multiple-options": "cpu-chi-multiple-options",
+  "cpu-chi-not-kamicha": "cpu-chi-not-kamicha",
+  "cpu-chi-no-yaku-avoid": "cpu-chi-no-yaku-avoid",
+  "cpu-chi-riichi-blocked": "cpu-chi-riichi-blocked",
+  "cpu-chi-open-tanyao-win-shape": "cpu-chi-open-tanyao-win-shape",
+  "cpu-chi-open-no-yaku-win-shape": "cpu-chi-open-no-yaku-win-shape",
+  "cpu-pon-priority-over-chi": "cpu-pon-priority-over-chi"
 };
 
 const SCENARIOS = {
@@ -618,6 +627,155 @@ const SCENARIOS = {
     lastDiscard: {
       playerId: 0,
       tile: "z5"
+    }
+  },
+  "cpu-chi-ready-tanyao": {
+    name: "cpu-chi-ready-tanyao",
+    description: "CPU player 1 can chi a human suited discard toward tanyao.",
+    phase: "draw",
+    currentPlayerIndex: 0,
+    hands: {
+      1: "m2 m3 m4 p3 p4 p7 p8 s2 s3 s4 s6 s7 s8"
+    },
+    discards: {
+      0: "p5"
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "p5"
+    }
+  },
+  "cpu-chi-multiple-options": {
+    name: "cpu-chi-multiple-options",
+    description: "CPU player 1 has three chi options on a human five discard.",
+    phase: "draw",
+    currentPlayerIndex: 0,
+    hands: {
+      1: "m2 m3 m4 p3 p4 p4 p6 p6 p7 s2 s3 s4 s8"
+    },
+    discards: {
+      0: "p5"
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "p5"
+    }
+  },
+  "cpu-chi-not-kamicha": {
+    name: "cpu-chi-not-kamicha",
+    description: "CPU player 1 has a chi shape, but the discard is not from the upper player.",
+    phase: "draw",
+    currentPlayerIndex: 2,
+    hands: {
+      1: "m2 m3 m4 p3 p4 p7 p8 s2 s3 s4 s6 s7 s8"
+    },
+    discards: {
+      2: "p5"
+    },
+    lastDiscard: {
+      playerId: 2,
+      tile: "p5"
+    }
+  },
+  "cpu-chi-no-yaku-avoid": {
+    name: "cpu-chi-no-yaku-avoid",
+    description: "CPU player 1 can chi a terminal shape but has no clear open-yaku route.",
+    phase: "draw",
+    currentPlayerIndex: 0,
+    hands: {
+      1: "p2 p3 m1 m9 p9 s1 s9 z1 z2 z3 z4 z6 z7"
+    },
+    discards: {
+      0: "p1"
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "p1"
+    }
+  },
+  "cpu-chi-riichi-blocked": {
+    name: "cpu-chi-riichi-blocked",
+    description: "CPU player 1 cannot chi while riichi.",
+    phase: "draw",
+    currentPlayerIndex: 0,
+    riichi: [1],
+    hands: {
+      1: "m2 m3 m4 p3 p4 p7 p8 s2 s3 s4 s6 s7 s8"
+    },
+    discards: {
+      0: "p5"
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "p5"
+    }
+  },
+  "cpu-chi-open-tanyao-win-shape": {
+    name: "cpu-chi-open-tanyao-win-shape",
+    description: "CPU player 1 has an open chi plus a complete tanyao tsumo shape.",
+    phase: "discard",
+    currentPlayerIndex: 1,
+    hands: {
+      1: "m2 m3 m4 p6 p7 p8 s2 s3 s4 m5 m5"
+    },
+    discards: {
+      0: "p5"
+    },
+    melds: {
+      1: [
+        {
+          type: "chi",
+          tiles: "p3 p4 p5",
+          calledTile: "p5",
+          fromPlayerId: 0
+        }
+      ]
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "p5"
+    }
+  },
+  "cpu-chi-open-no-yaku-win-shape": {
+    name: "cpu-chi-open-no-yaku-win-shape",
+    description: "CPU player 1 has an open chi plus a complete no-yaku shape.",
+    phase: "discard",
+    currentPlayerIndex: 1,
+    hands: {
+      1: "m1 m2 m3 p7 p8 p9 s1 s2 s3 z3 z3"
+    },
+    discards: {
+      0: "p5"
+    },
+    melds: {
+      1: [
+        {
+          type: "chi",
+          tiles: "p3 p4 p5",
+          calledTile: "p5",
+          fromPlayerId: 0
+        }
+      ]
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "p5"
+    }
+  },
+  "cpu-pon-priority-over-chi": {
+    name: "cpu-pon-priority-over-chi",
+    description: "CPU player 1 can both pon and chi, so CPU pon priority should block chi.",
+    phase: "draw",
+    currentPlayerIndex: 0,
+    hands: {
+      1: "p5 p5 p3 p4 m2 m3 m4 s2 s3 s4 p7 p8 m6"
+    },
+    discards: {
+      0: "p5"
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "p5"
     }
   }
 };

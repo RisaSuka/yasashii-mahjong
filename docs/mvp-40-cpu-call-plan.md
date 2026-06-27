@@ -2,7 +2,7 @@
 
 MVP-4.0 is a design-only milestone for CPU pon and chi. CPU calls change game pace, yaku visibility, turn flow, riichi decisions, and the four-direction table UI, so the first step is to define a deliberately small, testable scope before implementation.
 
-MVP-4.0 itself was design-only. MVP-4.1 implements the first slice of this plan: CPU pon core + UI. CPU chi, kan, scoring, furiten, full multi-caller competition, and CPU difficulty UI remain deferred.
+MVP-4.0 itself was design-only. MVP-4.1 implements the first slice of this plan: CPU pon core + UI. MVP-4.2 implements CPU chi core + UI. Kan, scoring, furiten, full multi-caller competition, and CPU difficulty UI remain deferred.
 
 ## MVP-4.1 Implementation Note
 
@@ -22,6 +22,23 @@ MVP-4.1 implements CPU pon only:
 - Added deterministic scenarios include `cpu-pon-ready-yakuhai`, `cpu-pon-ready-toitoi`, `cpu-pon-no-yaku-avoid`, `cpu-pon-riichi-blocked`, `cpu-pon-after-human-discard`, and `cpu-pon-open-yakuhai-win-shape`.
 
 The originally proposed `cpu-multiple-pon-candidates` scenario remains deferred because a legal four-copy tile set cannot produce one discard plus two matching tiles in multiple CPU hands at the same time without a synthetic impossible fixture.
+
+## MVP-4.2 Implementation Note
+
+MVP-4.2 implements CPU chi only:
+
+- CPU chi availability reuses the human chi sequence helper, but allows CPU players and keeps the upper-player-only restriction.
+- CPU chi is blocked while the CPU is in riichi, when the discard is an honor or not from kamicha, when a human reaction is waiting, and when CPU pon is available on the same discard.
+- CPU chi decisions use injected RNG and a small probability table:
+  - yaku-valid-tenpai chi: 60%
+  - clear tanyao direction chi: at least 40%
+  - already-open yaku/tanyao continuation: roughly 50%
+  - useful middle-shape improvement: roughly 35%
+  - terminal/no-yaku chi: 5%
+- CPU chi creates a shared `chi` meld with `calledTile` and `fromPlayerId`, marks the CPU hand open, removes two concealed sequence tiles, and immediately discards through the existing CPU discard evaluator.
+- CPU melds render in the existing four-direction table lanes with seat-direction tile rotation and can coexist with CPU pon melds.
+- Open CPU tanyao chi can win with tanyao, open no-yaku CPU hands remain rejected, and open CPU tsumo does not receive menzen-tsumo.
+- Added deterministic scenarios include `cpu-chi-ready-tanyao`, `cpu-chi-multiple-options`, `cpu-chi-not-kamicha`, `cpu-chi-no-yaku-avoid`, `cpu-chi-riichi-blocked`, `cpu-chi-after-human-discard`, `cpu-chi-open-tanyao-win-shape`, and `cpu-pon-priority-over-chi`.
 
 ## Purpose
 
