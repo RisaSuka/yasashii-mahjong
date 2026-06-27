@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp344-app-table-layout-1";
-import { renderGame } from "./ui/render.js?v=mvp344-app-table-layout-1";
+import { bindControls } from "./ui/input.js?v=mvp345-assist-buttons-hitfix-1";
+import { renderGame } from "./ui/render.js?v=mvp345-assist-buttons-hitfix-1";
 
-const APP_ASSET_VERSION = "mvp344-app-table-layout-1";
+const APP_ASSET_VERSION = "mvp345-assist-buttons-hitfix-1";
 
 const appRoot = document.querySelector("#app");
 

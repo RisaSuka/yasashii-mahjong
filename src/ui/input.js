@@ -48,9 +48,11 @@ export function bindControls(root, handlers) {
     });
   }
 
-  root.querySelector("[data-action='open-discard-advice']")?.addEventListener("click", () => {
-    handlers.onOpenDiscardAdvice?.();
-  });
+  for (const trigger of getActionElements(root, "[data-action='open-discard-advice']")) {
+    trigger.addEventListener("click", () => {
+      handlers.onOpenDiscardAdvice?.();
+    });
+  }
 
   root.querySelector("[data-action='close-discard-advice']")?.addEventListener("click", () => {
     handlers.onCloseDiscardAdvice?.();
@@ -103,9 +105,11 @@ export function bindControls(root, handlers) {
     });
   }
 
-  root.querySelector("[data-action='open-yaku-guide']")?.addEventListener("click", () => {
-    handlers.onOpenYakuGuide?.();
-  });
+  for (const trigger of getActionElements(root, "[data-action='open-yaku-guide']")) {
+    trigger.addEventListener("click", () => {
+      handlers.onOpenYakuGuide?.();
+    });
+  }
 
   for (const trigger of root.querySelectorAll("[data-action='close-yaku-guide']")) {
     trigger.addEventListener("click", (event) => {
@@ -116,9 +120,11 @@ export function bindControls(root, handlers) {
     });
   }
 
-  root.querySelector("[data-action='open-waits']")?.addEventListener("click", () => {
-    handlers.onOpenWaits?.();
-  });
+  for (const trigger of getActionElements(root, "[data-action='open-waits']")) {
+    trigger.addEventListener("click", () => {
+      handlers.onOpenWaits?.();
+    });
+  }
 
   for (const trigger of root.querySelectorAll("[data-action='close-waits']")) {
     trigger.addEventListener("click", (event) => {
@@ -192,4 +198,14 @@ export function bindControls(root, handlers) {
   root.querySelector("[data-action='skip-ron']")?.addEventListener("click", () => {
     handlers.onSkipRon();
   });
+}
+
+function getActionElements(root, selector) {
+  const matches = [...(root.querySelectorAll?.(selector) || [])];
+  if (matches.length > 0) {
+    return matches;
+  }
+
+  const single = root.querySelector?.(selector);
+  return single ? [single] : [];
 }

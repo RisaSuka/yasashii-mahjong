@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const ARTIFACT_DIR = path.join(ROOT, "test-artifacts", "layout");
-const CACHE_BUST = "mvp344-app-table-layout-1";
+const CACHE_BUST = "mvp345-assist-buttons-hitfix-1";
 const PORT = Number(process.env.LAYOUT_CHECK_PORT || 18765);
 const VIEWPORTS = [
   { width: 844, height: 390 },
@@ -156,6 +156,7 @@ function setupScenarioSource() {
     const roundModule = await import("./src/game/round.js?layout=" + cacheBust);
     const actionsModule = await import("./src/game/actions.js?layout=" + cacheBust);
     const renderModule = await import("./src/ui/render.js?layout=" + cacheBust);
+    const inputModule = await import("./src/ui/input.js?layout=" + cacheBust);
     const root = document.querySelector("#app");
     const tile = (id, suit, rank, copy = 0) => ({ id, suit, rank, copy, red: false });
 
@@ -479,7 +480,7 @@ function setupScenarioSource() {
       };
     }
 
-    renderModule.renderGame(state, root, {
+    const baseRenderOptions = {
       canDeclareTsumo: () => mode === "actions",
       canDeclareRon: () => mode === "actions",
       canDeclarePon: () => mode === "pon-reaction",
@@ -636,12 +637,88 @@ function setupScenarioSource() {
           ]
         }
       ]
-    });
+    };
+
+    const renderWithOptions = (extraOptions = {}) => {
+      renderModule.renderGame(state, root, {
+        ...baseRenderOptions,
+        ...extraOptions
+      });
+      inputModule.bindControls(root, {
+        onOpenDiscardAdvice() {
+          renderWithOptions({
+            discardAdviceDialogOpen: true,
+            yakuGuideDialogOpen: false,
+            waitsDialogOpen: false
+          });
+        },
+        onCloseDiscardAdvice() {
+          renderWithOptions({ discardAdviceDialogOpen: false });
+        },
+        onOpenYakuGuide() {
+          renderWithOptions({
+            discardAdviceDialogOpen: false,
+            yakuGuideDialogOpen: true,
+            waitsDialogOpen: false
+          });
+        },
+        onCloseYakuGuide() {
+          renderWithOptions({ yakuGuideDialogOpen: false });
+        },
+        onOpenWaits() {
+          renderWithOptions({
+            discardAdviceDialogOpen: false,
+            yakuGuideDialogOpen: false,
+            waitsDialogOpen: true
+          });
+        },
+        onCloseWaits() {
+          renderWithOptions({ waitsDialogOpen: false });
+        },
+        onOpenDiscardZoom() {},
+        onOpenSettingsMenu() {},
+        onCloseSettingsMenu() {},
+        onStartMatch() {},
+        onStartRound() {},
+        onStartNextRound() {},
+        onToggleLargeTileMode() {},
+        onToggleDiscardAdvice() {},
+        onDeclareTsumo() {},
+        onDeclareRon() {},
+        onDeclareRiichi() {},
+        onCancelRiichi() {},
+        onOpenCallOptions() {},
+        onCloseCallOptions() {},
+        onDeclarePon() {},
+        onDeclareChi() {},
+        onSkipRon() {},
+        onDiscardTile() {}
+      });
+    };
+
+    renderWithOptions();
+
+    window.__layoutClickAssist = async (action) => {
+      const modalSelectors = {
+        "open-discard-advice": ".discard-advice-modal",
+        "open-yaku-guide": ".yaku-guide-modal",
+        "open-waits": ".waits-modal"
+      };
+      const button = document.querySelector(".table-meld-self [data-action='" + action + "']");
+      if (!button) {
+        return { found: false, opened: false };
+      }
+      button.click();
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      const opened = Boolean(document.querySelector(modalSelectors[action]));
+      renderWithOptions();
+      return { found: true, opened };
+    };
   }`;
 }
 
 function inspectLayoutSource() {
-  return `({ tolerance }) => {
+  return `async ({ tolerance }) => {
     const failures = [];
     const viewport = { width: window.innerWidth, height: window.innerHeight };
     const selectors = {
@@ -667,7 +744,9 @@ function inspectLayoutSource() {
       hand: ".table-seat-bottom .hand",
       handTile: ".table-seat-bottom .hand .tile",
       gearButton: "[data-action='open-settings-menu']",
-      adviceButton: ".table-meld-self [data-action='open-discard-advice']"
+      adviceButton: ".table-meld-self [data-action='open-discard-advice']",
+      yakuGuideButton: ".table-meld-self [data-action='open-yaku-guide']",
+      waitsButton: ".table-meld-self [data-action='open-waits']"
     };
 
     if (document.documentElement.scrollWidth > viewport.width + tolerance) {
@@ -794,7 +873,7 @@ function inspectLayoutSource() {
 
     if (rects.centerInfo) {
       const centerText = document.querySelector(selectors.centerInfo)?.innerText || "";
-      if (centerText.includes("あなたの番")) {
+      if (centerText.includes("\u3042\u306a\u305f\u306e\u756a")) {
         failures.push("center score board should not show human turn sentence");
       }
       if (centerText.includes("...") || centerText.includes("…")) {
@@ -977,14 +1056,24 @@ function inspectLayoutSource() {
       checkOverlap("action bar", toRect(actionBar.getBoundingClientRect()), "human hand", toRect(handRect), 0);
     }
 
-    const adviceButton = document.querySelector(selectors.adviceButton);
-    if (adviceButton && !activeModal) {
-      const rect = adviceButton.getBoundingClientRect();
-      if (!isInViewport(rect, viewport, tolerance)) {
-        failures.push("advice button is outside viewport");
-      }
-      if (!isClickableAtCenter(adviceButton, rect)) {
-        failures.push("advice button is not clickable at center");
+    const assistButtons = [
+      ["advice", selectors.adviceButton, "open-discard-advice"],
+      ["yaku guide", selectors.yakuGuideButton, "open-yaku-guide"],
+      ["waits", selectors.waitsButton, "open-waits"]
+    ];
+    if (!activeModal) {
+      for (const [name, selector] of assistButtons) {
+        const button = document.querySelector(selector);
+        if (!button) {
+          continue;
+        }
+        const rect = button.getBoundingClientRect();
+        if (!isInViewport(rect, viewport, tolerance)) {
+          failures.push(name + " assist button is outside viewport");
+        }
+        if (!isClickableAtCenter(button, rect)) {
+          failures.push(name + " assist button is not clickable at center");
+        }
       }
     }
 
@@ -1250,6 +1339,20 @@ function inspectLayoutSource() {
       const unit = document.querySelector(".center-score-board " + selector);
       if (!unit) continue;
       checkOverlap(selector, toRect(unit.getBoundingClientRect()), riverName, riverRect, 0);
+    }
+
+    if (!activeModal && typeof window.__layoutClickAssist === "function") {
+      for (const [name, selector, action] of assistButtons) {
+        if (!document.querySelector(selector)) {
+          continue;
+        }
+        const result = await window.__layoutClickAssist(action);
+        if (!result.found) {
+          failures.push(name + " assist button could not be clicked because it was not found");
+        } else if (!result.opened) {
+          failures.push(name + " assist button click did not open its popup");
+        }
+      }
     }
 
     return {

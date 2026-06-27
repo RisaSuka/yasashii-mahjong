@@ -810,6 +810,68 @@ export function registerMatchUiTests() {
     assertEqual(closed, 2, "Close button and Escape should close waits dialog");
   });
 
+  test("MVP-3.4.5 UI: visible assist buttons dispatch even with hidden compatibility controls", async () => {
+    const { bindControls } = await loadModule("../src/ui/input.js", ["bindControls"]);
+    const hiddenAdvice = createFakeButton();
+    const visibleAdvice = createFakeButton();
+    const hiddenYaku = createFakeButton();
+    const visibleYaku = createFakeButton();
+    const hiddenWaits = createFakeButton();
+    const visibleWaits = createFakeButton();
+    const counts = {
+      advice: 0,
+      yaku: 0,
+      waits: 0
+    };
+    const root = {
+      addEventListener() {},
+      querySelector(selector) {
+        if (selector === "[data-action='open-discard-advice']") {
+          return hiddenAdvice;
+        }
+        if (selector === "[data-action='open-yaku-guide']") {
+          return hiddenYaku;
+        }
+        if (selector === "[data-action='open-waits']") {
+          return hiddenWaits;
+        }
+        return null;
+      },
+      querySelectorAll(selector) {
+        if (selector === "[data-action='open-discard-advice']") {
+          return [hiddenAdvice, visibleAdvice];
+        }
+        if (selector === "[data-action='open-yaku-guide']") {
+          return [hiddenYaku, visibleYaku];
+        }
+        if (selector === "[data-action='open-waits']") {
+          return [hiddenWaits, visibleWaits];
+        }
+        return [];
+      }
+    };
+
+    bindControls(root, {
+      onOpenDiscardAdvice() {
+        counts.advice += 1;
+      },
+      onOpenYakuGuide() {
+        counts.yaku += 1;
+      },
+      onOpenWaits() {
+        counts.waits += 1;
+      }
+    });
+
+    visibleAdvice.listeners.click();
+    visibleYaku.listeners.click();
+    visibleWaits.listeners.click();
+
+    assertEqual(counts.advice, 1, "Visible advice button should call its handler");
+    assertEqual(counts.yaku, 1, "Visible yaku guide button should call its handler");
+    assertEqual(counts.waits, 1, "Visible waits button should call its handler");
+  });
+
   test("MVP-1.2 UI: discard zoom controls render for all four center discard zones", async () => {
     const html = await renderState(addDiscards(await startMatchState(), 6));
 
