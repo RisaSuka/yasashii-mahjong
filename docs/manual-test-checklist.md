@@ -139,6 +139,20 @@ http://127.0.0.1:8765/tests/test-runner.html
 - Confirm next-round and replay buttons remain tappable after a hand or match ends.
 - Confirm the strengthened layout guard hit-tests gear/menu items, helper buttons, and call triggers across smartphone landscape viewports.
 
+## 1.9 MVP-4.0 CPU Call Design Review
+
+MVP-4.0 is documentation only. No manual browser behavior should change.
+
+- Confirm `docs/mvp-40-cpu-call-plan.md` exists.
+- Confirm the document keeps first implementation scope to CPU pon, CPU chi, CPU post-call discard, and CPU meld display.
+- Confirm kan, scoring, furiten, CPU difficulty UI, and full multi-caller competition are explicitly out of scope.
+- Confirm CPU pon judgment favors yakuhai/toitoi-visible hands and avoids no-yaku speculative calls.
+- Confirm CPU chi judgment favors tanyao/yaku-visible progress and avoids no-yaku or terminal-heavy calls.
+- Confirm reaction priority is documented as ron before pon before chi before skip.
+- Confirm human ron and human call choice remain prioritized before CPU calls.
+- Confirm anti-over-calling probabilities and RNG injection are documented.
+- Confirm future scenarios and test policy are listed before implementation starts.
+
 ## 2. Normal Desktop Flow
 
 - Open the app URL.

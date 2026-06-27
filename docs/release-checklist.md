@@ -4,16 +4,16 @@ Use this before merging to `main` or publishing with GitHub Pages.
 
 ## Current Release Candidate
 
-- Branch: `codex/mvp-35-table-ui-polish`
-- Scope: MVP-0.1 through MVP-3.5 table UI / gear menu / operation polish
-- Expected automated result: `338 pass / 0 pending / 0 fail`
+- Branch: `codex/mvp-40-cpu-call-plan`
+- Scope: MVP-4.0 CPU call design only; no production code, tests, or UI changes
+- Expected automated result: latest published baseline remains `338 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-3.5 is not published yet.
+- Publish status: MVP-4.0 design is not published yet.
 
 ## Git Safety
 
-- Confirm the current branch is `codex/mvp-35-table-ui-polish`.
+- Confirm the current branch is `codex/mvp-40-cpu-call-plan`.
 - Confirm the working tree is clean.
 - Confirm the latest commit is the intended release candidate.
 - Confirm no unreviewed local commits are being skipped.
@@ -35,6 +35,8 @@ git branch --list
 - Confirm pass count is 338.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
+- For MVP-4.0, confirm no production code or test files changed; this is a documentation-only release candidate.
+- Confirm `docs/mvp-40-cpu-call-plan.md` is present and reviewed.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
 - Run the smartphone landscape layout guard:
 

@@ -1,15 +1,15 @@
 # Current Status
 
-Last updated for MVP-3.5 table UI / gear menu / operation polish.
+Last updated for MVP-4.0 CPU call design.
 
 ## Repository State
 
-- Working branch: `codex/mvp-35-table-ui-polish`
-- Automated tests: MVP-3.5 normal tests pass locally (`338 pass / 0 pending / 0 fail`)
-- Layout check: Chrome-based smartphone landscape guard covers the connected app table layout, active-round header removal, compact CPU seat geometry, center-board alignment, full four-score visibility, right-edge settings menu, gear/menu item hit-tests, assist button hit-tests, call trigger hit-tests, local 6x3 river order before rotation, pon/chi reactions, multiple melds, open-hand wins, result/all-hands popups, action/meld/hand separation, modal exclusivity, and page overflow checks
-- Working tree: clean at the time of the latest MVP-3.5 verification
+- Working branch: `codex/mvp-40-cpu-call-plan`
+- Automated tests: no production or test code changed in MVP-4.0; latest published baseline remains `338 pass / 0 pending / 0 fail`
+- Layout check: no layout code changed in MVP-4.0; latest published baseline remains all target viewports and scenarios passing
+- Working tree: clean at the time of the latest MVP-4.0 design commit
 - Push: not yet
-- `main` merge: not yet for MVP-3.5
+- `main` merge: not yet for MVP-4.0
 
 ## Implemented MVPs
 
@@ -60,6 +60,7 @@ Last updated for MVP-3.5 table UI / gear menu / operation polish.
 | MVP-3.4.2 | Working branch | Reference-layout correction: small CPU seat markers, center score board as the visual anchor, local 6x3 river order with whole-river rotation, near-full-width human hand, compact `推` advice badges, and stronger geometry checks for the hand-drawn layout. |
 | MVP-3.4.4 | Working branch | Approved static exact-table mock connected to the live app renderer with the hidden round header, top-right gear menu, four-direction seats/rivers, readable center score board, full-width human hand, reserved action/support/meld zones, and expanded app layout screenshots. |
 | MVP-3.5 | Working branch | Table UI polish for existing gear menu, advice/yaku/waits helpers, action buttons, modal exclusivity, and layout/hit-test coverage. |
+| MVP-4.0 | Design branch | CPU pon/chi design only: call judgment, reaction priority, anti-over-calling controls, CPU meld display, scenarios, tests, and staged implementation order. |
 
 ## Current Capabilities
 

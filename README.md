@@ -1,3 +1,7 @@
+# MVP-4.0 CPU call design note
+
+MVP-4.0 is a design-only step for future CPU pon/chi. It does not add production code, tests, or UI changes. The plan lives in `docs/mvp-40-cpu-call-plan.md` and defines CPU pon/chi judgment, anti-over-calling controls, reaction priority, post-call discard behavior, open-hand yaku expectations, CPU meld display in the four-direction table, scenario ideas, test policy, and the recommended MVP-4.1 through MVP-4.4 implementation order.
+
 # MVP-3.5 table UI polish note
 
 MVP-3.5 keeps the MVP-3.4 four-direction table layout and focuses on operation polish rather than new rules. The existing top-right gear menu is retained, with clearer labels for the menu button and menu actions. The advice/yaku/waits helper buttons now expose explicit touch/accessibility labels, and the settings menu is treated as the active modal surface so it suppresses advice, yaku guide, waits, discard zoom, result, help, and all-hands popups.
