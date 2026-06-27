@@ -1,12 +1,14 @@
-# MVP-4.0 CPU call design note
+# MVP-4.1 CPU pon note
 
-MVP-4.0 is a design-only step for future CPU pon/chi. It does not add production code, tests, or UI changes. The plan lives in `docs/mvp-40-cpu-call-plan.md` and defines CPU pon/chi judgment, anti-over-calling controls, reaction priority, post-call discard behavior, open-hand yaku expectations, CPU meld display in the four-direction table, scenario ideas, test policy, and the recommended MVP-4.1 through MVP-4.4 implementation order.
+MVP-4.1 implements the first CPU call slice: CPU pon. CPU players can call pon on another player's latest discard when they hold two matching tiles, are not in riichi, and no human reaction is waiting. The decision is intentionally throttled with injected RNG: yakuhai pon is likely, toitoi/open-yaku routes are possible, and ordinary no-yaku pon is rare. After calling pon, the CPU creates a `pon` meld, becomes open, immediately discards with the existing evaluator, and continues normal turn flow.
+
+CPU chi, kan, scoring, furiten, full multi-caller competition, and CPU difficulty UI remain out of scope. The MVP-4.0 plan stays in `docs/mvp-40-cpu-call-plan.md` as the staged design for CPU calls.
 
 # MVP-3.5 table UI polish note
 
 MVP-3.5 keeps the MVP-3.4 four-direction table layout and focuses on operation polish rather than new rules. The existing top-right gear menu is retained, with clearer labels for the menu button and menu actions. The advice/yaku/waits helper buttons now expose explicit touch/accessibility labels, and the settings menu is treated as the active modal surface so it suppresses advice, yaku guide, waits, discard zoom, result, help, and all-hands popups.
 
-The layout guard now includes additional menu/control scenarios and hit-tests for the gear button, gear menu items, advice/yaku/waits helpers, and call option triggers. Cache bust is `mvp35-table-ui-polish-1`. Current local checks target `338 pass / 0 pending / 0 fail`, the smartphone landscape layout guard across all scenarios, and the CPU win reachability diagnostic.
+The layout guard now includes CPU pon meld scenarios in addition to menu/control hit-tests. Cache bust is `mvp41-cpu-pon-1`. Current local checks target `348 pass / 0 pending / 0 fail`, the smartphone landscape layout guard across all scenarios, and the CPU win reachability diagnostic.
 
 # MVP-3.4.4 app table layout connection note
 

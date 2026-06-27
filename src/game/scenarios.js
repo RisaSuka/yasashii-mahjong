@@ -28,7 +28,13 @@ const SCENARIO_ALIASES = {
   "human-multiple-melds-layout": "human-multiple-melds-layout",
   "human-open-tanyao-win-shape": "human-open-tanyao-win-shape",
   "human-open-no-yaku-win-shape": "human-open-no-yaku-win-shape",
-  "human-open-yakuhai-ron-ready": "human-open-yakuhai-ron-ready"
+  "human-open-yakuhai-ron-ready": "human-open-yakuhai-ron-ready",
+  "cpu-pon-ready-yakuhai": "cpu-pon-ready-yakuhai",
+  "cpu-pon-after-human-discard": "cpu-pon-ready-yakuhai",
+  "cpu-pon-ready-toitoi": "cpu-pon-ready-toitoi",
+  "cpu-pon-no-yaku-avoid": "cpu-pon-no-yaku-avoid",
+  "cpu-pon-riichi-blocked": "cpu-pon-riichi-blocked",
+  "cpu-pon-open-yakuhai-win-shape": "cpu-pon-open-yakuhai-win-shape"
 };
 
 const SCENARIOS = {
@@ -521,6 +527,97 @@ const SCENARIOS = {
     lastDiscard: {
       playerId: 1,
       tile: "m9"
+    }
+  },
+  "cpu-pon-ready-yakuhai": {
+    name: "cpu-pon-ready-yakuhai",
+    description: "CPU player 1 can pon a human yakuhai discard.",
+    phase: "draw",
+    currentPlayerIndex: 0,
+    hands: {
+      1: "m1 m2 m3 p2 p3 p4 s7 s8 s9 z5 z5 m9 p9"
+    },
+    discards: {
+      0: "z5"
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "z5"
+    }
+  },
+  "cpu-pon-ready-toitoi": {
+    name: "cpu-pon-ready-toitoi",
+    description: "CPU player 1 has a pair-heavy toitoi direction and can pon.",
+    phase: "draw",
+    currentPlayerIndex: 0,
+    hands: {
+      1: "m2 m2 p3 p3 s4 s4 m7 m7 p8 p8 z1 z2 z3"
+    },
+    discards: {
+      0: "m2"
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "m2"
+    }
+  },
+  "cpu-pon-no-yaku-avoid": {
+    name: "cpu-pon-no-yaku-avoid",
+    description: "CPU player 1 can pon an ordinary pair but has no clear open-yaku route.",
+    phase: "draw",
+    currentPlayerIndex: 0,
+    hands: {
+      1: "m2 m2 m3 m4 p3 p4 s4 s5 m6 p6 s6 z1 z3"
+    },
+    discards: {
+      0: "m2"
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "m2"
+    }
+  },
+  "cpu-pon-riichi-blocked": {
+    name: "cpu-pon-riichi-blocked",
+    description: "CPU player 1 has matching tiles but cannot pon while riichi.",
+    phase: "draw",
+    currentPlayerIndex: 0,
+    riichi: [1],
+    hands: {
+      1: "m1 m2 m3 p2 p3 p4 s7 s8 s9 z5 z5 m9 p9"
+    },
+    discards: {
+      0: "z5"
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "z5"
+    }
+  },
+  "cpu-pon-open-yakuhai-win-shape": {
+    name: "cpu-pon-open-yakuhai-win-shape",
+    description: "CPU player 1 has an open yakuhai pon plus a complete tsumo shape.",
+    phase: "discard",
+    currentPlayerIndex: 1,
+    hands: {
+      1: "m1 m2 m3 p2 p3 p4 s7 s8 s9 m9 m9"
+    },
+    discards: {
+      0: "z5"
+    },
+    melds: {
+      1: [
+        {
+          type: "pon",
+          tiles: "z5 z5 z5",
+          calledTile: "z5",
+          fromPlayerId: 0
+        }
+      ]
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "z5"
     }
   }
 };

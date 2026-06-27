@@ -21,8 +21,8 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 338.
-- Confirm pass count is 338.
+- Confirm total count is 348.
+- Confirm pass count is 348.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - For smartphone landscape layout work, also run the layout guard described in `docs/layout-test.md`.
@@ -72,7 +72,7 @@ http://127.0.0.1:8765/tests/test-runner.html
 - Confirm an open hand cannot declare riichi.
 - Confirm a riichi human cannot pon.
 - Confirm open yakuhai pon is treated as a yaku.
-- Confirm chi, kan, CPU calls, scoring, furiten, and full call competition are not implemented yet.
+- Confirm CPU chi, kan, scoring, furiten, and full call competition are not implemented yet.
 - Confirm smartphone landscape keeps the pon buttons and meld area inside the viewport.
 - Confirm the `ポンしました。捨てる牌を選んでください。` guidance disappears after the post-pon discard.
 - Confirm the human pon meld does not overlap the human hand tiles.
@@ -92,7 +92,7 @@ http://127.0.0.1:8765/tests/test-runner.html
 - Confirm a riichi human cannot chi.
 - Confirm an open chi hand cannot declare riichi.
 - Confirm multiple melds stay in the dedicated meld area and do not overlap the human hand tiles in smartphone landscape.
-- Confirm kan, CPU calls, scoring, furiten, and full call competition are not implemented yet.
+- Confirm CPU chi, kan, scoring, furiten, and full call competition are not implemented yet.
 
 ## 1.6 MVP-3.3 Call Stability Check
 
@@ -152,6 +152,21 @@ MVP-4.0 is documentation only. No manual browser behavior should change.
 - Confirm human ron and human call choice remain prioritized before CPU calls.
 - Confirm anti-over-calling probabilities and RNG injection are documented.
 - Confirm future scenarios and test policy are listed before implementation starts.
+
+## 1.10 MVP-4.1 CPU Pon Check
+
+- Use `cpu-pon-ready-yakuhai` and confirm a CPU can call pon on a human discard when holding two matching yakuhai tiles.
+- Confirm CPU pon is not automatic for ordinary no-yaku pairs and is controlled by injected RNG in tests.
+- Confirm a CPU in riichi cannot pon.
+- Confirm CPU pon does not run while a human ron/pon/chi reaction is waiting.
+- Confirm CPU pon creates a visible CPU `pon` meld in the four-direction table.
+- Confirm the CPU concealed hand loses two matching tiles and the called tile appears in the meld.
+- Confirm the CPU immediately discards one tile after pon and play does not stall.
+- Confirm CPU pon makes the hand open and later riichi is unavailable.
+- Confirm open CPU yakuhai pon can win with yakuhai.
+- Confirm open CPU tsumo does not receive menzen-tsumo.
+- Confirm starting the next round clears CPU melds.
+- Confirm CPU chi, kan, scoring, furiten, full multi-caller competition, and CPU difficulty UI remain unsupported.
 
 ## 2. Normal Desktop Flow
 

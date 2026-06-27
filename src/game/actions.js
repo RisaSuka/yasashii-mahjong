@@ -1,6 +1,6 @@
 import { chooseCpuDiscard, chooseCpuRiichiDiscardOption } from "./cpu/random-cpu.js";
 import { analyzeDiscardWaits } from "./advice/wait-analysis.js";
-import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp35-table-ui-polish-1";
+import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp41-cpu-pon-1";
 import { isWinningHand } from "./rules/win-check.js";
 import { detectYaku } from "./rules/yaku.js";
 import { drawFromWall } from "./wall.js";
@@ -145,6 +145,18 @@ export function canDeclareChi(state, playerId) {
 }
 
 export function getPonOptions(state, playerId) {
+  return getPonOptionsForPlayer(state, playerId, { allowedType: "human" });
+}
+
+export function canCpuCallPon(state, playerId) {
+  return getCpuPonOptions(state, playerId).length > 0;
+}
+
+export function getCpuPonOptions(state, playerId) {
+  return getPonOptionsForPlayer(state, playerId, { allowedType: "cpu" });
+}
+
+function getPonOptionsForPlayer(state, playerId, options = {}) {
   if (!state.round || state.round.phase === "ended" || !["draw", "reaction"].includes(state.round.phase)) {
     return [];
   }
@@ -152,7 +164,7 @@ export function getPonOptions(state, playerId) {
   const player = state.round.players.find((candidate) => candidate.id === playerId);
   const lastDiscard = state.round.lastDiscard;
 
-  if (!player || player.type !== "human" || isRiichiPlayer(player) || !lastDiscard?.tile || lastDiscard.playerId === playerId) {
+  if (!player || (options.allowedType && player.type !== options.allowedType) || isRiichiPlayer(player) || !lastDiscard?.tile || lastDiscard.playerId === playerId) {
     return [];
   }
 
@@ -169,6 +181,117 @@ export function getPonOptions(state, playerId) {
     handTileIds: matchingTiles.slice(0, 2).map((tile) => tile.id),
     tiles: [...matchingTiles.slice(0, 2), lastDiscard.tile]
   }];
+}
+
+export function evaluateCpuPonDecision(state, playerId, option) {
+  const player = state.round?.players.find((candidate) => candidate.id === playerId);
+
+  if (!player || player.type !== "cpu" || !option || isRiichiPlayer(player)) {
+    return {
+      shouldConsider: false,
+      chance: 0,
+      reasons: ["invalid"]
+    };
+  }
+
+  const calledTile = option.calledTile;
+  const pairCount = countPairsInHand(player.hand);
+  const tripletCount = countTripletsInHand(player.hand);
+  const alreadyOpen = (player.melds || []).length > 0;
+  const reasons = [];
+  let chance = 0.05;
+
+  if (isDragonTile(calledTile)) {
+    chance = Math.max(chance, 0.7);
+    reasons.push("dragon-yakuhai");
+  }
+
+  if (isValueWindTile(state, player, calledTile)) {
+    chance = Math.max(chance, 0.7);
+    reasons.push("wind-yakuhai");
+  }
+
+  if (pairCount + tripletCount >= 4) {
+    chance = Math.max(chance, 0.55);
+    reasons.push("toitoi-shape");
+  } else if (pairCount >= 3) {
+    chance = Math.max(chance, 0.45);
+    reasons.push("pair-heavy");
+  }
+
+  if (alreadyOpen && hasOpenYakuRoute(state, player, calledTile)) {
+    chance = Math.max(chance, 0.6);
+    reasons.push("open-yaku-route");
+  }
+
+  if (reasons.length === 0) {
+    chance = 0.05;
+    reasons.push("ordinary-pair");
+  }
+
+  return {
+    shouldConsider: chance > 0,
+    chance,
+    reasons
+  };
+}
+
+export function shouldCpuCallPon(state, playerId, option, random = Math.random) {
+  const decision = evaluateCpuPonDecision(state, playerId, option);
+
+  return decision.shouldConsider && random() < decision.chance;
+}
+
+export function findCpuPonCandidate(state, random = Math.random) {
+  if (!state.round || state.round.phase === "ended" || hasHumanReactionOpportunity(state)) {
+    return null;
+  }
+
+  const lastDiscard = state.round.lastDiscard;
+
+  if (!lastDiscard?.tile || lastDiscard.playerId === null || lastDiscard.playerId === undefined) {
+    return null;
+  }
+
+  for (const player of getPlayersInTurnOrderAfter(state.round, lastDiscard.playerId)) {
+    if (player.type !== "cpu") {
+      continue;
+    }
+
+    const option = getCpuPonOptions(state, player.id)[0];
+
+    if (!option) {
+      continue;
+    }
+
+    const decision = evaluateCpuPonDecision(state, player.id, option);
+
+    if (decision.shouldConsider && random() < decision.chance) {
+      return {
+        player,
+        option,
+        decision
+      };
+    }
+  }
+
+  return null;
+}
+
+export function resolveCpuPonAfterDiscard(state, random = Math.random) {
+  const candidate = findCpuPonCandidate(state, random);
+
+  if (!candidate) {
+    return state;
+  }
+
+  const calledState = declarePonForPlayer(state, candidate.player.id, candidate.option);
+
+  if (calledState === state || calledState.round?.phase !== "discard") {
+    return state;
+  }
+
+  return cpuDiscard(calledState, random);
 }
 
 export function getChiOptions(state, playerId) {
@@ -702,7 +825,9 @@ function createTsumoYakuContext(state, player, result) {
     riichi: isRiichiPlayer(player),
     handType: result.type,
     winnerId: player.id,
-    winningTile: state.round.lastDraw?.playerId === player.id ? state.round.lastDraw.tile : null
+    winningTile: state.round.lastDraw?.playerId === player.id ? state.round.lastDraw.tile : null,
+    playerWind: player.wind,
+    roundWind: state.round.roundWind
   };
 }
 
@@ -715,7 +840,9 @@ function createRonYakuContext(state, player, result) {
     handType: result.type,
     winnerId: player.id,
     fromPlayerId: state.round.lastDiscard.playerId,
-    winningTile: state.round.lastDiscard.tile
+    winningTile: state.round.lastDiscard.tile,
+    playerWind: player.wind,
+    roundWind: state.round.roundWind
   };
 }
 
@@ -764,6 +891,10 @@ function declareRiichiForPlayer(state, playerId, tileId, options = {}) {
 export function declarePon(state, playerId) {
   const option = getPonOptions(state, playerId)[0];
 
+  return declarePonForPlayer(state, playerId, option);
+}
+
+function declarePonForPlayer(state, playerId, option) {
   if (!option) {
     return state;
   }
@@ -931,6 +1062,114 @@ export function declareChi(state, playerId, handTileIds = []) {
 
 function isSameTileKind(a, b) {
   return a?.suit === b?.suit && a?.rank === b?.rank;
+}
+
+function hasHumanReactionOpportunity(state) {
+  const human = state.round?.players.find((player) => player.type === "human");
+
+  if (!human) {
+    return false;
+  }
+
+  return canCompleteRonLatestDiscard(state, human.id)
+    || canDeclarePon(state, human.id)
+    || canDeclareChi(state, human.id);
+}
+
+function getPlayersInTurnOrderAfter(round, playerId) {
+  if (!round?.players?.length) {
+    return [];
+  }
+
+  const startIndex = round.players.findIndex((player) => player.id === playerId);
+
+  if (startIndex < 0) {
+    return [];
+  }
+
+  const players = [];
+  for (let offset = 1; offset < round.players.length; offset += 1) {
+    players.push(round.players[(startIndex + offset) % round.players.length]);
+  }
+
+  return players;
+}
+
+function countPairsInHand(hand) {
+  const counts = countTileKinds(hand);
+  let pairCount = 0;
+
+  for (const count of counts.values()) {
+    if (count >= 2) {
+      pairCount += 1;
+    }
+  }
+
+  return pairCount;
+}
+
+function countTripletsInHand(hand) {
+  const counts = countTileKinds(hand);
+  let tripletCount = 0;
+
+  for (const count of counts.values()) {
+    if (count >= 3) {
+      tripletCount += 1;
+    }
+  }
+
+  return tripletCount;
+}
+
+function countTileKinds(hand) {
+  const counts = new Map();
+
+  for (const tile of Array.isArray(hand) ? hand : []) {
+    const key = `${tile.suit}${tile.rank}`;
+    counts.set(key, (counts.get(key) || 0) + 1);
+  }
+
+  return counts;
+}
+
+function isDragonTile(tile) {
+  return tile?.suit === "z" && tile.rank >= 5 && tile.rank <= 7;
+}
+
+function isValueWindTile(state, player, tile) {
+  if (tile?.suit !== "z") {
+    return false;
+  }
+
+  const rank = getWindRank(player?.wind);
+  const roundRank = getWindRank(state.round?.roundWind || state.match?.roundWind);
+
+  return tile.rank === rank || tile.rank === roundRank;
+}
+
+function hasOpenYakuRoute(state, player, calledTile) {
+  if (isDragonTile(calledTile) || isValueWindTile(state, player, calledTile)) {
+    return true;
+  }
+
+  return (player.melds || []).some((meld) => {
+    const tiles = meld.tiles || [];
+    if (tiles.length < 3) {
+      return false;
+    }
+
+    return tiles.every((tile) => isSameTileKind(tile, tiles[0]))
+      && (isDragonTile(tiles[0]) || isValueWindTile(state, player, tiles[0]));
+  });
+}
+
+function getWindRank(wind) {
+  return {
+    east: 1,
+    south: 2,
+    west: 3,
+    north: 4
+  }[wind] || null;
 }
 
 function isKamichaDiscard(round, playerId, discardPlayerId) {

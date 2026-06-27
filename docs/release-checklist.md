@@ -5,11 +5,11 @@ Use this before merging to `main` or publishing with GitHub Pages.
 ## Current Release Candidate
 
 - Branch: `codex/mvp-40-cpu-call-plan`
-- Scope: MVP-4.0 CPU call design only; no production code, tests, or UI changes
-- Expected automated result: latest published baseline remains `338 pass / 0 pending / 0 fail`
+- Scope: MVP-4.1 CPU pon core + UI
+- Expected automated result: `348 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-4.0 design is not published yet.
+- Publish status: MVP-4.1 CPU pon is not published yet.
 
 ## Git Safety
 
@@ -31,12 +31,12 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 338.
-- Confirm pass count is 338.
+- Confirm total count is 348.
+- Confirm pass count is 348.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
-- For MVP-4.0, confirm no production code or test files changed; this is a documentation-only release candidate.
-- Confirm `docs/mvp-40-cpu-call-plan.md` is present and reviewed.
+- Confirm MVP-4.1 CPU pon production code, tests, scenarios, layout guard, and docs are reviewed.
+- Confirm `docs/mvp-40-cpu-call-plan.md` remains present and now notes that MVP-4.1 completed the CPU pon slice.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
 - Run the smartphone landscape layout guard:
 
@@ -106,7 +106,15 @@ node scripts/simulate-cpu-win-reachability.mjs
 - Open no-yaku completed shapes are rejected.
 - Open tsumo does not receive menzen-tsumo.
 - Next-round setup clears melds.
-- Kan, CPU calls, scoring, furiten, and full call competition remain out of scope.
+- CPU pon is possible when a CPU holds two matching tiles for another player's latest discard.
+- CPU pon is blocked while that CPU is in riichi.
+- CPU pon does not preempt an available human ron/pon/chi reaction.
+- CPU pon decision uses injected RNG and strongly favors yakuhai over ordinary no-yaku pairs.
+- CPU pon creates a `pon` meld with `calledTile` and `fromPlayerId`, opens the CPU hand, removes two concealed tiles, and immediately discards one tile.
+- CPU pon melds render in the CPU meld lane with seat-direction rotation.
+- CPU open yakuhai pon can win, and CPU open tsumo does not receive menzen-tsumo.
+- Next-round setup clears CPU melds.
+- CPU chi, kan, scoring, furiten, and full call competition remain out of scope.
 - Winning result still shows yaku names, han, total han, explanations, and furigana.
 - Yaku display order remains beginner-friendly.
 - CSS tile display keeps manzu, pinzu, souzu, and honor tiles visually distinct.

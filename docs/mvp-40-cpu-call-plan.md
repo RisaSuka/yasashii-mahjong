@@ -2,7 +2,26 @@
 
 MVP-4.0 is a design-only milestone for CPU pon and chi. CPU calls change game pace, yaku visibility, turn flow, riichi decisions, and the four-direction table UI, so the first step is to define a deliberately small, testable scope before implementation.
 
-No production code, UI, or tests are implemented in this milestone.
+MVP-4.0 itself was design-only. MVP-4.1 implements the first slice of this plan: CPU pon core + UI. CPU chi, kan, scoring, furiten, full multi-caller competition, and CPU difficulty UI remain deferred.
+
+## MVP-4.1 Implementation Note
+
+MVP-4.1 implements CPU pon only:
+
+- CPU pon availability reuses the same matching-tile concept as human pon.
+- CPU pon is blocked while the CPU is in riichi or when a human reaction is waiting.
+- CPU pon decisions use injected RNG and a small probability table:
+  - dragon yakuhai pon: 70%
+  - self-wind or round-wind pon: 70%
+  - toitoi-leaning pon: roughly 45% to 55%
+  - already-open yaku route: roughly 60%
+  - ordinary no-yaku pon: 5%
+- CPU pon creates a shared `pon` meld with `calledTile` and `fromPlayerId`, marks the CPU hand open, removes two concealed tiles, and immediately discards through the existing CPU discard evaluator.
+- CPU melds render in the existing four-direction table lanes with seat-direction tile rotation.
+- Open CPU yakuhai pon can win with yakuhai, and open CPU tsumo does not receive menzen-tsumo.
+- Added deterministic scenarios include `cpu-pon-ready-yakuhai`, `cpu-pon-ready-toitoi`, `cpu-pon-no-yaku-avoid`, `cpu-pon-riichi-blocked`, `cpu-pon-after-human-discard`, and `cpu-pon-open-yakuhai-win-shape`.
+
+The originally proposed `cpu-multiple-pon-candidates` scenario remains deferred because a legal four-copy tile set cannot produce one discard plus two matching tiles in multiple CPU hands at the same time without a synthetic impossible fixture.
 
 ## Purpose
 

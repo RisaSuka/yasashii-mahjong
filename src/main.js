@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp35-table-ui-polish-1";
-import { renderGame } from "./ui/render.js?v=mvp35-table-ui-polish-1";
+import { bindControls } from "./ui/input.js?v=mvp41-cpu-pon-1";
+import { renderGame } from "./ui/render.js?v=mvp41-cpu-pon-1";
 
-const APP_ASSET_VERSION = "mvp35-table-ui-polish-1";
+const APP_ASSET_VERSION = "mvp41-cpu-pon-1";
 
 const appRoot = document.querySelector("#app");
 
@@ -53,6 +53,7 @@ async function loadGameApi() {
       canRonLatestDiscard: actions.canRonLatestDiscard,
       canCompleteRonLatestDiscard: actions.canCompleteRonLatestDiscard,
       resolveCpuRonAfterDiscard: actions.resolveCpuRonAfterDiscard,
+      resolveCpuPonAfterDiscard: actions.resolveCpuPonAfterDiscard,
       createInitialGameState: round.createInitialGameState,
       loadStats: storage.loadStats,
       suggestDiscards: advice.suggestDiscards,
@@ -511,6 +512,10 @@ function handleAfterDiscard() {
     return;
   }
 
+  if (resolveCpuPonIfNeeded()) {
+    return;
+  }
+
   continueAfterDiscard();
 }
 
@@ -548,6 +553,22 @@ function resolveCpuRonIfNeeded() {
 
   if (previousPhase !== "ended" && state.round?.phase === "ended") {
     render();
+    return true;
+  }
+
+  return false;
+}
+
+function resolveCpuPonIfNeeded() {
+  if (typeof gameApi.resolveCpuPonAfterDiscard !== "function") {
+    return false;
+  }
+
+  const previousState = state;
+  state = gameApi.resolveCpuPonAfterDiscard(state);
+
+  if (state !== previousState) {
+    handleAfterDiscard();
     return true;
   }
 
@@ -727,6 +748,9 @@ function createFallbackGameApi() {
       return false;
     },
     resolveCpuRonAfterDiscard(currentState) {
+      return currentState;
+    },
+    resolveCpuPonAfterDiscard(currentState) {
       return currentState;
     },
     dispatchAction(currentState, action) {

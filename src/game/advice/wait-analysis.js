@@ -116,6 +116,8 @@ function createWaitYakuContext(context, result, winningTile) {
     handType: result.type,
     winnerId: player.id,
     winningTile,
+    playerWind: player.wind,
+    roundWind: context.round?.roundWind || context.match?.roundWind || context.roundWind,
     round: context.round,
     match: context.match
   };

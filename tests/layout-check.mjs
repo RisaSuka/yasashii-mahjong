@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const ARTIFACT_DIR = path.join(ROOT, "test-artifacts", "layout");
-const CACHE_BUST = "mvp35-table-ui-polish-1";
+const CACHE_BUST = "mvp41-cpu-pon-1";
 const PORT = Number(process.env.LAYOUT_CHECK_PORT || 18765);
 const VIEWPORTS = [
   { width: 844, height: 390 },
@@ -41,6 +41,10 @@ const SCENARIOS = [
   { name: "open-tanyao-win", discards: 9, mode: "open-tanyao-win" },
   { name: "open-yakuhai-win", discards: 9, mode: "open-yakuhai-win" },
   { name: "cpu-win", discards: 12, mode: "cpu-win" },
+  { name: "cpu-pon", discards: 9, mode: "cpu-pon" },
+  { name: "cpu-open-melds", discards: 9, mode: "cpu-open-melds" },
+  { name: "cpu-pon-yakuhai-win", discards: 9, mode: "cpu-pon-yakuhai-win" },
+  { name: "multiple-cpu-melds", discards: 9, mode: "multiple-cpu-melds" },
   { name: "all-hands-open", discards: 18, mode: "all-hands-open" },
   { name: "settings-menu-open", discards: 9, mode: "settings-menu-open" },
   { name: "gear-menu-open", discards: 9, mode: "gear-menu-open" },
@@ -490,6 +494,80 @@ function setupScenarioSource() {
               melds: [openMeld]
             }
             : player)
+        }
+      };
+    }
+
+    if (mode === "cpu-pon" || mode === "cpu-open-melds" || mode === "cpu-pon-yakuhai-win" || mode === "multiple-cpu-melds") {
+      const cpu1Meld = {
+        id: "layout-cpu-pon-z5",
+        type: "pon",
+        tiles: [tile("layout-cpu-z5-a", "z", 5), tile("layout-cpu-z5-b", "z", 5, 1), tile("layout-cpu-z5-c", "z", 5, 2)],
+        calledTile: tile("layout-cpu-z5-c", "z", 5, 2),
+        fromPlayerId: 0
+      };
+      const cpu2Meld = {
+        id: "layout-cpu2-pon-z6",
+        type: "pon",
+        tiles: [tile("layout-cpu2-z6-a", "z", 6), tile("layout-cpu2-z6-b", "z", 6, 1), tile("layout-cpu2-z6-c", "z", 6, 2)],
+        calledTile: tile("layout-cpu2-z6-c", "z", 6, 2),
+        fromPlayerId: 3
+      };
+      const cpu3Meld = {
+        id: "layout-cpu3-pon-z7",
+        type: "pon",
+        tiles: [tile("layout-cpu3-z7-a", "z", 7), tile("layout-cpu3-z7-b", "z", 7, 1), tile("layout-cpu3-z7-c", "z", 7, 2)],
+        calledTile: tile("layout-cpu3-z7-c", "z", 7, 2),
+        fromPlayerId: 2
+      };
+
+      state = {
+        ...state,
+        round: {
+          ...state.round,
+          phase: mode === "cpu-pon-yakuhai-win" ? "ended" : "discard",
+          currentPlayerIndex: 1,
+          endReason: mode === "cpu-pon-yakuhai-win" ? "win" : state.round.endReason,
+          winningResult: mode === "cpu-pon-yakuhai-win"
+            ? {
+              winnerId: 1,
+              winType: "tsumo",
+              winningTile: tile("layout-cpu-win-m9", "m", 9),
+              handType: "standard",
+              handTiles: state.round.players[1].hand,
+              yakuResult: [{ id: "yakuhai", name: "Yakuhai", han: 1 }]
+            }
+            : state.round.winningResult,
+          players: state.round.players.map((player) => {
+            if (player.id === 1) {
+              return {
+                ...player,
+                isClosed: false,
+                menzen: false,
+                melds: [cpu1Meld]
+              };
+            }
+
+            if (mode === "multiple-cpu-melds" && player.id === 2) {
+              return {
+                ...player,
+                isClosed: false,
+                menzen: false,
+                melds: [cpu2Meld]
+              };
+            }
+
+            if (mode === "multiple-cpu-melds" && player.id === 3) {
+              return {
+                ...player,
+                isClosed: false,
+                menzen: false,
+                melds: [cpu3Meld]
+              };
+            }
+
+            return player;
+          })
         }
       };
     }
@@ -1198,6 +1276,42 @@ function inspectLayoutSource() {
         checkOverlap("meld area", meldRect, "hand tile " + index, tileRect, 0);
         if (failures.length > beforeCount) {
           break;
+        }
+      }
+    }
+
+    const meldZoneChecks = [
+      ["top", ".table-meld-top", rects.topDiscard, 180],
+      ["right", ".table-meld-right", rects.rightDiscard, -90],
+      ["left", ".table-meld-left", rects.leftDiscard, 90],
+      ["self", ".table-meld-self", rects.bottomDiscard, 0]
+    ];
+    for (const [name, selector, riverRect, expectedRotation] of meldZoneChecks) {
+      const zone = document.querySelector(selector);
+      const area = zone?.querySelector(".meld-area");
+      if (!area) {
+        continue;
+      }
+
+      const areaRect = toRect(area.getBoundingClientRect());
+      if (!isInViewport(area.getBoundingClientRect(), viewport, tolerance)) {
+        failures.push(name + " meld area is outside viewport");
+      }
+      if (riverRect) {
+        checkOverlap(name + " meld area", areaRect, name + " river", riverRect, 0);
+      }
+      if (handRect && name !== "self") {
+        checkOverlap(name + " meld area", areaRect, "human hand", toRect(handRect), 0);
+      }
+      if (rects.actionArea && name === "right") {
+        checkOverlap(name + " meld area", areaRect, "action area", rects.actionArea, 0);
+      }
+
+      const meldList = area.querySelector(".meld-list");
+      if (meldList) {
+        const angle = getRotationAngle(meldList);
+        if (!angleMatches(angle, expectedRotation)) {
+          failures.push(name + " meld list rotation expected " + expectedRotation + "deg but got " + angle + "deg");
         }
       }
     }
