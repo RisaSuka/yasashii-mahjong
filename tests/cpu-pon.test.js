@@ -53,10 +53,10 @@ export function registerCpuPonTests() {
     const yakuhaiDecision = evaluateCpuPonDecision(yakuhai, 1, yakuhaiOption);
     const noYakuDecision = evaluateCpuPonDecision(noYaku, 1, noYakuOption);
 
-    assertEqual(yakuhaiDecision.chance, 0.7, "Yakuhai pon should use the high base chance");
-    assertEqual(noYakuDecision.chance, 0.05, "Ordinary no-yaku pon should be rare");
-    assertEqual(shouldCpuCallPon(yakuhai, 1, yakuhaiOption, () => 0.69), true, "Injected rng should allow yakuhai pon");
-    assertEqual(shouldCpuCallPon(yakuhai, 1, yakuhaiOption, () => 0.7), false, "Injected rng should skip at the threshold");
+    assertEqual(yakuhaiDecision.chance, 0.65, "Yakuhai pon should use the high base chance");
+    assertEqual(noYakuDecision.chance, 0.03, "Ordinary no-yaku pon should be rare");
+    assertEqual(shouldCpuCallPon(yakuhai, 1, yakuhaiOption, () => 0.64), true, "Injected rng should allow yakuhai pon");
+    assertEqual(shouldCpuCallPon(yakuhai, 1, yakuhaiOption, () => 0.65), false, "Injected rng should skip at the threshold");
     assertEqual(shouldCpuCallPon(noYaku, 1, noYakuOption, () => 0.9), false, "No-yaku ordinary pon should usually be skipped");
   });
 

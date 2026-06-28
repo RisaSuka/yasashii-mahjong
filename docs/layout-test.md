@@ -111,6 +111,11 @@ The check renders these scenarios:
 - `cpu-open-yakuhai-win`: CPU open yakuhai result and next-round action fit the table after a called hand win
 - `cpu-open-tanyao-win`: CPU open tanyao result and next-round action fit the table after a called hand win
 - `cpu-open-multiple-melds`: multiple CPU pon/chi melds stay in rotated CPU lanes
+- `cpu1-multiple-melds`: right-side CPU1 can show four melds inside the right lane
+- `cpu2-multiple-melds`: top CPU2 can show four melds inside the top lane
+- `cpu3-multiple-melds`: left-side CPU3 can show four melds inside the left lane
+- `all-players-melds`: all seats can show open melds without overlapping hand, rivers, action area, or gear
+- `cpu-call-late-hand`: late-hand river pressure plus CPU melds remain inside the smartphone landscape viewport
 - `cpu-call-flow`: CPU call-flow layout keeps melds, rivers, actions, and hand separated after a call/discard sequence
 - `cpu-call-next-round`: CPU call state and next-round controls stay readable before fresh-round meld cleanup
 
