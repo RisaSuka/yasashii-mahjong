@@ -2,7 +2,7 @@
 
 MVP-4.4 keeps CPU pon/chi enabled, but reduces the sense of over-calling. Yakuhai pon stays available, while repeated CPU calls after two open melds are damped and chi decisions are slightly more conservative, especially for no-yaku routes. A lightweight fixed-seed diagnostic is available at `scripts/simulate-cpu-call-frequency.mjs` to report CPU pon/chi counts, per-round call rate, per-CPU totals, wins after calls, draws, human wins, and CPU wins.
 
-The four-direction layout guard now includes dedicated CPU1/CPU2/CPU3 multi-meld scenarios, all-player open-meld pressure, and late-hand CPU call layout. MVP-4.4.2 keeps each CPU pon/chi as one horizontal meld group, places opponent meld lanes near the corresponding right/top/left seat and river, and rotates only the meld tiles. Cache bust is `mvp442-cpu-meld-seat-lanes-1`. Current local checks target all smartphone landscape layout scenarios, the CPU win reachability diagnostic, and the CPU call frequency diagnostic.
+The four-direction layout guard now includes dedicated CPU1/CPU2/CPU3 multi-meld scenarios, all-player open-meld pressure, and late-hand CPU call layout. MVP-4.4.3 keeps each CPU pon/chi as one horizontal three-tile meld group, places opponent meld lanes near the corresponding right/top/left seat and river, and rotates only the meld tile faces. Cache bust is `mvp443-cpu-meld-tile-flow-1`. Current local checks target all smartphone landscape layout scenarios, the CPU win reachability diagnostic, and the CPU call frequency diagnostic.
 
 # MVP-4.3 CPU call stability note
 

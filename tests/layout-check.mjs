@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const ARTIFACT_DIR = path.join(ROOT, "test-artifacts", "layout");
-const CACHE_BUST = "mvp442-cpu-meld-seat-lanes-1";
+const CACHE_BUST = "mvp443-cpu-meld-tile-flow-1";
 const PORT = Number(process.env.LAYOUT_CHECK_PORT || 18765);
 const VIEWPORTS = [
   { width: 844, height: 390 },
@@ -1503,6 +1503,17 @@ function inspectLayoutSource() {
             break;
           }
         }
+        if (name === "right" || name === "left") {
+          const slotRects = slots.map((slot) => slot.getBoundingClientRect());
+          const xCenters = slotRects.map((rect) => rect.left + rect.width / 2);
+          const xSpread = Math.max(...xCenters) - Math.min(...xCenters);
+          const orderedTopToBottom = slotRects.every((rect, slotIndex) => (
+            slotIndex === 0 || rect.top >= slotRects[slotIndex - 1].top - 0.5
+          ));
+          if (xSpread > Math.max(4, areaRect.width * 0.18) || !orderedTopToBottom) {
+            failures.push(name + " CPU meld slots should stack one 3-tile set per row");
+          }
+        }
       }
 
       if (expectedCount && melds.length < expectedCount) {
@@ -1518,10 +1529,20 @@ function inspectLayoutSource() {
           failures.push(name + " meld " + index + " is clipped inside CPU meld lane");
           break;
         }
+        const meldAngle = getRotationAngle(meld);
+        if (!angleMatches(meldAngle, 0)) {
+          failures.push(name + " meld group should not rotate as a whole but got " + meldAngle + "deg");
+          break;
+        }
 
-        const meldTiles = [...meld.querySelectorAll(".meld-tile")];
-        if ((name === "right" || name === "left") && meldTiles.length >= 3) {
-          const tileRects = meldTiles.slice(0, 3).map((tile) => tile.getBoundingClientRect());
+        const tileBoxes = [...meld.querySelectorAll(".cpu-meld-tile-box")];
+        if (["top", "right", "left"].includes(name) && tileBoxes.length >= 3) {
+          if (meldRect.width <= meldRect.height * 1.3) {
+            failures.push(name + " meld " + index + " should be a horizontal 3-tile group: " + rectToString(meldRect));
+            break;
+          }
+
+          const tileRects = tileBoxes.slice(0, 3).map((tile) => tile.getBoundingClientRect());
           const centers = tileRects.map((rect) => ({
             x: rect.left + rect.width / 2,
             y: rect.top + rect.height / 2
@@ -1529,19 +1550,14 @@ function inspectLayoutSource() {
           const xSpread = Math.max(...centers.map((center) => center.x)) - Math.min(...centers.map((center) => center.x));
           const ySpread = Math.max(...centers.map((center) => center.y)) - Math.min(...centers.map((center) => center.y));
           const maxTileWidth = Math.max(...tileRects.map((rect) => rect.width));
-          const maxTileHeight = Math.max(...tileRects.map((rect) => rect.height));
           const orderedLeftToRight = centers.every((center, centerIndex) => (
             centerIndex === 0 || center.x > centers[centerIndex - 1].x - 0.5
           ));
 
-          const looksHorizontal = xSpread > Math.max(8, ySpread * 1.4) && xSpread > maxTileWidth * 1.05;
+          const maxAllowedYSpread = Math.max(6, meldRect.height * 0.35);
+          const looksHorizontal = xSpread > Math.max(8, ySpread * 1.4) && xSpread > maxTileWidth * 1.05 && ySpread <= maxAllowedYSpread;
           if (!orderedLeftToRight || !looksHorizontal) {
             failures.push(name + " meld " + index + " tiles should form one horizontal 3-tile group");
-            break;
-          }
-
-          if (meldRect.height > maxTileHeight * 2.2) {
-            failures.push(name + " meld " + index + " looks like a vertical tile stack: " + rectToString(meldRect));
             break;
           }
         }
@@ -1585,8 +1601,22 @@ function inspectLayoutSource() {
           if (failures.length > beforeCount) break;
         }
         const tileAngle = getRotationAngle(tile);
-        if (!angleMatches(tileAngle, expectedRotation)) {
+        if (["top", "right", "left"].includes(name)) {
+          if (!angleMatches(tileAngle, 0)) {
+            failures.push(name + " meld tile element should not rotate; face should rotate, but tile got " + tileAngle + "deg");
+            break;
+          }
+        } else if (!angleMatches(tileAngle, expectedRotation)) {
           failures.push(name + " meld tile rotation expected " + expectedRotation + "deg but got " + tileAngle + "deg");
+          break;
+        }
+      }
+
+      const tileFaces = [...area.querySelectorAll(".cpu-meld-tile-face")];
+      for (const [index, face] of tileFaces.entries()) {
+        const faceAngle = getRotationAngle(face);
+        if (!angleMatches(faceAngle, expectedRotation)) {
+          failures.push(name + " meld tile face rotation expected " + expectedRotation + "deg but got " + faceAngle + "deg");
           break;
         }
       }

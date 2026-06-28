@@ -6,7 +6,7 @@ import {
   getYakuDisplayName,
   sortYakuForDisplay
 } from "./yaku-display.js";
-import { getTileSvgPath } from "./tile-assets.js?v=mvp442-cpu-meld-seat-lanes-1";
+import { getTileSvgPath } from "./tile-assets.js?v=mvp443-cpu-meld-tile-flow-1";
 import { sortTiles } from "../game/tiles.js";
 
 const WIND_LABELS = {
@@ -364,7 +364,7 @@ function renderCpuMeldSlots(player, position) {
 
     return `
       <div class="cpu-meld-slot${meld ? "" : " is-empty"}" data-meld-slot="${index + 1}">
-        ${meld ? renderMeld(meld) : ""}
+        ${meld ? renderCpuMeld(meld) : ""}
         ${overflowLabel}
       </div>
     `;
@@ -375,6 +375,24 @@ function renderCpuMeldSlots(player, position) {
       <div class="meld-list cpu-meld-slots">
         ${slots}
       </div>
+    </div>
+  `;
+}
+
+function renderCpuMeld(meld) {
+  const typeLabel = meld.type === "pon" ? "\u30dd\u30f3" : meld.type === "chi" ? "\u30c1\u30fc" : "\u9cf4\u304d";
+  const tiles = meld.tiles || [];
+
+  return `
+    <div class="meld meld-group cpu-meld-group meld-${escapeHtml(meld.type || "call")}" aria-label="${typeLabel}">
+      <span class="meld-type">${typeLabel}</span>
+      <span class="meld-tiles cpu-meld-tiles">
+        ${tiles.map((tile) => `
+          <span class="cpu-meld-tile-box">
+            <span class="cpu-meld-tile-face">${renderTile(tile, "meld-tile cpu-meld-tile")}</span>
+          </span>
+        `).join("")}
+      </span>
     </div>
   `;
 }

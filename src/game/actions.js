@@ -1,6 +1,6 @@
 import { chooseCpuDiscard, chooseCpuRiichiDiscardOption } from "./cpu/random-cpu.js";
 import { analyzeDiscardWaits, analyzeWaits } from "./advice/wait-analysis.js";
-import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp442-cpu-meld-seat-lanes-1";
+import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp443-cpu-meld-tile-flow-1";
 import { isWinningHand } from "./rules/win-check.js";
 import { detectYaku } from "./rules/yaku.js";
 import { drawFromWall } from "./wall.js";
