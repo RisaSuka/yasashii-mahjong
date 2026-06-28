@@ -1,4 +1,4 @@
-/* MVP-4.4.3: fixed CPU meld slots with horizontal groups. Only tile faces rotate. */
+/* MVP-4.4.4: fixed CPU meld slots with side-seat column groups. Only tile faces rotate. */
 @media (orientation: landscape) and (max-width: 1180px) {
   .app.app-in-round .table.table-exact {
     grid-template-areas:
@@ -50,8 +50,8 @@
 
   .app.app-in-round .table.table-exact .cpu-meld-lane--right .cpu-meld-slots,
   .app.app-in-round .table.table-exact .cpu-meld-lane--left .cpu-meld-slots {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: minmax(0, 1fr);
     align-items: center;
     justify-items: center;
   }
@@ -119,7 +119,9 @@
 
   .app.app-in-round .table.table-exact .cpu-meld-lane--right .cpu-meld-slot .meld-tiles,
   .app.app-in-round .table.table-exact .cpu-meld-lane--left .cpu-meld-slot .meld-tiles {
-    grid-template-columns: repeat(3, var(--cpu-meld-tile-h)) !important;
+    grid-template-columns: var(--cpu-meld-tile-h) !important;
+    grid-template-rows: repeat(3, var(--cpu-meld-tile-w)) !important;
+    grid-auto-flow: row !important;
   }
 
   .app.app-in-round .table.table-exact .cpu-meld-tile-box {

@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp443-cpu-meld-tile-flow-1";
-import { renderGame } from "./ui/render.js?v=mvp443-cpu-meld-tile-flow-1";
+import { bindControls } from "./ui/input.js?v=mvp444-cpu-side-meld-columns-1";
+import { renderGame } from "./ui/render.js?v=mvp444-cpu-side-meld-columns-1";
 
-const APP_ASSET_VERSION = "mvp443-cpu-meld-tile-flow-1";
+const APP_ASSET_VERSION = "mvp444-cpu-side-meld-columns-1";
 
 const appRoot = document.querySelector("#app");
 

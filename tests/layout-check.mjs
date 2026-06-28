@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const ARTIFACT_DIR = path.join(ROOT, "test-artifacts", "layout");
-const CACHE_BUST = "mvp443-cpu-meld-tile-flow-1";
+const CACHE_BUST = "mvp444-cpu-side-meld-columns-1";
 const PORT = Number(process.env.LAYOUT_CHECK_PORT || 18765);
 const VIEWPORTS = [
   { width: 844, height: 390 },
@@ -1505,13 +1505,13 @@ function inspectLayoutSource() {
         }
         if (name === "right" || name === "left") {
           const slotRects = slots.map((slot) => slot.getBoundingClientRect());
-          const xCenters = slotRects.map((rect) => rect.left + rect.width / 2);
-          const xSpread = Math.max(...xCenters) - Math.min(...xCenters);
-          const orderedTopToBottom = slotRects.every((rect, slotIndex) => (
-            slotIndex === 0 || rect.top >= slotRects[slotIndex - 1].top - 0.5
+          const yCenters = slotRects.map((rect) => rect.top + rect.height / 2);
+          const ySpread = Math.max(...yCenters) - Math.min(...yCenters);
+          const orderedLeftToRight = slotRects.every((rect, slotIndex) => (
+            slotIndex === 0 || rect.left >= slotRects[slotIndex - 1].left - 0.5
           ));
-          if (xSpread > Math.max(4, areaRect.width * 0.18) || !orderedTopToBottom) {
-            failures.push(name + " CPU meld slots should stack one 3-tile set per row");
+          if (ySpread > Math.max(4, areaRect.height * 0.18) || !orderedLeftToRight) {
+            failures.push(name + " CPU meld slots should place each vertical 3-tile set in columns");
           }
         }
       }
@@ -1537,8 +1537,12 @@ function inspectLayoutSource() {
 
         const tileBoxes = [...meld.querySelectorAll(".cpu-meld-tile-box")];
         if (["top", "right", "left"].includes(name) && tileBoxes.length >= 3) {
-          if (meldRect.width <= meldRect.height * 1.3) {
+          if (name === "top" && meldRect.width <= meldRect.height * 1.3) {
             failures.push(name + " meld " + index + " should be a horizontal 3-tile group: " + rectToString(meldRect));
+            break;
+          }
+          if ((name === "right" || name === "left") && meldRect.height <= meldRect.width * 1.3) {
+            failures.push(name + " meld " + index + " should be a vertical 3-tile column: " + rectToString(meldRect));
             break;
           }
 
@@ -1550,15 +1554,28 @@ function inspectLayoutSource() {
           const xSpread = Math.max(...centers.map((center) => center.x)) - Math.min(...centers.map((center) => center.x));
           const ySpread = Math.max(...centers.map((center) => center.y)) - Math.min(...centers.map((center) => center.y));
           const maxTileWidth = Math.max(...tileRects.map((rect) => rect.width));
-          const orderedLeftToRight = centers.every((center, centerIndex) => (
-            centerIndex === 0 || center.x > centers[centerIndex - 1].x - 0.5
-          ));
+          const maxTileHeight = Math.max(...tileRects.map((rect) => rect.height));
 
-          const maxAllowedYSpread = Math.max(6, meldRect.height * 0.35);
-          const looksHorizontal = xSpread > Math.max(8, ySpread * 1.4) && xSpread > maxTileWidth * 1.05 && ySpread <= maxAllowedYSpread;
-          if (!orderedLeftToRight || !looksHorizontal) {
-            failures.push(name + " meld " + index + " tiles should form one horizontal 3-tile group");
-            break;
+          if (name === "top") {
+            const orderedLeftToRight = centers.every((center, centerIndex) => (
+              centerIndex === 0 || center.x > centers[centerIndex - 1].x - 0.5
+            ));
+            const maxAllowedYSpread = Math.max(6, meldRect.height * 0.35);
+            const looksHorizontal = xSpread > Math.max(8, ySpread * 1.4) && xSpread > maxTileWidth * 1.05 && ySpread <= maxAllowedYSpread;
+            if (!orderedLeftToRight || !looksHorizontal) {
+              failures.push(name + " meld " + index + " tiles should form one horizontal 3-tile group");
+              break;
+            }
+          } else {
+            const orderedTopToBottom = centers.every((center, centerIndex) => (
+              centerIndex === 0 || center.y > centers[centerIndex - 1].y - 0.5
+            ));
+            const maxAllowedXSpread = Math.max(6, meldRect.width * 0.35);
+            const looksVertical = ySpread > Math.max(8, xSpread * 1.4) && ySpread > maxTileHeight * 1.05 && xSpread <= maxAllowedXSpread;
+            if (!orderedTopToBottom || !looksVertical) {
+              failures.push(name + " meld " + index + " tiles should form one vertical 3-tile column");
+              break;
+            }
           }
         }
       }
