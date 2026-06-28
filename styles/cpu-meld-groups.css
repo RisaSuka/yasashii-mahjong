@@ -1,0 +1,146 @@
+/* MVP-4.4.1: fixed CPU meld slots. Lanes stay in the table grid; only tiles rotate. */
+@media (orientation: landscape) and (max-width: 1180px) {
+  .app.app-in-round .table.table-exact {
+    grid-template-areas:
+      "top-meld top-meld top-river top-seat right-seat gear"
+      "left-meld left-river score right-river right-meld gear"
+      "left-seat self-seat self-river actions self-meld gear"
+      "hand hand hand hand hand gear" !important;
+  }
+
+  .app.app-in-round .table.table-exact .table-meld-top,
+  .app.app-in-round .table.table-exact .table-meld-right,
+  .app.app-in-round .table.table-exact .table-meld-left {
+    display: grid !important;
+    align-items: stretch !important;
+    justify-items: stretch !important;
+    overflow: hidden !important;
+  }
+
+  .app.app-in-round .table.table-exact .table-meld-top .cpu-meld-lane,
+  .app.app-in-round .table.table-exact .table-meld-right .cpu-meld-lane,
+  .app.app-in-round .table.table-exact .table-meld-left .cpu-meld-lane {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    display: grid !important;
+    place-items: center !important;
+    padding: 1px !important;
+    overflow: hidden !important;
+    background: transparent !important;
+    border: 0 !important;
+  }
+
+  .app.app-in-round .table.table-exact .table-meld-top .cpu-meld-slots,
+  .app.app-in-round .table.table-exact .table-meld-right .cpu-meld-slots,
+  .app.app-in-round .table.table-exact .table-meld-left .cpu-meld-slots {
+    display: grid !important;
+    flex-wrap: nowrap !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    gap: 1px !important;
+  }
+
+  .app.app-in-round .table.table-exact .cpu-meld-lane--right .cpu-meld-slots,
+  .app.app-in-round .table.table-exact .cpu-meld-lane--left .cpu-meld-slots {
+    grid-template-rows: repeat(4, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+    justify-items: center;
+  }
+
+  .app.app-in-round .table.table-exact .cpu-meld-lane--top .cpu-meld-slots {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    align-items: center;
+    justify-items: center;
+  }
+
+  .app.app-in-round .table.table-exact .cpu-meld-slot {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+
+  .app.app-in-round .table.table-exact .cpu-meld-slot.is-empty {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .app.app-in-round .table.table-exact .cpu-meld-slot .meld-group {
+    display: inline-flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: 0 1px !important;
+    gap: 1px !important;
+    overflow: visible !important;
+    white-space: nowrap !important;
+  }
+
+  .app.app-in-round .table.table-exact .cpu-meld-slot .meld-type {
+    flex: 0 0 auto;
+    max-width: 8px;
+    overflow: hidden;
+    color: #0f766e;
+    font-size: 6px;
+    line-height: 1;
+  }
+
+  .app.app-in-round .table.table-exact .cpu-meld-slot .meld-tiles {
+    display: inline-flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-wrap: nowrap !important;
+    gap: 0 !important;
+    min-width: 0 !important;
+  }
+
+  .app.app-in-round .table.table-exact .cpu-meld-slot .meld-tile {
+    width: clamp(10px, 1.35vw, 12px) !important;
+    height: clamp(15px, 3.9dvh, 18px) !important;
+    min-width: clamp(10px, 1.35vw, 12px) !important;
+    min-height: clamp(15px, 3.9dvh, 18px) !important;
+    transform-origin: center center !important;
+  }
+
+  .app.app-in-round .table.table-exact .table-meld-top .cpu-meld-slot .meld-tile {
+    transform: rotate(180deg) !important;
+  }
+
+  .app.app-in-round .table.table-exact .table-meld-right .cpu-meld-slot .meld-tile {
+    transform: rotate(-90deg) !important;
+  }
+
+  .app.app-in-round .table.table-exact .table-meld-left .cpu-meld-slot .meld-tile {
+    transform: rotate(90deg) !important;
+  }
+
+  .app.app-in-round .table.table-exact .cpu-meld-overflow {
+    display: inline-grid;
+    place-items: center;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 999px;
+    background: rgba(15, 118, 110, 0.92);
+    color: #fff;
+    font-size: 9px;
+    font-weight: 900;
+  }
+}

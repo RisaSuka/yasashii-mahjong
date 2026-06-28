@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const ARTIFACT_DIR = path.join(ROOT, "test-artifacts", "layout");
-const CACHE_BUST = "mvp44-cpu-call-tuning-1";
+const CACHE_BUST = "mvp441-cpu-meld-group-layout-1";
 const PORT = Number(process.env.LAYOUT_CHECK_PORT || 18765);
 const VIEWPORTS = [
   { width: 844, height: 390 },
@@ -1076,12 +1076,6 @@ function inspectLayoutSource() {
       if (rects.topMeld && rects.topDiscard && rects.topMeld.right > rects.topDiscard.left + tolerance) {
         failures.push("CPU2 meld lane should be left of top river");
       }
-      if (rects.rightMeld && rects.rightDiscard && rects.rightMeld.bottom > rects.rightDiscard.top + tolerance) {
-        failures.push("CPU1 meld lane should be above right river");
-      }
-      if (rects.leftMeld && rects.leftDiscard && rects.leftMeld.top < rects.leftDiscard.bottom - tolerance) {
-        failures.push("CPU3 meld lane should be below left river");
-      }
       if (rects.selfMeld && rects.bottomDiscard && rects.selfMeld.left < rects.bottomDiscard.right - tolerance) {
         failures.push("human meld lane should be right of self river");
       }
@@ -1456,6 +1450,24 @@ function inspectLayoutSource() {
 
       const melds = [...area.querySelectorAll(".meld")];
       const expectedCount = expectedMeldCounts[name];
+      if (["top", "right", "left"].includes(name) && (expectedCount || melds.length > 0)) {
+        const slots = [...area.querySelectorAll(".cpu-meld-slot")];
+        if (slots.length !== 4) {
+          failures.push(name + " CPU meld lane should expose 4 fixed slots but found " + slots.length);
+        }
+        for (const [slotIndex, slot] of slots.entries()) {
+          const slotRect = slot.getBoundingClientRect();
+          if (!isInViewport(slotRect, viewport, tolerance)) {
+            failures.push(name + " CPU meld slot " + (slotIndex + 1) + " is outside viewport");
+            break;
+          }
+          if (!isInsideRect(slotRect, area.getBoundingClientRect(), tolerance)) {
+            failures.push(name + " CPU meld slot " + (slotIndex + 1) + " is outside its fixed lane");
+            break;
+          }
+        }
+      }
+
       if (expectedCount && melds.length < expectedCount) {
         failures.push(name + " meld area shows " + melds.length + " melds but expected at least " + expectedCount);
       }
@@ -1468,6 +1480,33 @@ function inspectLayoutSource() {
         if (!isInsideRect(meldRect, area.getBoundingClientRect(), tolerance)) {
           failures.push(name + " meld " + index + " is clipped inside CPU meld lane");
           break;
+        }
+
+        const meldTiles = [...meld.querySelectorAll(".meld-tile")];
+        if ((name === "right" || name === "left") && meldTiles.length >= 3) {
+          const tileRects = meldTiles.slice(0, 3).map((tile) => tile.getBoundingClientRect());
+          const centers = tileRects.map((rect) => ({
+            x: rect.left + rect.width / 2,
+            y: rect.top + rect.height / 2
+          }));
+          const xSpread = Math.max(...centers.map((center) => center.x)) - Math.min(...centers.map((center) => center.x));
+          const ySpread = Math.max(...centers.map((center) => center.y)) - Math.min(...centers.map((center) => center.y));
+          const maxTileWidth = Math.max(...tileRects.map((rect) => rect.width));
+          const maxTileHeight = Math.max(...tileRects.map((rect) => rect.height));
+          const orderedLeftToRight = centers.every((center, centerIndex) => (
+            centerIndex === 0 || center.x > centers[centerIndex - 1].x - 0.5
+          ));
+
+          const looksHorizontal = xSpread > Math.max(8, ySpread * 1.4) && xSpread > maxTileWidth * 1.05;
+          if (!orderedLeftToRight || !looksHorizontal) {
+            failures.push(name + " meld " + index + " tiles should form one horizontal 3-tile group");
+            break;
+          }
+
+          if (meldRect.height > maxTileHeight * 2.2) {
+            failures.push(name + " meld " + index + " looks like a vertical tile stack: " + rectToString(meldRect));
+            break;
+          }
         }
       }
 

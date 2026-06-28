@@ -6,7 +6,7 @@ import {
   getYakuDisplayName,
   sortYakuForDisplay
 } from "./yaku-display.js";
-import { getTileSvgPath } from "./tile-assets.js?v=mvp44-cpu-call-tuning-1";
+import { getTileSvgPath } from "./tile-assets.js?v=mvp441-cpu-meld-group-layout-1";
 import { sortTiles } from "../game/tiles.js";
 
 const WIND_LABELS = {
@@ -340,16 +340,42 @@ function renderHumanSupportActions(discardAdvice, yakuGuide, waitInfo) {
 }
 
 function renderMeldZone(player, tablePosition) {
-  const positionClasses = String(tablePosition)
+  const positions = String(tablePosition)
     .split(/\s+/)
-    .filter(Boolean)
-    .map((position) => `table-meld-${position}`)
-    .join(" ");
+    .filter(Boolean);
+  const positionClasses = positions.map((position) => `table-meld-${position}`).join(" ");
+  const primaryPosition = positions.find((position) => ["top", "right", "left", "self", "bottom"].includes(position)) || "";
+  const isCpuLane = ["top", "right", "left"].includes(primaryPosition) && player?.type !== "human";
 
   return `
     <section class="table-meld-zone ${positionClasses}" aria-label="${player?.name || ""}の鳴き">
-      ${renderMelds(player)}
+      ${isCpuLane ? renderCpuMeldSlots(player, primaryPosition) : renderMelds(player)}
     </section>
+  `;
+}
+
+function renderCpuMeldSlots(player, position) {
+  const melds = player?.melds || [];
+  const visibleMelds = melds.slice(0, 4);
+  const overflowCount = Math.max(0, melds.length - visibleMelds.length);
+  const slots = Array.from({ length: 4 }, (_, index) => {
+    const meld = visibleMelds[index];
+    const overflowLabel = overflowCount > 0 && index === 3 ? `<span class="cpu-meld-overflow">+${overflowCount}</span>` : "";
+
+    return `
+      <div class="cpu-meld-slot${meld ? "" : " is-empty"}" data-meld-slot="${index + 1}">
+        ${meld ? renderMeld(meld) : ""}
+        ${overflowLabel}
+      </div>
+    `;
+  }).join("");
+
+  return `
+    <div class="meld-area cpu-meld-lane cpu-meld-lane--${escapeHtml(position)}" aria-label="\u9cf4\u304d">
+      <div class="meld-list cpu-meld-slots">
+        ${slots}
+      </div>
+    </div>
   `;
 }
 
@@ -1191,7 +1217,7 @@ function renderMeld(meld) {
   const tiles = meld.tiles || [];
 
   return `
-    <div class="meld meld-${escapeHtml(meld.type || "call")}" aria-label="${typeLabel}">
+    <div class="meld meld-group meld-${escapeHtml(meld.type || "call")}" aria-label="${typeLabel}">
       <span class="meld-type">${typeLabel}</span>
       <span class="meld-tiles">${tiles.map((tile) => renderTile(tile, "meld-tile")).join("")}</span>
     </div>
