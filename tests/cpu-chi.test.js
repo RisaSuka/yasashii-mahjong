@@ -64,8 +64,8 @@ export function registerCpuChiTests() {
     const tanyaoDecision = evaluateCpuChiDecision(tanyao, 1, tanyaoOption);
     const noYakuDecision = evaluateCpuChiDecision(noYaku, 1, noYakuOption);
 
-    assertTrue(tanyaoDecision.chance >= 0.4, "Tanyao-direction chi should be considered more readily");
-    assertEqual(noYakuDecision.chance, 0.05, "No-yaku terminal chi should be rare");
+    assertTrue(tanyaoDecision.chance >= 0.25, "Tanyao-direction chi should be considered more readily");
+    assertEqual(noYakuDecision.chance, 0.01, "No-yaku terminal chi should be rare");
     assertEqual(shouldCpuCallChi(tanyao, 1, tanyaoOption, () => 0), true, "Injected rng should allow a good chi");
     assertEqual(shouldCpuCallChi(noYaku, 1, noYakuOption, () => 0.9), false, "Injected rng should usually skip no-yaku chi");
   });

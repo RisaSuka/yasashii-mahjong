@@ -94,6 +94,30 @@ export function registerCpuCallStabilityTests() {
     assertEqual(canCpuCallChi(chiRiichi, 1), false, "Riichi CPU should not chi");
   });
 
+  test("CPU CALL: repeated CPU calls are damped without removing yakuhai pon", async () => {
+    const ponState = withExtraCpuMelds(await scenarioState("cpu-pon-then-discard-flow"), 1);
+    const chiState = withExtraCpuMelds(await scenarioState("cpu-chi-ready-tanyao"), 1);
+    const { getCpuPonOptions, evaluateCpuPonDecision, shouldCpuCallPon } = await loadActions([
+      "getCpuPonOptions",
+      "evaluateCpuPonDecision",
+      "shouldCpuCallPon"
+    ]);
+    const { getCpuChiOptions, evaluateCpuChiDecision } = await loadActions([
+      "getCpuChiOptions",
+      "evaluateCpuChiDecision"
+    ]);
+
+    const ponOption = getCpuPonOptions(ponState, 1)[0];
+    const ponDecision = evaluateCpuPonDecision(ponState, 1, ponOption);
+    const chiOption = getCpuChiOptions(chiState, 1)[0];
+    const chiDecision = evaluateCpuChiDecision(chiState, 1, chiOption);
+
+    assertEqual(ponDecision.chance, 0.45, "Two-open-meld yakuhai pon should be damped but still possible");
+    assertEqual(shouldCpuCallPon(ponState, 1, ponOption, () => 0.44), true, "Damped yakuhai pon should still be callable below its chance");
+    assertEqual(shouldCpuCallPon(ponState, 1, ponOption, () => 0.45), false, "Damped yakuhai pon should skip at the threshold");
+    assertTrue(chiDecision.chance <= 0.35, "Two-open-meld chi should be damped to avoid over-calling");
+  });
+
   test("CPU CALL: reaction priority keeps human choice, CPU ron, pon, then chi", async () => {
     const humanReactionState = makeCpuPonPossibleForHumanReaction(await scenarioState("human-pon-ready-yakuhai"));
     const cpuRonState = await scenarioState("cpu-ron-ready-yakuhai");
@@ -246,6 +270,48 @@ function makeCpuPonPossibleForHumanReaction(state) {
               ...player.hand.slice(2)
             ]
           }
+        : player)
+    }
+  };
+}
+
+function withExtraCpuMelds(state, playerId) {
+  const extraMelds = [
+    {
+      id: `test-extra-${playerId}-pon-z6`,
+      type: "pon",
+      tiles: [
+        { id: `test-extra-${playerId}-z6-a`, suit: "z", rank: 6, copy: 0, red: false },
+        { id: `test-extra-${playerId}-z6-b`, suit: "z", rank: 6, copy: 1, red: false },
+        { id: `test-extra-${playerId}-z6-c`, suit: "z", rank: 6, copy: 2, red: false }
+      ],
+      calledTile: { id: `test-extra-${playerId}-z6-c`, suit: "z", rank: 6, copy: 2, red: false },
+      fromPlayerId: 0
+    },
+    {
+      id: `test-extra-${playerId}-chi-p345`,
+      type: "chi",
+      tiles: [
+        { id: `test-extra-${playerId}-p3`, suit: "p", rank: 3, copy: 0, red: false },
+        { id: `test-extra-${playerId}-p4`, suit: "p", rank: 4, copy: 0, red: false },
+        { id: `test-extra-${playerId}-p5`, suit: "p", rank: 5, copy: 0, red: false }
+      ],
+      calledTile: { id: `test-extra-${playerId}-p4`, suit: "p", rank: 4, copy: 0, red: false },
+      fromPlayerId: 0
+    }
+  ];
+
+  return {
+    ...state,
+    round: {
+      ...state.round,
+      players: state.round.players.map((player) => player.id === playerId
+        ? {
+          ...player,
+          isClosed: false,
+          menzen: false,
+          melds: [...(player.melds || []), ...extraMelds]
+        }
         : player)
     }
   };

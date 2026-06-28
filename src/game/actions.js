@@ -1,6 +1,6 @@
 import { chooseCpuDiscard, chooseCpuRiichiDiscardOption } from "./cpu/random-cpu.js";
 import { analyzeDiscardWaits, analyzeWaits } from "./advice/wait-analysis.js";
-import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp43-cpu-call-stability-1";
+import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp44-cpu-call-tuning-1";
 import { isWinningHand } from "./rules/win-check.js";
 import { detectYaku } from "./rules/yaku.js";
 import { drawFromWall } from "./wall.js";
@@ -205,36 +205,43 @@ export function evaluateCpuPonDecision(state, playerId, option) {
   const calledTile = option.calledTile;
   const pairCount = countPairsInHand(player.hand);
   const tripletCount = countTripletsInHand(player.hand);
-  const alreadyOpen = (player.melds || []).length > 0;
+  const meldCount = (player.melds || []).length;
+  const alreadyOpen = meldCount > 0;
+  const isYakuhaiCall = isDragonTile(calledTile) || isValueWindTile(state, player, calledTile);
   const reasons = [];
-  let chance = 0.05;
+  let chance = 0.03;
 
   if (isDragonTile(calledTile)) {
-    chance = Math.max(chance, 0.7);
+    chance = Math.max(chance, 0.65);
     reasons.push("dragon-yakuhai");
   }
 
   if (isValueWindTile(state, player, calledTile)) {
-    chance = Math.max(chance, 0.7);
+    chance = Math.max(chance, 0.65);
     reasons.push("wind-yakuhai");
   }
 
   if (pairCount + tripletCount >= 4) {
-    chance = Math.max(chance, 0.55);
+    chance = Math.max(chance, 0.42);
     reasons.push("toitoi-shape");
   } else if (pairCount >= 3) {
-    chance = Math.max(chance, 0.45);
+    chance = Math.max(chance, 0.32);
     reasons.push("pair-heavy");
   }
 
   if (alreadyOpen && hasOpenYakuRoute(state, player, calledTile)) {
-    chance = Math.max(chance, 0.6);
+    chance = Math.max(chance, isYakuhaiCall ? 0.55 : 0.32);
     reasons.push("open-yaku-route");
   }
 
   if (reasons.length === 0) {
-    chance = 0.05;
+    chance = 0.03;
     reasons.push("ordinary-pair");
+  }
+
+  if (meldCount >= 2) {
+    chance = Math.min(chance, isYakuhaiCall ? 0.45 : 0.12);
+    reasons.push("multi-meld-damping");
   }
 
   return {
@@ -343,35 +350,41 @@ export function evaluateCpuChiDecision(state, playerId, option) {
   }
 
   const analysis = analyzeCpuChiShape(state, player, option);
-  const alreadyOpen = (player.melds || []).length > 0;
+  const meldCount = (player.melds || []).length;
+  const alreadyOpen = meldCount > 0;
   const reasons = [];
-  let chance = 0.05;
+  let chance = 0.02;
 
   if (analysis.hasYakuWait) {
-    chance = Math.max(chance, 0.6);
+    chance = Math.max(chance, 0.45);
     reasons.push("yaku-tenpai");
   }
 
   if (alreadyOpen && (analysis.allSimpleAfterCall || analysis.hasOpenYakuRoute)) {
-    chance = Math.max(chance, analysis.hasYakuWait ? 0.6 : 0.5);
+    chance = Math.max(chance, analysis.hasYakuWait ? 0.4 : 0.28);
     reasons.push("open-yaku-route");
   }
 
   if (analysis.allSimpleAfterCall || analysis.tanyaoDirection) {
-    chance = Math.max(chance, 0.4);
+    chance = Math.max(chance, 0.25);
     reasons.push("tanyao-direction");
   }
 
   if (analysis.badShapeImprovement) {
-    chance = Math.max(chance, 0.35);
+    chance = Math.max(chance, 0.18);
     reasons.push("shape-improvement");
   }
 
   if (!analysis.hasYakuWait && !analysis.allSimpleAfterCall && !analysis.tanyaoDirection) {
-    chance = Math.min(chance, 0.05);
+    chance = Math.min(chance, 0.01);
     if (reasons.length === 0) {
       reasons.push("no-yaku-avoid");
     }
+  }
+
+  if (meldCount >= 2) {
+    chance = Math.min(chance, analysis.hasYakuWait ? 0.35 : 0.1);
+    reasons.push("multi-meld-damping");
   }
 
   return {

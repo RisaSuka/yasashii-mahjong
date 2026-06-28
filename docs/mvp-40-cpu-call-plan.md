@@ -419,6 +419,19 @@ Regression tests:
 
 ## Implementation Order
 
+## MVP-4.4 Tuning Notes
+
+MVP-4.4 keeps CPU calls active but reduces over-calling pressure:
+
+- Yakuhai pon remains the clearest CPU call and stays available.
+- Pair-heavy and toitoi-like pon are slightly less eager than the first implementation.
+- Chi is modestly more conservative, especially when no yaku route is visible.
+- After a CPU already has two open melds, additional calls are damped unless the call has a clear yaku route.
+- `scripts/simulate-cpu-call-frequency.mjs` provides a fixed-seed diagnostic for CPU pon/chi counts, calls per round, per-CPU totals, wins after calls, draws, human wins, CPU wins, and stalled rounds.
+- The layout guard now includes CPU1/CPU2/CPU3 four-meld stress scenarios and an all-player meld pressure scenario.
+
+Future human call advice is tracked in `docs/call-advice-plan.md`. It will explain, in beginner language, when pon/chi is likely useful and when skipping preserves riichi or menzen-tsumo.
+
 Recommended staged path:
 
 1. MVP-4.1 CPU pon core + UI

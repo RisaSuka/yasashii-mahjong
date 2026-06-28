@@ -21,13 +21,24 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 368.
-- Confirm pass count is 368.
+- Confirm total count is 369.
+- Confirm pass count is 369.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - For smartphone landscape layout work, also run the layout guard described in `docs/layout-test.md`.
 - If `tests/layout-check.mjs` fails, review the reported viewport/scenario and screenshots under `test-artifacts/layout/` before continuing UI fixes.
 - For CPU win reachability diagnostics, run `node scripts/simulate-cpu-win-reachability.mjs` and confirm CPU tsumo, CPU ron, no-yaku rejection, CPU post-call flow, open yakuhai, open tanyao, and open no-yaku rejection are reported.
+- For CPU call frequency diagnostics, run `node scripts/simulate-cpu-call-frequency.mjs` and confirm CPU pon/chi counts, calls per round, per-CPU call counts, wins after calls, draws, human wins, CPU wins, and no stalled rounds are reported.
+
+## 1.0.2 MVP-4.4 CPU Call Tuning Check
+
+- In smartphone landscape, confirm CPU1 and CPU3 can show 2-4 melds without leaving the viewport.
+- Confirm CPU2 multiple melds stay inside the top meld lane and do not overlap the gear button or top river.
+- Confirm CPU meld tiles keep their seat rotations: CPU1 -90deg, CPU2 180deg, CPU3 90deg.
+- Confirm CPU meld lanes do not overlap rivers, seats, actions, the human hand, or the gear button.
+- Confirm CPU call frequency still allows yakuhai pon, but repeated calls after two CPU melds feel less aggressive.
+- Confirm `scripts/simulate-cpu-call-frequency.mjs` reports a stable fixed-seed summary.
+- Confirm future human call-advice design remains documentation-only in `docs/call-advice-plan.md`.
 
 ## 1.0.1 MVP-4.3 CPU Call Stability Check
 

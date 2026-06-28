@@ -1,8 +1,14 @@
+# MVP-4.4 CPU call tuning note
+
+MVP-4.4 keeps CPU pon/chi enabled, but reduces the sense of over-calling. Yakuhai pon stays available, while repeated CPU calls after two open melds are damped and chi decisions are slightly more conservative, especially for no-yaku routes. A lightweight fixed-seed diagnostic is available at `scripts/simulate-cpu-call-frequency.mjs` to report CPU pon/chi counts, per-round call rate, per-CPU totals, wins after calls, draws, human wins, and CPU wins.
+
+The four-direction layout guard now includes dedicated CPU1/CPU2/CPU3 multi-meld scenarios, all-player open-meld pressure, and late-hand CPU call layout. CPU meld tiles keep seat-direction rotation while the meld groups wrap inside their lanes so CPU1/CPU3 multiple melds do not leave the viewport. Cache bust is `mvp44-cpu-call-tuning-1`. Current local checks target `369 pass / 0 pending / 0 fail`, all smartphone landscape layout scenarios, the CPU win reachability diagnostic, and the new CPU call frequency diagnostic.
+
 # MVP-4.3 CPU call stability note
 
 MVP-4.3 stabilizes the CPU open-call flow after MVP-4.1 CPU pon and MVP-4.2 CPU chi. CPU pon/chi now have regression coverage for immediate post-call discard, normal turn continuation, open yakuhai/tanyao wins, open no-yaku rejection, no menzen-tsumo on open wins, riichi blocking, next-round meld cleanup, and the simple reaction priority of human reaction first, CPU ron before CPU calls, CPU pon before CPU chi.
 
-The CPU win reachability diagnostic now includes CPU post-pon/post-chi continuation plus open yakuhai, open tanyao, and open no-yaku checks. The layout guard includes CPU open-yakuhai/open-tanyao win states, CPU call-flow, CPU next-round cleanup, and multiple CPU meld lanes. Cache bust is `mvp43-cpu-call-stability-1`. Current local checks target `368 pass / 0 pending / 0 fail`, all smartphone landscape layout scenarios, and the expanded CPU win reachability diagnostic.
+The CPU win reachability diagnostic now includes CPU post-pon/post-chi continuation plus open yakuhai, open tanyao, and open no-yaku checks. The layout guard includes CPU open-yakuhai/open-tanyao win states, CPU call-flow, CPU next-round cleanup, and multiple CPU meld lanes. Current local checks targeted `368 pass / 0 pending / 0 fail`, all smartphone landscape layout scenarios, and the expanded CPU win reachability diagnostic.
 
 # MVP-4.2 CPU chi note
 

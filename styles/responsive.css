@@ -1755,6 +1755,76 @@
   }
 }
 
+/* MVP-4.4: keep multiple CPU melds inside the exact-table lanes. */
+@media (orientation: landscape) and (max-width: 1180px) {
+  .app.app-in-round .table.table-exact .table-meld-top .meld-area,
+  .app.app-in-round .table.table-exact .table-meld-right .meld-area,
+  .app.app-in-round .table.table-exact .table-meld-left .meld-area {
+    display: grid !important;
+    place-items: center !important;
+    padding: 1px !important;
+    overflow: hidden !important;
+  }
+
+  .app.app-in-round .table.table-exact .table-meld-top .meld-list,
+  .app.app-in-round .table.table-exact .table-meld-right .meld-list,
+  .app.app-in-round .table.table-exact .table-meld-left .meld-list {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-content: center !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 1px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    max-height: 100% !important;
+    transform: none !important;
+    overflow: hidden !important;
+  }
+
+  .app.app-in-round .table.table-exact .table-meld-top .meld,
+  .app.app-in-round .table.table-exact .table-meld-right .meld,
+  .app.app-in-round .table.table-exact .table-meld-left .meld {
+    flex: 0 0 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    max-width: 48px !important;
+    min-height: 20px !important;
+    padding: 0 !important;
+    gap: 0 !important;
+    overflow: visible !important;
+  }
+
+  .app.app-in-round .table.table-exact .table-meld-top .meld-tiles,
+  .app.app-in-round .table.table-exact .table-meld-right .meld-tiles,
+  .app.app-in-round .table.table-exact .table-meld-left .meld-tiles {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0 !important;
+  }
+
+  .app.app-in-round .table.table-exact .table-meld-top .meld-tile {
+    transform: rotate(180deg) !important;
+  }
+
+  .app.app-in-round .table.table-exact .table-meld-right .meld-tile {
+    transform: rotate(-90deg) !important;
+  }
+
+  .app.app-in-round .table.table-exact .table-meld-left .meld-tile {
+    transform: rotate(90deg) !important;
+  }
+
+  .app.app-in-round .table.table-exact .table-meld-self .meld-list {
+    transform: rotate(0deg) !important;
+  }
+}
+
 /* MVP-3.4.4 final precedence override: approved static mock final4 connected to app. */
 @media (orientation: landscape) and (max-width: 1180px) {
   html,

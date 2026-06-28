@@ -4,16 +4,16 @@ Use this before merging to `main` or publishing with GitHub Pages.
 
 ## Current Release Candidate
 
-- Branch: `codex/mvp-40-cpu-call-plan`
-- Scope: MVP-4.3 CPU call stability
-- Expected automated result: `368 pass / 0 pending / 0 fail`
+- Branch: `codex/mvp-44-cpu-call-tuning`
+- Scope: MVP-4.4 CPU call frequency and multi-meld UI tuning
+- Expected automated result: `369 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-4.3 CPU call stability is not published yet.
+- Publish status: MVP-4.4 CPU call tuning is not published yet.
 
 ## Git Safety
 
-- Confirm the current branch is `codex/mvp-40-cpu-call-plan`.
+- Confirm the current branch is `codex/mvp-44-cpu-call-tuning`.
 - Confirm the working tree is clean.
 - Confirm the latest commit is the intended release candidate.
 - Confirm no unreviewed local commits are being skipped.
@@ -31,12 +31,12 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 368.
-- Confirm pass count is 368.
+- Confirm total count is 369.
+- Confirm pass count is 369.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
-- Confirm MVP-4.3 CPU call stability production code, tests, scenarios, layout guard, diagnostics, and docs are reviewed.
-- Confirm `docs/mvp-40-cpu-call-plan.md` remains present and now notes that MVP-4.1 completed CPU pon, MVP-4.2 completed CPU chi, and MVP-4.3 stabilized post-call flow and open-hand yaku checks.
+- Confirm MVP-4.4 CPU call tuning production code, tests, scenarios, layout guard, diagnostics, and docs are reviewed.
+- Confirm `docs/mvp-40-cpu-call-plan.md` remains present and `docs/call-advice-plan.md` records future human call-advice criteria.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
 - Run the smartphone landscape layout guard:
 
@@ -46,7 +46,7 @@ node tests/layout-check.mjs
 
 - If Node is not on PATH in the Codex desktop environment, use the bundled Node command documented in `docs/layout-test.md`.
 - Confirm layout-check screenshots are written under `test-artifacts/layout/`.
-- Current layout-check result: all target viewports and scenarios pass, including `normal`, `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `all-hands-open`, `settings-menu-open`, `gear-menu-open`, `assist-buttons-open`, `call-reaction-buttons`, `riichi-action-buttons`, `yaku-guide`, `waits`, `riichi-ready`, `riichi-declared`, `cpu-riichi`, `pon-reaction`, `chi-reaction`, `open-melds`, `multiple-melds`, `open-tanyao-win`, `open-yakuhai-win`, `river-order-fixture`, `cpu-win`, `cpu-pon`, `cpu-chi`, `cpu-open-melds`, `cpu-pon-yakuhai-win`, `cpu-chi-tanyao-win`, `multiple-cpu-melds`, `cpu-open-yakuhai-win`, `cpu-open-tanyao-win`, `cpu-open-multiple-melds`, `cpu-call-flow`, and `cpu-call-next-round`.
+- Current layout-check result: all target viewports and scenarios pass, including `normal`, `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `all-hands-open`, `settings-menu-open`, `gear-menu-open`, `assist-buttons-open`, `call-reaction-buttons`, `riichi-action-buttons`, `yaku-guide`, `waits`, `riichi-ready`, `riichi-declared`, `cpu-riichi`, `pon-reaction`, `chi-reaction`, `open-melds`, `multiple-melds`, `open-tanyao-win`, `open-yakuhai-win`, `river-order-fixture`, `cpu-win`, `cpu-pon`, `cpu-chi`, `cpu-open-melds`, `cpu-pon-yakuhai-win`, `cpu-chi-tanyao-win`, `multiple-cpu-melds`, `cpu-open-yakuhai-win`, `cpu-open-tanyao-win`, `cpu-open-multiple-melds`, `cpu1-multiple-melds`, `cpu2-multiple-melds`, `cpu3-multiple-melds`, `all-players-melds`, `cpu-call-late-hand`, `cpu-call-flow`, and `cpu-call-next-round`.
 - Run the CPU win reachability diagnostic:
 
 ```powershell
@@ -54,6 +54,13 @@ node scripts/simulate-cpu-win-reachability.mjs
 ```
 
 - Confirm the diagnostic reports CPU tsumo reachable, CPU ron reachable, no-yaku CPU shape ignored, CPU post-pon/post-chi flow continuing, open yakuhai reachable, open tanyao reachable, and open no-yaku ignored.
+- Run the CPU call frequency diagnostic:
+
+```powershell
+node scripts/simulate-cpu-call-frequency.mjs
+```
+
+- Confirm the diagnostic reports CPU pon/chi counts, calls per round, per-CPU call counts, wins after calls, draws, human wins, and CPU wins without stalled rounds.
 
 ## Core Functional Checks
 

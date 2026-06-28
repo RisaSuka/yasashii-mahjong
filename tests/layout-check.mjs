@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const ARTIFACT_DIR = path.join(ROOT, "test-artifacts", "layout");
-const CACHE_BUST = "mvp43-cpu-call-stability-1";
+const CACHE_BUST = "mvp44-cpu-call-tuning-1";
 const PORT = Number(process.env.LAYOUT_CHECK_PORT || 18765);
 const VIEWPORTS = [
   { width: 844, height: 390 },
@@ -50,6 +50,11 @@ const SCENARIOS = [
   { name: "cpu-open-yakuhai-win", discards: 9, mode: "cpu-pon-yakuhai-win" },
   { name: "cpu-open-tanyao-win", discards: 9, mode: "cpu-chi-tanyao-win" },
   { name: "cpu-open-multiple-melds", discards: 9, mode: "multiple-cpu-melds" },
+  { name: "cpu1-multiple-melds", discards: 9, mode: "cpu1-multiple-melds" },
+  { name: "cpu2-multiple-melds", discards: 9, mode: "cpu2-multiple-melds" },
+  { name: "cpu3-multiple-melds", discards: 9, mode: "cpu3-multiple-melds" },
+  { name: "all-players-melds", discards: 9, mode: "all-players-melds" },
+  { name: "cpu-call-late-hand", discards: 18, mode: "cpu-call-late-hand" },
   { name: "cpu-call-flow", discards: 9, mode: "cpu-open-melds" },
   { name: "cpu-call-next-round", discards: 9, mode: "cpu-open-melds" },
   { name: "all-hands-open", discards: 18, mode: "all-hands-open" },
@@ -127,7 +132,11 @@ async function runScenario(viewport, scenario) {
       mode: scenario.mode,
       cacheBust: `${CACHE_BUST}-${label}`
     });
-    const inspection = await page.evaluate(inspectLayoutSource(), { tolerance: TOLERANCE });
+    const inspection = await page.evaluate(inspectLayoutSource(), {
+      tolerance: TOLERANCE,
+      scenarioName: scenario.name,
+      mode: scenario.mode
+    });
     failures.push(...inspection.failures.map((message) => `${label}: ${message}`));
     await page.screenshot(path.join(ARTIFACT_DIR, `${label}.png`));
     const finalScreenshotName = getAppFinalScreenshotName(viewport, scenario);
@@ -512,6 +521,11 @@ function setupScenarioSource() {
       || mode === "cpu-pon-yakuhai-win"
       || mode === "cpu-chi-tanyao-win"
       || mode === "multiple-cpu-melds"
+      || mode === "cpu1-multiple-melds"
+      || mode === "cpu2-multiple-melds"
+      || mode === "cpu3-multiple-melds"
+      || mode === "all-players-melds"
+      || mode === "cpu-call-late-hand"
     ) {
       const cpu1Meld = {
         id: "layout-cpu-pon-z5",
@@ -541,6 +555,69 @@ function setupScenarioSource() {
         calledTile: tile("layout-cpu3-z7-c", "z", 7, 2),
         fromPlayerId: 2
       };
+      const cpu1PonMeld2 = {
+        id: "layout-cpu1-pon-m7",
+        type: "pon",
+        tiles: [tile("layout-cpu1-m7-a", "m", 7), tile("layout-cpu1-m7-b", "m", 7, 1), tile("layout-cpu1-m7-c", "m", 7, 2)],
+        calledTile: tile("layout-cpu1-m7-c", "m", 7, 2),
+        fromPlayerId: 3
+      };
+      const cpu1ChiMeld2 = {
+        id: "layout-cpu1-chi-s456",
+        type: "chi",
+        tiles: [tile("layout-cpu1-s4", "s", 4), tile("layout-cpu1-s5", "s", 5), tile("layout-cpu1-s6", "s", 6)],
+        calledTile: tile("layout-cpu1-s5", "s", 5),
+        fromPlayerId: 0
+      };
+      const cpu2ChiMeld = {
+        id: "layout-cpu2-chi-m345",
+        type: "chi",
+        tiles: [tile("layout-cpu2-m3", "m", 3), tile("layout-cpu2-m4", "m", 4), tile("layout-cpu2-m5", "m", 5)],
+        calledTile: tile("layout-cpu2-m4", "m", 4),
+        fromPlayerId: 1
+      };
+      const cpu2PonMeld2 = {
+        id: "layout-cpu2-pon-p7",
+        type: "pon",
+        tiles: [tile("layout-cpu2-p7-a", "p", 7), tile("layout-cpu2-p7-b", "p", 7, 1), tile("layout-cpu2-p7-c", "p", 7, 2)],
+        calledTile: tile("layout-cpu2-p7-c", "p", 7, 2),
+        fromPlayerId: 0
+      };
+      const cpu2ChiMeld2 = {
+        id: "layout-cpu2-chi-s234",
+        type: "chi",
+        tiles: [tile("layout-cpu2-s2", "s", 2), tile("layout-cpu2-s3", "s", 3), tile("layout-cpu2-s4", "s", 4)],
+        calledTile: tile("layout-cpu2-s3", "s", 3),
+        fromPlayerId: 1
+      };
+      const cpu3ChiMeld = {
+        id: "layout-cpu3-chi-p456",
+        type: "chi",
+        tiles: [tile("layout-cpu3-p4", "p", 4), tile("layout-cpu3-p5", "p", 5), tile("layout-cpu3-p6", "p", 6)],
+        calledTile: tile("layout-cpu3-p5", "p", 5),
+        fromPlayerId: 2
+      };
+      const cpu3PonMeld2 = {
+        id: "layout-cpu3-pon-m8",
+        type: "pon",
+        tiles: [tile("layout-cpu3-m8-a", "m", 8), tile("layout-cpu3-m8-b", "m", 8, 1), tile("layout-cpu3-m8-c", "m", 8, 2)],
+        calledTile: tile("layout-cpu3-m8-c", "m", 8, 2),
+        fromPlayerId: 1
+      };
+      const cpu3ChiMeld2 = {
+        id: "layout-cpu3-chi-s567",
+        type: "chi",
+        tiles: [tile("layout-cpu3-s5", "s", 5), tile("layout-cpu3-s6", "s", 6), tile("layout-cpu3-s7", "s", 7)],
+        calledTile: tile("layout-cpu3-s6", "s", 6),
+        fromPlayerId: 2
+      };
+      const humanOpenMeld = {
+        id: "layout-all-human-pon-z5",
+        type: "pon",
+        tiles: [tile("layout-all-human-z5-a", "z", 5), tile("layout-all-human-z5-b", "z", 5, 1), tile("layout-all-human-z5-c", "z", 5, 2)],
+        calledTile: tile("layout-all-human-z5-c", "z", 5, 2),
+        fromPlayerId: 1
+      };
 
       state = {
         ...state,
@@ -565,9 +642,13 @@ function setupScenarioSource() {
             if (player.id === 1) {
               const melds = mode === "cpu-chi" || mode === "cpu-chi-tanyao-win"
                 ? [cpu1ChiMeld]
-                : mode === "cpu-open-melds" || mode === "multiple-cpu-melds"
-                  ? [cpu1Meld, cpu1ChiMeld]
-                  : [cpu1Meld];
+                : mode === "cpu1-multiple-melds"
+                  ? [cpu1Meld, cpu1ChiMeld, cpu1PonMeld2, cpu1ChiMeld2]
+                  : mode === "all-players-melds" || mode === "cpu-call-late-hand"
+                    ? [cpu1Meld, cpu1ChiMeld, cpu1PonMeld2]
+                    : mode === "cpu-open-melds" || mode === "multiple-cpu-melds"
+                      ? [cpu1Meld, cpu1ChiMeld]
+                      : [cpu1Meld];
               return {
                 ...player,
                 isClosed: false,
@@ -576,21 +657,36 @@ function setupScenarioSource() {
               };
             }
 
-            if (mode === "multiple-cpu-melds" && player.id === 2) {
+            if ((mode === "multiple-cpu-melds" || mode === "cpu2-multiple-melds" || mode === "all-players-melds" || mode === "cpu-call-late-hand") && player.id === 2) {
+              const melds = mode === "cpu2-multiple-melds"
+                ? [cpu2Meld, cpu2ChiMeld, cpu2PonMeld2, cpu2ChiMeld2]
+                : [cpu2Meld, cpu2ChiMeld, cpu2PonMeld2];
               return {
                 ...player,
                 isClosed: false,
                 menzen: false,
-                melds: [cpu2Meld]
+                melds
               };
             }
 
-            if (mode === "multiple-cpu-melds" && player.id === 3) {
+            if ((mode === "multiple-cpu-melds" || mode === "cpu3-multiple-melds" || mode === "all-players-melds" || mode === "cpu-call-late-hand") && player.id === 3) {
+              const melds = mode === "cpu3-multiple-melds"
+                ? [cpu3Meld, cpu3ChiMeld, cpu3PonMeld2, cpu3ChiMeld2]
+                : [cpu3Meld, cpu3ChiMeld, cpu3PonMeld2];
               return {
                 ...player,
                 isClosed: false,
                 menzen: false,
-                melds: [cpu3Meld]
+                melds
+              };
+            }
+
+            if ((mode === "all-players-melds" || mode === "cpu-call-late-hand") && player.id === 0) {
+              return {
+                ...player,
+                isClosed: false,
+                menzen: false,
+                melds: [humanOpenMeld]
               };
             }
 
@@ -881,7 +977,7 @@ function setupScenarioSource() {
 }
 
 function inspectLayoutSource() {
-  return `async ({ tolerance }) => {
+  return `async ({ tolerance, scenarioName, mode }) => {
     const failures = [];
     const viewport = { width: window.innerWidth, height: window.innerHeight };
     const selectors = {
@@ -1308,13 +1404,22 @@ function inspectLayoutSource() {
       }
     }
 
+    const expectedMeldCountsByMode = {
+      "multiple-cpu-melds": { right: 2, top: 3, left: 3 },
+      "cpu1-multiple-melds": { right: 4 },
+      "cpu2-multiple-melds": { top: 4 },
+      "cpu3-multiple-melds": { left: 4 },
+      "all-players-melds": { right: 3, top: 3, left: 3, self: 1 },
+      "cpu-call-late-hand": { right: 3, top: 3, left: 3, self: 1 }
+    };
+    const expectedMeldCounts = expectedMeldCountsByMode[mode] || expectedMeldCountsByMode[scenarioName] || {};
     const meldZoneChecks = [
-      ["top", ".table-meld-top", rects.topDiscard, 180],
-      ["right", ".table-meld-right", rects.rightDiscard, -90],
-      ["left", ".table-meld-left", rects.leftDiscard, 90],
-      ["self", ".table-meld-self", rects.bottomDiscard, 0]
+      ["top", ".table-meld-top", rects.topDiscard, rects.topSeat, 180],
+      ["right", ".table-meld-right", rects.rightDiscard, rects.rightSeat, -90],
+      ["left", ".table-meld-left", rects.leftDiscard, rects.leftSeat, 90],
+      ["self", ".table-meld-self", rects.bottomDiscard, rects.selfSeat, 0]
     ];
-    for (const [name, selector, riverRect, expectedRotation] of meldZoneChecks) {
+    for (const [name, selector, riverRect, seatRect, expectedRotation] of meldZoneChecks) {
       const zone = document.querySelector(selector);
       const area = zone?.querySelector(".meld-area");
       if (!area) {
@@ -1328,18 +1433,59 @@ function inspectLayoutSource() {
       if (riverRect) {
         checkOverlap(name + " meld area", areaRect, name + " river", riverRect, 0);
       }
+      if (seatRect) {
+        checkOverlap(name + " meld area", areaRect, name + " seat", seatRect, 0);
+      }
       if (handRect && name !== "self") {
         checkOverlap(name + " meld area", areaRect, "human hand", toRect(handRect), 0);
       }
       if (rects.actionArea && name === "right") {
         checkOverlap(name + " meld area", areaRect, "action area", rects.actionArea, 0);
       }
+      if (rects.gearButton && (name === "top" || name === "right")) {
+        checkOverlap(name + " meld area", areaRect, "gear button", rects.gearButton, 0);
+      }
 
       const meldList = area.querySelector(".meld-list");
       if (meldList) {
         const angle = getRotationAngle(meldList);
-        if (!angleMatches(angle, expectedRotation)) {
-          failures.push(name + " meld list rotation expected " + expectedRotation + "deg but got " + angle + "deg");
+        if (!angleMatches(angle, 0)) {
+          failures.push(name + " meld list should not rotate as a whole but got " + angle + "deg");
+        }
+      }
+
+      const melds = [...area.querySelectorAll(".meld")];
+      const expectedCount = expectedMeldCounts[name];
+      if (expectedCount && melds.length < expectedCount) {
+        failures.push(name + " meld area shows " + melds.length + " melds but expected at least " + expectedCount);
+      }
+      for (const [index, meld] of melds.entries()) {
+        const meldRect = meld.getBoundingClientRect();
+        if (!isInViewport(meldRect, viewport, tolerance)) {
+          failures.push(name + " meld " + index + " is outside viewport");
+          break;
+        }
+        if (!isInsideRect(meldRect, area.getBoundingClientRect(), tolerance)) {
+          failures.push(name + " meld " + index + " is clipped inside CPU meld lane");
+          break;
+        }
+      }
+
+      const tiles = [...area.querySelectorAll(".meld-tile")];
+      for (const [index, tile] of tiles.entries()) {
+        const tileRect = tile.getBoundingClientRect();
+        if (Math.min(tileRect.width, tileRect.height) < 10) {
+          failures.push(name + " meld tile " + index + " visible size is too small: " + rectToString(tileRect));
+          break;
+        }
+        if (!isInsideRect(tileRect, area.getBoundingClientRect(), tolerance)) {
+          failures.push(name + " meld tile " + index + " is clipped inside CPU meld lane");
+          break;
+        }
+        const tileAngle = getRotationAngle(tile);
+        if (!angleMatches(tileAngle, expectedRotation)) {
+          failures.push(name + " meld tile rotation expected " + expectedRotation + "deg but got " + tileAngle + "deg");
+          break;
         }
       }
     }
