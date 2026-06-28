@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp441-cpu-meld-group-layout-1";
-import { renderGame } from "./ui/render.js?v=mvp441-cpu-meld-group-layout-1";
+import { bindControls } from "./ui/input.js?v=mvp442-cpu-meld-seat-lanes-1";
+import { renderGame } from "./ui/render.js?v=mvp442-cpu-meld-seat-lanes-1";
 
-const APP_ASSET_VERSION = "mvp441-cpu-meld-group-layout-1";
+const APP_ASSET_VERSION = "mvp442-cpu-meld-seat-lanes-1";
 
 const appRoot = document.querySelector("#app");
 

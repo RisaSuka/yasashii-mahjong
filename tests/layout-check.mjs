@@ -8,14 +8,19 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const ARTIFACT_DIR = path.join(ROOT, "test-artifacts", "layout");
-const CACHE_BUST = "mvp441-cpu-meld-group-layout-1";
+const CACHE_BUST = "mvp442-cpu-meld-seat-lanes-1";
 const PORT = Number(process.env.LAYOUT_CHECK_PORT || 18765);
 const VIEWPORTS = [
   { width: 844, height: 390 },
   { width: 896, height: 414 },
   { width: 932, height: 430 },
   { width: 812, height: 375 },
-  { width: 780, height: 360 }
+  { width: 780, height: 360 },
+  { width: 844, height: 360 },
+  { width: 896, height: 380 },
+  { width: 932, height: 400 },
+  { width: 812, height: 345 },
+  { width: 780, height: 330 }
 ];
 const SCENARIOS = [
   { name: "normal", discards: 9, mode: "playing" },
@@ -54,6 +59,11 @@ const SCENARIOS = [
   { name: "cpu2-multiple-melds", discards: 9, mode: "cpu2-multiple-melds" },
   { name: "cpu3-multiple-melds", discards: 9, mode: "cpu3-multiple-melds" },
   { name: "all-players-melds", discards: 9, mode: "all-players-melds" },
+  { name: "cpu-right-four-melds-real", discards: 9, mode: "cpu-right-four-melds-real" },
+  { name: "cpu-left-four-melds-real", discards: 9, mode: "cpu-left-four-melds-real" },
+  { name: "cpu-top-four-melds-real", discards: 9, mode: "cpu-top-four-melds-real" },
+  { name: "all-opponents-four-melds-real", discards: 9, mode: "all-opponents-four-melds-real" },
+  { name: "all-players-melds-real", discards: 9, mode: "all-players-melds-real" },
   { name: "cpu-call-late-hand", discards: 18, mode: "cpu-call-late-hand" },
   { name: "cpu-call-flow", discards: 9, mode: "cpu-open-melds" },
   { name: "cpu-call-next-round", discards: 9, mode: "cpu-open-melds" },
@@ -525,6 +535,11 @@ function setupScenarioSource() {
       || mode === "cpu2-multiple-melds"
       || mode === "cpu3-multiple-melds"
       || mode === "all-players-melds"
+      || mode === "cpu-right-four-melds-real"
+      || mode === "cpu-left-four-melds-real"
+      || mode === "cpu-top-four-melds-real"
+      || mode === "all-opponents-four-melds-real"
+      || mode === "all-players-melds-real"
       || mode === "cpu-call-late-hand"
     ) {
       const cpu1Meld = {
@@ -642,7 +657,7 @@ function setupScenarioSource() {
             if (player.id === 1) {
               const melds = mode === "cpu-chi" || mode === "cpu-chi-tanyao-win"
                 ? [cpu1ChiMeld]
-                : mode === "cpu1-multiple-melds"
+                : mode === "cpu1-multiple-melds" || mode === "cpu-right-four-melds-real" || mode === "all-opponents-four-melds-real" || mode === "all-players-melds-real"
                   ? [cpu1Meld, cpu1ChiMeld, cpu1PonMeld2, cpu1ChiMeld2]
                   : mode === "all-players-melds" || mode === "cpu-call-late-hand"
                     ? [cpu1Meld, cpu1ChiMeld, cpu1PonMeld2]
@@ -657,8 +672,8 @@ function setupScenarioSource() {
               };
             }
 
-            if ((mode === "multiple-cpu-melds" || mode === "cpu2-multiple-melds" || mode === "all-players-melds" || mode === "cpu-call-late-hand") && player.id === 2) {
-              const melds = mode === "cpu2-multiple-melds"
+            if ((mode === "multiple-cpu-melds" || mode === "cpu2-multiple-melds" || mode === "all-players-melds" || mode === "cpu-call-late-hand" || mode === "cpu-top-four-melds-real" || mode === "all-opponents-four-melds-real" || mode === "all-players-melds-real") && player.id === 2) {
+              const melds = mode === "cpu2-multiple-melds" || mode === "cpu-top-four-melds-real" || mode === "all-opponents-four-melds-real" || mode === "all-players-melds-real"
                 ? [cpu2Meld, cpu2ChiMeld, cpu2PonMeld2, cpu2ChiMeld2]
                 : [cpu2Meld, cpu2ChiMeld, cpu2PonMeld2];
               return {
@@ -669,8 +684,8 @@ function setupScenarioSource() {
               };
             }
 
-            if ((mode === "multiple-cpu-melds" || mode === "cpu3-multiple-melds" || mode === "all-players-melds" || mode === "cpu-call-late-hand") && player.id === 3) {
-              const melds = mode === "cpu3-multiple-melds"
+            if ((mode === "multiple-cpu-melds" || mode === "cpu3-multiple-melds" || mode === "all-players-melds" || mode === "cpu-call-late-hand" || mode === "cpu-left-four-melds-real" || mode === "all-opponents-four-melds-real" || mode === "all-players-melds-real") && player.id === 3) {
+              const melds = mode === "cpu3-multiple-melds" || mode === "cpu-left-four-melds-real" || mode === "all-opponents-four-melds-real" || mode === "all-players-melds-real"
                 ? [cpu3Meld, cpu3ChiMeld, cpu3PonMeld2, cpu3ChiMeld2]
                 : [cpu3Meld, cpu3ChiMeld, cpu3PonMeld2];
               return {
@@ -681,7 +696,7 @@ function setupScenarioSource() {
               };
             }
 
-            if ((mode === "all-players-melds" || mode === "cpu-call-late-hand") && player.id === 0) {
+            if ((mode === "all-players-melds" || mode === "cpu-call-late-hand" || mode === "all-players-melds-real") && player.id === 0) {
               return {
                 ...player,
                 isClosed: false,
@@ -1109,7 +1124,8 @@ function inspectLayoutSource() {
       if (Math.abs(centerY - tableCenterY) > viewport.height * 0.16) {
         failures.push("center score board is too far from table vertical center");
       }
-      if (centerRect.width < 104 || centerRect.height < 104) {
+      const minCenterHeight = Math.min(104, viewport.height * 0.26);
+      if (centerRect.width < 104 || centerRect.height < minCenterHeight) {
         failures.push("center score board is too small: " + rectToString(centerRect));
       }
     }
@@ -1404,6 +1420,11 @@ function inspectLayoutSource() {
       "cpu2-multiple-melds": { top: 4 },
       "cpu3-multiple-melds": { left: 4 },
       "all-players-melds": { right: 3, top: 3, left: 3, self: 1 },
+      "cpu-right-four-melds-real": { right: 4 },
+      "cpu-left-four-melds-real": { left: 4 },
+      "cpu-top-four-melds-real": { top: 4 },
+      "all-opponents-four-melds-real": { right: 4, top: 4, left: 4 },
+      "all-players-melds-real": { right: 4, top: 4, left: 4, self: 1 },
       "cpu-call-late-hand": { right: 3, top: 3, left: 3, self: 1 }
     };
     const expectedMeldCounts = expectedMeldCountsByMode[mode] || expectedMeldCountsByMode[scenarioName] || {};
@@ -1438,6 +1459,22 @@ function inspectLayoutSource() {
       }
       if (rects.gearButton && (name === "top" || name === "right")) {
         checkOverlap(name + " meld area", areaRect, "gear button", rects.gearButton, 0);
+      }
+      if (["top", "right", "left"].includes(name) && (expectedMeldCounts[name] || area.querySelector(".meld"))) {
+        const nearestSeatOrRiver = Math.min(
+          seatRect ? rectDistance(areaRect, seatRect) : Number.POSITIVE_INFINITY,
+          riverRect ? rectDistance(areaRect, riverRect) : Number.POSITIVE_INFINITY
+        );
+        const maxSeatDistance = Math.max(36, Math.min(viewport.width, viewport.height) * 0.26);
+        if (nearestSeatOrRiver > maxSeatDistance) {
+          failures.push(name + " CPU meld lane is too far from its seat/river: " + Math.round(nearestSeatOrRiver) + "px");
+        }
+      }
+      if (name === "right" && rects.actionArea && areaRect.bottom > rects.actionArea.top - 1) {
+        failures.push("right CPU meld lane should stay above the human action area");
+      }
+      if (name === "top" && areaRect.top < 0) {
+        failures.push("top CPU meld lane is clipped by the top viewport edge");
       }
 
       const meldList = area.querySelector(".meld-list");
@@ -1520,6 +1557,32 @@ function inspectLayoutSource() {
         if (!isInsideRect(tileRect, area.getBoundingClientRect(), tolerance)) {
           failures.push(name + " meld tile " + index + " is clipped inside CPU meld lane");
           break;
+        }
+        const tileBox = toRect(tileRect);
+        if (riverRect) {
+          const beforeCount = failures.length;
+          checkOverlap(name + " meld tile " + index, tileBox, name + " river", riverRect, 0);
+          if (failures.length > beforeCount) break;
+        }
+        if (seatRect) {
+          const beforeCount = failures.length;
+          checkOverlap(name + " meld tile " + index, tileBox, name + " seat", seatRect, 0);
+          if (failures.length > beforeCount) break;
+        }
+        if (handRect && name !== "self") {
+          const beforeCount = failures.length;
+          checkOverlap(name + " meld tile " + index, tileBox, "human hand", toRect(handRect), 0);
+          if (failures.length > beforeCount) break;
+        }
+        if (rects.actionArea && name === "right") {
+          const beforeCount = failures.length;
+          checkOverlap(name + " meld tile " + index, tileBox, "action area", rects.actionArea, 0);
+          if (failures.length > beforeCount) break;
+        }
+        if (rects.gearButton && (name === "top" || name === "right")) {
+          const beforeCount = failures.length;
+          checkOverlap(name + " meld tile " + index, tileBox, "gear button", rects.gearButton, 0);
+          if (failures.length > beforeCount) break;
         }
         const tileAngle = getRotationAngle(tile);
         if (!angleMatches(tileAngle, expectedRotation)) {
@@ -1825,6 +1888,13 @@ function inspectLayoutSource() {
       if (smaller > 0 && area / smaller > maxRatio) {
         failures.push(nameA + " overlaps " + nameB + " too much");
       }
+    }
+
+    function rectDistance(rectA, rectB) {
+      if (!rectA || !rectB) return Number.POSITIVE_INFINITY;
+      const dx = Math.max(0, rectA.left - rectB.right, rectB.left - rectA.right);
+      const dy = Math.max(0, rectA.top - rectB.bottom, rectB.top - rectA.bottom);
+      return Math.sqrt(dx * dx + dy * dy);
     }
 
     function getGridTrackCount(value) {
