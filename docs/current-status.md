@@ -1,15 +1,15 @@
 # Current Status
 
-Last updated for MVP-4.2 CPU chi core + UI.
+Last updated for MVP-4.3 CPU call stability.
 
 ## Repository State
 
 - Working branch: `codex/mvp-40-cpu-call-plan`
-- Automated tests: MVP-4.2 target is `358 pass / 0 pending / 0 fail`
-- Layout check: all target viewports and scenarios should pass, including CPU pon/chi/open-meld scenarios
-- Working tree: clean after MVP-4.2 verification
+- Automated tests: MVP-4.3 target is `368 pass / 0 pending / 0 fail`
+- Layout check: all target viewports and scenarios should pass, including CPU open-call flow/win/next-round scenarios
+- Working tree: clean after MVP-4.3 verification
 - Push: not yet
-- `main` merge: not yet for MVP-4.2
+- `main` merge: not yet for MVP-4.3
 
 ## Implemented MVPs
 
@@ -63,6 +63,7 @@ Last updated for MVP-4.2 CPU chi core + UI.
 | MVP-4.0 | Design branch | CPU pon/chi design only: call judgment, reaction priority, anti-over-calling controls, CPU meld display, scenarios, tests, and staged implementation order. |
 | MVP-4.1 | Working branch | CPU pon core + UI: CPU pon availability, throttled RNG decision, CPU pon meld state/display, immediate post-pon CPU discard, open yakuhai yaku coverage, and CPU meld layout guards. |
 | MVP-4.2 | Working branch | CPU chi core + UI: CPU chi from upper-player suited discards, throttled tanyao/yaku-tenpai decision, immediate post-chi CPU discard, open tanyao coverage, and CPU chi meld layout guards. |
+| MVP-4.3 | Working branch | CPU call stability: post-pon/post-chi discard flow, CPU ron > pon > chi priority, open yakuhai/tanyao wins, open no-yaku rejection, riichi blocking, next-round CPU meld cleanup, and expanded diagnostics/layout coverage. |
 
 ## Current Capabilities
 

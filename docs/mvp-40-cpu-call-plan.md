@@ -2,7 +2,7 @@
 
 MVP-4.0 is a design-only milestone for CPU pon and chi. CPU calls change game pace, yaku visibility, turn flow, riichi decisions, and the four-direction table UI, so the first step is to define a deliberately small, testable scope before implementation.
 
-MVP-4.0 itself was design-only. MVP-4.1 implements the first slice of this plan: CPU pon core + UI. MVP-4.2 implements CPU chi core + UI. Kan, scoring, furiten, full multi-caller competition, and CPU difficulty UI remain deferred.
+MVP-4.0 itself was design-only. MVP-4.1 implements the first slice of this plan: CPU pon core + UI. MVP-4.2 implements CPU chi core + UI. MVP-4.3 stabilizes CPU post-call flow and open-hand yaku handling. Kan, scoring, furiten, full multi-caller competition, and CPU difficulty UI remain deferred.
 
 ## MVP-4.1 Implementation Note
 
@@ -39,6 +39,21 @@ MVP-4.2 implements CPU chi only:
 - CPU melds render in the existing four-direction table lanes with seat-direction tile rotation and can coexist with CPU pon melds.
 - Open CPU tanyao chi can win with tanyao, open no-yaku CPU hands remain rejected, and open CPU tsumo does not receive menzen-tsumo.
 - Added deterministic scenarios include `cpu-chi-ready-tanyao`, `cpu-chi-multiple-options`, `cpu-chi-not-kamicha`, `cpu-chi-no-yaku-avoid`, `cpu-chi-riichi-blocked`, `cpu-chi-after-human-discard`, `cpu-chi-open-tanyao-win-shape`, and `cpu-pon-priority-over-chi`.
+
+## MVP-4.3 Implementation Note
+
+MVP-4.3 stabilizes CPU open-call flow after CPU pon and CPU chi:
+
+- CPU post-pon and post-chi flows immediately discard through the shared evaluator and continue normal turn progression.
+- CPU open yakuhai and open tanyao tsumo/ron paths are covered.
+- CPU open no-yaku completed hands remain rejected.
+- CPU open tsumo does not receive menzen-tsumo, and open wins do not receive riichi.
+- CPU in riichi cannot pon/chi, and open CPU hands cannot declare riichi.
+- Reaction priority is guarded as human reaction first, CPU ron before CPU calls, CPU pon before CPU chi, and CPU chi only from the upper player's suited discard.
+- Next-round setup clears CPU melds.
+- The CPU reachability diagnostic now checks post-pon flow, post-chi flow, open yakuhai, open tanyao, and open no-yaku rejection.
+- Layout guard scenarios cover CPU open-yakuhai/open-tanyao wins, CPU call flow, CPU next-round call cleanup surfaces, and multiple CPU meld lanes.
+- CPU call frequency tuning remains deferred to MVP-4.4.
 
 ## Purpose
 

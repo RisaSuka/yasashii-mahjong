@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp42-cpu-chi-1";
-import { renderGame } from "./ui/render.js?v=mvp42-cpu-chi-1";
+import { bindControls } from "./ui/input.js?v=mvp43-cpu-call-stability-1";
+import { renderGame } from "./ui/render.js?v=mvp43-cpu-call-stability-1";
 
-const APP_ASSET_VERSION = "mvp42-cpu-chi-1";
+const APP_ASSET_VERSION = "mvp43-cpu-call-stability-1";
 
 const appRoot = document.querySelector("#app");
 

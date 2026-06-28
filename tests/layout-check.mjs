@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const ARTIFACT_DIR = path.join(ROOT, "test-artifacts", "layout");
-const CACHE_BUST = "mvp42-cpu-chi-1";
+const CACHE_BUST = "mvp43-cpu-call-stability-1";
 const PORT = Number(process.env.LAYOUT_CHECK_PORT || 18765);
 const VIEWPORTS = [
   { width: 844, height: 390 },
@@ -47,6 +47,11 @@ const SCENARIOS = [
   { name: "cpu-pon-yakuhai-win", discards: 9, mode: "cpu-pon-yakuhai-win" },
   { name: "cpu-chi-tanyao-win", discards: 9, mode: "cpu-chi-tanyao-win" },
   { name: "multiple-cpu-melds", discards: 9, mode: "multiple-cpu-melds" },
+  { name: "cpu-open-yakuhai-win", discards: 9, mode: "cpu-pon-yakuhai-win" },
+  { name: "cpu-open-tanyao-win", discards: 9, mode: "cpu-chi-tanyao-win" },
+  { name: "cpu-open-multiple-melds", discards: 9, mode: "multiple-cpu-melds" },
+  { name: "cpu-call-flow", discards: 9, mode: "cpu-open-melds" },
+  { name: "cpu-call-next-round", discards: 9, mode: "cpu-open-melds" },
   { name: "all-hands-open", discards: 18, mode: "all-hands-open" },
   { name: "settings-menu-open", discards: 9, mode: "settings-menu-open" },
   { name: "gear-menu-open", discards: 9, mode: "gear-menu-open" },

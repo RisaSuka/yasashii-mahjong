@@ -136,6 +136,7 @@
       import { registerCallStabilityTests } from "./call-stability.test.js";
       import { registerCpuDiscardTests } from "./cpu-discard.test.js";
       import { registerCpuChiTests } from "./cpu-chi.test.js";
+      import { registerCpuCallStabilityTests } from "./cpu-call-stability.test.js";
       import { registerCpuPonTests } from "./cpu-pon.test.js";
       import { registerCpuWinTests } from "./cpu-win.test.js";
       import { registerDiscardAdviceTests } from "./discard-advice.test.js";
@@ -164,7 +165,7 @@
       import { registerYakuTests } from "./yaku.test.js";
       import { runTests, tests } from "./test.js";
 
-      globalThis.__TEST_CACHE_BUST__ = "mvp42-cpu-chi-1";
+      globalThis.__TEST_CACHE_BUST__ = "mvp43-cpu-call-stability-1";
 
       const totalCount = document.querySelector("#total-count");
       const passCount = document.querySelector("#pass-count");
@@ -180,6 +181,7 @@
       registerActionTests();
       registerCallStabilityTests();
       registerCpuDiscardTests();
+      registerCpuCallStabilityTests();
       registerCpuChiTests();
       registerCpuPonTests();
       registerCpuWinTests();

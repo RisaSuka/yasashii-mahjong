@@ -5,11 +5,11 @@ Use this before merging to `main` or publishing with GitHub Pages.
 ## Current Release Candidate
 
 - Branch: `codex/mvp-40-cpu-call-plan`
-- Scope: MVP-4.2 CPU chi core + UI
-- Expected automated result: `358 pass / 0 pending / 0 fail`
+- Scope: MVP-4.3 CPU call stability
+- Expected automated result: `368 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-4.2 CPU chi is not published yet.
+- Publish status: MVP-4.3 CPU call stability is not published yet.
 
 ## Git Safety
 
@@ -31,12 +31,12 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 358.
-- Confirm pass count is 358.
+- Confirm total count is 368.
+- Confirm pass count is 368.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
-- Confirm MVP-4.2 CPU chi production code, tests, scenarios, layout guard, and docs are reviewed.
-- Confirm `docs/mvp-40-cpu-call-plan.md` remains present and now notes that MVP-4.1 completed CPU pon and MVP-4.2 completed CPU chi.
+- Confirm MVP-4.3 CPU call stability production code, tests, scenarios, layout guard, diagnostics, and docs are reviewed.
+- Confirm `docs/mvp-40-cpu-call-plan.md` remains present and now notes that MVP-4.1 completed CPU pon, MVP-4.2 completed CPU chi, and MVP-4.3 stabilized post-call flow and open-hand yaku checks.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
 - Run the smartphone landscape layout guard:
 
@@ -46,14 +46,14 @@ node tests/layout-check.mjs
 
 - If Node is not on PATH in the Codex desktop environment, use the bundled Node command documented in `docs/layout-test.md`.
 - Confirm layout-check screenshots are written under `test-artifacts/layout/`.
-- Current layout-check result: all target viewports and scenarios pass, including `normal`, `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `all-hands-open`, `settings-menu-open`, `gear-menu-open`, `assist-buttons-open`, `call-reaction-buttons`, `riichi-action-buttons`, `yaku-guide`, `waits`, `riichi-ready`, `riichi-declared`, `cpu-riichi`, `pon-reaction`, `chi-reaction`, `open-melds`, `multiple-melds`, `open-tanyao-win`, `open-yakuhai-win`, `river-order-fixture`, `cpu-win`, `cpu-pon`, `cpu-chi`, `cpu-open-melds`, `cpu-pon-yakuhai-win`, `cpu-chi-tanyao-win`, and `multiple-cpu-melds`.
+- Current layout-check result: all target viewports and scenarios pass, including `normal`, `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `all-hands-open`, `settings-menu-open`, `gear-menu-open`, `assist-buttons-open`, `call-reaction-buttons`, `riichi-action-buttons`, `yaku-guide`, `waits`, `riichi-ready`, `riichi-declared`, `cpu-riichi`, `pon-reaction`, `chi-reaction`, `open-melds`, `multiple-melds`, `open-tanyao-win`, `open-yakuhai-win`, `river-order-fixture`, `cpu-win`, `cpu-pon`, `cpu-chi`, `cpu-open-melds`, `cpu-pon-yakuhai-win`, `cpu-chi-tanyao-win`, `multiple-cpu-melds`, `cpu-open-yakuhai-win`, `cpu-open-tanyao-win`, `cpu-open-multiple-melds`, `cpu-call-flow`, and `cpu-call-next-round`.
 - Run the CPU win reachability diagnostic:
 
 ```powershell
 node scripts/simulate-cpu-win-reachability.mjs
 ```
 
-- Confirm the diagnostic reports CPU tsumo reachable, CPU ron reachable, and no-yaku CPU shape ignored.
+- Confirm the diagnostic reports CPU tsumo reachable, CPU ron reachable, no-yaku CPU shape ignored, CPU post-pon/post-chi flow continuing, open yakuhai reachable, open tanyao reachable, and open no-yaku ignored.
 
 ## Core Functional Checks
 

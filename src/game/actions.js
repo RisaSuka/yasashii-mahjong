@@ -1,6 +1,6 @@
 import { chooseCpuDiscard, chooseCpuRiichiDiscardOption } from "./cpu/random-cpu.js";
 import { analyzeDiscardWaits, analyzeWaits } from "./advice/wait-analysis.js";
-import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp42-cpu-chi-1";
+import { addTileToPlayer, createInitialGameState, startRound } from "./round.js?v=mvp43-cpu-call-stability-1";
 import { isWinningHand } from "./rules/win-check.js";
 import { detectYaku } from "./rules/yaku.js";
 import { drawFromWall } from "./wall.js";
@@ -251,7 +251,7 @@ export function shouldCpuCallPon(state, playerId, option, random = Math.random) 
 }
 
 export function findCpuPonCandidate(state, random = Math.random) {
-  if (!state.round || state.round.phase === "ended" || hasHumanReactionOpportunity(state)) {
+  if (!state.round || state.round.phase === "ended" || hasHumanReactionOpportunity(state) || findCpuRonWinner(state)) {
     return null;
   }
 
