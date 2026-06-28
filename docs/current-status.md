@@ -1,15 +1,15 @@
 # Current Status
 
-Last updated for MVP-3.5 table UI / gear menu / operation polish.
+Last updated for MVP-4.3 CPU call stability.
 
 ## Repository State
 
-- Working branch: `codex/mvp-35-table-ui-polish`
-- Automated tests: MVP-3.5 normal tests pass locally (`338 pass / 0 pending / 0 fail`)
-- Layout check: Chrome-based smartphone landscape guard covers the connected app table layout, active-round header removal, compact CPU seat geometry, center-board alignment, full four-score visibility, right-edge settings menu, gear/menu item hit-tests, assist button hit-tests, call trigger hit-tests, local 6x3 river order before rotation, pon/chi reactions, multiple melds, open-hand wins, result/all-hands popups, action/meld/hand separation, modal exclusivity, and page overflow checks
-- Working tree: clean at the time of the latest MVP-3.5 verification
+- Working branch: `codex/mvp-40-cpu-call-plan`
+- Automated tests: MVP-4.3 target is `368 pass / 0 pending / 0 fail`
+- Layout check: all target viewports and scenarios should pass, including CPU open-call flow/win/next-round scenarios
+- Working tree: clean after MVP-4.3 verification
 - Push: not yet
-- `main` merge: not yet for MVP-3.5
+- `main` merge: not yet for MVP-4.3
 
 ## Implemented MVPs
 
@@ -60,6 +60,10 @@ Last updated for MVP-3.5 table UI / gear menu / operation polish.
 | MVP-3.4.2 | Working branch | Reference-layout correction: small CPU seat markers, center score board as the visual anchor, local 6x3 river order with whole-river rotation, near-full-width human hand, compact `推` advice badges, and stronger geometry checks for the hand-drawn layout. |
 | MVP-3.4.4 | Working branch | Approved static exact-table mock connected to the live app renderer with the hidden round header, top-right gear menu, four-direction seats/rivers, readable center score board, full-width human hand, reserved action/support/meld zones, and expanded app layout screenshots. |
 | MVP-3.5 | Working branch | Table UI polish for existing gear menu, advice/yaku/waits helpers, action buttons, modal exclusivity, and layout/hit-test coverage. |
+| MVP-4.0 | Design branch | CPU pon/chi design only: call judgment, reaction priority, anti-over-calling controls, CPU meld display, scenarios, tests, and staged implementation order. |
+| MVP-4.1 | Working branch | CPU pon core + UI: CPU pon availability, throttled RNG decision, CPU pon meld state/display, immediate post-pon CPU discard, open yakuhai yaku coverage, and CPU meld layout guards. |
+| MVP-4.2 | Working branch | CPU chi core + UI: CPU chi from upper-player suited discards, throttled tanyao/yaku-tenpai decision, immediate post-chi CPU discard, open tanyao coverage, and CPU chi meld layout guards. |
+| MVP-4.3 | Working branch | CPU call stability: post-pon/post-chi discard flow, CPU ron > pon > chi priority, open yakuhai/tanyao wins, open no-yaku rejection, riichi blocking, next-round CPU meld cleanup, and expanded diagnostics/layout coverage. |
 
 ## Current Capabilities
 
@@ -137,7 +141,7 @@ Last updated for MVP-3.5 table UI / gear menu / operation polish.
   - Declaring pon removes two matching hand tiles, creates a `pon` meld with `calledTile` and `fromPlayerId`, marks the hand open, and lets the human discard one tile.
   - Open hands cannot declare riichi.
   - Open yakuhai pon can count as yaku.
-  - Chi, kan, CPU calls, scoring, furiten, and full call competition remain unsupported.
+  - CPU calls do not preempt the human pon choice; kan, scoring, furiten, and full call competition remain unsupported.
 - Human chi v1:
   - Human can chi only the upper player's latest suited-number discard.
   - Honor tiles cannot be chi.
@@ -147,7 +151,7 @@ Last updated for MVP-3.5 table UI / gear menu / operation polish.
   - Declaring chi removes two selected hand tiles, creates a `chi` meld with `calledTile` and `fromPlayerId`, marks the hand open, and lets the human discard one tile.
   - Open hands cannot declare riichi.
   - Multiple melds are displayed horizontally near the human seat and are guarded against overlap with hand tiles in smartphone landscape.
-  - Kan, CPU calls, scoring, furiten, and full call competition remain unsupported.
+  - CPU calls do not preempt the human chi choice; kan, scoring, furiten, and full call competition remain unsupported.
 - Call stability checks:
   - Open yakuhai pon can win and keeps yakuhai in `yakuResult`.
   - Open chi tanyao can win under the kuitan-ari beginner policy.
@@ -160,6 +164,21 @@ Last updated for MVP-3.5 table UI / gear menu / operation polish.
   - The gear menu suppresses other modal surfaces while it is open.
   - Advice, yaku guide, and waits helper buttons have explicit touch/accessibility labels.
   - Layout hit-tests verify gear/menu items, helper buttons, and call option triggers are not covered by table layers.
+- CPU pon v1:
+  - CPU players can pon another player's latest discard when holding two matching tiles.
+  - CPU pon is blocked while the CPU is in riichi and when a human reaction is waiting.
+  - CPU pon decisions use injected RNG: dragon/self-wind/round-wind pon is favored, toitoi or already-open yaku routes are possible, and ordinary no-yaku pon is rare.
+  - Declaring CPU pon removes two matching concealed tiles, creates a `pon` meld with `calledTile` and `fromPlayerId`, marks the CPU hand open, and immediately discards one tile through the existing evaluator.
+  - CPU open yakuhai pon can win with yakuhai, and open CPU tsumo does not receive menzen-tsumo.
+  - CPU melds render in the existing four-direction table lanes with seat-direction rotation.
+- CPU chi v1:
+  - CPU players can chi only the upper player's latest suited-number discard.
+  - CPU chi is blocked while the CPU is in riichi, when a human reaction is waiting, and when CPU pon is available on the same discard.
+  - CPU chi decisions use injected RNG: open tanyao and yaku-valid-tenpai directions are possible, already-open yaku routes are modestly favored, and terminal/no-yaku chi is rare.
+  - Declaring CPU chi removes two concealed sequence tiles, creates a `chi` meld with `calledTile` and `fromPlayerId`, marks the CPU hand open, and immediately discards one tile through the existing evaluator.
+  - CPU open tanyao chi can win with tanyao, open CPU tsumo does not receive menzen-tsumo, and open no-yaku shapes are rejected.
+  - CPU melds render in the existing four-direction table lanes with seat-direction rotation and can coexist with pon melds.
+  - Kan, scoring, furiten, full multi-caller competition, and CPU difficulty UI remain unsupported.
 - Next-round continuation:
   - `次の局へ` appears after exhaustive draw, tsumo, or ron.
   - The next round creates a fresh wall, dead wall, players, hands, and dealer initial draw.
@@ -318,15 +337,13 @@ Last updated for MVP-3.5 table UI / gear menu / operation polish.
 
 - Point calculation.
 - Fu calculation.
-- Chi, pon, kan.
-- Riichi.
+- CPU kan.
 - Furiten.
 - Dora and ura-dora scoring.
 - Point-based final result screen.
 - Hanchan flow.
 - Dealer repeat and honba full rules.
 - Point movement between rounds.
-- CPU ron.
 - Multiple ron.
 - Full CPU AI.
 - Dealer repeat and honba.

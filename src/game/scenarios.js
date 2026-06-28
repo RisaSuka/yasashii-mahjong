@@ -28,7 +28,32 @@ const SCENARIO_ALIASES = {
   "human-multiple-melds-layout": "human-multiple-melds-layout",
   "human-open-tanyao-win-shape": "human-open-tanyao-win-shape",
   "human-open-no-yaku-win-shape": "human-open-no-yaku-win-shape",
-  "human-open-yakuhai-ron-ready": "human-open-yakuhai-ron-ready"
+  "human-open-yakuhai-ron-ready": "human-open-yakuhai-ron-ready",
+  "cpu-pon-ready-yakuhai": "cpu-pon-ready-yakuhai",
+  "cpu-pon-after-human-discard": "cpu-pon-ready-yakuhai",
+  "cpu-pon-ready-toitoi": "cpu-pon-ready-toitoi",
+  "cpu-pon-no-yaku-avoid": "cpu-pon-no-yaku-avoid",
+  "cpu-pon-riichi-blocked": "cpu-pon-riichi-blocked",
+  "cpu-pon-open-yakuhai-win-shape": "cpu-pon-open-yakuhai-win-shape",
+  "cpu-chi-ready-tanyao": "cpu-chi-ready-tanyao",
+  "cpu-chi-after-human-discard": "cpu-chi-ready-tanyao",
+  "cpu-chi-multiple-options": "cpu-chi-multiple-options",
+  "cpu-chi-not-kamicha": "cpu-chi-not-kamicha",
+  "cpu-chi-no-yaku-avoid": "cpu-chi-no-yaku-avoid",
+  "cpu-chi-riichi-blocked": "cpu-chi-riichi-blocked",
+  "cpu-chi-open-tanyao-win-shape": "cpu-chi-open-tanyao-win-shape",
+  "cpu-chi-open-no-yaku-win-shape": "cpu-chi-open-no-yaku-win-shape",
+  "cpu-open-yakuhai-tsumo": "cpu-open-yakuhai-tsumo",
+  "cpu-open-yakuhai-ron": "cpu-open-yakuhai-ron",
+  "cpu-open-tanyao-tsumo": "cpu-open-tanyao-tsumo",
+  "cpu-open-tanyao-ron": "cpu-open-tanyao-ron",
+  "cpu-open-no-yaku-shape": "cpu-open-no-yaku-shape",
+  "cpu-pon-then-discard-flow": "cpu-pon-then-discard-flow",
+  "cpu-chi-then-discard-flow": "cpu-chi-then-discard-flow",
+  "cpu-open-multiple-melds-layout": "cpu-open-multiple-melds-layout",
+  "cpu-call-next-round-clears-melds": "cpu-call-next-round-clears-melds",
+  "cpu-call-riichi-disabled": "cpu-call-riichi-disabled",
+  "cpu-pon-priority-over-chi": "cpu-pon-priority-over-chi"
 };
 
 const SCENARIOS = {
@@ -521,6 +546,513 @@ const SCENARIOS = {
     lastDiscard: {
       playerId: 1,
       tile: "m9"
+    }
+  },
+  "cpu-pon-ready-yakuhai": {
+    name: "cpu-pon-ready-yakuhai",
+    description: "CPU player 1 can pon a human yakuhai discard.",
+    phase: "draw",
+    currentPlayerIndex: 0,
+    hands: {
+      1: "m1 m2 m3 p2 p3 p4 s7 s8 s9 z5 z5 m9 p9"
+    },
+    discards: {
+      0: "z5"
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "z5"
+    }
+  },
+  "cpu-pon-ready-toitoi": {
+    name: "cpu-pon-ready-toitoi",
+    description: "CPU player 1 has a pair-heavy toitoi direction and can pon.",
+    phase: "draw",
+    currentPlayerIndex: 0,
+    hands: {
+      1: "m2 m2 p3 p3 s4 s4 m7 m7 p8 p8 z1 z2 z3"
+    },
+    discards: {
+      0: "m2"
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "m2"
+    }
+  },
+  "cpu-pon-no-yaku-avoid": {
+    name: "cpu-pon-no-yaku-avoid",
+    description: "CPU player 1 can pon an ordinary pair but has no clear open-yaku route.",
+    phase: "draw",
+    currentPlayerIndex: 0,
+    hands: {
+      1: "m2 m2 m3 m4 p3 p4 s4 s5 m6 p6 s6 z1 z3"
+    },
+    discards: {
+      0: "m2"
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "m2"
+    }
+  },
+  "cpu-pon-riichi-blocked": {
+    name: "cpu-pon-riichi-blocked",
+    description: "CPU player 1 has matching tiles but cannot pon while riichi.",
+    phase: "draw",
+    currentPlayerIndex: 0,
+    riichi: [1],
+    hands: {
+      1: "m1 m2 m3 p2 p3 p4 s7 s8 s9 z5 z5 m9 p9"
+    },
+    discards: {
+      0: "z5"
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "z5"
+    }
+  },
+  "cpu-pon-open-yakuhai-win-shape": {
+    name: "cpu-pon-open-yakuhai-win-shape",
+    description: "CPU player 1 has an open yakuhai pon plus a complete tsumo shape.",
+    phase: "discard",
+    currentPlayerIndex: 1,
+    hands: {
+      1: "m1 m2 m3 p2 p3 p4 s7 s8 s9 m9 m9"
+    },
+    discards: {
+      0: "z5"
+    },
+    melds: {
+      1: [
+        {
+          type: "pon",
+          tiles: "z5 z5 z5",
+          calledTile: "z5",
+          fromPlayerId: 0
+        }
+      ]
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "z5"
+    }
+  },
+  "cpu-chi-ready-tanyao": {
+    name: "cpu-chi-ready-tanyao",
+    description: "CPU player 1 can chi a human suited discard toward tanyao.",
+    phase: "draw",
+    currentPlayerIndex: 0,
+    hands: {
+      1: "m2 m3 m4 p3 p4 p7 p8 s2 s3 s4 s6 s7 s8"
+    },
+    discards: {
+      0: "p5"
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "p5"
+    }
+  },
+  "cpu-chi-multiple-options": {
+    name: "cpu-chi-multiple-options",
+    description: "CPU player 1 has three chi options on a human five discard.",
+    phase: "draw",
+    currentPlayerIndex: 0,
+    hands: {
+      1: "m2 m3 m4 p3 p4 p4 p6 p6 p7 s2 s3 s4 s8"
+    },
+    discards: {
+      0: "p5"
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "p5"
+    }
+  },
+  "cpu-chi-not-kamicha": {
+    name: "cpu-chi-not-kamicha",
+    description: "CPU player 1 has a chi shape, but the discard is not from the upper player.",
+    phase: "draw",
+    currentPlayerIndex: 2,
+    hands: {
+      1: "m2 m3 m4 p3 p4 p7 p8 s2 s3 s4 s6 s7 s8"
+    },
+    discards: {
+      2: "p5"
+    },
+    lastDiscard: {
+      playerId: 2,
+      tile: "p5"
+    }
+  },
+  "cpu-chi-no-yaku-avoid": {
+    name: "cpu-chi-no-yaku-avoid",
+    description: "CPU player 1 can chi a terminal shape but has no clear open-yaku route.",
+    phase: "draw",
+    currentPlayerIndex: 0,
+    hands: {
+      1: "p2 p3 m1 m9 p9 s1 s9 z1 z2 z3 z4 z6 z7"
+    },
+    discards: {
+      0: "p1"
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "p1"
+    }
+  },
+  "cpu-chi-riichi-blocked": {
+    name: "cpu-chi-riichi-blocked",
+    description: "CPU player 1 cannot chi while riichi.",
+    phase: "draw",
+    currentPlayerIndex: 0,
+    riichi: [1],
+    hands: {
+      1: "m2 m3 m4 p3 p4 p7 p8 s2 s3 s4 s6 s7 s8"
+    },
+    discards: {
+      0: "p5"
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "p5"
+    }
+  },
+  "cpu-chi-open-tanyao-win-shape": {
+    name: "cpu-chi-open-tanyao-win-shape",
+    description: "CPU player 1 has an open chi plus a complete tanyao tsumo shape.",
+    phase: "discard",
+    currentPlayerIndex: 1,
+    hands: {
+      1: "m2 m3 m4 p6 p7 p8 s2 s3 s4 m5 m5"
+    },
+    discards: {
+      0: "p5"
+    },
+    melds: {
+      1: [
+        {
+          type: "chi",
+          tiles: "p3 p4 p5",
+          calledTile: "p5",
+          fromPlayerId: 0
+        }
+      ]
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "p5"
+    }
+  },
+  "cpu-chi-open-no-yaku-win-shape": {
+    name: "cpu-chi-open-no-yaku-win-shape",
+    description: "CPU player 1 has an open chi plus a complete no-yaku shape.",
+    phase: "discard",
+    currentPlayerIndex: 1,
+    hands: {
+      1: "m1 m2 m3 p7 p8 p9 s1 s2 s3 z3 z3"
+    },
+    discards: {
+      0: "p5"
+    },
+    melds: {
+      1: [
+        {
+          type: "chi",
+          tiles: "p3 p4 p5",
+          calledTile: "p5",
+          fromPlayerId: 0
+        }
+      ]
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "p5"
+    }
+  },
+  "cpu-open-yakuhai-tsumo": {
+    name: "cpu-open-yakuhai-tsumo",
+    description: "CPU player 1 can tsumo with an open yakuhai pon hand.",
+    phase: "discard",
+    currentPlayerIndex: 1,
+    hands: {
+      1: "m1 m2 m3 p2 p3 p4 s7 s8 s9 m9 m9"
+    },
+    discards: {
+      0: "z5"
+    },
+    melds: {
+      1: [
+        {
+          type: "pon",
+          tiles: "z5 z5 z5",
+          calledTile: "z5",
+          fromPlayerId: 0
+        }
+      ]
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "z5"
+    }
+  },
+  "cpu-open-yakuhai-ron": {
+    name: "cpu-open-yakuhai-ron",
+    description: "CPU player 1 can ron with an open yakuhai pon hand.",
+    phase: "draw",
+    currentPlayerIndex: 0,
+    hands: {
+      1: "m1 m2 m3 p2 p3 p4 s7 s8 s9 m9"
+    },
+    discards: {
+      0: "m9"
+    },
+    melds: {
+      1: [
+        {
+          type: "pon",
+          tiles: "z5 z5 z5",
+          calledTile: "z5",
+          fromPlayerId: 0
+        }
+      ]
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "m9"
+    }
+  },
+  "cpu-open-tanyao-tsumo": {
+    name: "cpu-open-tanyao-tsumo",
+    description: "CPU player 1 can tsumo with an open tanyao chi hand.",
+    phase: "discard",
+    currentPlayerIndex: 1,
+    hands: {
+      1: "m2 m3 m4 p6 p7 p8 s2 s3 s4 m5 m5"
+    },
+    discards: {
+      0: "p5"
+    },
+    melds: {
+      1: [
+        {
+          type: "chi",
+          tiles: "p3 p4 p5",
+          calledTile: "p5",
+          fromPlayerId: 0
+        }
+      ]
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "p5"
+    }
+  },
+  "cpu-open-tanyao-ron": {
+    name: "cpu-open-tanyao-ron",
+    description: "CPU player 1 can ron with an open tanyao chi hand.",
+    phase: "draw",
+    currentPlayerIndex: 0,
+    hands: {
+      1: "m2 m3 m4 p6 p7 p8 s2 s3 s4 m5"
+    },
+    discards: {
+      0: "m5"
+    },
+    melds: {
+      1: [
+        {
+          type: "chi",
+          tiles: "p3 p4 p5",
+          calledTile: "p5",
+          fromPlayerId: 0
+        }
+      ]
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "m5"
+    }
+  },
+  "cpu-open-no-yaku-shape": {
+    name: "cpu-open-no-yaku-shape",
+    description: "CPU player 1 has an open complete shape with no yaku.",
+    phase: "discard",
+    currentPlayerIndex: 1,
+    hands: {
+      1: "m1 m2 m3 p7 p8 p9 s1 s2 s3 z3 z3"
+    },
+    discards: {
+      0: "p5"
+    },
+    melds: {
+      1: [
+        {
+          type: "chi",
+          tiles: "p3 p4 p5",
+          calledTile: "p5",
+          fromPlayerId: 0
+        }
+      ]
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "p5"
+    }
+  },
+  "cpu-pon-then-discard-flow": {
+    name: "cpu-pon-then-discard-flow",
+    description: "CPU player 1 can pon, immediately discard, and keep the round moving.",
+    phase: "draw",
+    currentPlayerIndex: 0,
+    hands: {
+      1: "m1 m2 m3 p2 p3 p4 s7 s8 s9 z5 z5 m9 p9"
+    },
+    discards: {
+      0: "z5"
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "z5"
+    }
+  },
+  "cpu-chi-then-discard-flow": {
+    name: "cpu-chi-then-discard-flow",
+    description: "CPU player 1 can chi, immediately discard, and keep the round moving.",
+    phase: "draw",
+    currentPlayerIndex: 0,
+    hands: {
+      1: "m2 m3 m4 p3 p4 p7 p8 s2 s3 s4 s6 s7 s8"
+    },
+    discards: {
+      0: "p5"
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "p5"
+    }
+  },
+  "cpu-open-multiple-melds-layout": {
+    name: "cpu-open-multiple-melds-layout",
+    description: "CPU players have multiple open melds for four-direction layout checks.",
+    phase: "discard",
+    currentPlayerIndex: 0,
+    hands: {
+      1: "m1 m2 m3 p6 p7 p8 s2 s3 s4 m5",
+      2: "m2 m3 m4 p2 p3 p4 s2 s3 s4 z1 z1",
+      3: "m3 m4 m5 p3 p4 p5 s3 s4 s5 z2 z2"
+    },
+    discards: {
+      0: "p5",
+      1: "m9",
+      2: "s9",
+      3: "p9"
+    },
+    melds: {
+      1: [
+        {
+          type: "pon",
+          tiles: "z5 z5 z5",
+          calledTile: "z5",
+          fromPlayerId: 0
+        },
+        {
+          type: "chi",
+          tiles: "p3 p4 p5",
+          calledTile: "p5",
+          fromPlayerId: 0
+        }
+      ],
+      2: [
+        {
+          type: "pon",
+          tiles: "z6 z6 z6",
+          calledTile: "z6",
+          fromPlayerId: 1
+        }
+      ],
+      3: [
+        {
+          type: "chi",
+          tiles: "s3 s4 s5",
+          calledTile: "s4",
+          fromPlayerId: 2
+        }
+      ]
+    },
+    lastDiscard: {
+      playerId: 3,
+      tile: "p9"
+    }
+  },
+  "cpu-call-next-round-clears-melds": {
+    name: "cpu-call-next-round-clears-melds",
+    description: "An ended round with CPU open melds should clear all melds on next round.",
+    phase: "ended",
+    currentPlayerIndex: 1,
+    hands: {
+      1: "m1 m2 m3 p2 p3 p4 s7 s8 s9 m9 m9"
+    },
+    discards: {
+      0: "z5"
+    },
+    melds: {
+      1: [
+        {
+          type: "pon",
+          tiles: "z5 z5 z5",
+          calledTile: "z5",
+          fromPlayerId: 0
+        }
+      ]
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "z5"
+    }
+  },
+  "cpu-call-riichi-disabled": {
+    name: "cpu-call-riichi-disabled",
+    description: "CPU player 1 has an open meld and cannot declare riichi.",
+    phase: "discard",
+    currentPlayerIndex: 1,
+    hands: {
+      1: "m1 m2 m3 p1 p2 p3 s7 s8 s9 z1 z2"
+    },
+    discards: {
+      0: "z5"
+    },
+    melds: {
+      1: [
+        {
+          type: "pon",
+          tiles: "z5 z5 z5",
+          calledTile: "z5",
+          fromPlayerId: 0
+        }
+      ]
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "z5"
+    }
+  },
+  "cpu-pon-priority-over-chi": {
+    name: "cpu-pon-priority-over-chi",
+    description: "CPU player 1 can both pon and chi, so CPU pon priority should block chi.",
+    phase: "draw",
+    currentPlayerIndex: 0,
+    hands: {
+      1: "p5 p5 p3 p4 m2 m3 m4 s2 s3 s4 p7 p8 m6"
+    },
+    discards: {
+      0: "p5"
+    },
+    lastDiscard: {
+      playerId: 0,
+      tile: "p5"
     }
   }
 };

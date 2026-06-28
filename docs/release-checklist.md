@@ -4,16 +4,16 @@ Use this before merging to `main` or publishing with GitHub Pages.
 
 ## Current Release Candidate
 
-- Branch: `codex/mvp-35-table-ui-polish`
-- Scope: MVP-0.1 through MVP-3.5 table UI / gear menu / operation polish
-- Expected automated result: `338 pass / 0 pending / 0 fail`
+- Branch: `codex/mvp-40-cpu-call-plan`
+- Scope: MVP-4.3 CPU call stability
+- Expected automated result: `368 pass / 0 pending / 0 fail`
 - Push: not yet
 - `main` merge: not yet
-- Publish status: MVP-3.5 is not published yet.
+- Publish status: MVP-4.3 CPU call stability is not published yet.
 
 ## Git Safety
 
-- Confirm the current branch is `codex/mvp-35-table-ui-polish`.
+- Confirm the current branch is `codex/mvp-40-cpu-call-plan`.
 - Confirm the working tree is clean.
 - Confirm the latest commit is the intended release candidate.
 - Confirm no unreviewed local commits are being skipped.
@@ -31,10 +31,12 @@ git branch --list
 ## Automated Checks
 
 - Open `http://127.0.0.1:8765/tests/test-runner.html`.
-- Confirm total count is 338.
-- Confirm pass count is 338.
+- Confirm total count is 368.
+- Confirm pass count is 368.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
+- Confirm MVP-4.3 CPU call stability production code, tests, scenarios, layout guard, diagnostics, and docs are reviewed.
+- Confirm `docs/mvp-40-cpu-call-plan.md` remains present and now notes that MVP-4.1 completed CPU pon, MVP-4.2 completed CPU chi, and MVP-4.3 stabilized post-call flow and open-hand yaku checks.
 - Confirm `src/game/` has no DOM access except the localStorage boundary in `src/game/storage.js`.
 - Run the smartphone landscape layout guard:
 
@@ -44,14 +46,14 @@ node tests/layout-check.mjs
 
 - If Node is not on PATH in the Codex desktop environment, use the bundled Node command documented in `docs/layout-test.md`.
 - Confirm layout-check screenshots are written under `test-artifacts/layout/`.
-- Current layout-check result: all target viewports and scenarios pass, including `normal`, `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `all-hands-open`, `settings-menu-open`, `gear-menu-open`, `assist-buttons-open`, `call-reaction-buttons`, `riichi-action-buttons`, `yaku-guide`, `waits`, `riichi-ready`, `riichi-declared`, `cpu-riichi`, `pon-reaction`, `chi-reaction`, `open-melds`, `multiple-melds`, `open-tanyao-win`, `open-yakuhai-win`, `river-order-fixture`, and `cpu-win`; MVP-3.5 keeps the connected four-direction app layout and adds hit-tests for the gear button, gear menu items, advice/yaku/waits helpers, and call option triggers.
+- Current layout-check result: all target viewports and scenarios pass, including `normal`, `late`, `draw-ended`, `discard-zoom`, `match-ended`, `result-popup`, `all-hands-open`, `settings-menu-open`, `gear-menu-open`, `assist-buttons-open`, `call-reaction-buttons`, `riichi-action-buttons`, `yaku-guide`, `waits`, `riichi-ready`, `riichi-declared`, `cpu-riichi`, `pon-reaction`, `chi-reaction`, `open-melds`, `multiple-melds`, `open-tanyao-win`, `open-yakuhai-win`, `river-order-fixture`, `cpu-win`, `cpu-pon`, `cpu-chi`, `cpu-open-melds`, `cpu-pon-yakuhai-win`, `cpu-chi-tanyao-win`, `multiple-cpu-melds`, `cpu-open-yakuhai-win`, `cpu-open-tanyao-win`, `cpu-open-multiple-melds`, `cpu-call-flow`, and `cpu-call-next-round`.
 - Run the CPU win reachability diagnostic:
 
 ```powershell
 node scripts/simulate-cpu-win-reachability.mjs
 ```
 
-- Confirm the diagnostic reports CPU tsumo reachable, CPU ron reachable, and no-yaku CPU shape ignored.
+- Confirm the diagnostic reports CPU tsumo reachable, CPU ron reachable, no-yaku CPU shape ignored, CPU post-pon/post-chi flow continuing, open yakuhai reachable, open tanyao reachable, and open no-yaku ignored.
 
 ## Core Functional Checks
 
@@ -104,7 +106,21 @@ node scripts/simulate-cpu-win-reachability.mjs
 - Open no-yaku completed shapes are rejected.
 - Open tsumo does not receive menzen-tsumo.
 - Next-round setup clears melds.
-- Kan, CPU calls, scoring, furiten, and full call competition remain out of scope.
+- CPU pon is possible when a CPU holds two matching tiles for another player's latest discard.
+- CPU pon is blocked while that CPU is in riichi.
+- CPU pon does not preempt an available human ron/pon/chi reaction.
+- CPU pon decision uses injected RNG and strongly favors yakuhai over ordinary no-yaku pairs.
+- CPU pon creates a `pon` meld with `calledTile` and `fromPlayerId`, opens the CPU hand, removes two concealed tiles, and immediately discards one tile.
+- CPU pon melds render in the CPU meld lane with seat-direction rotation.
+- CPU open yakuhai pon can win, and CPU open tsumo does not receive menzen-tsumo.
+- Next-round setup clears CPU melds.
+- CPU chi is possible only from the upper player's latest suited-number discard.
+- CPU chi is blocked while that CPU is in riichi, for honor/non-upper/own discards, while human reaction is waiting, and when CPU pon is available on the same discard.
+- CPU chi decision uses injected RNG and favors tanyao or yaku-valid-tenpai direction over terminal-heavy no-yaku calls.
+- CPU chi creates a `chi` meld with `calledTile` and `fromPlayerId`, opens the CPU hand, removes two concealed sequence tiles, and immediately discards one tile.
+- CPU chi melds render in the CPU meld lane with seat-direction rotation and can coexist with pon melds.
+- CPU open tanyao chi can win, open no-yaku CPU hands cannot win, and CPU open tsumo does not receive menzen-tsumo.
+- Kan, scoring, furiten, and full call competition remain out of scope.
 - Winning result still shows yaku names, han, total han, explanations, and furigana.
 - Yaku display order remains beginner-friendly.
 - CSS tile display keeps manzu, pinzu, souzu, and honor tiles visually distinct.

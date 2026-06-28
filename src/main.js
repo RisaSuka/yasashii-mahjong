@@ -1,7 +1,7 @@
-import { bindControls } from "./ui/input.js?v=mvp35-table-ui-polish-1";
-import { renderGame } from "./ui/render.js?v=mvp35-table-ui-polish-1";
+import { bindControls } from "./ui/input.js?v=mvp43-cpu-call-stability-1";
+import { renderGame } from "./ui/render.js?v=mvp43-cpu-call-stability-1";
 
-const APP_ASSET_VERSION = "mvp35-table-ui-polish-1";
+const APP_ASSET_VERSION = "mvp43-cpu-call-stability-1";
 
 const appRoot = document.querySelector("#app");
 
@@ -53,6 +53,8 @@ async function loadGameApi() {
       canRonLatestDiscard: actions.canRonLatestDiscard,
       canCompleteRonLatestDiscard: actions.canCompleteRonLatestDiscard,
       resolveCpuRonAfterDiscard: actions.resolveCpuRonAfterDiscard,
+      resolveCpuPonAfterDiscard: actions.resolveCpuPonAfterDiscard,
+      resolveCpuChiAfterDiscard: actions.resolveCpuChiAfterDiscard,
       createInitialGameState: round.createInitialGameState,
       loadStats: storage.loadStats,
       suggestDiscards: advice.suggestDiscards,
@@ -511,6 +513,14 @@ function handleAfterDiscard() {
     return;
   }
 
+  if (resolveCpuPonIfNeeded()) {
+    return;
+  }
+
+  if (resolveCpuChiIfNeeded()) {
+    return;
+  }
+
   continueAfterDiscard();
 }
 
@@ -548,6 +558,38 @@ function resolveCpuRonIfNeeded() {
 
   if (previousPhase !== "ended" && state.round?.phase === "ended") {
     render();
+    return true;
+  }
+
+  return false;
+}
+
+function resolveCpuPonIfNeeded() {
+  if (typeof gameApi.resolveCpuPonAfterDiscard !== "function") {
+    return false;
+  }
+
+  const previousState = state;
+  state = gameApi.resolveCpuPonAfterDiscard(state);
+
+  if (state !== previousState) {
+    handleAfterDiscard();
+    return true;
+  }
+
+  return false;
+}
+
+function resolveCpuChiIfNeeded() {
+  if (typeof gameApi.resolveCpuChiAfterDiscard !== "function") {
+    return false;
+  }
+
+  const previousState = state;
+  state = gameApi.resolveCpuChiAfterDiscard(state);
+
+  if (state !== previousState) {
+    handleAfterDiscard();
     return true;
   }
 
@@ -727,6 +769,12 @@ function createFallbackGameApi() {
       return false;
     },
     resolveCpuRonAfterDiscard(currentState) {
+      return currentState;
+    },
+    resolveCpuPonAfterDiscard(currentState) {
+      return currentState;
+    },
+    resolveCpuChiAfterDiscard(currentState) {
       return currentState;
     },
     dispatchAction(currentState, action) {

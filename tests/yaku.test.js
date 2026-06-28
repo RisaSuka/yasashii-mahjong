@@ -36,6 +36,19 @@ export function registerYakuTests() {
     assertHasYaku(result, "yakuhai");
   });
 
+  test("YAKU: value wind triplet can be detected with wind context", async () => {
+    const { detectYaku } = await loadYakuModule();
+    const result = detectYaku(windYakuhaiHand(), {
+      winType: "ron",
+      isClosed: false,
+      handType: "standard",
+      playerWind: "south",
+      roundWind: "east"
+    });
+
+    assertHasYaku(result, "yakuhai");
+  });
+
   test("YAKU: chiitoitsu can be detected as yaku", async () => {
     const { detectYaku } = await loadYakuModule();
     const result = detectYaku(chiitoitsuHand(), {
@@ -135,6 +148,10 @@ function tanyaoHand() {
 
 function yakuhaiHand() {
   return tiles("m1 m2 m3 p4 p5 p6 s7 s8 s9 z5 z5 z5 m9 m9");
+}
+
+function windYakuhaiHand() {
+  return tiles("m1 m2 m3 p4 p5 p6 s7 s8 s9 z2 z2 z2 m9 m9");
 }
 
 function chiitoitsuHand() {

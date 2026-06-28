@@ -32,7 +32,7 @@ export function detectYaku(tiles, context = {}) {
     yaku.push(YAKU.TANYAO);
   }
 
-  if (hasYakuhaiTriplet(counts)) {
+  if (hasYakuhaiTriplet(counts, context)) {
     yaku.push(YAKU.YAKUHAI);
   }
 
@@ -73,14 +73,45 @@ function isTanyao(tiles) {
   return tiles.every((tile) => tile.suit !== "z" && tile.rank >= 2 && tile.rank <= 8);
 }
 
-function hasYakuhaiTriplet(counts) {
+function hasYakuhaiTriplet(counts, context = {}) {
   for (const key of DRAGON_KEYS) {
     if ((counts.get(key) || 0) >= 3) {
       return true;
     }
   }
 
+  for (const key of collectValueWindKeys(context)) {
+    if ((counts.get(key) || 0) >= 3) {
+      return true;
+    }
+  }
+
   return false;
+}
+
+function collectValueWindKeys(context) {
+  const ranks = new Set();
+  const roundWindRank = getWindRank(context.roundWind || context.match?.roundWind || context.round?.roundWind);
+  const playerWindRank = getWindRank(context.playerWind || context.player?.wind);
+
+  if (roundWindRank) {
+    ranks.add(roundWindRank);
+  }
+
+  if (playerWindRank) {
+    ranks.add(playerWindRank);
+  }
+
+  return [...ranks].map((rank) => `z${rank}`);
+}
+
+function getWindRank(wind) {
+  return {
+    east: 1,
+    south: 2,
+    west: 3,
+    north: 4
+  }[wind] || null;
 }
 
 function isToitoiFromCounts(counts) {

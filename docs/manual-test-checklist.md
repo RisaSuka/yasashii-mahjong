@@ -21,13 +21,26 @@ http://127.0.0.1:8765/tests/test-runner.html
 ## 1. Automated Baseline
 
 - Open the test runner URL.
-- Confirm total count is 338.
-- Confirm pass count is 338.
+- Confirm total count is 368.
+- Confirm pass count is 368.
 - Confirm fail count is 0.
 - Confirm pending count is 0.
 - For smartphone landscape layout work, also run the layout guard described in `docs/layout-test.md`.
 - If `tests/layout-check.mjs` fails, review the reported viewport/scenario and screenshots under `test-artifacts/layout/` before continuing UI fixes.
-- For CPU win reachability diagnostics, run `node scripts/simulate-cpu-win-reachability.mjs` and confirm CPU tsumo, CPU ron, and no-yaku rejection are reported.
+- For CPU win reachability diagnostics, run `node scripts/simulate-cpu-win-reachability.mjs` and confirm CPU tsumo, CPU ron, no-yaku rejection, CPU post-call flow, open yakuhai, open tanyao, and open no-yaku rejection are reported.
+
+## 1.0.1 MVP-4.3 CPU Call Stability Check
+
+- Use `cpu-pon-then-discard-flow` and confirm CPU pon immediately creates a meld, discards one tile, and returns to normal turn progression.
+- Use `cpu-chi-then-discard-flow` and confirm CPU chi immediately creates a meld, discards one tile, and returns to normal turn progression.
+- Use `cpu-open-yakuhai-tsumo` and `cpu-open-yakuhai-ron` and confirm open yakuhai wins include yakuhai but not riichi or menzen-tsumo.
+- Use `cpu-open-tanyao-tsumo` and `cpu-open-tanyao-ron` and confirm open tanyao wins include tanyao but not riichi or menzen-tsumo.
+- Use `cpu-open-no-yaku-shape` and confirm CPU does not win with an open no-yaku completed shape.
+- Confirm CPU in riichi cannot pon/chi, and an already-open CPU cannot declare riichi.
+- Confirm reaction priority remains human reaction first, then CPU ron, then CPU pon, then CPU chi.
+- Confirm CPU chi still only occurs from the upper player's suited discard.
+- Confirm CPU1/CPU2/CPU3 meld lanes show pon/chi melds with the correct seat rotation and do not overlap rivers, action buttons, or the human hand.
+- Confirm starting the next round clears CPU melds.
 
 ## 1.1 MVP-2.0 SVG Tile Visual Check
 
@@ -72,7 +85,7 @@ http://127.0.0.1:8765/tests/test-runner.html
 - Confirm an open hand cannot declare riichi.
 - Confirm a riichi human cannot pon.
 - Confirm open yakuhai pon is treated as a yaku.
-- Confirm chi, kan, CPU calls, scoring, furiten, and full call competition are not implemented yet.
+- Confirm CPU calls do not interfere with human pon; kan, scoring, furiten, and full call competition are not implemented yet.
 - Confirm smartphone landscape keeps the pon buttons and meld area inside the viewport.
 - Confirm the `ポンしました。捨てる牌を選んでください。` guidance disappears after the post-pon discard.
 - Confirm the human pon meld does not overlap the human hand tiles.
@@ -92,7 +105,7 @@ http://127.0.0.1:8765/tests/test-runner.html
 - Confirm a riichi human cannot chi.
 - Confirm an open chi hand cannot declare riichi.
 - Confirm multiple melds stay in the dedicated meld area and do not overlap the human hand tiles in smartphone landscape.
-- Confirm kan, CPU calls, scoring, furiten, and full call competition are not implemented yet.
+- Confirm CPU calls do not interfere with human chi; kan, scoring, furiten, and full call competition are not implemented yet.
 
 ## 1.6 MVP-3.3 Call Stability Check
 
@@ -138,6 +151,50 @@ http://127.0.0.1:8765/tests/test-runner.html
 - Confirm `見送る` stays on one line.
 - Confirm next-round and replay buttons remain tappable after a hand or match ends.
 - Confirm the strengthened layout guard hit-tests gear/menu items, helper buttons, and call triggers across smartphone landscape viewports.
+
+## 1.9 MVP-4.0 CPU Call Design Review
+
+MVP-4.0 is documentation only. No manual browser behavior should change.
+
+- Confirm `docs/mvp-40-cpu-call-plan.md` exists.
+- Confirm the document keeps first implementation scope to CPU pon, CPU chi, CPU post-call discard, and CPU meld display.
+- Confirm kan, scoring, furiten, CPU difficulty UI, and full multi-caller competition are explicitly out of scope.
+- Confirm CPU pon judgment favors yakuhai/toitoi-visible hands and avoids no-yaku speculative calls.
+- Confirm CPU chi judgment favors tanyao/yaku-visible progress and avoids no-yaku or terminal-heavy calls.
+- Confirm reaction priority is documented as ron before pon before chi before skip.
+- Confirm human ron and human call choice remain prioritized before CPU calls.
+- Confirm anti-over-calling probabilities and RNG injection are documented.
+- Confirm future scenarios and test policy are listed before implementation starts.
+
+## 1.10 MVP-4.1 CPU Pon Check
+
+- Use `cpu-pon-ready-yakuhai` and confirm a CPU can call pon on a human discard when holding two matching yakuhai tiles.
+- Confirm CPU pon is not automatic for ordinary no-yaku pairs and is controlled by injected RNG in tests.
+- Confirm a CPU in riichi cannot pon.
+- Confirm CPU pon does not run while a human ron/pon/chi reaction is waiting.
+- Confirm CPU pon creates a visible CPU `pon` meld in the four-direction table.
+- Confirm the CPU concealed hand loses two matching tiles and the called tile appears in the meld.
+- Confirm the CPU immediately discards one tile after pon and play does not stall.
+- Confirm CPU pon makes the hand open and later riichi is unavailable.
+- Confirm open CPU yakuhai pon can win with yakuhai.
+- Confirm open CPU tsumo does not receive menzen-tsumo.
+- Confirm starting the next round clears CPU melds.
+- Confirm kan, scoring, furiten, full multi-caller competition, and CPU difficulty UI remain unsupported.
+
+## 1.11 MVP-4.2 CPU Chi Check
+
+- Use `cpu-chi-ready-tanyao` and confirm a CPU can chi only the upper player's suited discard.
+- Confirm CPU chi is not available for honor tiles, non-upper-player discards, own discards, or riichi CPUs.
+- Confirm CPU chi is controlled by injected RNG and favors tanyao/yaku-valid-tenpai shapes over no-yaku terminal-heavy shapes.
+- Confirm CPU pon has priority when the same discard can be pon or chi.
+- Confirm CPU chi creates a visible CPU `chi` meld in the four-direction table.
+- Confirm the CPU concealed hand loses two sequence tiles and the called tile appears in the meld.
+- Confirm the CPU immediately discards one tile after chi and play does not stall.
+- Confirm CPU chi makes the hand open and later riichi is unavailable.
+- Confirm open CPU tanyao chi can win with tanyao.
+- Confirm open CPU no-yaku hands cannot win and open CPU tsumo does not receive menzen-tsumo.
+- Confirm starting the next round clears CPU chi melds.
+- Confirm kan, scoring, furiten, full multi-caller competition, and CPU difficulty UI remain unsupported.
 
 ## 2. Normal Desktop Flow
 
